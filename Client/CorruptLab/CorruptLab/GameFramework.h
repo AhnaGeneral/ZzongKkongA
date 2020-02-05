@@ -63,6 +63,7 @@ private:
 
 	ID3D12Resource					*m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
 	ID3D12DescriptorHeap			*m_pd3dRtvDescriptorHeap = NULL;
+
 	UINT							m_nRtvDescriptorIncrementSize;
 	D3D12_CPU_DESCRIPTOR_HANDLE		m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBuffers];
 
