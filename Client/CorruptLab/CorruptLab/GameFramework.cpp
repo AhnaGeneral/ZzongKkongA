@@ -202,15 +202,17 @@ void CGameFramework::CreateCommandQueueAndList()
 
 void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 {
+	//RenderTarget ========================================================================================================
 	D3D12_DESCRIPTOR_HEAP_DESC d3dDescriptorHeapDesc;
 	::ZeroMemory(&d3dDescriptorHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
-	d3dDescriptorHeapDesc.NumDescriptors = m_nSwapChainBuffers + m_nOffScreenRenderTargetBuffers;
+	d3dDescriptorHeapDesc.NumDescriptors = m_nSwapChainBuffers + m_nOffScreenRenderTargetBuffers; // SwapChain + MRT (now : 5)
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	d3dDescriptorHeapDesc.NodeMask = 0;
 	HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dRtvDescriptorHeap);
 	m_nRtvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
+	
+	//DeptStencilTarget ====================================================================================================
 	d3dDescriptorHeapDesc.NumDescriptors = 1;
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void **)&m_pd3dDsvDescriptorHeap);
@@ -240,14 +242,16 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	CTexture *pTextureForPostProcessing = new CTexture(m_nOffScreenRenderTargetBuffers, RESOURCE_TEXTURE2D_ARRAY, 0);
 
 	D3D12_CLEAR_VALUE d3dClearValue ={ DXGI_FORMAT_R8G8B8A8_UNORM, { 0.0f, 0.0f, 0.0f, 1.0f } };
+
 	for (UINT i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 	{
-		m_ppd3dOffScreenRenderTargetBuffers[i] = pTextureForPostProcessing->CreateTexture(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
+		m_ppd3dOffScreenRenderTargetBuffers[i] = pTextureForPostProcessing->CreateTexture(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth, m_nWndClientHeight, 
+			DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
 		m_ppd3dOffScreenRenderTargetBuffers[i]->AddRef();
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBuffers * m_nRtvDescriptorIncrementSize);
+	d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBuffers * m_nRtvDescriptorIncrementSize); // ptr : 2 + 128 
 
 	D3D12_RENDER_TARGET_VIEW_DESC d3dRenderTargetViewDesc;
 	d3dRenderTargetViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -257,9 +261,12 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 
 	for (UINT i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 	{
+		// [ GameFramework.h ]
+		// D3D12_CPU_DESCRIPTOR_HANDLE	m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nOffScreenRenderTargetBuffers];
+
 		m_pd3dOffScreenRenderTargetBufferCPUHandles[i] = d3dRtvCPUDescriptorHandle;
 		m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(i), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[i]);
-		d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize;
+		d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 	}
 
 	m_pPostProcessingShader = new CPostProcessingByLaplacianShader();
@@ -331,8 +338,9 @@ void CGameFramework::ChangeSwapChainState()
 	m_pdxgiSwapChain->GetDesc(&dxgiSwapChainDesc);
 	m_pdxgiSwapChain->ResizeBuffers(m_nSwapChainBuffers, m_nWndClientWidth, m_nWndClientHeight, dxgiSwapChainDesc.BufferDesc.Format, dxgiSwapChainDesc.Flags);
 #endif
-	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex();
+	m_nSwapChainBufferIndex = m_pdxgiSwapChain->GetCurrentBackBufferIndex(); 
 
+ 
 	CreateSwapChainRenderTargetViews();
 }
 
@@ -527,6 +535,7 @@ void CGameFramework::AnimateObjects()
 	if (m_pScene) m_pScene->AnimateObjects(m_GameTimer.GetTimeElapsed());
 }
 
+//GPU가 끝날 때까지 기다려주는 단계 
 void CGameFramework::WaitForGpuComplete()
 {
 	const UINT64 nFenceValue = ++m_nFenceValues[m_nSwapChainBufferIndex];
@@ -566,17 +575,23 @@ void CGameFramework::FrameAdvance()
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) ::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i], D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) 
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i], D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	float pfClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[i], pfClearColor, 0, NULL);
+
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) 
+		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[i], pfClearColor, 0, NULL);
+
 	m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nSwapChainBufferIndex], pfClearColor, 0, NULL);
 	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenRenderTargetBuffers, m_pd3dOffScreenRenderTargetBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
 	m_pScene->Render(m_pd3dCommandList, m_pCamera);
 
-	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) ::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
@@ -609,7 +624,8 @@ void CGameFramework::FrameAdvance()
 #ifdef _WITH_SYNCH_SWAPCHAIN
 	m_pdxgiSwapChain->Present(1, 0);
 #else
-	m_pdxgiSwapChain->Present(0, 0);
+	m_pdxgiSwapChain->Present(0, 0); 
+	//버퍼두개를 교환하는 것을 present라고한다.
 #endif
 #endif
 
