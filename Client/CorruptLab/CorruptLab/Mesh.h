@@ -51,7 +51,9 @@ public:
 protected:
 	MeshInfo   m_MeshInfo;
 public:
+	UINT GetType() { return(m_MeshInfo.m_nType); }
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet) { }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
