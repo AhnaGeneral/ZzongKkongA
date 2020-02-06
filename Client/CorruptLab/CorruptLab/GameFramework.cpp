@@ -583,22 +583,24 @@ void CGameFramework::FrameAdvance()
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) 
 		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[i], pfClearColor, 0, NULL);
 
-	m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nSwapChainBufferIndex], pfClearColor, 0, NULL);
+	m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nSwapChainBufferIndex], pfClearColor, 0, NULL);// 필요 없을수도
 	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenRenderTargetBuffers, m_pd3dOffScreenRenderTargetBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
-	m_pScene->Render(m_pd3dCommandList, m_pCamera);
-
-	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
+	m_pScene->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
+	                                                // write 용으로 사용하고 있었음
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 되? 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
-
+	   
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	m_pd3dCommandList->ClearRenderTargetView(m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
 	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
-	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera);
+	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera); // 화면 좌표계에 해당하는 투영좌표계의 좌표로 인해 사각형을하나 그려서 그림을 복사 해서 그림을 그려라.
+	                                                               // 스크린 좌표계 !! 
+
 
 #ifdef _WITH_PLAYER_TOP
 	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);

@@ -24,13 +24,10 @@ class CShader;
 
 struct CB_GAMEOBJECT_INFO
 {
-	XMFLOAT4X4	m_xmf4x4World;
-	UINT		m_nObjectID;
-	UINT		m_nMaterialID;
+	XMFLOAT4X4	                    m_xmf4x4World;
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 struct SRVROOTARGUMENTINFO
 {
 	UINT							m_nRootParameterIndex = 0;
@@ -56,8 +53,8 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE		*m_pd3dSamplerGpuDescriptorHandles = NULL;
 
 public:
-	void AddRef() { m_nReferences++; }
-	void Release() { if (--m_nReferences <= 0) delete this; }
+	void AddRef()                   { m_nReferences++; }
+	void Release()                  { if (--m_nReferences <= 0) delete this; }
 
 	void SetRootArgument(int nIndex, UINT nRootParameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dsrvGpuDescriptorHandle);
 	void SetSampler(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSamplerGpuDescriptorHandle);
@@ -76,9 +73,7 @@ public:
 	void ReleaseUploadBuffers();
 };
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define MATERIAL_ALBEDO_MAP			0x01
 #define MATERIAL_SPECULAR_MAP		0x02
 #define MATERIAL_NORMAL_MAP			0x04
@@ -113,7 +108,7 @@ struct MATERIALLOADINFO
 struct MATERIALSLOADINFO
 {
 	int								m_nMaterials = 0;
-	MATERIALLOADINFO* m_pMaterials = NULL;
+	MATERIALLOADINFO                *m_pMaterials = NULL;
 };
 
 class CMaterialColors
@@ -127,8 +122,8 @@ private:
 	int								m_nReferences = 0;
 
 public:
-	void AddRef() { m_nReferences++; }
-	void Release() { if (--m_nReferences <= 0) delete this; }
+	void AddRef()                   { m_nReferences++; }
+	void Release()                  { if (--m_nReferences <= 0) delete this; }
 
 	XMFLOAT4						m_xmf4Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	XMFLOAT4						m_xmf4Diffuse = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -146,12 +141,12 @@ private:
 	int								m_nReferences = 0;
 
 public:
-	void AddRef() { m_nReferences++; }
-	void Release() { if (--m_nReferences <= 0) delete this; }
+	void AddRef()                   { m_nReferences++; }
+	void Release()                  { if (--m_nReferences <= 0) delete this; }
 
-	CShader* m_pShader = NULL;
+	CShader                         *m_pShader = NULL;
 
-	CMaterialColors* m_pMaterialColors = NULL;
+	CMaterialColors                 *m_pMaterialColors = NULL;
 
 	void SetMaterialColors(CMaterialColors* pMaterialColors);
 	void SetShader(CShader* pShader);
@@ -160,7 +155,7 @@ public:
 	void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList);
 
 protected:
-	static CShader* m_pIlluminatedShader;
+	static CShader                   *m_pIlluminatedShader;
 
 public:
 	static void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
@@ -172,13 +167,12 @@ class CGameObject
 	//void SetCbvGPUDescriptorHandle(D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorHandle) { m_d3dCbvGPUDescriptorHandle = d3dCbvGPUDescriptorHandle; }
 	//void SetCbvGPUDescriptorHandlePtr(UINT64 nCbvGPUDescriptorHandlePtr) { m_d3dCbvGPUDescriptorHandle.ptr = nCbvGPUDescriptorHandlePtr; }
 	//D3D12_GPU_DESCRIPTOR_HANDLE GetCbvGPUDescriptorHandle() { return(m_d3dCbvGPUDescriptorHandle); }
-
 private:
 	int								m_nReferences = 0;
 
 public:
-	void AddRef();
-	void Release();
+	void AddRef()  { m_nReferences++; }
+	void Release() { if (--m_nReferences <= 0) delete this; }
 
 public:
 	CGameObject();
@@ -187,17 +181,17 @@ public:
 public:
 	char							m_pstrFrameName[64];
 
-	CMesh* m_pMesh = NULL;
+	CMesh                           * m_pMesh = NULL;
 
 	int								m_nMaterials = 0;
-	CMaterial** m_ppMaterials = NULL;
+	CMaterial                       ** m_ppMaterials = NULL;
 
 	XMFLOAT4X4						m_xmf4x4Transform;
 	XMFLOAT4X4						m_xmf4x4World;
 
-	CGameObject* m_pParent = NULL;
-	CGameObject* m_pChild = NULL;
-	CGameObject* m_pSibling = NULL;
+	CGameObject                     * m_pParent = NULL;
+	CGameObject                     * m_pChild = NULL;
+	CGameObject                     * m_pSibling = NULL;
 
 	void SetMesh(CMesh* pMesh);
 	void SetShader(CShader* pShader);
@@ -211,7 +205,7 @@ public:
 	virtual void OnInitialize() { }
 	virtual void Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL);
 
-	virtual void OnPrepareRender() { }
+	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
@@ -258,38 +252,5 @@ public:
 
 };
 
-class CRotatingObject : public CGameObject
-{
-public:
-	CRotatingObject(int nMeshes=1);
-	virtual ~CRotatingObject();
 
-private:
-	XMFLOAT3 m_xmf3RotationAxis;
-	float	 m_fRotationSpeed;
-
-public:
-	void SetRotationSpeed(float fRotationSpeed) { m_fRotationSpeed = fRotationSpeed; }
-	void SetRotationAxis(XMFLOAT3 xmf3RotationAxis) { m_xmf3RotationAxis = xmf3RotationAxis; }
-
-	virtual void Animate(float fTimeElapsed);
-	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
-};
-
-class CRevolvingObject : public CGameObject
-{
-public:
-	CRevolvingObject(int nMeshes=1);
-	virtual ~CRevolvingObject();
-
-private:
-	XMFLOAT3  m_xmf3RevolutionAxis;
-	float	  m_fRevolutionSpeed;
-
-public:
-	void SetRevolutionSpeed(float fRevolutionSpeed) { m_fRevolutionSpeed = fRevolutionSpeed; }
-	void SetRevolutionAxis(XMFLOAT3 xmf3RevolutionAxis) { m_xmf3RevolutionAxis = xmf3RevolutionAxis; }
-
-	virtual void Animate(float fTimeElapsed);
-};
 

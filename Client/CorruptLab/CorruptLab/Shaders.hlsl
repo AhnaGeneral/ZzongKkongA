@@ -13,8 +13,6 @@ cbuffer cbCameraInfo : register(b1)
 cbuffer cbGameObjectInfo : register(b2)
 {
 	matrix		gmtxGameObject : packoffset(c0);
-	uint		gnObjectID : packoffset(c4);
-	uint		gnMaterialID : packoffset(c8);
 };
 
 #include "Light.hlsl"
@@ -175,8 +173,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 
 	output.normal.xyz = input.normalW.xyz * 0.5f + 0.5f;
 
-	output.object = float4(gnObjectID / 9261.0f, gnObjectID / 9261.0f, gnObjectID / 9261.0f, gnObjectID / 9261.0f);
-
 	return(output);
 }
 
@@ -194,7 +190,7 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
 	return(float4(0, 0, 0, 0));
 }
 
-Texture2D<float4> gtxtScene : register(t1);
+Texture2D<float4> gtxtScene : register(t1); // scene, normal, objectID RTV 0, 1, 2를 리소스 어레이로만든것
 
 float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {

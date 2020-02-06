@@ -109,11 +109,33 @@ CMaterial::~CMaterial()
 }
 
 
+void CMaterial::SetMaterialColors(CMaterialColors* pMaterialColors)
+{
+	if (m_pMaterialColors) m_pMaterialColors->Release();
+	m_pMaterialColors = pMaterialColors;
+	if (m_pMaterialColors) m_pMaterialColors->AddRef();
+}
+
 void CMaterial::SetShader(CShader *pShader)
 {
 	if (m_pShader) m_pShader->Release();
 	m_pShader = pShader;
 	if (m_pShader) m_pShader->AddRef();
+}
+
+void CMaterial::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &(m_pMaterialColors->m_xmf4Ambient), 16);
+	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &(m_pMaterialColors->m_xmf4Diffuse), 20);
+	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &(m_pMaterialColors->m_xmf4Specular), 24);
+	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &(m_pMaterialColors->m_xmf4Emissive), 28);
+}
+
+void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+{
+	m_pIlluminatedShader = new CIlluminatedShader();
+	m_pIlluminatedShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature);
+	m_pIlluminatedShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,6 +185,24 @@ void CGameObject::SetMaterial(int nMaterial, CMaterial *pMaterial)
 	if (m_ppMaterials[nMaterial]) m_ppMaterials[nMaterial]->Release();
 	m_ppMaterials[nMaterial] = pMaterial;
 	if (m_ppMaterials[nMaterial]) m_ppMaterials[nMaterial]->AddRef();
+}
+
+void CGameObject::SetChild(CGameObject* pChild, bool bReferenceUpdate)
+{
+	if (pChild)
+	{
+		pChild->m_pParent = this;
+		if (bReferenceUpdate) pChild->AddRef();
+	}
+	if (m_pChild)
+	{
+		if (pChild) pChild->m_pSibling = m_pChild->m_pSibling;
+		m_pChild->m_pSibling = pChild;
+	}
+	else
+	{
+		m_pChild = pChild;
+	}
 }
 
 void CGameObject::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
@@ -222,11 +262,19 @@ void CGameObject::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandLi
 {
 }
 
+void CGameObject::ReleaseShaderVariables()
+{
+}
+
 void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
 {
 	XMFLOAT4X4 xmf4x4World;
 	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
 	pd3dCommandList->SetGraphicsRoot32BitConstants(1, 16, &xmf4x4World, 0);
+}
+
+void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial)
+{
 }
 
 void CGameObject::ReleaseUploadBuffers()
@@ -641,43 +689,12 @@ CGameObject* CGameObject::LoadGeometryFromFile(ID3D12Device* pd3dDevice, ID3D12G
 
 	return(pGameObject);
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CRotatingObject::CRotatingObject(int nMeshes)
-{
-	m_xmf3RotationAxis = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	m_fRotationSpeed = 15.0f;
-}
 
-CRotatingObject::~CRotatingObject()
-{
-}
 
-void CRotatingObject::Animate(float fTimeElapsed)
+CMaterialColors::CMaterialColors(MATERIALLOADINFO* pMaterialInfo)
 {
-	CGameObject::Rotate(&m_xmf3RotationAxis, m_fRotationSpeed * fTimeElapsed);
+	m_xmf4Diffuse = pMaterialInfo->m_xmf4AlbedoColor;
+	m_xmf4Specular = pMaterialInfo->m_xmf4SpecularColor; //(r,g,b,a=power)
+	m_xmf4Specular.w = (pMaterialInfo->m_fGlossiness * 255.0f);
+	m_xmf4Emissive = pMaterialInfo->m_xmf4EmissiveColor;
 }
-
-void CRotatingObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
-{
-	CGameObject::Render(pd3dCommandList, pCamera);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-CRevolvingObject::CRevolvingObject(int nMeshes)
-{
-	m_xmf3RevolutionAxis = XMFLOAT3(1.0f, 0.0f, 0.0f);
-	m_fRevolutionSpeed = 0.0f;
-}
-
-CRevolvingObject::~CRevolvingObject()
-{
-}
-
-void CRevolvingObject::Animate(float fTimeElapsed)
-{
-	XMMATRIX mtxRotate = XMMatrixRotationAxis(XMLoadFloat3(&m_xmf3RevolutionAxis), XMConvertToRadians(m_fRevolutionSpeed * fTimeElapsed));
-	m_xmf4x4World = Matrix4x4::Multiply(m_xmf4x4World, mtxRotate);
-}
-
