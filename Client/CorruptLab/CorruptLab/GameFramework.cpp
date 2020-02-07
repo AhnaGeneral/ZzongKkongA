@@ -590,6 +590,8 @@ void CGameFramework::FrameAdvance()
 
 	m_pScene->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
 	                                                // write 용으로 사용하고 있었음
+	m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
+
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 되? 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 	   
@@ -605,7 +607,6 @@ void CGameFramework::FrameAdvance()
 #ifdef _WITH_PLAYER_TOP
 	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 #endif
-	m_pPlayer->Render(m_pd3dCommandList, m_pCamera);
 
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
