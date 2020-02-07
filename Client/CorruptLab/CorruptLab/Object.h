@@ -193,6 +193,10 @@ public:
 	CGameObject                     * m_pChild = NULL;
 	CGameObject                     * m_pSibling = NULL;
 
+	ID3D12Resource                  * m_pd3dcbGameObjects = NULL;	
+	CB_GAMEOBJECT_INFO              * m_pcbMappedGameObjects = NULL;
+
+
 	void SetMesh(CMesh* pMesh);
 	void SetShader(CShader* pShader);
 	void SetShader(int nMaterial, CShader* pShader);

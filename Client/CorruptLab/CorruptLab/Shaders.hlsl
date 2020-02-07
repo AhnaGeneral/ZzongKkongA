@@ -1,104 +1,29 @@
-cbuffer cbPlayerInfo : register(b0)
+
+struct MATERIAL
 {
-	matrix		gmtxPlayerWorld : packoffset(c0);
+	float4		    m_cAmbient;
+	float4		    m_cDiffuse;
+	float4		    m_cSpecular; //a = power
+	float4		    m_cEmissive;
 };
 
 cbuffer cbCameraInfo : register(b1)
 {
-	matrix		gmtxView : packoffset(c0);
-	matrix		gmtxProjection : packoffset(c4);
-	float3		gvCameraPosition : packoffset(c8);
+	matrix		    gmtxView : packoffset(c0);
+	matrix		    gmtxProjection : packoffset(c4);
+	float3		    gvCameraPosition : packoffset(c8);
 };
 
 cbuffer cbGameObjectInfo : register(b2)
 {
-	matrix		gmtxGameObject : packoffset(c0);
+	matrix		    gmtxGameObject : packoffset(c0);
+	MATERIAL        gMaterial : packoffset(c4); 
 };
 
 #include "Light.hlsl"
 
-struct VS_DIFFUSED_INPUT
-{
-	float3 position : POSITION;
-	float4 color : COLOR;
-};
-
-struct VS_DIFFUSED_OUTPUT
-{
-	float4 position : SV_POSITION;
-	float4 color : COLOR;
-};
-
-VS_DIFFUSED_OUTPUT VSDiffused(VS_DIFFUSED_INPUT input)
-{
-	VS_DIFFUSED_OUTPUT output;
-
-	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
-	output.color = input.color;
-
-	return(output);
-}
-
-float4 PSDiffused(VS_DIFFUSED_OUTPUT input) : SV_TARGET
-{
-	return(input.color);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-VS_DIFFUSED_OUTPUT VSPlayer(VS_DIFFUSED_INPUT input)
-{
-	VS_DIFFUSED_OUTPUT output;
-
-	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxPlayerWorld), gmtxView), gmtxProjection);
-	output.color = input.color;
-
-	return(output);
-}
-
-float4 PSPlayer(VS_DIFFUSED_OUTPUT input) : SV_TARGET
-{
-	return(input.color);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-Texture2DArray gtxtTextureArray : register(t0);
 SamplerState gSamplerState : register(s0);
 
-struct VS_TEXTURED_INPUT
-{
-	float3 position : POSITION;
-	float2 uv : TEXCOORD;
-};
-
-struct VS_TEXTURED_OUTPUT
-{
-	float4 position : SV_POSITION;
-	float2 uv : TEXCOORD;
-};
-
-VS_TEXTURED_OUTPUT VSTextured(VS_TEXTURED_INPUT input)
-{
-	VS_TEXTURED_OUTPUT output;
-
-	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
-	output.uv = input.uv;
-
-	return(output);
-}
-
-float4 PSTextured(VS_TEXTURED_OUTPUT input, uint nPrimitiveID : SV_PrimitiveID) : SV_TARGET
-{
-	float3 uvw = float3(input.uv, nPrimitiveID / 2);
-	float4 cColor = gtxtTextureArray.Sample(gSamplerState, uvw);
-
-	return(cColor);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-#define _WITH_VERTEX_LIGHTING
 
 struct VS_TEXTURED_LIGHTING_INPUT
 {
@@ -114,10 +39,8 @@ struct VS_TEXTURED_LIGHTING_OUTPUT
 	float3 normalW : NORMAL;
 	//	nointerpolation float3 normalW : NORMAL;
 	float2 uv : TEXCOORD;
-#ifdef _WITH_VERTEX_LIGHTING
-	float4 color : COLOR;
-#endif
 };
+
 
 VS_TEXTURED_LIGHTING_OUTPUT VSTexturedLighting(VS_TEXTURED_LIGHTING_INPUT input)
 {
@@ -127,53 +50,27 @@ VS_TEXTURED_LIGHTING_OUTPUT VSTexturedLighting(VS_TEXTURED_LIGHTING_INPUT input)
 	output.positionW = (float3)mul(float4(input.position, 1.0f), gmtxGameObject);
 	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
 	output.uv = input.uv;
-#ifdef _WITH_VERTEX_LIGHTING
-	output.normalW = normalize(output.normalW);
-	output.color = Lighting(output.positionW, output.normalW);
-#endif
 	return(output);
 }
 
-float4 PSTexturedLighting(VS_TEXTURED_LIGHTING_OUTPUT input, uint nPrimitiveID : SV_PrimitiveID) : SV_TARGET
-{
-	float3 uvw = float3(input.uv, nPrimitiveID / 2);
-	float4 cColor = gtxtTextureArray.Sample(gSamplerState, uvw);
-#ifdef _WITH_VERTEX_LIGHTING
-	float4 cIllumination = input.color;
-#else
-	input.normalW = normalize(input.normalW);
-	float4 cIllumination = Lighting(input.positionW, input.normalW);
-#endif
-	return(cColor * cIllumination);
-}
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
+/////////////////////////////////////////////////////////////////////////////////////////////
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
-	float4 color : SV_TARGET0;
+	float4 color  : SV_TARGET0; 
 	float4 normal : SV_TARGET1;
-	float4 object : SV_TARGET2;
+	float4 object : SV_TARGET2; // 필요 없어보이니까 랜덤타겟 개수 확실히 정하고 바꿀때 지울것
 };
 
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LIGHTING_OUTPUT input, uint nPrimitiveID : SV_PrimitiveID)
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LIGHTING_OUTPUT input)
 {
-	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
+	
+	output.normal = float4(input.normalW,1.0f);
+	float3 positionW = (float3)mul(input.position, gmtxGameObject);	
 
-	float3 uvw = float3(input.uv, nPrimitiveID / 2);
-	float4 cColor = gtxtTextureArray.Sample(gSamplerState, uvw);
-
-#ifdef _WITH_VERTEX_LIGHTING
-	output.color = input.color * cColor;
-#else
-	input.normalW = normalize(input.normalW);
-	float4 cIllumination = Lighting(input.positionW, input.normalW);
-	output.color = cIllumination * cColor;
-#endif
-
-	output.normal.xyz = input.normalW.xyz * 0.5f + 0.5f;
-
-	return(output);
+	output.color = Lighting(positionW, output.normal);
+	return output;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -206,7 +103,7 @@ static int2 gnOffsets[9] = { { -1,-1 },{ 0,-1 },{ 1,-1 },{ -1,0 },{ 0,0 },{ 1,0 
 Texture2D<float4> gtxtNormal : register(t2);
 Texture2D<float4> gtxtObject : register(t3);
 
-float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Target
+float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Target //backbufferm
 {
 	float fEdgeness = 0.0f;
 	float3 cEdgeness = float3(0.0f, 0.0f, 0.0f);
@@ -225,7 +122,7 @@ float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Targe
 		cEdgeness = float3(fEdgeness, fEdgeness, fEdgeness);
 	}
 	float3 cColor = gtxtScene[int2(position.xy)].rgb;
-	cColor = (fEdgeness < 0.15f) ? cColor : ((fEdgeness < 0.65f) ? (cColor + cEdgeness) : cEdgeness);
+	//cColor = (fEdgeness < 0.15f) ? cColor : ((fEdgeness < 0.65f) ? (cColor + cEdgeness) : cEdgeness);
 
 	return(float4(cColor, 1.0f));
 }

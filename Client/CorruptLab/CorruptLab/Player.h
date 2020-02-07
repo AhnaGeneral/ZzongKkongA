@@ -84,7 +84,7 @@ public:
 
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed) { return(NULL); }
 	virtual void OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera);
-	virtual void SetRootParameter(ID3D12GraphicsCommandList *pd3dCommandList);
+	virtual void SetRootParameter(ID3D12GraphicsCommandList *pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
 
 protected:
@@ -101,6 +101,9 @@ public:
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
 	virtual void OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera);
 };
+
+
+
 
 class CTerrainPlayer : public CPlayer
 {
