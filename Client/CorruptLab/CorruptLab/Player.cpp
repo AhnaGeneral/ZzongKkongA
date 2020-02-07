@@ -39,7 +39,9 @@ void CPlayer::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComm
 
 	if (m_pCamera) 
 		m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
 	CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//SetRootParameter(pd3dCommandList, &m_xmf4x4World);
 
 	UINT ncbElementBytes = ((sizeof(CB_PLAYER_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
 	m_pd3dcbPlayer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);

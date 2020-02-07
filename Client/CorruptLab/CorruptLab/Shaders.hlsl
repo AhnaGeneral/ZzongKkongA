@@ -124,5 +124,5 @@ float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Targe
 	float3 cColor = gtxtScene[int2(position.xy)].rgb;
 	//cColor = (fEdgeness < 0.15f) ? cColor : ((fEdgeness < 0.65f) ? (cColor + cEdgeness) : cEdgeness);
 
-	return(float4(cColor, 1.0f));
+	return(float4(1.f,1.f,0, 1.0f));
 }
