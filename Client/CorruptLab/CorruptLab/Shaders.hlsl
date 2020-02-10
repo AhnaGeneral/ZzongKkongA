@@ -29,7 +29,7 @@ struct VS_TEXTURED_LIGHTING_INPUT
 {
 	float3 position : POSITION;
 	float3 normal : NORMAL;
-	float2 uv : TEXCOORD;
+	//float2 uv : TEXCOORD;
 };
 
 struct VS_TEXTURED_LIGHTING_OUTPUT
@@ -37,22 +37,22 @@ struct VS_TEXTURED_LIGHTING_OUTPUT
 	float4 position : SV_POSITION;
 	float3 positionW : POSITION;
 	float3 normalW : NORMAL;
+	float4 color : COLOR; 
 	//	nointerpolation float3 normalW : NORMAL;
-	float2 uv : TEXCOORD;
+	//float2 uv : TEXCOORD;
 };
 
 
-VS_TEXTURED_LIGHTING_OUTPUT VSTexturedLighting(VS_TEXTURED_LIGHTING_INPUT input)
+VS_TEXTURED_LIGHTING_OUTPUT VSLighting(VS_TEXTURED_LIGHTING_INPUT input)
 {
-	VS_TEXTURED_LIGHTING_OUTPUT output;
-
+	VS_TEXTURED_LIGHTING_OUTPUT output; 
+	
 	output.normalW = mul(input.normal, (float3x3)gmtxGameObject);
 	output.positionW = (float3)mul(float4(input.position, 1.0f), gmtxGameObject);
 	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
-	output.uv = input.uv;
-	return(output);
-}
 
+	return output; 
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
@@ -105,24 +105,24 @@ Texture2D<float4> gtxtObject : register(t3);
 
 float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Target //backbufferm
 {
-	float fEdgeness = 0.0f;
-	float3 cEdgeness = float3(0.0f, 0.0f, 0.0f);
-	if ((uint(position.x) >= 1) || (uint(position.y) >= 1) || (uint(position.x) <= gtxtNormal.Length.x - 2) || (uint(position.y) <= gtxtNormal.Length.y - 2))
-	{
-		float fObject = 0.0f;
-		for (int i = 0; i < 9; i++)
-		{
-			float3 vNormal = gtxtNormal[int2(position.xy) + gnOffsets[i]].xyz;
-			vNormal = vNormal * 2.0f - 1.0f;
-			cEdgeness += gfLaplacians[i] * vNormal;
-			fObject += gtxtObject[int2(position.xy) + gnOffsets[i]].r * (1.0f / 9.0f);
-		}
-		fEdgeness = cEdgeness.r * 0.3f + cEdgeness.g * 0.59f + cEdgeness.b * 0.11f;
-		if ((fEdgeness < 0.15f) && (abs(fObject - gtxtObject[int2(position.xy)].r) > 0.01f)) fEdgeness = 1.0f;
-		cEdgeness = float3(fEdgeness, fEdgeness, fEdgeness);
-	}
+	//float fEdgeness = 0.0f;
+	//float3 cEdgeness = float3(0.0f, 0.0f, 0.0f);
+	//if ((uint(position.x) >= 1) || (uint(position.y) >= 1) || (uint(position.x) <= gtxtNormal.Length.x - 2) || (uint(position.y) <= gtxtNormal.Length.y - 2))
+	//{
+	//	float fObject = 0.0f;
+	//	for (int i = 0; i < 9; i++)
+	//	{
+	//		float3 vNormal = gtxtNormal[int2(position.xy) + gnOffsets[i]].xyz;
+	//		vNormal = vNormal * 2.0f - 1.0f;
+	//		cEdgeness += gfLaplacians[i] * vNormal;
+	//		fObject += gtxtObject[int2(position.xy) + gnOffsets[i]].r * (1.0f / 9.0f);
+	//	}
+	//	fEdgeness = cEdgeness.r * 0.3f + cEdgeness.g * 0.59f + cEdgeness.b * 0.11f;
+	//	if ((fEdgeness < 0.15f) && (abs(fObject - gtxtObject[int2(position.xy)].r) > 0.01f)) fEdgeness = 1.0f;
+	//	cEdgeness = float3(fEdgeness, fEdgeness, fEdgeness);
+	//}
 	float3 cColor = gtxtScene[int2(position.xy)].rgb;
 	//cColor = (fEdgeness < 0.15f) ? cColor : ((fEdgeness < 0.65f) ? (cColor + cEdgeness) : cEdgeness);
 
-	return(float4(1.f,1.f,0, 1.0f));
+	return(float4( 0.0f, 1.0f, 1.0f , 1.0f));
 }

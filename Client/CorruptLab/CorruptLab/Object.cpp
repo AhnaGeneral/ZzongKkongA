@@ -136,6 +136,8 @@ void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pIlluminatedShader = new CIlluminatedShader();
 	m_pIlluminatedShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature);
 	m_pIlluminatedShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_pIlluminatedShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 0);
+	//pDescriptorHeaps[0] is NULL but NumDescriptorHeaps is > 0. 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -241,11 +243,13 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 		{
 			if (m_ppMaterials[i])
 			{
-				if (m_ppMaterials[i]->m_pShader) m_ppMaterials[i]->m_pShader->Render(pd3dCommandList, pCamera);
+				if (m_ppMaterials[i]->m_pShader) 
+					m_ppMaterials[i]->m_pShader->Render(pd3dCommandList, pCamera);
 				m_ppMaterials[i]->UpdateShaderVariable(pd3dCommandList);
 			}
 
-			if (m_pMesh) m_pMesh->Render(pd3dCommandList, i);
+			if (m_pMesh) 
+				m_pMesh->Render(pd3dCommandList, i);
 		}
 	}
 	if (m_pSibling) m_pSibling->Render(pd3dCommandList, pCamera);
@@ -616,7 +620,8 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 					CMaterialColors* pMaterialColors = new CMaterialColors(&pMaterialsInfo->m_pMaterials[i]);
 					pMaterial->SetMaterialColors(pMaterialColors);
 
-					if (pGameObject->GetMeshType() & VERTEXT_NORMAL) pMaterial->SetIlluminatedShader();
+					if (pGameObject->GetMeshType() & VERTEXT_NORMAL) 
+						pMaterial->SetIlluminatedShader();
 
 					pGameObject->SetMaterial(i, pMaterial);
 				}

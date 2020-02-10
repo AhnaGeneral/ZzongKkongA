@@ -10,11 +10,6 @@
 #include "Object.h"
 #include "Camera.h"
 
-struct CB_PLAYER_INFO
-{
-	XMFLOAT4X4					m_xmf4x4World;
-};
-
 class CPlayer : public CGameObject
 {
 protected:
@@ -87,9 +82,6 @@ public:
 	virtual void SetRootParameter(ID3D12GraphicsCommandList *pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
 
-protected:
-	ID3D12Resource	*m_pd3dcbPlayer = NULL;
-	CB_PLAYER_INFO	*m_pcbMappedPlayer = NULL;
 };
 
 class CAirplanePlayer : public CPlayer

@@ -466,7 +466,10 @@ void CGameFramework::BuildObjects()
 	m_pScene = new CScene();
 	m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-	m_pScene->m_pPlayer = m_pPlayer = new CAirplanePlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), NULL, 1);
+	CMaterial::PrepareShaders(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
+	CAirplanePlayer* pAirplanePlayer = new CAirplanePlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
+	pAirplanePlayer->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
 	ID3D12CommandList *ppd3dCommandLists[] = { m_pd3dCommandList };
@@ -475,6 +478,7 @@ void CGameFramework::BuildObjects()
 	WaitForGpuComplete();
 
 	if (m_pScene) m_pScene->ReleaseUploadBuffers();
+	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
 
 	m_GameTimer.Reset();
 }
@@ -533,6 +537,8 @@ void CGameFramework::ProcessInput()
 void CGameFramework::AnimateObjects()
 {
 	if (m_pScene) m_pScene->AnimateObjects(m_GameTimer.GetTimeElapsed());
+
+	m_pPlayer->Animate(m_GameTimer.GetTimeElapsed(), NULL);
 }
 
 //GPU가 끝날 때까지 기다려주는 단계 
@@ -578,7 +584,7 @@ void CGameFramework::FrameAdvance()
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i], D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-	float pfClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	float pfClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) 
 		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[i], pfClearColor, 0, NULL);
