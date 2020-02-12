@@ -584,7 +584,7 @@ void CGameFramework::FrameAdvance()
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i], D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-	float pfClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
 
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) 
 		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[i], pfClearColor, 0, NULL);

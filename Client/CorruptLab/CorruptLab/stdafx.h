@@ -54,6 +54,14 @@ using Microsoft::WRL::ComPtr;
 
 //#define _WITH_CB_GAMEOBJECT_32BIT_CONSTANTS
 //#define _WITH_CB_GAMEOBJECT_ROOT_DESCRIPTOR
+
+#ifdef UNICODE
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+#else
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#endif
+
+
 #define _WITH_CB_WORLD_MATRIX_DESCRIPTOR_TABLE
 
 #pragma comment(lib, "d3dcompiler.lib")
@@ -83,6 +91,8 @@ extern void SynchronizeResourceTransition(ID3D12GraphicsCommandList *pd3dCommand
 //#define ROOT_PARAMETER_TEXTURE		4
 
 #define EPSILON						1.0e-10f
+
+#include <iostream>
 
 inline bool IsZero(float fValue) { return((fabsf(fValue) < EPSILON)); }
 inline bool IsEqual(float fA, float fB) { return(::IsZero(fA - fB)); }

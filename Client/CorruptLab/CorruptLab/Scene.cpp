@@ -79,7 +79,7 @@ void CScene::BuildLightsAndMaterials()
 void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
 {
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
-
+	std::cout << "누나 졸작 화이팅 by 은우" << std::endl;
 	BuildLightsAndMaterials();
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
