@@ -81,6 +81,7 @@ void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 		m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Shift);
 		m_pCamera->Move(xmf3Shift);
 	}
+	SetPosition(m_xmf3Position);
 }
 
 void CPlayer::Rotate(float x, float y, float z)

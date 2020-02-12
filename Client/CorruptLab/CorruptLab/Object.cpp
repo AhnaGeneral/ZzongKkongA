@@ -234,6 +234,7 @@ void CGameObject::OnPrepareRender()
 
 void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
 {
+	//UpdateTransform(NULL);
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
