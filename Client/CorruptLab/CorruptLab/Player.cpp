@@ -39,7 +39,7 @@ void CPlayer::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComm
 	if (m_pCamera) 
 		m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	//CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	//SetRootParameter(pd3dCommandList, &m_xmf4x4World);
 }
 
@@ -245,9 +245,9 @@ CAirplanePlayer::CAirplanePlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	//CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList, )
+	//CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList,)
 	CGameObject* pGameObject = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Apache.bin");
-	pGameObject->Rotate(15.0f, 0.0f, 0.0f); 
+	pGameObject->Rotate(0.0f, 0.0f, 0.0f); 
 	SetChild(pGameObject, true);
 	OnInitialize();
 
