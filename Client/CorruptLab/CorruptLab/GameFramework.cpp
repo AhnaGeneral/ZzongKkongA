@@ -435,8 +435,13 @@ void CGameFramework::OnDestroy()
 	if (m_pd3dDepthStencilBuffer) m_pd3dDepthStencilBuffer->Release();
 	if (m_pd3dDsvDescriptorHeap) m_pd3dDsvDescriptorHeap->Release();
 
-	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) if (m_ppd3dOffScreenRenderTargetBuffers[i]) m_ppd3dOffScreenRenderTargetBuffers[i]->Release();
-	for (int i = 0; i < m_nSwapChainBuffers; i++) if (m_ppd3dSwapChainBackBuffers[i]) m_ppd3dSwapChainBackBuffers[i]->Release();
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) 
+		if (m_ppd3dOffScreenRenderTargetBuffers[i])
+			m_ppd3dOffScreenRenderTargetBuffers[i]->Release();
+
+	for (int i = 0; i < m_nSwapChainBuffers; i++) 
+		if (m_ppd3dSwapChainBackBuffers[i]) 
+			m_ppd3dSwapChainBackBuffers[i]->Release();
 
 	if (m_pd3dRtvDescriptorHeap) m_pd3dRtvDescriptorHeap->Release();
 
@@ -447,16 +452,22 @@ void CGameFramework::OnDestroy()
 	if (m_pd3dFence) m_pd3dFence->Release();
 
 	m_pdxgiSwapChain->SetFullscreenState(FALSE, NULL);
+
 	if (m_pdxgiSwapChain) m_pdxgiSwapChain->Release();
     if (m_pd3dDevice) m_pd3dDevice->Release();
 	if (m_pdxgiFactory) m_pdxgiFactory->Release();
 
-#if defined(_DEBUG)
-	IDXGIDebug1	*pdxgiDebug = NULL;
-	DXGIGetDebugInterface1(0, __uuidof(IDXGIDebug1), (void **)&pdxgiDebug);
-	HRESULT hResult = pdxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
-	pdxgiDebug->Release();
-#endif
+	IDXGIDebug1* pDebug = nullptr;
+	if (SUCCEEDED(DXGIGetDebugInterface1(0, __uuidof(IDXGIDebug1), (void**)&pDebug)))
+	{
+		pDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_SUMMARY);
+		pDebug->Release();
+	}
+	//IDXGIDebug1	*pdxgiDebug = NULL;
+	//DXGIGetDebugInterface1(0, __uuidof(IDXGIDebug1), (void **)&pdxgiDebug);
+	//HRESULT hResult = pdxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
+	//pdxgiDebug->Release();
+
 }
 
 void CGameFramework::BuildObjects()
@@ -490,7 +501,8 @@ void CGameFramework::ReleaseObjects()
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) delete m_pScene;
 
-	if (m_pPostProcessingShader) m_pPostProcessingShader->Release();
+	if (m_pPostProcessingShader) 
+		m_pPostProcessingShader->Release();
 }
 
 void CGameFramework::ProcessInput()
