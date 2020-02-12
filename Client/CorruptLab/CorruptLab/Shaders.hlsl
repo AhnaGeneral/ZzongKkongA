@@ -66,10 +66,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
 	
-	output.normal = float4(1,1,0,1);
-	float3 positionW = (float3)mul(input.position, gmtxGameObject);	
-
-	output.color = Lighting(positionW, output.normal);
+	output.normal = float4(input.normalW,1);
+	output.color = Lighting(input.positionW, output.normal);
 	return output;
 }
 

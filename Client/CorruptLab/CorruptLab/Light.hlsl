@@ -29,9 +29,8 @@ struct LIGHT
 
 cbuffer cbLights : register(b3)
 {
-	LIGHT					gLights[MAX_LIGHTS];
 	float4					gcGlobalAmbientLight;
-	int						gnLights;
+	LIGHT					gLights[MAX_LIGHTS];
 };
 
 float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
@@ -138,7 +137,7 @@ float4 Lighting(float3 vPosition, float3 vNormal)
 	float3 vToCamera = normalize(vCameraPosition - vPosition);
 
 	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	[unroll(MAX_LIGHTS)] for (int i = 0; i < gnLights; i++)
+	[unroll(MAX_LIGHTS)] for (int i = 0; i < MAX_LIGHTS; i++)
 	{
 		if (gLights[i].m_bEnable)
 		{
