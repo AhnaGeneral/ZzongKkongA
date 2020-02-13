@@ -463,10 +463,6 @@ void CGameFramework::OnDestroy()
 		pDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_SUMMARY);
 		pDebug->Release();
 	}
-	//IDXGIDebug1	*pdxgiDebug = NULL;
-	//DXGIGetDebugInterface1(0, __uuidof(IDXGIDebug1), (void **)&pdxgiDebug);
-	//HRESULT hResult = pdxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_DETAIL);
-	//pdxgiDebug->Release();
 
 }
 
@@ -503,6 +499,9 @@ void CGameFramework::ReleaseObjects()
 
 	if (m_pPostProcessingShader) 
 		m_pPostProcessingShader->Release();
+	
+	if (CMaterial::m_pIlluminatedShader)
+		CMaterial::m_pIlluminatedShader->Release();
 }
 
 void CGameFramework::ProcessInput()

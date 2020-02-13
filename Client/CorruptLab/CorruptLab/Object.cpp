@@ -27,7 +27,9 @@ CTexture::~CTexture()
 {
 	if (m_ppd3dTextures)
 	{
-		for (int i = 0; i < m_nTextures; i++) if (m_ppd3dTextures[i]) m_ppd3dTextures[i]->Release();
+		for (int i = 0; i < m_nTextures; i++)
+			if (m_ppd3dTextures[i]) 
+				m_ppd3dTextures[i]->Release();
 	}
 
 	if (m_pRootArgumentInfos)
@@ -82,6 +84,7 @@ void CTexture::ReleaseUploadBuffers()
 
 void CTexture::ReleaseShaderVariables()
 {
+
 }
 
 void CTexture::LoadTextureFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, wchar_t *pszFileName, UINT nIndex)
@@ -107,6 +110,7 @@ CMaterial::~CMaterial()
 {
 	if (m_pShader) m_pShader->Release();
 	if (m_pMaterialColors) m_pMaterialColors->Release();
+	if (m_pTexture) m_pTexture->Release();
 }
 
 
@@ -287,6 +291,11 @@ void CGameObject::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandLi
 
 void CGameObject::ReleaseShaderVariables()
 {
+	if (m_pd3dcbGameObjects)
+	{
+		m_pd3dcbGameObjects->Unmap(0, NULL);
+		m_pd3dcbGameObjects->Release();
+	}//if (m_pcbMappedGameObjects) delete m_pcbMappedGameObjects; 
 }
 
 void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
@@ -430,14 +439,14 @@ BYTE ReadStringFromFile(FILE* pInFile, char* pstrToken)
 
 #define _WITH_DEBUG_FRAME_HIERARCHY
 
-CMeshLoadInfo* CGameObject::LoadMeshInfoFromFile(FILE* pInFile)
+MeshLoadInfo* CGameObject::LoadMeshInfoFromFile(FILE* pInFile)
 {
 	char pstrToken[64] = { '\0' };
 	UINT nReads = 0;
 
 	int nPositions = 0, nColors = 0, nNormals = 0, nIndices = 0, nSubMeshes = 0, nSubIndices = 0;
 
-	CMeshLoadInfo* pMeshInfo = new CMeshLoadInfo;
+	MeshLoadInfo* pMeshInfo = new MeshLoadInfo;
 
 
 	pMeshInfo->m_nVertices = ::ReadIntegerFromFile(pInFile);
@@ -631,13 +640,13 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 		}
 		else if (!strcmp(pstrToken, "<Mesh>:"))
 		{
-			CMeshLoadInfo* pMeshInfo = pGameObject->LoadMeshInfoFromFile(pInFile);
+			MeshLoadInfo* pMeshInfo = pGameObject->LoadMeshInfoFromFile(pInFile);
 			if (pMeshInfo)
 			{
 				CMesh* pMesh = NULL;
 				if (pMeshInfo->m_nType & VERTEXT_NORMAL)
 				{
-					pMesh = new CMeshIlluminatedFromFile(pd3dDevice, pd3dCommandList, pMeshInfo);
+					pMesh = new CStandardMesh(pd3dDevice, pd3dCommandList, pMeshInfo);
 				}
 				if (pMesh) pGameObject->SetMesh(pMesh);
 				delete pMeshInfo;

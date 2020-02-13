@@ -144,10 +144,9 @@ private:
 public:
 	void AddRef()                   { m_nReferences++; }
 	void Release()                  { if (--m_nReferences <= 0) delete this; }
+
 	CTexture* m_pTexture = NULL;
-
 	CShader                         *m_pShader = NULL;
-
 	CMaterialColors                 *m_pMaterialColors = NULL;
 
 	void SetMaterialColors(CMaterialColors* pMaterialColors); 
@@ -156,7 +155,6 @@ public:
 	void SetShader(CShader* pShader);
 	CShader* GetShader() { return m_pShader; }
 	void SetIlluminatedShader() { SetShader(m_pIlluminatedShader); }
-
 	void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList);
 
 public:
@@ -172,9 +170,6 @@ public:
 //
 class CGameObject
 {
-	//void SetCbvGPUDescriptorHandle(D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorHandle) { m_d3dCbvGPUDescriptorHandle = d3dCbvGPUDescriptorHandle; }
-	//void SetCbvGPUDescriptorHandlePtr(UINT64 nCbvGPUDescriptorHandlePtr) { m_d3dCbvGPUDescriptorHandle.ptr = nCbvGPUDescriptorHandlePtr; }
-	//D3D12_GPU_DESCRIPTOR_HANDLE GetCbvGPUDescriptorHandle() { return(m_d3dCbvGPUDescriptorHandle); }
 private:
 	int								m_nReferences = 0;
 
@@ -189,7 +184,7 @@ public:
 public:
 	char							m_pstrFrameName[64];
 
-	CMesh                           * m_pMesh = NULL;
+	CMesh                           *m_pMesh = NULL;
 
 	int								m_nMaterials = 0;
 	CMaterial                       ** m_ppMaterials = NULL;
@@ -256,7 +251,7 @@ public:
 
 public:
 	static MATERIALSLOADINFO* LoadMaterialsInfoFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
-	static CMeshLoadInfo* LoadMeshInfoFromFile(FILE* pInFile);
+	static MeshLoadInfo* LoadMeshInfoFromFile(FILE* pInFile);
 
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, FILE* pInFile);
 	static CGameObject* LoadGeometryFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName);
@@ -264,6 +259,3 @@ public:
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);
 
 };
-
-
-
