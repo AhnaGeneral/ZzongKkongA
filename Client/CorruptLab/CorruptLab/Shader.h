@@ -83,6 +83,10 @@ protected:
 
 class CIlluminatedShader : public CShader
 {
+private:
+	ID3DBlob *m_pd3dVertexShaderBlob = NULL;
+	ID3DBlob *m_pd3dPixelShaderBlob = NULL;
+
 public:
 	CIlluminatedShader();
 	virtual ~CIlluminatedShader();

@@ -76,6 +76,7 @@ public:
 	XMFLOAT3                 *m_pxmf3Positions = NULL;
 	XMFLOAT4                 *m_pxmf4Colors = NULL;
 	XMFLOAT3                 *m_pxmf3Normals = NULL;
+	XMFLOAT2				 *m_pxmf2TexCoords = NULL;
 
 	int						 m_nIndices = 0;
 	UINT                     *m_pnIndices = NULL;
@@ -99,6 +100,11 @@ protected:
 	ID3D12Resource            *m_pd3dPositionBuffer = NULL;
 	ID3D12Resource            *m_pd3dPositionUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW  m_d3dPositionBufferView;
+
+	ID3D12Resource* m_pd3dTexCoordBuffer = NULL;
+	ID3D12Resource* m_pd3dTexCoordUploadBuffer = NULL;
+	D3D12_VERTEX_BUFFER_VIEW  m_d3dTexCoordBufferView;
+
 
 	int						  m_nSubMeshes = 0;
 	int                       *m_pnSubSetIndices = NULL;

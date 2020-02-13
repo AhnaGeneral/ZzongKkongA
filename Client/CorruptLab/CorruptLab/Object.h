@@ -139,27 +139,35 @@ public:
 
 private:
 	int								m_nReferences = 0;
+	XMFLOAT4						m_xmf4Albedo = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 public:
 	void AddRef()                   { m_nReferences++; }
 	void Release()                  { if (--m_nReferences <= 0) delete this; }
+	CTexture* m_pTexture = NULL;
 
 	CShader                         *m_pShader = NULL;
 
 	CMaterialColors                 *m_pMaterialColors = NULL;
 
-	void SetMaterialColors(CMaterialColors* pMaterialColors);
+	void SetMaterialColors(CMaterialColors* pMaterialColors); 
+	void SetAlbedo(XMFLOAT4 xmf4Albedo) { m_xmf4Albedo = xmf4Albedo; }
+	void SetTexture(CTexture* pTexture);
 	void SetShader(CShader* pShader);
+	CShader* GetShader() { return m_pShader; }
 	void SetIlluminatedShader() { SetShader(m_pIlluminatedShader); }
 
 	void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList);
 
-protected:
+public:
 	static CShader                   *m_pIlluminatedShader;
 
 public:
 	static void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
 };
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 class CGameObject
@@ -237,6 +245,7 @@ public:
 	void Rotate(float fPitch = 10.0f, float fYaw = 10.0f, float fRoll = 10.0f);
 	void Rotate(XMFLOAT3* pxmf3Axis, float fAngle);
 	void Rotate(XMFLOAT4* pxmf4Quaternion);
+	void SetTexture(CTexture* tex);
 
 	CGameObject* GetParent() { return(m_pParent); }
 	void UpdateTransform(XMFLOAT4X4* pxmf4x4Parent = NULL);

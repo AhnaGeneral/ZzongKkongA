@@ -38,6 +38,7 @@ CTexture::~CTexture()
 	if (m_pd3dSamplerGpuDescriptorHandles) delete[] m_pd3dSamplerGpuDescriptorHandles;
 }
 
+
 void CTexture::SetRootArgument(int nIndex, UINT nRootParameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSrvGpuDescriptorHandle)
 {
 	m_pRootArgumentInfos[nIndex].m_nRootParameterIndex = nRootParameterIndex;
@@ -116,6 +117,16 @@ void CMaterial::SetMaterialColors(CMaterialColors* pMaterialColors)
 	if (m_pMaterialColors) m_pMaterialColors->AddRef();
 }
 
+void CMaterial::SetTexture(CTexture* pTexture)
+{
+	if (m_pTexture) {
+		m_pTexture->Release();
+		m_pTexture = NULL;
+	}
+	m_pTexture = pTexture;
+	if (m_pTexture) m_pTexture->AddRef();
+}
+
 void CMaterial::SetShader(CShader *pShader)
 {
 	if (m_pShader) m_pShader->Release();
@@ -125,10 +136,15 @@ void CMaterial::SetShader(CShader *pShader)
 
 void CMaterial::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &(m_pMaterialColors->m_xmf4Ambient), 16);
-	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &(m_pMaterialColors->m_xmf4Diffuse), 20);
-	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &(m_pMaterialColors->m_xmf4Specular), 24);
-	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &(m_pMaterialColors->m_xmf4Emissive), 28);
+	if (m_pMaterialColors)
+	{
+		pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &(m_pMaterialColors->m_xmf4Ambient), 16);
+		pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &(m_pMaterialColors->m_xmf4Diffuse), 20);
+		pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &(m_pMaterialColors->m_xmf4Specular), 24);
+		pd3dCommandList->SetGraphicsRoot32BitConstants(1, 4, &(m_pMaterialColors->m_xmf4Emissive), 28);
+	}
+	if (m_pTexture)
+		m_pTexture->UpdateShaderVariables(pd3dCommandList);
 }
 
 void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
@@ -136,7 +152,7 @@ void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pIlluminatedShader = new CIlluminatedShader();
 	m_pIlluminatedShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
 	m_pIlluminatedShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	m_pIlluminatedShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 0);
+	m_pIlluminatedShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1);
 	//pDescriptorHeaps[0] is NULL but NumDescriptorHeaps is > 0. 
 }
 
@@ -377,6 +393,14 @@ void CGameObject::Rotate(XMFLOAT3 *pxmf3Axis, float fAngle)
 	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
 }
 
+void CGameObject::SetTexture(CTexture* tex)
+{
+	if(m_ppMaterials)
+		m_ppMaterials[0]->SetTexture(tex);
+	if (m_pChild) m_pChild->SetTexture(tex);
+	if (m_pSibling) m_pSibling->SetTexture(tex);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 모델 로드하기 
 int ReadIntegerFromFile(FILE* pInFile)
@@ -414,6 +438,7 @@ CMeshLoadInfo* CGameObject::LoadMeshInfoFromFile(FILE* pInFile)
 	int nPositions = 0, nColors = 0, nNormals = 0, nIndices = 0, nSubMeshes = 0, nSubIndices = 0;
 
 	CMeshLoadInfo* pMeshInfo = new CMeshLoadInfo;
+
 
 	pMeshInfo->m_nVertices = ::ReadIntegerFromFile(pInFile);
 	::ReadStringFromFile(pInFile, pMeshInfo->m_pstrMeshName);
@@ -457,6 +482,18 @@ CMeshLoadInfo* CGameObject::LoadMeshInfoFromFile(FILE* pInFile)
 				nReads = (UINT)::fread(pMeshInfo->m_pxmf3Normals, sizeof(XMFLOAT3), nNormals, pInFile);
 			}
 		}
+		else if (!strcmp(pstrToken, "<TexCoords>:"))
+		{
+			nNormals = ::ReadIntegerFromFile(pInFile);
+			if (nNormals > 0)
+			{
+				pMeshInfo->m_nType |= VERTEXT_NORMAL;
+				pMeshInfo->m_pxmf2TexCoords = new XMFLOAT2[nPositions];
+				nReads = (UINT)::fread(pMeshInfo->m_pxmf2TexCoords, sizeof(XMFLOAT2), nPositions, pInFile);
+			}
+		}
+
+
 		else if (!strcmp(pstrToken, "<Indices>:"))
 		{
 			nIndices = ::ReadIntegerFromFile(pInFile);
@@ -495,6 +532,8 @@ CMeshLoadInfo* CGameObject::LoadMeshInfoFromFile(FILE* pInFile)
 			break;
 		}
 	}
+
+
 	return(pMeshInfo);
 }
 

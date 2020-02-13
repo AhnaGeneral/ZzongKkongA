@@ -75,6 +75,13 @@ CMeshFromFile::CMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_d3dPositionBufferView.StrideInBytes = sizeof(XMFLOAT3);
 	m_d3dPositionBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices;
 
+
+	m_pd3dTexCoordBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pMeshInfo->m_pxmf2TexCoords, sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dTexCoordUploadBuffer);
+
+	m_d3dTexCoordBufferView.BufferLocation = m_pd3dTexCoordBuffer->GetGPUVirtualAddress();
+	m_d3dTexCoordBufferView.StrideInBytes = sizeof(XMFLOAT3);
+	m_d3dTexCoordBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices;
+
 	//[확인(X)]
 	m_nSubMeshes = pMeshInfo->m_nSubMeshes;
 
@@ -135,9 +142,12 @@ void CMeshFromFile::ReleaseUploadBuffers()
 
 void CMeshFromFile::Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet)
 {
-	//[확인(X)]
+
 	pd3dCommandList->IASetPrimitiveTopology(m_MeshInfo.m_d3dPrimitiveTopology);
-	pd3dCommandList->IASetVertexBuffers(m_MeshInfo.m_nSlot, 1, &m_d3dPositionBufferView);
+
+	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[2] = { m_d3dPositionBufferView, m_d3dTexCoordBufferView };
+	pd3dCommandList->IASetVertexBuffers(m_MeshInfo.m_nSlot, 2, pVertexBufferViews);
+
 	if ((m_nSubMeshes > 0) && (nSubSet < m_nSubMeshes))
 	{
 		pd3dCommandList->IASetIndexBuffer(&(m_pd3dSubSetIndexBufferViews[nSubSet]));

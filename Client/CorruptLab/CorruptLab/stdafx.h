@@ -89,6 +89,7 @@ extern void SynchronizeResourceTransition(ID3D12GraphicsCommandList *pd3dCommand
 //#define ROOT_PARAMETER_MATERIAL		2
 #define ROOT_PARAMETER_LIGHT		2
 //#define ROOT_PARAMETER_TEXTURE		4
+#define ROOT_PARAMETER_TEXTURE		3
 
 #define EPSILON						1.0e-10f
 

@@ -23,13 +23,18 @@ cbuffer cbGameObjectInfo : register(b2)
 #include "Light.hlsl"
 
 SamplerState gSamplerState : register(s0);
+Texture2D gtxtTexture : register(t0);
 
+Texture2D<float4> gtxtScene : register(t1); // scene, normal, objectID RTV 0, 1, 2를 리소스 어레이로만든것
+
+Texture2D<float4> gtxtNormal : register(t2);
+Texture2D<float4> gtxtObject : register(t3);
 
 struct VS_TEXTURED_LIGHTING_INPUT
 {
 	float3 position : POSITION;
 	float3 normal : NORMAL;
-	//float2 uv : TEXCOORD;
+	float2 uv : TEXCOORD;
 };
 
 struct VS_TEXTURED_LIGHTING_OUTPUT
@@ -37,9 +42,8 @@ struct VS_TEXTURED_LIGHTING_OUTPUT
 	float4 position : SV_POSITION;
 	float3 positionW : POSITION;
 	float3 normalW : NORMAL;
-	float4 color : COLOR; 
 	//	nointerpolation float3 normalW : NORMAL;
-	//float2 uv : TEXCOORD;
+	float2 uv : TEXCOORD;
 };
 
 
@@ -50,7 +54,7 @@ VS_TEXTURED_LIGHTING_OUTPUT VSLighting(VS_TEXTURED_LIGHTING_INPUT input)
 	output.normalW = mul(input.normal, (float3x3)gmtxGameObject);
 	output.positionW = (float3)mul(float4(input.position, 1.0f), gmtxGameObject);
 	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
-
+	output.uv = input.uv;
 	return output; 
 }
 
@@ -66,8 +70,11 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
 	
-	output.normal = float4(input.normalW,1);
-	output.color = Lighting(input.positionW, output.normal);
+	output.normal = float4(input.normalW,1); 
+	float4 cColorTex = gtxtTexture.Sample(gSamplerState, input.uv);
+	float4 cColorLighted = Lighting(input.positionW, input.normalW);
+	//output.color = lerp(cColorTex, cColorLighted, 0.6f); 
+	output.color = cColorTex;
 	return output;
 }
 
@@ -85,8 +92,6 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
 	return(float4(0, 0, 0, 0));
 }
 
-Texture2D<float4> gtxtScene : register(t1); // scene, normal, objectID RTV 0, 1, 2를 리소스 어레이로만든것
-
 float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
 	float3 cColor = gtxtScene[int2(position.xy)].rgb;
@@ -98,8 +103,6 @@ static float gfLaplacians[9] = { -1.0f, -1.0f, -1.0f, -1.0f, 8.0f, -1.0f, -1.0f,
 static int2 gnOffsets[9] = { { -1,-1 },{ 0,-1 },{ 1,-1 },{ -1,0 },{ 0,0 },{ 1,0 },{ -1,1 },{ 0,1 },{ 1,1 } };
 //static int2 gnOffsets[9] = { {-1,-1}, {0,-1}, int2(1,-1), int2(-1,0), int2(0,0), int2(1,0), int2(-1,1), int2(0,1), int2(1,1) };
 
-Texture2D<float4> gtxtNormal : register(t2);
-Texture2D<float4> gtxtObject : register(t3);
 
 float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Target //backbufferm
 {
