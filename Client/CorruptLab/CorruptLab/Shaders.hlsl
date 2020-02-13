@@ -73,8 +73,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	output.normal = float4(input.normalW,1); 
 	float4 cColorTex = gtxtTexture.Sample(gSamplerState, input.uv);
 	float4 cColorLighted = Lighting(input.positionW, input.normalW);
-	//output.color = lerp(cColorTex, cColorLighted, 0.6f); 
-	output.color = cColorTex;
+	output.color = lerp(cColorTex, cColorLighted, 0.6f); 
+	//output.color = float4(input.uv,1,1);
 	return output;
 }
 
