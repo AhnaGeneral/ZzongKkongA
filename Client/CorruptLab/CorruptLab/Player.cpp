@@ -247,10 +247,11 @@ CAirplanePlayer::CAirplanePlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
 	//CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList,)
-	CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	CTexture* pTexture = new CTexture(2, RESOURCE_TEXTURE2D, 0);
 
 	pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/box_BC.dds", 0);
-	CMaterial::m_pIlluminatedShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTexture, ROOT_PARAMETER_TEXTURE, true);
+	pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/box_NM.dds", 1);
+	CMaterial::m_pIlluminatedShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTexture, ROOT_PARAMETER_ALBEDO_TEXTURE, true);
 
 	CGameObject* pGameObject = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/box.bin");
 	

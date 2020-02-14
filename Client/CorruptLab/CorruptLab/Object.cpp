@@ -156,7 +156,7 @@ void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pIlluminatedShader = new CIlluminatedShader();
 	m_pIlluminatedShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
 	m_pIlluminatedShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	m_pIlluminatedShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1);
+	m_pIlluminatedShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 2);
 	//pDescriptorHeaps[0] is NULL but NumDescriptorHeaps is > 0. 
 }
 
