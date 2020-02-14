@@ -81,6 +81,11 @@ extern ID3D12Resource *CreateTexture2DResource(ID3D12Device *pd3dDevice, ID3D12G
 
 extern void SynchronizeResourceTransition(ID3D12GraphicsCommandList *pd3dCommandList, ID3D12Resource *pd3dResource, D3D12_RESOURCE_STATES d3dStateBefore, D3D12_RESOURCE_STATES d3dStateAfter);
 
+extern int ReadIntegerFromFile(FILE* pInFile);
+extern float ReadFloatFromFile(FILE* pInFile);
+extern BYTE ReadStringFromFile(FILE* pInFile, char* pstrToken);
+
+
 #define RANDOM_COLOR	XMFLOAT4(rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX))
 
 #define ROOT_PARAMETER_CAMERA				0

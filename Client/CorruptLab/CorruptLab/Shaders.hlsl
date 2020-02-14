@@ -28,8 +28,8 @@ Texture2D<float4> gtxtScene : register(t1); // scene, normal, objectID RTV 0, 1,
 Texture2D<float4> gtxtNormal : register(t2);
 Texture2D<float4> gtxtObject : register(t3);
 
-Texture2D gtxtAlbedo : register(t4);
-Texture2D gtxtNormal : register(t5);
+Texture2D gtxtAlbedoMap : register(t4);
+Texture2D gtxtNormalMap : register(t5);
 
 struct VS_TEXTURED_LIGHTING_INPUT
 {
@@ -72,8 +72,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
 	
 	output.normal = float4(input.normalW,1); 
-	float4 cColorAlbedo = gtxAlbedo.Sample(gSamplerState, input.uv);
-	float4 cColorNormal = gtxtNormal.Sample(gSamplerState, input.uv);
+	float4 cColorAlbedo = gtxtAlbedoMap.Sample(gSamplerState, input.uv);
+	float4 cColorNormal = gtxtNormalMap.Sample(gSamplerState, input.uv);
 
 	float4 cColorLighted = Lighting(input.positionW, input.normalW);
 	output.color = lerp(cColorAlbedo, cColorLighted, 0.6f);
