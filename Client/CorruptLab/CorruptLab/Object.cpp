@@ -532,9 +532,17 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 		}
 		else if (!strcmp(pstrToken, "<Mesh>:"))
 		{
-			CStandardMesh* pMesh = new CStandardMesh(pd3dDevice, pd3dCommandList,);
-			pMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
-			pGameObject->SetMesh(pMesh);
+			MeshLoadInfo* pMeshInfo = pGameObject->LoadMeshInfoFromFile(pInFile);
+			if (pMeshInfo)
+			{
+				CMesh* pMesh = NULL;
+				if (pMeshInfo->m_nType & VERTEXT_NORMAL)
+				{
+					pMesh = new CStandardMesh(pd3dDevice, pd3dCommandList, pMeshInfo);
+				}
+				if (pMesh) pGameObject->SetMesh(pMesh);
+				delete pMeshInfo;
+			}
 		}
 		else if (!strcmp(pstrToken, "<Materials>:"))
 		{
@@ -584,6 +592,113 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 	}
 	return(pGameObject);
 }
+MeshLoadInfo* CGameObject::LoadMeshInfoFromFile(FILE* pInFile)
+{
+	char pstrToken[64] = { '\0' };
+	UINT nReads = 0;
+
+	int nPositions = 0, nColors = 0, nNormals = 0, nIndices = 0, nSubMeshes = 0, nSubIndices = 0;
+
+	MeshLoadInfo* pMeshInfo = new MeshLoadInfo;
+
+
+	pMeshInfo->m_nVertices = ::ReadIntegerFromFile(pInFile);
+	::ReadStringFromFile(pInFile, pMeshInfo->m_pstrMeshName);
+
+	for (; ; )
+	{
+		::ReadStringFromFile(pInFile, pstrToken);
+
+		if (!strcmp(pstrToken, "<Bounds>:"))
+		{
+			nReads = (UINT)::fread(&(pMeshInfo->m_xmf3AABBCenter), sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&(pMeshInfo->m_xmf3AABBExtents), sizeof(XMFLOAT3), 1, pInFile);
+		}
+		else if (!strcmp(pstrToken, "<Positions>:"))
+		{
+			nPositions = ::ReadIntegerFromFile(pInFile);
+			if (nPositions > 0)
+			{
+				pMeshInfo->m_nType |= VERTEXT_POSITION;
+				pMeshInfo->m_pxmf3Positions = new XMFLOAT3[nPositions];
+				nReads = (UINT)::fread(pMeshInfo->m_pxmf3Positions, sizeof(XMFLOAT3), nPositions, pInFile);
+			}
+		}
+		else if (!strcmp(pstrToken, "<Colors>:"))
+		{
+			nColors = ::ReadIntegerFromFile(pInFile);
+			if (nColors > 0)
+			{
+				pMeshInfo->m_nType |= VERTEXT_COLOR;
+				pMeshInfo->m_pxmf4Colors = new XMFLOAT4[nColors];
+				nReads = (UINT)::fread(pMeshInfo->m_pxmf4Colors, sizeof(XMFLOAT4), nColors, pInFile);
+			}
+		}
+		else if (!strcmp(pstrToken, "<Normals>:"))
+		{
+			nNormals = ::ReadIntegerFromFile(pInFile);
+			if (nNormals > 0)
+			{
+				pMeshInfo->m_nType |= VERTEXT_NORMAL;
+				pMeshInfo->m_pxmf3Normals = new XMFLOAT3[nNormals];
+				nReads = (UINT)::fread(pMeshInfo->m_pxmf3Normals, sizeof(XMFLOAT3), nNormals, pInFile);
+			}
+		}
+		else if (!strcmp(pstrToken, "<TexCoords>:"))
+		{
+			nNormals = ::ReadIntegerFromFile(pInFile);
+			if (nNormals > 0)
+			{
+				pMeshInfo->m_nType |= VERTEXT_NORMAL;
+				pMeshInfo->m_pxmf2TexCoords = new XMFLOAT2[nPositions];
+				nReads = (UINT)::fread(pMeshInfo->m_pxmf2TexCoords, sizeof(XMFLOAT2), nPositions, pInFile);
+			}
+		}
+
+
+		else if (!strcmp(pstrToken, "<Indices>:"))
+		{
+			nIndices = ::ReadIntegerFromFile(pInFile);
+			if (nIndices > 0)
+			{
+				pMeshInfo->m_pnIndices = new UINT[nIndices];
+				nReads = (UINT)::fread(pMeshInfo->m_pnIndices, sizeof(int), nIndices, pInFile);
+			}
+		}
+		else if (!strcmp(pstrToken, "<SubMeshes>:"))
+		{
+			pMeshInfo->m_nSubMeshes = ::ReadIntegerFromFile(pInFile);
+			if (pMeshInfo->m_nSubMeshes > 0)
+			{
+				pMeshInfo->m_pnSubSetIndices = new int[pMeshInfo->m_nSubMeshes];
+				pMeshInfo->m_ppnSubSetIndices = new UINT * [pMeshInfo->m_nSubMeshes];
+				for (int i = 0; i < pMeshInfo->m_nSubMeshes; i++)
+				{
+					::ReadStringFromFile(pInFile, pstrToken);
+					if (!strcmp(pstrToken, "<SubMesh>:"))
+					{
+						int nIndex = ::ReadIntegerFromFile(pInFile);
+						pMeshInfo->m_pnSubSetIndices[i] = ::ReadIntegerFromFile(pInFile);
+						if (pMeshInfo->m_pnSubSetIndices[i] > 0)
+						{
+							pMeshInfo->m_ppnSubSetIndices[i] = new UINT[pMeshInfo->m_pnSubSetIndices[i]];
+							nReads = (UINT)::fread(pMeshInfo->m_ppnSubSetIndices[i], sizeof(int), pMeshInfo->m_pnSubSetIndices[i], pInFile);
+						}
+
+					}
+				}
+			}
+		}
+		else if (!strcmp(pstrToken, "</Mesh>"))
+		{
+			break;
+		}
+	}
+
+
+	return(pMeshInfo);
+}
+
 
 void CGameObject::PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent)
 {

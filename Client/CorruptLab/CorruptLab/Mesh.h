@@ -4,9 +4,9 @@
 #pragma once
 
 // m_ntype¿ª ∞·¡§
-#define VERTEXT_POSITION			0x01
-#define VERTEXT_COLOR				0x02
-#define VERTEXT_NORMAL				0x04
+#define VERTEXT_POSITION				0x0001
+#define VERTEXT_COLOR					0x0002
+#define VERTEXT_NORMAL					0x0004
 
 
 typedef struct MESHINFO
@@ -122,8 +122,8 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet);
 };
 
-#define SKINNED_ANIMATION_BONES		128
-
+//#define SKINNED_ANIMATION_BONES		128
+//
 //class CSkinnedMesh : public CStandardMesh
 //{
 //public:

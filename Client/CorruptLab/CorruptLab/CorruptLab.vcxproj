@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CorruptLab.h" />
     <ClInclude Include="d3dx12.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CorruptLab.cpp" />
     <ClCompile Include="DDSTextureLoader12.cpp" />

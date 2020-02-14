@@ -76,6 +76,9 @@
     <ClInclude Include="targetver.h">
       <Filter>00.Basic</Filter>
     </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>05.Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -110,6 +113,9 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>00.Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>05.Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
