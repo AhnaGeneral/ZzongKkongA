@@ -54,7 +54,7 @@ CStandardMesh::CStandardMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 	m_MeshInfo.m_nType = pMeshInfo->m_nType;
 
 	CStandardVertex *pVerticse = new CStandardVertex[m_MeshInfo.m_nVertices];
-	for (int i = 0; i < m_MeshInfo.m_nVertices; ++i)
+	for (UINT i = 0; i < (m_MeshInfo.m_nVertices); ++i)
 	{
 		pVerticse[i].m_xmf3Position = pMeshInfo->m_pxmf3Positions[i];
 		pVerticse[i].m_xmf3Normal   = pMeshInfo->m_pxmf3Normals[i];

@@ -191,6 +191,7 @@ public:
 
 	XMFLOAT4X4						m_xmf4x4Transform;
 	XMFLOAT4X4						m_xmf4x4World;
+	XMFLOAT4X4						m_xmf4x4ToParent;
 
 	CGameObject                     * m_pParent = NULL;
 	CGameObject                     * m_pChild = NULL;
