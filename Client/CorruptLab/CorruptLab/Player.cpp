@@ -249,11 +249,11 @@ CAirplanePlayer::CAirplanePlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 	//CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList,)
 	CTexture* pTexture = new CTexture(2, RESOURCE_TEXTURE2D, 0);
 
-	pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/box_BC.dds", 0);
+	pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Johnson/Johnson_BaseColor.dds", 0);
 	pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/box_NM.dds", 1);
 	CMaterial::m_pIlluminatedShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTexture, ROOT_PARAMETER_ALBEDO_TEXTURE, true);
 
-	CGameObject* pGameObject = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/box.bin");
+	CGameObject* pGameObject = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Johnson/Model_Idle.bin");
 	
 	pGameObject->SetTexture(pTexture);
 

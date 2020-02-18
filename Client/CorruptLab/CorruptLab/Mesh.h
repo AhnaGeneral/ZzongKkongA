@@ -41,10 +41,9 @@ typedef struct MESHINFO
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dColorBufferView;
 
 	XMFLOAT2                      * m_pxmf2TextureCoords0 = NULL;
-	//XMFLOAT2                      * m_pxmf2TexCoords = NULL;
-	//ID3D12Resource                * m_pd3dTextureCoord0Buffer = NULL;
-	//ID3D12Resource                * m_pd3dTextureCoord0UploadBuffer = NULL;
-	//D3D12_VERTEX_BUFFER_VIEW		m_d3dTextureCoord0BufferView;
+	ID3D12Resource                * m_pd3dTextureCoord0Buffer = NULL;
+	ID3D12Resource                * m_pd3dTextureCoord0UploadBuffer = NULL;
+	D3D12_VERTEX_BUFFER_VIEW		m_d3dTextureCoord0BufferView;
 
 	XMFLOAT2                      * m_pxmf2TextureCoords1 = NULL;
 	ID3D12Resource                * m_pd3dTextureCoord1Buffer = NULL;
@@ -150,7 +149,7 @@ public:
 
 #define SKINNED_ANIMATION_BONES		128
 
-class CSkinnedMesh : public CMesh
+class CSkinnedMesh : public CStandardMesh
 {
 public:
 	CSkinnedMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
