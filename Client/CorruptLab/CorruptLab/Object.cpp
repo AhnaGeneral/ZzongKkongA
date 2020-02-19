@@ -5,7 +5,7 @@
 #include "stdafx.h"
 #include "Object.h"
 #include "Shader.h"
-
+//#include "Animation.h"
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers)
 {
@@ -436,7 +436,32 @@ void CGameObject::SetTexture(CTexture* tex)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define _WITH_DEBUG_FRAME_HIERARCHY
+//#define _WITH_DEBUG_FRAME_HIERARCHY
+
+CSkinnedMesh* CGameObject::FindSkinnedMesh(char* pstrSkinnedMeshName)
+{
+	CSkinnedMesh* pSkinnedMesh = NULL;
+	if (m_pMesh && (m_pMesh->GetType() & VERTEXT_BONE_INDEX_WEIGHT))
+	{
+		pSkinnedMesh = (CSkinnedMesh*)m_pMesh;
+		if (!strncmp(pSkinnedMesh->GetMeshInfo()->m_pstrMeshName, pstrSkinnedMeshName, strlen(pstrSkinnedMeshName))) return(pSkinnedMesh);
+	}
+
+	if (m_pSibling) if (pSkinnedMesh = m_pSibling->FindSkinnedMesh(pstrSkinnedMeshName)) return(pSkinnedMesh);
+	if (m_pChild) if (pSkinnedMesh = m_pChild->FindSkinnedMesh(pstrSkinnedMeshName)) return(pSkinnedMesh);
+
+	return(NULL);
+}
+
+//void CGameObject::SetTrackAnimationSet(int nAnimationTrack, int nAnimationSet)
+//{
+//	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->SetTrackAnimationSet(nAnimationTrack, nAnimationSet);
+//}
+//
+//void CGameObject::SetTrackAnimationPosition(int nAnimationTrack, float fPosition)
+//{
+//	if (m_pSkinnedAnimationController) m_pSkinnedAnimationController->SetTrackPosition(nAnimationTrack, fPosition);
+//}
 
 MATERIALSLOADINFO* CGameObject::LoadMaterialsInfoFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
 {
@@ -639,3 +664,143 @@ CMaterialColors::CMaterialColors(MATERIALLOADINFO* pMaterialInfo)
 	m_xmf4Specular.w = (pMaterialInfo->m_fGlossiness * 255.0f);
 	m_xmf4Emissive = pMaterialInfo->m_xmf4EmissiveColor;
 }
+
+
+
+//void CGameObject::LoadAnimationFromFile(FILE* pInFile, CLoadedModelInfo* pLoadedModel)
+//{
+//	char pstrToken[64] = { '\0' };
+//	UINT nReads = 0;
+//
+//	int nAnimationSets = 0;
+//
+//	for (; ; )
+//	{
+//		::ReadStringFromFile(pInFile, pstrToken);
+//		if (!strcmp(pstrToken, "<AnimationSets>:"))
+//		{
+//			nAnimationSets = ::ReadIntegerFromFile(pInFile);
+//		}
+//		else if (!strcmp(pstrToken, "<FrameNames>:"))
+//		{
+//			pLoadedModel->m_nSkinnedMeshes = ::ReadIntegerFromFile(pInFile);
+//
+//			pLoadedModel->m_pnAnimatedBoneFrames = new int[pLoadedModel->m_nSkinnedMeshes];
+//			pLoadedModel->m_ppAnimationSets = new CAnimationSets * [pLoadedModel->m_nSkinnedMeshes];
+//			pLoadedModel->m_ppSkinnedMeshes = new CSkinnedMesh * [pLoadedModel->m_nSkinnedMeshes];
+//			pLoadedModel->m_pppAnimatedBoneFrameCaches = new CGameObject * *[pLoadedModel->m_nSkinnedMeshes];
+//
+//			for (int i = 0; i < pLoadedModel->m_nSkinnedMeshes; i++)
+//			{
+//				pLoadedModel->m_ppAnimationSets[i] = new CAnimationSets(nAnimationSets);
+//
+//				int nSkin = ::ReadIntegerFromFile(pInFile); //i
+//
+//				::ReadStringFromFile(pInFile, pstrToken); //Skinned Mesh Name
+//				pLoadedModel->m_ppSkinnedMeshes[i] = pLoadedModel->m_pModelRootObject->FindSkinnedMesh(pstrToken);
+//				pLoadedModel->m_ppSkinnedMeshes[i]->PrepareSkinning(pLoadedModel->m_pModelRootObject);
+//
+//				pLoadedModel->m_pnAnimatedBoneFrames[i] = ::ReadIntegerFromFile(pInFile);
+//				pLoadedModel->m_pppAnimatedBoneFrameCaches[i] = new CGameObject * [pLoadedModel->m_pnAnimatedBoneFrames[i]];
+//
+//				for (int j = 0; j < pLoadedModel->m_pnAnimatedBoneFrames[i]; j++)
+//				{
+//					::ReadStringFromFile(pInFile, pstrToken);
+//					pLoadedModel->m_pppAnimatedBoneFrameCaches[i][j] = pLoadedModel->m_pModelRootObject->FindFrame(pstrToken);
+//
+//#ifdef _WITH_DEBUG_SKINNING_BONE
+//					TCHAR pstrDebug[256] = { 0 };
+//					TCHAR pwstrAnimationBoneName[64] = { 0 };
+//					TCHAR pwstrBoneCacheName[64] = { 0 };
+//					size_t nConverted = 0;
+//					mbstowcs_s(&nConverted, pwstrAnimationBoneName, 64, pstrToken, _TRUNCATE);
+//					mbstowcs_s(&nConverted, pwstrBoneCacheName, 64, pLoadedModel->m_pppAnimatedBoneFrameCaches[i][j]->m_pstrFrameName, _TRUNCATE);
+//					_stprintf_s(pstrDebug, 256, _T("AnimationBoneFrame:: Cache(%s) AnimationBone(%s)\n"), pwstrBoneCacheName, pwstrAnimationBoneName);
+//					OutputDebugString(pstrDebug);
+//#endif
+//				}
+//			}
+//		}
+//		else if (!strcmp(pstrToken, "<AnimationSet>:"))
+//		{
+//			int nAnimationSet = ::ReadIntegerFromFile(pInFile);
+//
+//			::ReadStringFromFile(pInFile, pstrToken); //Animation Set Name
+//
+//			float fLength = ::ReadFloatFromFile(pInFile);
+//			int nFramesPerSecond = ::ReadIntegerFromFile(pInFile);
+//			int nKeyFrames = ::ReadIntegerFromFile(pInFile);
+//
+//			for (int i = 0; i < pLoadedModel->m_nSkinnedMeshes; i++)
+//			{
+//				pLoadedModel->m_ppAnimationSets[i]->m_ppAnimationSets[nAnimationSet] = new CAnimationSet(fLength, nFramesPerSecond, nKeyFrames, pLoadedModel->m_pnAnimatedBoneFrames[i], pstrToken);
+//			}
+//
+//			for (int i = 0; i < nKeyFrames; i++)
+//			{
+//				::ReadStringFromFile(pInFile, pstrToken);
+//				if (!strcmp(pstrToken, "<Transforms>:"))
+//				{
+//					int nKey = ::ReadIntegerFromFile(pInFile); //i
+//					float fKeyTime = ::ReadFloatFromFile(pInFile);
+//					for (int j = 0; j < pLoadedModel->m_nSkinnedMeshes; j++)
+//					{
+//						int nSkin = ::ReadIntegerFromFile(pInFile); //j
+//						CAnimationSet* pAnimationSet = pLoadedModel->m_ppAnimationSets[j]->m_ppAnimationSets[nAnimationSet];
+//						pAnimationSet->m_pfKeyFrameTimes[i] = fKeyTime;
+//						nReads = (UINT)::fread(pAnimationSet->m_ppxmf4x4KeyFrameTransforms[i], sizeof(XMFLOAT4X4), pLoadedModel->m_pnAnimatedBoneFrames[j], pInFile);
+//					}
+//				}
+//			}
+//		}
+//		else if (!strcmp(pstrToken, "</AnimationSets>"))
+//		{
+//			break;
+//		}
+//	}
+//}
+//
+//CLoadedModelInfo* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader)
+//{
+//	FILE* pInFile = NULL;
+//	::fopen_s(&pInFile, pstrFileName, "rb");
+//	::rewind(pInFile);
+//
+//	CLoadedModelInfo* pLoadedModel = new CLoadedModelInfo();
+//
+//	char pstrToken[64] = { '\0' };
+//
+//	for (; ; )
+//	{
+//		if (::ReadStringFromFile(pInFile, pstrToken))
+//		{
+//			if (!strcmp(pstrToken, "<Hierarchy>:"))
+//			{
+//				//pLoadedModel->m_pModelRootObject = CGameObject::LoadFrameHierarchyFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, NULL, pInFile, pShader, &pLoadedModel->m_nSkinnedMeshes);
+//				::ReadStringFromFile(pInFile, pstrToken); //"</Hierarchy>"
+//			}
+//			else if (!strcmp(pstrToken, "<Animation>:"))
+//			{
+//				CGameObject::LoadAnimationFromFile(pInFile, pLoadedModel);
+//			}
+//			else if (!strcmp(pstrToken, "</Animation>:"))
+//			{
+//				break;
+//			}
+//		}
+//		else
+//		{
+//			break;
+//		}
+//	}
+//
+//#ifdef _WITH_DEBUG_FRAME_HIERARCHY
+//	TCHAR pstrDebug[256] = { 0 };
+//	_stprintf_s(pstrDebug, 256, "Frame Hierarchy\n"));
+//	OutputDebugString(pstrDebug);
+//
+//	CGameObject::PrintFrameInfo(pGameObject, NULL);
+//#endif
+//
+//	return(pLoadedModel);
+//}

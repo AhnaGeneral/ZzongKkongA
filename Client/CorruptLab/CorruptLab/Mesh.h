@@ -124,6 +124,7 @@ public:
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
 	void ReleaseUploadBuffers();
+	MeshInfo* GetMeshInfo() { return &m_MeshInfo; }
 
 protected:
 	MeshInfo              m_MeshInfo;
