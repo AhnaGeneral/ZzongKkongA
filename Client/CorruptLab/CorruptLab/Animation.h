@@ -3,13 +3,14 @@
 //-----------------------------------------------------------------------------
 
 #pragma once
-#include "Object.h"
-
 
 #define ANIMATION_TYPE_ONCE			0
 #define ANIMATION_TYPE_LOOP			1
 #define ANIMATION_TYPE_PINGPONG		2
 #define ANIMATION_CALLBACK_EPSILON	0.015f
+
+class CGameObject; 
+class CSkinnedMesh; 
 
 struct CALLBACKKEY
 {
@@ -45,18 +46,6 @@ public:
 	int								m_nKeyFrames = 0;
 	float                         * m_pfKeyFrameTimes = NULL;
 	XMFLOAT4X4                   ** m_ppxmf4x4KeyFrameTransforms = NULL;
-
-////#ifdef _WITH_ANIMATION_SRT
-//	int								m_nKeyFrameScales = 0;
-//	float                         * m_pfKeyFrameScaleTimes = NULL;
-//	XMFLOAT3                     ** m_ppxmf3KeyFrameScales = NULL;
-//	int								m_nKeyFrameRotations = 0;
-//	float                         * m_pfKeyFrameRotationTimes = NULL;
-//	XMFLOAT4                     ** m_ppxmf4KeyFrameRotations = NULL;
-//	int								m_nKeyFrameTranslations = 0;
-//	float                         * m_pfKeyFrameTranslationTimes = NULL;
-//	XMFLOAT3                     ** m_ppxmf3KeyFrameTranslations = NULL;
-////#endif
 
 	float 							m_fPosition = 0.0f;
 	int 							m_nType = ANIMATION_TYPE_LOOP; //Once, Loop, PingPong

@@ -88,12 +88,11 @@ extern BYTE ReadStringFromFile(FILE* pInFile, char* pstrToken);
 
 #define RANDOM_COLOR	XMFLOAT4(rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX))
 
-#define ROOT_PARAMETER_CAMERA				0
-#define ROOT_PARAMETER_OBJECT				1
-#define ROOT_PARAMETER_PLAYER				1
-#define ROOT_PARAMETER_LIGHT				2
-#define ROOT_PARAMETER_ALBEDO_TEXTURE		3
-#define ROOT_PARAMETER_NORMAL_TEXTURE		4
+#define ROOT_PARAMETER_CAMERA		0
+#define ROOT_PARAMETER_OBJECT		1
+#define ROOT_PARAMETER_PLAYER		1
+#define ROOT_PARAMETER_LIGHT		2
+#define ROOT_PARAMETER_TEXTURE	    3 // albedo, normal, specular, emission  
 
 #define EPSILON						1.0e-10f
 

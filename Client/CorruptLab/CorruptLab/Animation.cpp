@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "Shader.h"
 #include "Scene.h"
+#include "Object.h"
 
 CAnimationSet::CAnimationSet(float fLength, int nFramesPerSecond, 
 	int nKeyFrameTransforms, int nSkinningBones, char* pstrName)

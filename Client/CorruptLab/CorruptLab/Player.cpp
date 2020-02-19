@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Shader.h"
+#include "Animation.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
@@ -40,7 +41,6 @@ void CPlayer::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComm
 		m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	//SetRootParameter(pd3dCommandList, &m_xmf4x4World);
 }
 
 void CPlayer::ReleaseShaderVariables()
@@ -246,24 +246,16 @@ CAirplanePlayer::CAirplanePlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	//CMaterial::PrepareShaders(pd3dDevice, pd3dCommandList,)
-	CTexture* pTexture = new CTexture(2, RESOURCE_TEXTURE2D, 0);
-
-	pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Johnson/Johnson_BaseColor.dds", 0);
-	pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/box_NM.dds", 1);
-	CMaterial::m_pIlluminatedShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTexture, ROOT_PARAMETER_ALBEDO_TEXTURE, true);
-
-	CGameObject* pGameObject = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Johnson/Model_Idle.bin");
+	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Johnson/Run.bin", NULL);
 	
-	pGameObject->SetTexture(pTexture);
+	SetChild(pAngrybotModel->m_pModelRootObject, true);
 
-	pGameObject->Rotate(0.0f, 0.0f, 0.0f); 
-	SetChild(pGameObject, true);
-	OnInitialize();
-
+	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 1, pAngrybotModel);
+	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
+	
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	//SetCbvGPUDescriptorHandle(pShader->GetGPUCbvDescriptorStartHandle());
+	if (pAngrybotModel) delete pAngrybotModel;
 
 }
 
