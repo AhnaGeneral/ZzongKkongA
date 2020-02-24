@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Shader.h"
-#include "Animation.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
@@ -40,7 +39,8 @@ void CPlayer::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComm
 	if (m_pCamera) 
 		m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//SetRootParameter(pd3dCommandList, &m_xmf4x4World);
 }
 
 void CPlayer::ReleaseShaderVariables()
@@ -81,7 +81,7 @@ void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 		m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Shift);
 		m_pCamera->Move(xmf3Shift);
 	}
-	SetPosition(m_xmf3Position);
+	SetPosition(m_xmf3Position.x, m_xmf3Position.y, m_xmf3Position.z);
 }
 
 void CPlayer::Rotate(float x, float y, float z)
@@ -246,17 +246,13 @@ CAirplanePlayer::CAirplanePlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	CLoadedModelInfo* pAngrybotModel = CGameObject::LoadGeometryAndAnimationFromFile
-	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Johnson/Run.bin", NULL);
-	
-	SetChild(pAngrybotModel->m_pModelRootObject, true);
+	CGameObject* pGameObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Johnson/Texture_Idle.bin", NULL, true);
 
-	m_pSkinnedAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, 1, pAngrybotModel);
-	m_pSkinnedAnimationController->SetTrackAnimationSet(0, 0);
-	
+	SetScale(5.0f, 5.0f, 5.0f); 
+	SetChild(pGameObject, true);
+	OnInitialize();
+
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	if (pAngrybotModel) delete pAngrybotModel;
-
 }
 
 CAirplanePlayer::~CAirplanePlayer()

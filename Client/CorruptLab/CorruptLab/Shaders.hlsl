@@ -28,8 +28,13 @@ Texture2D<float4> gtxtScene : register(t1); // scene, normal, objectID RTV 0, 1,
 Texture2D<float4> gtxtNormal : register(t2);
 Texture2D<float4> gtxtObject : register(t3);
 
-Texture2D gtxtAlbedoMap : register(t4);
-Texture2D gtxtNormalMap : register(t5);
+Texture2D gtxtAlbedoTexture : register(t4);
+Texture2D gtxtSpecularTexture : register(t5);
+Texture2D gtxtNormalTexture : register(t6);
+Texture2D gtxtMetallicTexture : register(t7);
+Texture2D gtxtEmissionTexture : register(t8);
+Texture2D gtxtDetailAlbedoTexture : register(t9);
+Texture2D gtxtDetailNormalTexture : register(t10);
 
 struct VS_TEXTURED_LIGHTING_INPUT
 {
@@ -50,6 +55,53 @@ struct VS_TEXTURED_LIGHTING_OUTPUT
 	float2 uv : TEXCOORD;
 };
 
+struct VS_SKINNED_STANDARD_INPUT
+{
+	float3 position : POSITION;
+	float2 uv : TEXCOORD;
+	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
+	float3 bitangent : BITANGENT;
+	uint4 indices : BONEINDEX;
+	float4 weights : BONEWEIGHT;
+};
+
+#define MAX_VERTEX_INFLUENCES			4
+#define SKINNED_ANIMATION_BONES			128
+
+cbuffer cbBoneOffsets : register(b7)
+{
+	float4x4 gpmtxBoneOffsets[SKINNED_ANIMATION_BONES];
+};
+
+cbuffer cbBoneTransforms : register(b8)
+{
+	float4x4 gpmtxBoneTransforms[SKINNED_ANIMATION_BONES];
+};
+
+VS_TEXTURED_LIGHTING_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
+{
+	VS_TEXTURED_LIGHTING_OUTPUT output;
+
+	output.positionW = float3(0.0f, 0.0f, 0.0f);
+	output.normalW = float3(0.0f, 0.0f, 0.0f);
+	output.tangentW = float3(0.0f, 0.0f, 0.0f);
+	output.bitangentW = float3(0.0f, 0.0f, 0.0f);
+	matrix mtxVertexToBoneWorld;
+	for (int i = 0; i < MAX_VERTEX_INFLUENCES; i++)
+	{
+		mtxVertexToBoneWorld = mul(gpmtxBoneOffsets[input.indices[i]], gpmtxBoneTransforms[input.indices[i]]);
+		output.positionW += input.weights[i] * mul(float4(input.position, 1.0f), mtxVertexToBoneWorld).xyz;
+		output.normalW += input.weights[i] * mul(input.normal, (float3x3)mtxVertexToBoneWorld);
+		output.tangentW += input.weights[i] * mul(input.tangent, (float3x3)mtxVertexToBoneWorld);
+		output.bitangentW += input.weights[i] * mul(input.bitangent, (float3x3)mtxVertexToBoneWorld);
+	}
+
+	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
+	output.uv = input.uv;
+
+	return(output);
+}
 
 VS_TEXTURED_LIGHTING_OUTPUT VSLighting(VS_TEXTURED_LIGHTING_INPUT input)
 {
@@ -77,8 +129,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
 	
 	output.normal = float4(input.normalW,1); 
-	float4 cColorAlbedo = gtxtAlbedoMap.Sample(gSamplerState, input.uv);
-	float4 cColorNormal = gtxtNormalMap.Sample(gSamplerState, input.uv);
+	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
+	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
 
 	float4 cColorLighted = Lighting(input.positionW, input.normalW);
 	output.color = lerp(cColorAlbedo, cColorLighted, 0.6f);
@@ -134,4 +186,5 @@ float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Targe
 	cColor = (fEdgeness < 0.15f) ? cColor : ((fEdgeness < 0.65f) ? (cColor + cEdgeness) : cEdgeness);
 
 	return(float4(cColor, 1.0f));
+
 }

@@ -20,14 +20,20 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="05.Object">
-      <UniqueIdentifier>{c8a9b285-7c5e-46bc-b5ac-0da6bfc99d91}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06.Player">
       <UniqueIdentifier>{1a3cf00a-5cea-408b-acc8-b649c3cbf5da}</UniqueIdentifier>
     </Filter>
     <Filter Include="07.Camera">
       <UniqueIdentifier>{33f4ca6f-ac3c-4f8e-aea2-95f2afd98c02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.external">
+      <UniqueIdentifier>{d761b15f-ab1f-4439-8351-87a8b9604e31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08.Animation">
+      <UniqueIdentifier>{4bc3aa1e-70c8-4b3a-883d-43ad0074c13c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component">
+      <UniqueIdentifier>{c8a9b285-7c5e-46bc-b5ac-0da6bfc99d91}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -38,7 +44,7 @@
       <Filter>06.Player</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>05.Object</Filter>
+      <Filter>05.Component</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>03.Timer</Filter>
@@ -47,7 +53,7 @@
       <Filter>01.FrameWork</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>05.Object</Filter>
+      <Filter>05.Component</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>04.Shader</Filter>
@@ -61,12 +67,6 @@
     <ClInclude Include="CorruptLab.h">
       <Filter>00.Basic</Filter>
     </ClInclude>
-    <ClInclude Include="d3dx12.h">
-      <Filter>00.Basic</Filter>
-    </ClInclude>
-    <ClInclude Include="DDSTextureLoader12.h">
-      <Filter>00.Basic</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
       <Filter>00.Basic</Filter>
     </ClInclude>
@@ -76,8 +76,20 @@
     <ClInclude Include="targetver.h">
       <Filter>00.Basic</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>05.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTextureLoader12.h">
+      <Filter>98.external</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader12.h">
+      <Filter>98.external</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>98.external</Filter>
+    </ClInclude>
     <ClInclude Include="Animation.h">
-      <Filter>05.Object</Filter>
+      <Filter>08.Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -88,7 +100,7 @@
       <Filter>06.Player</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>05.Object</Filter>
+      <Filter>05.Component</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>03.Timer</Filter>
@@ -97,7 +109,7 @@
       <Filter>01.FrameWork</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>05.Object</Filter>
+      <Filter>05.Component</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>04.Shader</Filter>
@@ -108,14 +120,20 @@
     <ClCompile Include="CorruptLab.cpp">
       <Filter>00.Basic</Filter>
     </ClCompile>
-    <ClCompile Include="DDSTextureLoader12.cpp">
-      <Filter>00.Basic</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>00.Basic</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>05.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader12.cpp">
+      <Filter>98.external</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader12.cpp">
+      <Filter>98.external</Filter>
+    </ClCompile>
     <ClCompile Include="Animation.cpp">
-      <Filter>05.Object</Filter>
+      <Filter>08.Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

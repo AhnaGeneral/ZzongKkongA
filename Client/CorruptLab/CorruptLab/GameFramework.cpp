@@ -475,7 +475,7 @@ void CGameFramework::BuildObjects()
 
 	CMaterial::PrepareShaders(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
 	CAirplanePlayer* pAirplanePlayer = new CAirplanePlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
-	pAirplanePlayer->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	pAirplanePlayer->SetPosition(0.0f, 0.0f, 0.0f);
 	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
@@ -500,8 +500,11 @@ void CGameFramework::ReleaseObjects()
 	if (m_pPostProcessingShader) 
 		m_pPostProcessingShader->Release();
 	
-	if (CMaterial::m_pIlluminatedShader)
-		CMaterial::m_pIlluminatedShader->Release();
+	if (CMaterial::m_pSkinnedAnimationShader)
+		CMaterial::m_pSkinnedAnimationShader->Release();
+
+	if (CMaterial::m_pStandardShader)
+		CMaterial::m_pStandardShader->Release();
 }
 
 void CGameFramework::ProcessInput()
