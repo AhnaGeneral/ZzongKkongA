@@ -160,6 +160,7 @@ void CAnimationController::SetAnimationSet(int nAnimationSet)
 void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHandler* pCallbackHandler)
 {
 	m_fTime += fTimeElapsed;
+
 	if (m_pAnimationSets)
 	{
 		for (int i = 0; i < m_nAnimationTracks; i++)
@@ -180,7 +181,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHan
 				float fPositon = pAnimationSet->GetPosition(pAnimationSet->m_fPosition);
 				for (int i = 0; i < m_nAnimationBoneFrames; i++)
 				{
-					m_ppAnimationBoneFrameCaches[i]->m_xmf4x4ToParent = pAnimationSet->GetSRT(i, fPositon);
+					m_ppAnimationBoneFrameCaches[i]->m_xmf4x4Transform = pAnimationSet->GetSRT(i, fPositon);
 				}
 			}
 		}
