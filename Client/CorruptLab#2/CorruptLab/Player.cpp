@@ -248,7 +248,7 @@ CAirplanePlayer::CAirplanePlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 
 	CGameObject* pGameObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Johnson/Texture_Idle.bin", NULL, true);
 
-	SetScale(0.3f, 0.3f, 0.3f); 
+	//SetScale(0.3f, 0.3f, 0.3f); 
 	SetChild(pGameObject, true);
 	OnInitialize();
 
