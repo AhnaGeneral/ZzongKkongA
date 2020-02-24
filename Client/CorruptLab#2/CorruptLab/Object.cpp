@@ -333,6 +333,9 @@ void CGameObject::SetChild(CGameObject* pChild, bool bReferenceUpdate)
 
 void CGameObject::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
 {
+	OnPrepareRender();
+
+	if (m_pAnimationController) m_pAnimationController->AdvanceTime(fTimeElapsed, NULL);
 	if (m_pSibling) m_pSibling->Animate(fTimeElapsed, pxmf4x4Parent);
 	if (m_pChild) m_pChild->Animate(fTimeElapsed, &m_xmf4x4World);
 }
