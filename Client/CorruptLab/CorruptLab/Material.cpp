@@ -216,7 +216,7 @@ void CMaterial::LoadTextureFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsComm
 			*ppTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 			(*ppTexture)->LoadTextureFromFile(pd3dDevice, pd3dCommandList, pwstrTextureName, 0);
 			if (*ppTexture) (*ppTexture)->AddRef();
-			m_pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, *ppTexture, nRootParameter, (int)(nRootParameter - ROOT_PARAMETER_ALBEDO_TEXTURE));
+			m_pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, *ppTexture, nRootParameter, (int)(nRootParameter - ROOT_PARAMETER_ALBEDO_TEX));
 		}
 		else
 		{

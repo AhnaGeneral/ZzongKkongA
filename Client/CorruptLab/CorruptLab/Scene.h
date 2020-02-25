@@ -43,6 +43,8 @@ struct MATERIALS
 	MATERIAL	m_pReflections[MAX_MATERIALS];
 };
 
+class CHeightMapTerrain;
+
 class CScene
 {
 public:
@@ -77,6 +79,7 @@ public:
 	ID3D12RootSignature	*m_pd3dGraphicsRootSignature = NULL;
 
 	LIGHTS				*m_pLights = NULL;
+	CHeightMapTerrain	*m_pTerrain = NULL;
 
 	ID3D12Resource		*m_pd3dcbLights = NULL;
 	LIGHTS				*m_pcbMappedLights = NULL;

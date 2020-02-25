@@ -113,6 +113,7 @@ public:
 class CMesh
 {
 public:
+	CMesh() {}
 	CMesh(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
 	virtual ~CMesh();
 
@@ -123,7 +124,7 @@ public:
 	void AddRef() { m_nReferences++; }
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
-	void ReleaseUploadBuffers();
+	virtual void ReleaseUploadBuffers();
 	MeshInfo* GetMeshInfo() { return &m_MeshInfo; }
 
 protected:
