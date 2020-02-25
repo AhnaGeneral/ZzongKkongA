@@ -12,10 +12,8 @@ public:
 	CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, LPCTSTR pFileName, int nWidth, int nLength, int nBlockWidth, int nBlockLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color);
 	virtual ~CHeightMapTerrain();
 	void SetMesh(int nIndex, CMesh* pMesh);
-	XMFLOAT2 GetPipelineMode();
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
-	void SetTessellationMode(ID3D12GraphicsCommandList* pd3dCommandList);
 	void ChangePipeLine();
 
 	void SetCbvGPUDescriptorHandle(D3D12_GPU_DESCRIPTOR_HANDLE d3dCbvGPUDescriptorHandle) { m_d3dCbvGPUDescriptorHandle = d3dCbvGPUDescriptorHandle; }
@@ -33,12 +31,10 @@ private:
 	int								m_nLength;
 
 	XMFLOAT3						m_xmf3Scale;
-	XMFLOAT2* m_pxmf2TessFactor = NULL;
 
 	CMesh** m_ppMeshes;
 	int								m_nMeshes;
 
-	ID3D12Resource* m_pd3dcbTessFactor = NULL;
 
 public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);

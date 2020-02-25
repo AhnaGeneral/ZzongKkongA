@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Scene.h"
+#include "Geometry.h"
 
 CScene::CScene()
 {
@@ -46,6 +47,9 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
 	std::cout << "누나 졸작 화이팅 by 은우" << std::endl;
+	XMFLOAT3 xmf3Scale(4.0f, 6.0f, 4.0f);
+	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
+	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Geometry/terrain.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color);
 
 	BuildLightsAndMaterials();
 
@@ -116,22 +120,14 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	pd3dMaterialTexRanges[6].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 
-	D3D12_DESCRIPTOR_RANGE pd3dTerrainTexRanges[2];
+	D3D12_DESCRIPTOR_RANGE pd3dTerrainTexRanges;
+	pd3dTerrainTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dTerrainTexRanges.NumDescriptors = 2;
+	pd3dTerrainTexRanges.BaseShaderRegister = 11; //t11: gtxtTerrainBaseTexture  //t12: gtxtTerrainDetailTexture
+	pd3dTerrainTexRanges.RegisterSpace = 0;
+	pd3dTerrainTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-
-	pd3dTerrainTexRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dTerrainTexRanges[0].NumDescriptors = 1;
-	pd3dTerrainTexRanges[0].BaseShaderRegister = 11; //t11: gtxtTerrainBaseTexture
-	pd3dTerrainTexRanges[0].RegisterSpace = 0;
-	pd3dTerrainTexRanges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-	pd3dTerrainTexRanges[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dTerrainTexRanges[1].NumDescriptors = 1;
-	pd3dTerrainTexRanges[1].BaseShaderRegister = 12; //t12: gtxtTerrainDetailTexture
-	pd3dTerrainTexRanges[1].RegisterSpace = 0;
-	pd3dTerrainTexRanges[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-	D3D12_ROOT_PARAMETER pd3dRootParameters[14];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[13];
 
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].Descriptor.ShaderRegister = 1; //b1 : Camera
@@ -194,15 +190,10 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	pd3dRootParameters[ROOT_PARAMETER_BONE_TRANSFORMS].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[ROOT_PARAMETER_BONE_TRANSFORMS].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
 	
-	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_BASE_TEX].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_BASE_TEX].DescriptorTable.NumDescriptorRanges = 1;
-	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_BASE_TEX].DescriptorTable.pDescriptorRanges = &pd3dTerrainTexRanges[0];
-	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_BASE_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-
-	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_DETAIL_TEX].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_DETAIL_TEX].DescriptorTable.NumDescriptorRanges = 1;
-	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_DETAIL_TEX].DescriptorTable.pDescriptorRanges = &pd3dTerrainTexRanges[1];
-	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_DETAIL_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_TEX].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_TEX].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_TEX].DescriptorTable.pDescriptorRanges = &pd3dTerrainTexRanges;
+	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc;
@@ -220,8 +211,8 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	d3dSamplerDesc.RegisterSpace = 0;
 	d3dSamplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
-	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | 
-		D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	//D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 
 	D3D12_ROOT_SIGNATURE_DESC d3dRootSignatureDesc;
 	::ZeroMemory(&d3dRootSignatureDesc, sizeof(D3D12_ROOT_SIGNATURE_DESC));
@@ -307,6 +298,8 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 
 	UpdateShaderVariables(pd3dCommandList);
+
+	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT, d3dcbLightsGpuVirtualAddress); //Lights
