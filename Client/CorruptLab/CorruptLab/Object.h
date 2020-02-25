@@ -6,7 +6,6 @@
 class CShader;
 class CAnimationController;
 
-
 struct CB_GAMEOBJECT_INFO  { XMFLOAT4X4 m_xmf4x4World; };
 
 class CGameObject
