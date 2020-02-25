@@ -6,9 +6,7 @@
 #include "Player.h"
 #include "Shader.h"
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// CPlayer
-
+// CPlayer ======================================================================================================
 CPlayer::CPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, int nMeshes) : CGameObject()
 {
 	m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -38,9 +36,6 @@ void CPlayer::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComm
 {
 	if (m_pCamera) 
 		m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
-	//CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	//SetRootParameter(pd3dCommandList, &m_xmf4x4World);
 }
 
 void CPlayer::ReleaseShaderVariables()
@@ -50,9 +45,7 @@ void CPlayer::ReleaseShaderVariables()
 	CGameObject::ReleaseShaderVariables();
 }
 
-void CPlayer::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
-{
-}
+void CPlayer::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList) {}
 
 void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
@@ -70,9 +63,7 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 			m_pCamera->Move(xmf3Shift);
 		else Move(xmf3Shift, bUpdateVelocity);
 	}
-	
 }
-
 
 void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 {
@@ -243,9 +234,8 @@ void CPlayer::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamer
 		CGameObject::Render(pd3dCommandList, pCamera);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// CAirplanePlayer
 
+// CAirplanePlayer =====================================================================================================
 CAirplanePlayer::CAirplanePlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, int nMeshes) : CPlayer(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pContext, nMeshes)
 {
 	m_pCamera = ChangeCamera(SPACESHIP_CAMERA, 0.0f);
@@ -259,9 +249,7 @@ CAirplanePlayer::CAirplanePlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommand
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
-CAirplanePlayer::~CAirplanePlayer()
-{
-}
+CAirplanePlayer::~CAirplanePlayer() {}
 
 void CAirplanePlayer::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
 {

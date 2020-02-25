@@ -30,7 +30,8 @@
 
 	return(nStrLength);
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ //=========================================================================================================================
 CGameObject::CGameObject()
 {
 	m_xmf4x4Transform = Matrix4x4::Identity();
@@ -39,7 +40,8 @@ CGameObject::CGameObject()
 
 CGameObject::~CGameObject()
 {
-	if (m_pMesh) m_pMesh->Release();
+	if (m_pMesh) 
+		m_pMesh->Release();
 
 	if (m_nMaterials > 0)
 	{
@@ -49,6 +51,22 @@ CGameObject::~CGameObject()
 		}
 	}
 	if (m_ppMaterials) delete[] m_ppMaterials;
+}
+
+void CGameObject::AddRef()
+{
+	m_nReferences++;
+
+	if (m_pSibling) m_pSibling->AddRef();
+	if (m_pChild) m_pChild->AddRef();
+}
+
+void CGameObject::Release()
+{
+	if (m_pChild) m_pChild->Release();
+	if (m_pSibling) m_pSibling->Release();
+
+	if (--m_nReferences <= 0) delete this;
 }
 
 void CGameObject::SetMesh( CMesh *pMesh)
@@ -178,9 +196,7 @@ CGameObject* CGameObject::FindFrame(char* pstrFrameName)
 	return(NULL);
 }
 
-void CGameObject::OnPrepareRender()
-{
-}
+void CGameObject::OnPrepareRender(){}
 
 void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
 {
@@ -207,6 +223,37 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 	if (m_pChild) m_pChild->Render(pd3dCommandList, pCamera);
 }
 
+CMaterialColors::CMaterialColors(MATERIALLOADINFO* pMaterialInfo)
+{
+	m_xmf4Diffuse = pMaterialInfo->m_xmf4AlbedoColor;
+	m_xmf4Specular = pMaterialInfo->m_xmf4SpecularColor; //(r,g,b,a=power)
+	m_xmf4Specular.w = (pMaterialInfo->m_fGlossiness * 255.0f);
+	m_xmf4Emissive = pMaterialInfo->m_xmf4EmissiveColor;
+}
+
+CTexture* CGameObject::FindReplicatedTexture(_TCHAR* pstrTextureName)
+{
+	for (int i = 0; i < m_nMaterials; i++)
+	{
+		if (m_ppMaterials[i])
+		{
+			for (int j = 0; j < m_ppMaterials[i]->m_nTextures; j++)
+			{
+				if (m_ppMaterials[i]->m_ppTextures[j])
+				{
+					if (!_tcsncmp(m_ppMaterials[i]->m_ppstrTextureNames[j], pstrTextureName, _tcslen(pstrTextureName))) return(m_ppMaterials[i]->m_ppTextures[j]);
+				}
+			}
+		}
+	}
+	CTexture* pTexture = NULL;
+	if (m_pSibling) if (pTexture = m_pSibling->FindReplicatedTexture(pstrTextureName)) return(pTexture);
+	if (m_pChild) if (pTexture = m_pChild->FindReplicatedTexture(pstrTextureName)) return(pTexture);
+
+	return(NULL);
+}
+
+//=========================================================================================================================
 void CGameObject::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256의 배수
@@ -215,9 +262,7 @@ void CGameObject::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graphics
 	m_pd3dcbGameObjects->Map(0, NULL, (void**)&m_pcbMappedGameObjects);
 }
 
-void CGameObject::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
-{
-}
+void CGameObject::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList){}
 
 void CGameObject::ReleaseShaderVariables()
 {
@@ -236,9 +281,7 @@ void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLis
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
 }
 
-void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial)
-{
-}
+void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial){}
 
 void CGameObject::ReleaseUploadBuffers()
 {
@@ -248,6 +291,7 @@ void CGameObject::ReleaseUploadBuffers()
 	if (m_pChild) m_pChild->ReleaseUploadBuffers();
 }
 
+//=========================================================================================================================
 CGameObject* CGameObject::GetRootSkinnedGameObject()
 {
 	if (m_pAnimationController) return(this);
@@ -298,8 +342,6 @@ void CGameObject::UpdateTransform(XMFLOAT4X4* pxmf4x4Parent)
 	if (m_pSibling) m_pSibling->UpdateTransform(pxmf4x4Parent);
 	if (m_pChild) m_pChild->UpdateTransform(&m_xmf4x4World); // 자식에게 부모의 변환정보를 적용시킨다
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //#define _WITH_DEBUG_FRAME_HIERARCHY
 CGameObject* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader, bool bHasAnimation)
@@ -633,34 +675,5 @@ void CGameObject::PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent)
 	if (pGameObject->m_pChild) CGameObject::PrintFrameInfo(pGameObject->m_pChild, pGameObject);
 }
 
-CMaterialColors::CMaterialColors(MATERIALLOADINFO* pMaterialInfo)
-{
-	m_xmf4Diffuse = pMaterialInfo->m_xmf4AlbedoColor;
-	m_xmf4Specular = pMaterialInfo->m_xmf4SpecularColor; //(r,g,b,a=power)
-	m_xmf4Specular.w = (pMaterialInfo->m_fGlossiness * 255.0f);
-	m_xmf4Emissive = pMaterialInfo->m_xmf4EmissiveColor;
-}
-
-CTexture* CGameObject::FindReplicatedTexture(_TCHAR* pstrTextureName)
-{
-	for (int i = 0; i < m_nMaterials; i++)
-	{
-		if (m_ppMaterials[i])
-		{
-			for (int j = 0; j < m_ppMaterials[i]->m_nTextures; j++)
-			{
-				if (m_ppMaterials[i]->m_ppTextures[j])
-				{
-					if (!_tcsncmp(m_ppMaterials[i]->m_ppstrTextureNames[j], pstrTextureName, _tcslen(pstrTextureName))) return(m_ppMaterials[i]->m_ppTextures[j]);
-				}
-			}
-		}
-	}
-	CTexture* pTexture = NULL;
-	if (m_pSibling) if (pTexture = m_pSibling->FindReplicatedTexture(pstrTextureName)) return(pTexture);
-	if (m_pChild) if (pTexture = m_pChild->FindReplicatedTexture(pstrTextureName)) return(pTexture);
-
-	return(NULL);
-}
 
 

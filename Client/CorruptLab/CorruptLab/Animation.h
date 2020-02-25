@@ -14,8 +14,8 @@ class CSkinnedMesh;
 
 struct CALLBACKKEY
 {
-	float  							m_fTime = 0.0f;
-	void* m_pCallbackData = NULL;
+	float  				       m_fTime = 0.0f;
+	void                     * m_pCallbackData = NULL;
 };
 
 //#define _WITH_ANIMATION_SRT
@@ -36,8 +36,8 @@ public:
 	int								m_nAnimationBoneFrames = 0;
 
 	int								m_nKeyFrameTransforms = 0;
-	float* m_pfKeyFrameTransformTimes = NULL;
-	XMFLOAT4X4** m_ppxmf4x4KeyFrameTransforms = NULL;
+	float                         * m_pfKeyFrameTransformTimes = NULL;
+	XMFLOAT4X4                   ** m_ppxmf4x4KeyFrameTransforms = NULL;
 
 #ifdef _WITH_ANIMATION_SRT
 	int								m_nKeyFrameScales = 0;
@@ -58,7 +58,7 @@ public:
 	int								m_nCurrentKey = -1;
 
 	int 							m_nCallbackKeys = 0;
-	CALLBACKKEY* m_pCallbackKeys = NULL;
+	CALLBACKKEY                    * m_pCallbackKeys = NULL;
 
 public:
 	float GetPosition(float fPosition);
@@ -101,19 +101,19 @@ public:
 	float 							m_fTime = 0.0f;
 
 	int								m_nAnimationSets = 0;
-	CAnimationSet* m_pAnimationSets = NULL;
+	CAnimationSet                 * m_pAnimationSets = NULL;
 
 	int								m_nAnimationSet = 0;
 
 	int								m_nAnimationBoneFrames = 0;
-	CGameObject** m_ppAnimationBoneFrameCaches = NULL;
+	CGameObject                  ** m_ppAnimationBoneFrameCaches = NULL;
 
 	int 							m_nAnimationTracks = 0;
-	CAnimationTrack* m_pAnimationTracks = NULL;
+	CAnimationTrack               * m_pAnimationTracks = NULL;
 
 	int  				 			m_nAnimationTrack = 0;
 
-	CGameObject* m_pRootFrame = NULL;
+	CGameObject                   * m_pRootFrame = NULL;
 
 public:
 	void SetAnimationSet(int nAnimationSet);

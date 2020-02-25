@@ -13,26 +13,26 @@
 class CPlayer : public CGameObject
 {
 protected:
-	XMFLOAT3	     m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	XMFLOAT3	     m_xmf3Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
-	XMFLOAT3	     m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
-	XMFLOAT3	     m_xmf3Look = XMFLOAT3(0.0f, 0.0f, 1.0f);
-				     
-	XMFLOAT3	     m_xmf3Velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	XMFLOAT3         m_xmf3Gravity = XMFLOAT3(0.0f, 0.0f, 0.0f);
-				     
-	float            m_fPitch = 0.0f;
-	float            m_fYaw = 0.0f;
-	float            m_fRoll = 0.0f;
-				     
-	float            m_fMaxVelocityXZ = 0.0f;
-	float            m_fMaxVelocityY = 0.0f;
-	float            m_fFriction = 0.0f;
-				     
-	LPVOID		     m_pPlayerUpdatedContext = NULL;
-	LPVOID		     m_pCameraUpdatedContext = NULL;
-				     
-	CCamera		     *m_pCamera = NULL;
+	XMFLOAT3	           m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	XMFLOAT3	           m_xmf3Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	XMFLOAT3	           m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	XMFLOAT3	           m_xmf3Look = XMFLOAT3(0.0f, 0.0f, 1.0f);
+				           
+	XMFLOAT3	           m_xmf3Velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	XMFLOAT3               m_xmf3Gravity = XMFLOAT3(0.0f, 0.0f, 0.0f);
+				           
+	float                  m_fPitch = 0.0f;
+	float                  m_fYaw = 0.0f;
+	float                  m_fRoll = 0.0f;
+				           
+	float                  m_fMaxVelocityXZ = 0.0f;
+	float                  m_fMaxVelocityY = 0.0f;
+	float                  m_fFriction = 0.0f;
+				           
+	LPVOID		           m_pPlayerUpdatedContext = NULL;
+	LPVOID		           m_pCameraUpdatedContext = NULL;
+				           
+	CCamera		           *m_pCamera = NULL;
 
 public:
 	CPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext=NULL, int nMeshes = 1);
@@ -48,7 +48,6 @@ public:
 	void SetMaxVelocityXZ(float fMaxVelocity) { m_fMaxVelocityXZ = fMaxVelocity; }
 	void SetMaxVelocityY(float fMaxVelocity) { m_fMaxVelocityY = fMaxVelocity; }
 	void SetVelocity(const XMFLOAT3& xmf3Velocity) { m_xmf3Velocity = xmf3Velocity; }
-	//void SetPosition(const XMFLOAT3& xmf3Position) { Move(XMFLOAT3(xmf3Position.x - m_xmf3Position.x, xmf3Position.y - m_xmf3Position.y, xmf3Position.z - m_xmf3Position.z), false); }
 
 	const XMFLOAT3& GetVelocity() const { return(m_xmf3Velocity); }
 	float GetYaw() const { return(m_fYaw); }
@@ -92,20 +91,5 @@ public:
 
 	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
 	virtual void OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera);
-};
-
-
-
-
-class CTerrainPlayer : public CPlayer
-{
-public:
-	CTerrainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext=NULL, int nMeshes = 1);
-	virtual ~CTerrainPlayer();
-
-	virtual CCamera *ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
-
-	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
-	virtual void OnCameraUpdateCallback(float fTimeElapsed);
 };
 

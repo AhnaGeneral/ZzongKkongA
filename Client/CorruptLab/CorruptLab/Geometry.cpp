@@ -31,7 +31,8 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 		{
 			xStart = x * (nBlockWidth - 1);
 			zStart = z * (nBlockLength - 1);
-			pHeightMapGridMesh = new CHeightMapGridMesh(pd3dDevice, pd3dCommandList, xStart, zStart, nBlockWidth, nBlockLength, xmf3Scale, xmf4Color, m_pHeightMapImage);
+			pHeightMapGridMesh = new CHeightMapGridMesh(pd3dDevice, pd3dCommandList, xStart, zStart,
+				nBlockWidth, nBlockLength, xmf3Scale, xmf4Color, m_pHeightMapImage);
 			SetMesh(x + (z * cxBlocks), pHeightMapGridMesh);
 		}
 	}
@@ -55,12 +56,17 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	m_ppMaterials[0]->SetTexture(pTerrainTexture);
 
 	SetCbvGPUDescriptorHandle(pTerrainShader->GetGPUCbvDescriptorStartHandle());
-
 }
 
 CHeightMapTerrain::~CHeightMapTerrain(void)
 {
-	if (m_pHeightMapImage) delete m_pHeightMapImage;
+	if (m_pHeightMapImage)
+		delete m_pHeightMapImage;
+	if (m_nMeshes > 0)
+	{
+		for (int i = 0; i < m_nMeshes; ++i)
+			m_ppMeshes[i]->Release();
+	}
 }
 
 void CHeightMapTerrain::SetMesh(int nIndex, CMesh* pMesh)
@@ -112,6 +118,13 @@ void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCame
 			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(pd3dCommandList, i);
 		}
 	}
+}
+
+void CHeightMapTerrain::ReleaseUploadBuffers()
+{
+	if (m_nMeshes)
+		for (int i = 0; i < m_nMeshes; ++i)
+			m_ppMeshes[i]->ReleaseUploadBuffers();
 }
 
 // skybox ==================================================================================================

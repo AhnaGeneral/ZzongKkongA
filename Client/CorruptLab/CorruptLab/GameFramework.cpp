@@ -494,7 +494,7 @@ void CGameFramework::BuildObjects()
 
 void CGameFramework::ReleaseObjects()
 {
-	if (m_pPlayer) delete m_pPlayer;
+	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
 	if (m_pScene) delete m_pScene;
@@ -502,11 +502,11 @@ void CGameFramework::ReleaseObjects()
 	if (m_pPostProcessingShader) 
 		m_pPostProcessingShader->Release();
 	
-	if (CMaterial::m_pSkinnedAnimationShader)
-		CMaterial::m_pSkinnedAnimationShader->Release();
+	//if (CMaterial::m_pSkinnedAnimationShader)
+	//	CMaterial::m_pSkinnedAnimationShader->Release();
 
-	if (CMaterial::m_pStandardShader)
-		CMaterial::m_pStandardShader->Release();
+	//if (CMaterial::m_pStandardShader)
+	//	CMaterial::m_pStandardShader->Release();
 }
 
 void CGameFramework::ProcessInput()

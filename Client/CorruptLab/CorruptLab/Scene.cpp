@@ -68,7 +68,8 @@ void CScene::ReleaseObjects()
 	if (m_pLights) delete m_pLights;
 	if (m_pMaterials) delete m_pMaterials;
 	if (m_pSkyBox) delete m_pSkyBox;
-	if (m_pTerrain) delete m_pTerrain;
+	if (m_pTerrain)
+		delete m_pTerrain;
 
 
 }

@@ -9,38 +9,38 @@
 
 struct LIGHT
 {
-	XMFLOAT4	   m_xmf4Ambient;
-	XMFLOAT4	   m_xmf4Diffuse;
-	XMFLOAT4	   m_xmf4Specular;
-	XMFLOAT3	   m_xmf3Position;
-	float 		   m_fFalloff;
-	XMFLOAT3	   m_xmf3Direction;
-	float 		   m_fTheta; //cos(m_fTheta)
-	XMFLOAT3	   m_xmf3Attenuation;
-	float		   m_fPhi; //cos(m_fPhi)
-	bool		   m_bEnable;
-	int			   m_nType;
-	float		   m_fRange;
-	float		   padding;
-};				   
-				   
-struct LIGHTS	   
-{				   
-	XMFLOAT4	   m_xmf4GlobalAmbient;
-	LIGHT		   m_pLights[MAX_LIGHTS];
-};				   
-				   
-struct MATERIAL	   
-{				   
-	XMFLOAT4	   m_xmf4Ambient;
-	XMFLOAT4	   m_xmf4Diffuse;
-	XMFLOAT4	   m_xmf4Specular; //(r,g,b,a=power)
-	XMFLOAT4	   m_xmf4Emissive;
+	XMFLOAT4	      m_xmf4Ambient;
+	XMFLOAT4	      m_xmf4Diffuse;
+	XMFLOAT4	      m_xmf4Specular;
+	XMFLOAT3	      m_xmf3Position;
+	float 		      m_fFalloff;
+	XMFLOAT3	      m_xmf3Direction;
+	float 		      m_fTheta; //cos(m_fTheta)
+	XMFLOAT3	      m_xmf3Attenuation;
+	float		      m_fPhi; //cos(m_fPhi)
+	bool		      m_bEnable;
+	int			      m_nType;
+	float		      m_fRange;
+	float		      padding;
+};				      
+				      
+struct LIGHTS	      
+{				      
+	XMFLOAT4	      m_xmf4GlobalAmbient;
+	LIGHT		      m_pLights[MAX_LIGHTS];
+};				      
+				      
+struct MATERIAL	      
+{				      
+	XMFLOAT4	      m_xmf4Ambient;
+	XMFLOAT4	      m_xmf4Diffuse;
+	XMFLOAT4	      m_xmf4Specular; //(r,g,b,a=power)
+	XMFLOAT4	      m_xmf4Emissive;
 };
 
 struct MATERIALS
 {
-	MATERIAL	m_pReflections[MAX_MATERIALS];
+	MATERIAL	     m_pReflections[MAX_MATERIALS];
 };
 
 class CHeightMapTerrain;
@@ -48,6 +48,24 @@ class CSkyBox;
 
 class CScene
 {
+public:
+	CPlayer				     *m_pPlayer = NULL;
+						     
+    protected:			     
+	ID3D12RootSignature	     *m_pd3dGraphicsRootSignature = NULL;
+						     
+	LIGHTS				     *m_pLights = NULL;
+	CHeightMapTerrain	     *m_pTerrain = NULL;
+	CSkyBox                  *m_pSkyBox = NULL;
+						     
+	ID3D12Resource		     *m_pd3dcbLights = NULL;
+	LIGHTS				     *m_pcbMappedLights = NULL;
+						     
+	MATERIALS			     *m_pMaterials = NULL;
+						     
+	ID3D12Resource		     *m_pd3dcbMaterials = NULL;
+	MATERIAL			     *m_pcbMappedMaterials = NULL;
+
 public:
     CScene();
     ~CScene();
@@ -62,7 +80,8 @@ public:
 
 	ID3D12RootSignature *CreateGraphicsRootSignature(ID3D12Device *pd3dDevice);
 	ID3D12RootSignature *GetGraphicsRootSignature() { return(m_pd3dGraphicsRootSignature); }
-	void SetGraphicsRootSignature(ID3D12GraphicsCommandList *pd3dCommandList) { pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature); }
+	void SetGraphicsRootSignature(ID3D12GraphicsCommandList *pd3dCommandList)
+	{ pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature); }
 
 	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
@@ -75,22 +94,4 @@ public:
 	void ReleaseUploadBuffers();
 
 	void SetTerrainPipelineState(); 
-
-	CPlayer				*m_pPlayer = NULL;
-
-    protected:
-	ID3D12RootSignature	*m_pd3dGraphicsRootSignature = NULL;
-
-	LIGHTS				*m_pLights = NULL;
-	CHeightMapTerrain	*m_pTerrain = NULL;
-	CSkyBox             *m_pSkyBox = NULL;
-
-	  
-	ID3D12Resource		*m_pd3dcbLights = NULL;
-	LIGHTS				*m_pcbMappedLights = NULL;
-
-	MATERIALS			*m_pMaterials = NULL;
-
-	ID3D12Resource		*m_pd3dcbMaterials = NULL;
-	MATERIAL			*m_pcbMappedMaterials = NULL;
 };
