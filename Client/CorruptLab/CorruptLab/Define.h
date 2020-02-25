@@ -20,4 +20,9 @@
 
 #define ROOT_PARAMETER_TERRAIN_TEX		12
 
+#define ROOT_PARAMETER_SKYBOX_TEX		13
+
+
+
+
 #define EPSILON						1.0e-10f

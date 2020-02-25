@@ -186,3 +186,20 @@ public:
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets = 1);
 };
 
+
+class CSkyBoxShader : public CShader
+{
+
+private:
+	ID3DBlob* m_pd3dVertexShaderBlob = NULL;
+	ID3DBlob* m_pd3dPixelShaderBlob = NULL;
+public:
+	CSkyBoxShader();
+	virtual ~CSkyBoxShader();
+
+	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
+
+	virtual D3D12_SHADER_BYTECODE CreateVertexShader();
+	virtual D3D12_SHADER_BYTECODE CreatePixelShader();
+};

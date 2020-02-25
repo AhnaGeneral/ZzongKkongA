@@ -49,6 +49,8 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	std::cout << "누나 졸작 화이팅 by 은우" << std::endl;
 	XMFLOAT3 xmf3Scale(4.0f, 6.0f, 4.0f);
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
+	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Geometry/terrain.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color);
 
 	BuildLightsAndMaterials();
@@ -65,10 +67,16 @@ void CScene::ReleaseObjects()
 
 	if (m_pLights) delete m_pLights;
 	if (m_pMaterials) delete m_pMaterials;
+	if (m_pSkyBox) delete m_pSkyBox;
+	if (m_pTerrain) delete m_pTerrain;
+
+
 }
 
 void CScene::ReleaseUploadBuffers()
 {
+	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
+	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
 }
 
 void CScene::SetTerrainPipelineState()
@@ -132,7 +140,15 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	pd3dTerrainTexRanges.RegisterSpace = 0;
 	pd3dTerrainTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[13];
+	D3D12_DESCRIPTOR_RANGE pd3dSkyTexRange; 
+	pd3dSkyTexRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dSkyTexRange.NumDescriptors = 1;
+	pd3dSkyTexRange.BaseShaderRegister = 13; // t13:gtxtSkyCubeTexture
+	pd3dSkyTexRange.RegisterSpace = 0;
+	pd3dSkyTexRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+
+	D3D12_ROOT_PARAMETER pd3dRootParameters[14];
 
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].Descriptor.ShaderRegister = 1; //b1 : Camera
@@ -200,21 +216,39 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_TEX].DescriptorTable.pDescriptorRanges = &pd3dTerrainTexRanges;
 	pd3dRootParameters[ROOT_PARAMETER_TERRAIN_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+	pd3dRootParameters[ROOT_PARAMETER_SKYBOX_TEX].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_SKYBOX_TEX].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_SKYBOX_TEX].DescriptorTable.pDescriptorRanges = &pd3dSkyTexRange;
+	pd3dRootParameters[ROOT_PARAMETER_SKYBOX_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
-	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc;
+
+	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
-	d3dSamplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
-	d3dSamplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	d3dSamplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	d3dSamplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	d3dSamplerDesc.MipLODBias = 0;
-	d3dSamplerDesc.MaxAnisotropy = 1;
-	d3dSamplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-	d3dSamplerDesc.MinLOD = 0;
-	d3dSamplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
-	d3dSamplerDesc.ShaderRegister = 0;
-	d3dSamplerDesc.RegisterSpace = 0;
-	d3dSamplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	d3dSamplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+	d3dSamplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	d3dSamplerDesc[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	d3dSamplerDesc[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	d3dSamplerDesc[0].MipLODBias = 0;
+	d3dSamplerDesc[0].MaxAnisotropy = 1;
+	d3dSamplerDesc[0].ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	d3dSamplerDesc[0].MinLOD = 0;
+	d3dSamplerDesc[0].MaxLOD = D3D12_FLOAT32_MAX;
+	d3dSamplerDesc[0].ShaderRegister = 0;
+	d3dSamplerDesc[0].RegisterSpace = 0;
+	d3dSamplerDesc[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	d3dSamplerDesc[1].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;  	// skybox sempler 
+	d3dSamplerDesc[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	d3dSamplerDesc[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	d3dSamplerDesc[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	d3dSamplerDesc[1].MipLODBias = 0;
+	d3dSamplerDesc[1].MaxAnisotropy = 1;
+	d3dSamplerDesc[1].ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	d3dSamplerDesc[1].MinLOD = 0;
+	d3dSamplerDesc[1].MaxLOD = D3D12_FLOAT32_MAX;
+	d3dSamplerDesc[1].ShaderRegister = 1;
+	d3dSamplerDesc[1].RegisterSpace = 0;
+	d3dSamplerDesc[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	//D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
@@ -223,8 +257,8 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 	::ZeroMemory(&d3dRootSignatureDesc, sizeof(D3D12_ROOT_SIGNATURE_DESC));
 	d3dRootSignatureDesc.NumParameters = _countof(pd3dRootParameters);
 	d3dRootSignatureDesc.pParameters = pd3dRootParameters;
-	d3dRootSignatureDesc.NumStaticSamplers = 1;
-	d3dRootSignatureDesc.pStaticSamplers = &d3dSamplerDesc;
+	d3dRootSignatureDesc.NumStaticSamplers = _countof(d3dSamplerDesc);
+	d3dRootSignatureDesc.pStaticSamplers = d3dSamplerDesc;
 	d3dRootSignatureDesc.Flags = d3dRootSignatureFlags;
 
 	ID3DBlob *pd3dSignatureBlob = NULL;
@@ -303,9 +337,10 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 
 	UpdateShaderVariables(pd3dCommandList);
-
+	if (m_pSkyBox) 
+		m_pSkyBox->Render(pd3dCommandList, pCamera);
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
-
+	
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT, d3dcbLightsGpuVirtualAddress); //Lights
 

@@ -44,6 +44,7 @@ struct MATERIALS
 };
 
 class CHeightMapTerrain;
+class CSkyBox;
 
 class CScene
 {
@@ -82,7 +83,9 @@ public:
 
 	LIGHTS				*m_pLights = NULL;
 	CHeightMapTerrain	*m_pTerrain = NULL;
+	CSkyBox             *m_pSkyBox = NULL;
 
+	  
 	ID3D12Resource		*m_pd3dcbLights = NULL;
 	LIGHTS				*m_pcbMappedLights = NULL;
 
