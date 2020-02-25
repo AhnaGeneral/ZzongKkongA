@@ -1,14 +1,4 @@
-﻿  Animation.cpp
-  Camera.cpp
-  CorruptLab.cpp
-  GameFramework.cpp
-  Mesh.cpp
-D:\졸작2\Client\CorruptLab\CorruptLab\Mesh.cpp(57,20): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-  Object.cpp
-  Player.cpp
+﻿  GameFramework.cpp
   Scene.cpp
-  Shader.cpp
-  stdafx.cpp
-  Timer.cpp
   코드를 생성하고 있습니다...
   CorruptLab.vcxproj -> D:\졸작2\Client\CorruptLab\x64\Debug\CorruptLab.exe

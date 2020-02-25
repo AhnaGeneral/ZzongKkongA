@@ -379,6 +379,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				case VK_RETURN:
 					break;
 				case VK_F1:
+					m_pScene->SetTerrainPipelineState();
+					break;
 				case VK_F2:
 				case VK_F3:
 					m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());

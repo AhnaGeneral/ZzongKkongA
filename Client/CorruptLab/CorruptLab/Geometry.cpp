@@ -92,11 +92,16 @@ void CHeightMapTerrain::ChangePipeLine()
 	m_bPipelineStateIndex = (!m_bPipelineStateIndex);
 }
 
+void CHeightMapTerrain::SetPipelinemode()
+{
+	m_bPipelineStateIndex = (!m_bPipelineStateIndex);
+}
+
 void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	OnPrepareRender();
 
-	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera);
+	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera, m_bPipelineStateIndex);
 	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 	UpdateShaderVariables(pd3dCommandList);

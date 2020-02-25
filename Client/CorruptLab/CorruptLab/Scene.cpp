@@ -71,6 +71,11 @@ void CScene::ReleaseUploadBuffers()
 {
 }
 
+void CScene::SetTerrainPipelineState()
+{
+	m_pTerrain->SetPipelinemode();
+}
+
 ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevice)
 {
 	ID3D12RootSignature *pd3dGraphicsRootSignature = NULL;

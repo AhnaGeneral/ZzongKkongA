@@ -73,6 +73,8 @@ public:
 
 	void ReleaseUploadBuffers();
 
+	void SetTerrainPipelineState(); 
+
 	CPlayer				*m_pPlayer = NULL;
 
     protected:
