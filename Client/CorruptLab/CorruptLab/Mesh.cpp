@@ -13,9 +13,6 @@ CMesh::~CMesh()
 	if (m_MeshInfo.m_pd3dVertexBuffer) 
 		m_MeshInfo.m_pd3dVertexBuffer->Release();
 
-	if (m_MeshInfo.m_pd3dIndexBuffer) 
-		m_MeshInfo.m_pd3dIndexBuffer->Release();
-
 	if (m_MeshInfo.m_pd3dColorBuffer)
 		m_MeshInfo.m_pd3dColorBuffer->Release();
 
@@ -25,15 +22,6 @@ CMesh::~CMesh()
 	if (m_MeshInfo.m_pd3dTextureCoord1Buffer)
 		m_MeshInfo.m_pd3dTextureCoord1Buffer->Release();
 
-	if (m_MeshInfo.m_pd3dNormalBuffer)
-		m_MeshInfo.m_pd3dNormalBuffer->Release();
-
-	if (m_MeshInfo.m_pd3dTangentBuffer)
-		m_MeshInfo.m_pd3dTangentBuffer->Release();
-
-	if (m_MeshInfo.m_pd3dBiTangentBuffer)
-		m_MeshInfo.m_pd3dBiTangentBuffer->Release();
-
 
 }
 
@@ -42,8 +30,6 @@ void CMesh::ReleaseUploadBuffers()
 	if (m_MeshInfo.m_pd3dVertexUploadBuffer) 
 		m_MeshInfo.m_pd3dVertexUploadBuffer->Release();
 
-	if (m_MeshInfo.m_pd3dIndexUploadBuffer) 
-		m_MeshInfo.m_pd3dIndexUploadBuffer->Release();
 
 	if (m_MeshInfo.m_pd3dColorUploadBuffer)
 		m_MeshInfo.m_pd3dColorUploadBuffer->Release();
@@ -54,23 +40,11 @@ void CMesh::ReleaseUploadBuffers()
 	if (m_MeshInfo.m_pd3dTextureCoord1UploadBuffer)
 		m_MeshInfo.m_pd3dTextureCoord1UploadBuffer->Release();
 
-	if (m_MeshInfo.m_pd3dNormalUploadBuffer)
-		m_MeshInfo.m_pd3dNormalUploadBuffer->Release();
-
-	if (m_MeshInfo.m_pd3dTangentUploadBuffer)
-		m_MeshInfo.m_pd3dTangentUploadBuffer->Release();
-
-	if (m_MeshInfo.m_pd3dBiTangentUploadBuffer)
-		m_MeshInfo.m_pd3dBiTangentUploadBuffer->Release();
 
 	m_MeshInfo.m_pd3dVertexUploadBuffer = NULL;
-	m_MeshInfo.m_pd3dIndexUploadBuffer = NULL;
 	m_MeshInfo.m_pd3dColorUploadBuffer = NULL;
 	m_MeshInfo.m_pd3dTextureCoord0UploadBuffer = NULL;
 	m_MeshInfo.m_pd3dTextureCoord1UploadBuffer = NULL;
-	m_MeshInfo.m_pd3dNormalUploadBuffer = NULL;
-	m_MeshInfo.m_pd3dTangentUploadBuffer = NULL;
-	m_MeshInfo.m_pd3dBiTangentUploadBuffer = NULL;
 
 };
 
@@ -85,6 +59,15 @@ CStandardMesh::CStandardMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 CStandardMesh::~CStandardMesh()
 {	
+
+	if (m_pd3dNormalBuffer)
+		m_pd3dNormalBuffer->Release();
+
+	if (m_pd3dTangentBuffer)
+		m_pd3dTangentBuffer->Release();
+
+	if (m_pd3dBiTangentBuffer)
+		m_pd3dBiTangentBuffer->Release();
 }
 void CStandardMesh::ReleaseUploadBuffers()
 {
@@ -99,6 +82,19 @@ void CStandardMesh::ReleaseUploadBuffers()
 		if (m_MeshInfo.m_ppd3dSubSetIndexUploadBuffers) delete[] m_MeshInfo.m_ppd3dSubSetIndexUploadBuffers;
 		m_MeshInfo.m_ppd3dSubSetIndexUploadBuffers = NULL;
 	}
+
+	if (m_pd3dNormalUploadBuffer)
+		m_pd3dNormalUploadBuffer->Release();
+
+	if (m_pd3dTangentUploadBuffer)
+		m_pd3dTangentUploadBuffer->Release();
+
+	if (m_pd3dBiTangentUploadBuffer)
+		m_pd3dBiTangentUploadBuffer->Release();
+
+	m_pd3dTangentUploadBuffer = NULL;
+	m_pd3dBiTangentUploadBuffer = NULL;
+	m_pd3dNormalUploadBuffer = NULL;
 }
 
 void CStandardMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
@@ -111,7 +107,7 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 
 	m_MeshInfo.m_nVertices = ::ReadIntegerFromFile(pInFile);
 
-	::ReadStringFromFile(pInFile, m_MeshInfo.m_pstrMeshName);
+	::ReadStringFromFile(pInFile, m_pstrMeshName);
 
 	for (; ; )
 	{
@@ -119,8 +115,8 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 
 		if (!strcmp(pstrToken, "<Bounds>:"))
 		{
-			nReads = (UINT)::fread(&(m_MeshInfo.m_xmf3AABBCenter), sizeof(XMFLOAT3), 1, pInFile);
-			nReads = (UINT)::fread(&(m_MeshInfo.m_xmf3AABBExtents), sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&(m_xmf3AABBCenter), sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&(m_xmf3AABBExtents), sizeof(XMFLOAT3), 1, pInFile);
 		}
 
 		else if (!strcmp(pstrToken, "<Positions>:"))
@@ -158,15 +154,15 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 			if (nNormals > 0)
 			{
 				m_MeshInfo.m_nType |= VERTEXT_NORMAL;
-				m_MeshInfo.m_pxmf3Normals = new XMFLOAT3[nNormals];
-				nReads = (UINT)::fread(m_MeshInfo.m_pxmf3Normals, sizeof(XMFLOAT3), nNormals, pInFile);
+				m_pxmf3Normals = new XMFLOAT3[nNormals];
+				nReads = (UINT)::fread(m_pxmf3Normals, sizeof(XMFLOAT3), nNormals, pInFile);
 			
-				m_MeshInfo.m_pd3dNormalBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_MeshInfo.m_pxmf3Normals, 
-					sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_MeshInfo.m_pd3dNormalUploadBuffer);
+				m_pd3dNormalBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList,m_pxmf3Normals, 
+					sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dNormalUploadBuffer);
 
-				m_MeshInfo.m_d3dNormalBufferView.BufferLocation = m_MeshInfo.m_pd3dNormalBuffer->GetGPUVirtualAddress();
-				m_MeshInfo.m_d3dNormalBufferView.StrideInBytes = sizeof(XMFLOAT3);
-				m_MeshInfo.m_d3dNormalBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices;
+				m_d3dNormalBufferView.BufferLocation =m_pd3dNormalBuffer->GetGPUVirtualAddress();
+				m_d3dNormalBufferView.StrideInBytes = sizeof(XMFLOAT3);
+				m_d3dNormalBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices;
 			}
 		}
 
@@ -176,15 +172,15 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 			if (nTangents > 0)
 			{
 				m_MeshInfo.m_nType |= VERTEXT_TANGENT;
-				m_MeshInfo.m_pxmf3Tangents = new XMFLOAT3[nTangents];
-				nReads = (UINT)::fread(m_MeshInfo.m_pxmf3Tangents, sizeof(XMFLOAT3), nTangents, pInFile);
+				m_pxmf3Tangents = new XMFLOAT3[nTangents];
+				nReads = (UINT)::fread(m_pxmf3Tangents, sizeof(XMFLOAT3), nTangents, pInFile);
 
-				m_MeshInfo.m_pd3dTangentBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_MeshInfo.m_pxmf3Tangents, 
-					sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_MeshInfo.m_pd3dTangentUploadBuffer);
+				m_pd3dTangentBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pxmf3Tangents, 
+					sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dTangentUploadBuffer);
 
-				m_MeshInfo.m_d3dTangentBufferView.BufferLocation = m_MeshInfo.m_pd3dTangentBuffer->GetGPUVirtualAddress();
-				m_MeshInfo.m_d3dTangentBufferView.StrideInBytes = sizeof(XMFLOAT3);
-				m_MeshInfo.m_d3dTangentBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices;
+				m_d3dTangentBufferView.BufferLocation = m_pd3dTangentBuffer->GetGPUVirtualAddress();
+				m_d3dTangentBufferView.StrideInBytes = sizeof(XMFLOAT3);
+				m_d3dTangentBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices;
 			}
 		}
 
@@ -193,15 +189,15 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 			nReads = (UINT)::fread(&nBiTangents, sizeof(int), 1, pInFile);
 			if (nBiTangents > 0)
 			{
-				m_MeshInfo.m_pxmf3BiTangents = new XMFLOAT3[nBiTangents];
-				nReads = (UINT)::fread(m_MeshInfo.m_pxmf3BiTangents, sizeof(XMFLOAT3), nBiTangents, pInFile);
+				m_pxmf3BiTangents = new XMFLOAT3[nBiTangents];
+				nReads = (UINT)::fread(m_pxmf3BiTangents, sizeof(XMFLOAT3), nBiTangents, pInFile);
 
-				m_MeshInfo.m_pd3dBiTangentBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_MeshInfo.m_pxmf3BiTangents,
-					sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_MeshInfo.m_pd3dBiTangentUploadBuffer);
+				m_pd3dBiTangentBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pxmf3BiTangents,
+					sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dBiTangentUploadBuffer);
 
-				m_MeshInfo.m_d3dBiTangentBufferView.BufferLocation = m_MeshInfo.m_pd3dBiTangentBuffer->GetGPUVirtualAddress();
-				m_MeshInfo.m_d3dBiTangentBufferView.StrideInBytes = sizeof(XMFLOAT3);
-				m_MeshInfo.m_d3dBiTangentBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices;
+				m_d3dBiTangentBufferView.BufferLocation = m_pd3dBiTangentBuffer->GetGPUVirtualAddress();
+				m_d3dBiTangentBufferView.StrideInBytes = sizeof(XMFLOAT3);
+				m_d3dBiTangentBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_MeshInfo.m_nVertices;
 			}
 		}
 
@@ -241,15 +237,6 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 			}
 		}
 
-		else if (!strcmp(pstrToken, "<Indices>:"))
-		{
-			nIndices = ::ReadIntegerFromFile(pInFile);
-			if (nIndices > 0)
-			{
-				m_MeshInfo.m_pnIndices = new UINT[nIndices];
-				nReads = (UINT)::fread(m_MeshInfo.m_pnIndices, sizeof(int), nIndices, pInFile);
-			}
-		}
 		else if (!strcmp(pstrToken, "<SubMeshes>:"))
 		{
 			m_MeshInfo.m_nSubMeshes = ::ReadIntegerFromFile(pInFile);
@@ -300,7 +287,7 @@ void CStandardMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubS
 	const int ViewNum = 5;
 	pd3dCommandList->IASetPrimitiveTopology(m_MeshInfo.m_d3dPrimitiveTopology);
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[ViewNum] =
-	{ m_MeshInfo.m_d3dVertexBufferView, m_MeshInfo.m_d3dTextureCoord0BufferView, m_MeshInfo.m_d3dNormalBufferView, m_MeshInfo.m_d3dTangentBufferView, m_MeshInfo.m_d3dBiTangentBufferView };
+	{ m_MeshInfo.m_d3dVertexBufferView, m_MeshInfo.m_d3dTextureCoord0BufferView, m_d3dNormalBufferView, m_d3dTangentBufferView, m_d3dBiTangentBufferView };
 	pd3dCommandList->IASetVertexBuffers(m_MeshInfo.m_nSlot, ViewNum, pVertexBufferViews);
 
 	if ((m_MeshInfo.m_nSubMeshes > 0) && (nSubSet < m_MeshInfo.m_nSubMeshes))
@@ -358,8 +345,8 @@ void CSkinnedMesh::LoadSkinInfoFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 		}
 		else if (!strcmp(pstrToken, "<Bounds>:"))
 		{
-			nReads = (UINT)::fread(&m_MeshInfo.m_xmf3AABBCenter, sizeof(XMFLOAT3), 1, pInFile);
-			nReads = (UINT)::fread(&m_MeshInfo.m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&m_xmf3AABBCenter, sizeof(XMFLOAT3), 1, pInFile);
+			nReads = (UINT)::fread(&m_xmf3AABBExtents, sizeof(XMFLOAT3), 1, pInFile);
 		}
 		else if (!strcmp(pstrToken, "<BoneNames>:"))
 		{
@@ -471,8 +458,8 @@ void CSkinnedMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSe
 	const int ViewNum = 7;
 	pd3dCommandList->IASetPrimitiveTopology(m_MeshInfo.m_d3dPrimitiveTopology);
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[ViewNum] =
-	{ m_MeshInfo.m_d3dVertexBufferView, m_MeshInfo.m_d3dTextureCoord0BufferView, m_MeshInfo.m_d3dNormalBufferView,
-		m_MeshInfo.m_d3dTangentBufferView, m_MeshInfo.m_d3dBiTangentBufferView, m_d3dBoneIndexBufferView,m_d3dBoneWeightBufferView };
+	{ m_MeshInfo.m_d3dVertexBufferView, m_MeshInfo.m_d3dTextureCoord0BufferView, m_d3dNormalBufferView,
+		m_d3dTangentBufferView, m_d3dBiTangentBufferView, m_d3dBoneIndexBufferView,m_d3dBoneWeightBufferView };
 	pd3dCommandList->IASetVertexBuffers(m_MeshInfo.m_nSlot, ViewNum, pVertexBufferViews);
 
 	if ((m_MeshInfo.m_nSubMeshes > 0) && (nSubSet < m_MeshInfo.m_nSubMeshes))

@@ -30,11 +30,7 @@ typedef struct MESHINFO
 	ID3D12Resource                * m_pd3dVertexBuffer = NULL;
 	ID3D12Resource                * m_pd3dVertexUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW        m_d3dVertexBufferView;
-				                    
-	ID3D12Resource                * m_pd3dIndexBuffer = NULL;
-	ID3D12Resource                * m_pd3dIndexUploadBuffer = NULL;
-	D3D12_INDEX_BUFFER_VIEW	        m_d3dIndexBufferView;
-							      
+				               
 	XMFLOAT4                      * m_pxmf4Colors = NULL;
 	ID3D12Resource                * m_pd3dColorBuffer = NULL;
 	ID3D12Resource                * m_pd3dColorUploadBuffer = NULL;
@@ -50,20 +46,6 @@ typedef struct MESHINFO
 	ID3D12Resource                * m_pd3dTextureCoord1UploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dTextureCoord1BufferView;
 
-	XMFLOAT3                      * m_pxmf3Normals = NULL;
-	ID3D12Resource                * m_pd3dNormalBuffer = NULL;
-	ID3D12Resource                * m_pd3dNormalUploadBuffer = NULL;
-	D3D12_VERTEX_BUFFER_VIEW		m_d3dNormalBufferView;
-
-	XMFLOAT3                      * m_pxmf3Tangents = NULL;
-	ID3D12Resource                * m_pd3dTangentBuffer = NULL;
-	ID3D12Resource                * m_pd3dTangentUploadBuffer = NULL;
-	D3D12_VERTEX_BUFFER_VIEW		m_d3dTangentBufferView;
-
-	XMFLOAT3                      * m_pxmf3BiTangents = NULL;
-	ID3D12Resource                * m_pd3dBiTangentBuffer = NULL;
-	ID3D12Resource                * m_pd3dBiTangentUploadBuffer = NULL;
-	D3D12_VERTEX_BUFFER_VIEW		m_d3dBiTangentBufferView;
 
 	int                             m_nSubMeshes = 0;
 	int                           * m_pnSubSetIndices = NULL;
@@ -72,10 +54,6 @@ typedef struct MESHINFO
 	ID3D12Resource               ** m_ppd3dSubSetIndexUploadBuffers = NULL;
 	D3D12_INDEX_BUFFER_VIEW       * m_pd3dSubSetIndexBufferViews = NULL;
 	
-	char                            m_pstrMeshName[256] = { 0 };
-
-	XMFLOAT3             	        m_xmf3AABBCenter = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	XMFLOAT3             	        m_xmf3AABBExtents = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
 	D3D12_PRIMITIVE_TOPOLOGY        m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 							      
@@ -83,12 +61,8 @@ typedef struct MESHINFO
 	UINT					        m_nVertices = 0;
 	UINT					        m_nStride = 0;
 	UINT					        m_nOffset = 0;
-							      
-	UINT					        m_nIndices = 0;
-	UINT                          * m_pnIndices = NULL;
-	UINT					        m_nStartIndex = 0;
+
 	UINT                            m_nType = 0;
-	int						        m_nBaseVertex = 0;
 } MeshInfo;
 
 
@@ -138,6 +112,30 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class CStandardMesh : public CMesh
 {
+protected:
+
+	char                            m_pstrMeshName[256] = { 0 };
+
+	XMFLOAT3* m_pxmf3Tangents = NULL;
+	ID3D12Resource* m_pd3dTangentBuffer = NULL;
+	ID3D12Resource* m_pd3dTangentUploadBuffer = NULL;
+	D3D12_VERTEX_BUFFER_VIEW		m_d3dTangentBufferView;
+
+	XMFLOAT3* m_pxmf3BiTangents = NULL;
+	ID3D12Resource* m_pd3dBiTangentBuffer = NULL;
+	ID3D12Resource* m_pd3dBiTangentUploadBuffer = NULL;
+	D3D12_VERTEX_BUFFER_VIEW		m_d3dBiTangentBufferView;
+
+	XMFLOAT3* m_pxmf3Normals = NULL;
+	ID3D12Resource* m_pd3dNormalBuffer = NULL;
+	ID3D12Resource* m_pd3dNormalUploadBuffer = NULL;
+	D3D12_VERTEX_BUFFER_VIEW		m_d3dNormalBufferView;
+
+
+	XMFLOAT3             	        m_xmf3AABBCenter = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	XMFLOAT3             	        m_xmf3AABBExtents = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+
 public:
 	CStandardMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual ~CStandardMesh();
