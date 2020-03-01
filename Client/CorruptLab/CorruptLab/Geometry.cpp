@@ -5,35 +5,36 @@
 // Terrain ==================================================================================
 CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, LPCTSTR pFileName, int nWidth, int nLength, int nBlockWidth, int nBlockLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color)
 {
-	m_xmf4x4World = Matrix4x4::Identity();
 
-	m_nWidth = nWidth;
-	m_nLength = nLength;
+	m_nWidth = nWidth; // 257 
+	m_nLength = nLength; // 257
 
-	int cxQuadsPerBlock = nBlockWidth - 1;
-	int czQuadsPerBlock = nBlockLength - 1;
+	int cxQuadsPerBlock = nBlockWidth - 1; //8
+	int czQuadsPerBlock = nBlockLength - 1; //8
 
 	m_xmf3Scale = xmf3Scale;
 
 	m_pHeightMapImage = new CHeightMapImage(pFileName, nWidth, nLength, xmf3Scale);
 
-	long cxBlocks = (m_nWidth - 1) / cxQuadsPerBlock;
+	long cxBlocks = (m_nWidth - 1) / cxQuadsPerBlock; //256 / 8 = 32
 	long czBlocks = (m_nLength - 1) / czQuadsPerBlock;
 
-	m_nMeshes = cxBlocks * czBlocks;
-	m_ppMeshes = new CMesh * [m_nMeshes];
-	for (int i = 0; i < m_nMeshes; i++)	m_ppMeshes[i] = NULL;
+	m_nMeshes = cxBlocks * czBlocks; // 32*32 = 1024
+	m_ppMeshes = new CMesh * [m_nMeshes]; // 1024? 
+	for (int i = 0; i < m_nMeshes; i++)	
+		m_ppMeshes[i] = NULL;
 
 	CHeightMapGridMesh* pHeightMapGridMesh = NULL;
-	for (int z = 0, zStart = 0; z < czBlocks; z++)
+	for (int z = 0, zStart = 0; z < czBlocks; z++) // z:0 ~ z:31
 	{
-		for (int x = 0, xStart = 0; x < cxBlocks; x++)
+		for (int x = 0, xStart = 0; x < cxBlocks; x++) //x:0 ~ x:31
 		{
-			xStart = x * (nBlockWidth - 1);
-			zStart = z * (nBlockLength - 1);
+			xStart = x * (nBlockWidth - 1); // x * 8  :: 0 , 8 , 16, 24 .... 248 
+			zStart = z * (nBlockLength - 1); // z * 8
 			pHeightMapGridMesh = new CHeightMapGridMesh(pd3dDevice, pd3dCommandList, xStart, zStart,
 				nBlockWidth, nBlockLength, xmf3Scale, xmf4Color, m_pHeightMapImage);
 			SetMesh(x + (z * cxBlocks), pHeightMapGridMesh);
+			//std:: d
 		}
 	}
 
@@ -109,8 +110,6 @@ void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCame
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 	UpdateShaderVariables(pd3dCommandList);
 
-	//pd3dCommandList->SetGraphicsRootDescriptorTable(2, m_d3dCbvGPUDescriptorHandle);
-
 	if (m_ppMeshes)
 	{
 		for (int i = 0; i < m_nMeshes; i++)
@@ -162,4 +161,32 @@ void CSkyBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamer
 	SetPosition(xmf3CameraPos.x, xmf3CameraPos.y, xmf3CameraPos.z);
 
 	CGameObject::Render(pd3dCommandList, pCamera);
+
+}
+
+CBillboard::CBillboard(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, float fWidth, float fHeight, float fDepth, float fPosX, float fPosY, float fPosZ)
+{
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//SetCbvGPUDescriptorHandlePtr(m_d3dCbvGPUDescriptorStartHandle.ptr + (::gnCbvSrvDescriptorIncrementSize));
+}
+
+CBillboard::~CBillboard()
+{
+}
+
+void CBillboard::Animates(float fTimeElapsed, CCamera* pCamera)
+{
+	XMFLOAT3 xmf3UpdateCameraPosition = pCamera->GetPosition();
+	SetLookAt(xmf3UpdateCameraPosition);
+}
+
+void CBillboard::SetLookAt(XMFLOAT3& xmf3TargetCamera)
+{
+	XMFLOAT3 xmf3UP(0.0f, 1.0f, 0.0f);
+	XMFLOAT3 xmf3Position(m_xmf4x4World._41, m_xmf4x4World._42, m_xmf4x4World._43);
+	XMFLOAT3 xmf3Look = Vector3::Subtract(xmf3TargetCamera, xmf3Position);
+	XMFLOAT3 xmf3Right = Vector3::CrossProduct(xmf3UP, xmf3Look);
+	m_xmf4x4World._11 = xmf3Right.x; m_xmf4x4World._12 = xmf3Right.y; m_xmf4x4World._13 = xmf3Right.z;
+	m_xmf4x4World._21 = xmf3UP.x; m_xmf4x4World._22 = xmf3UP.y; m_xmf4x4World._23 = xmf3UP.z;
+	m_xmf4x4World._31 = xmf3Look.x; m_xmf4x4World._32 = xmf3Look.y; m_xmf4x4World._33 = xmf3Look.y;
 }

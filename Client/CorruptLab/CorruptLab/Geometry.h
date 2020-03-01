@@ -53,7 +53,7 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 };
 
-
+// SkyBox =========================================================================================================
 class CSkyBox : public CGameObject
 {
 public:
@@ -61,4 +61,21 @@ public:
 	virtual ~CSkyBox();
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
+};
+
+ //Cloud =========================================================================================================
+struct GS_BILLBOARD_INSTANCE
+{
+	XMFLOAT3 m_xmf3Position;
+	XMFLOAT2 m_xmf2Size;
+};
+
+class CBillboard : public CGameObject
+{
+public:
+	CBillboard(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, float fWidth, float fHeight, float fDepth, float fPosX, float fPosY, float fPosZ);
+	virtual ~CBillboard();
+
+	virtual void Animates(float fTimeElapsed, CCamera* pCamera); // Gameobject와 다른 애니메이트
+	void SetLookAt(XMFLOAT3& xmf3TargetCamera);
 };

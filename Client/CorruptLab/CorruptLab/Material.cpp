@@ -96,7 +96,10 @@ CShader* CMaterial::m_pSkinnedAnimationShader = NULL;
 CShader* CMaterial::m_pStandardShader = NULL;
 //____________________________________________________
 
-CMaterial::CMaterial() {}
+CMaterial::CMaterial() 
+{
+	
+}
 
 CMaterial::CMaterial(int nTextures)
 {

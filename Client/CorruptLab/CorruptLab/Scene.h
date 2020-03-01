@@ -50,14 +50,14 @@ class CScene
 {
 public:
 	CPlayer				     *m_pPlayer = NULL;
-						     
-    protected:			     
+						     		     
 	ID3D12RootSignature	     *m_pd3dGraphicsRootSignature = NULL;
 						     
 	LIGHTS				     *m_pLights = NULL;
 	CHeightMapTerrain	     *m_pTerrain = NULL;
 	CSkyBox                  *m_pSkyBox = NULL;
-						     
+	CCloudGSShader           *m_pCloudGSShader = NULL;
+
 	ID3D12Resource		     *m_pd3dcbLights = NULL;
 	LIGHTS				     *m_pcbMappedLights = NULL;
 						     

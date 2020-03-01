@@ -51,13 +51,7 @@ typedef struct MESHINFO
 	ID3D12Resource               ** m_ppd3dSubSetIndexUploadBuffers = NULL;
 	D3D12_INDEX_BUFFER_VIEW       * m_pd3dSubSetIndexBufferViews = NULL;
 	
-	D3D12_PRIMITIVE_TOPOLOGY        m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 							      
-	UINT					        m_nSlot = 0;
-	UINT					        m_nVertices = 0;
-	UINT					        m_nStride = 0;
-	UINT					        m_nOffset = 0;
-	UINT                            m_nType = 0;
 } MeshInfo;
 
 // CMesh-----------------------------------------------------------------------------------------
@@ -76,10 +70,18 @@ public:
 	void Release() { if (--m_nReferences <= 0) delete this; }
 
 protected:
-	MeshInfo              m_MeshInfo;
+
+	D3D12_PRIMITIVE_TOPOLOGY        m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST ;
+	UINT				            m_nSlot = 0;
+	UINT				            m_nVertices = 0;
+	UINT				            m_nStride = 0;
+	UINT				            m_nOffset = 0;
+	UINT                            m_nType = 0;
+						            
+	MeshInfo                        m_MeshInfo;
 
 public:
-	UINT GetType() { return(m_MeshInfo.m_nType); }
+	UINT GetType() { return(m_nType); }
 	MeshInfo* GetMeshInfo() { return &m_MeshInfo; }
 
 	virtual void ReleaseUploadBuffers();
@@ -217,7 +219,7 @@ public:
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet);
 };
-
+// CSkyBoxMesh-----------------------------------------------------------------------------------
 class CSkyBoxMesh : public CMesh
 {
 public:
@@ -227,3 +229,14 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet);
 
 };
+
+// CBillboadRectMesh-----------------------------------------------------------------------------------
+//class CBillboardRectMesh : public CMesh
+//{
+//public:
+//	CBillboardRectMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
+//		float fWidth, float fHeight, float fDepth, float fxPosition, float fyPosition, float fzPosition);
+//	virtual ~CBillboardRectMesh();
+//	virtual void ReleaseUploadBuffers();
+//	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet);
+//};

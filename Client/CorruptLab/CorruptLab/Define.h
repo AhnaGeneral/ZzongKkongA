@@ -22,7 +22,7 @@
 
 #define ROOT_PARAMETER_SKYBOX_TEX		13
 
-
+#define ROOT_PARAMETER_CLOUD_TEX		14
 
 
 #define EPSILON						1.0e-10f

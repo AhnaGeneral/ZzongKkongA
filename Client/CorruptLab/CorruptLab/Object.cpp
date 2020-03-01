@@ -124,6 +124,15 @@ void CGameObject::SetPosition(float x, float y, float z)
 	UpdateTransform(NULL); // 포지션이 변한 상태를 그대로 월드행렬에 적용 
 }
 
+void CGameObject::SetPosition(XMFLOAT3 xmf3Position)
+{
+	m_xmf4x4Transform._41 = xmf3Position.x;
+	m_xmf4x4Transform._42 = xmf3Position.y;
+	m_xmf4x4Transform._43 = xmf3Position.z;
+
+	UpdateTransform(NULL); // 포지션이 변한 상태를 그대로 월드행렬에 적용 
+}
+
 void CGameObject::SetScale(float x, float y, float z)
 {
 	XMMATRIX mtxScale = XMMatrixScaling(x, y, z);
