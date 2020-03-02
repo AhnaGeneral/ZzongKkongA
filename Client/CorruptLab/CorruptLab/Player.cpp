@@ -34,8 +34,7 @@ CPlayer::~CPlayer()
 
 void CPlayer::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
 {
-	if (m_pCamera) 
-		m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	if (m_pCamera) m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
 void CPlayer::ReleaseShaderVariables()
@@ -61,7 +60,7 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 
 	/*	if (m_pCamera->GetMode() == SPACESHIP_CAMERA)
 			m_pCamera->Move(xmf3Shift);*/
-		else Move(xmf3Shift, bUpdateVelocity);
+		Move(xmf3Shift, bUpdateVelocity);
 	}
 }
 
@@ -76,7 +75,7 @@ void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 		m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Shift);
 		m_pCamera->Move(xmf3Shift);
 	}
-	SetPosition(m_xmf3Position.x, m_xmf3Position.y, m_xmf3Position.z);
+	//SetPosition(m_xmf3Position.x, m_xmf3Position.y, m_xmf3Position.z);
 }
 
 void CPlayer::Rotate(float x, float y, float z)
@@ -154,14 +153,11 @@ void CPlayer::Update(float fTimeElapsed)
 
 	Move(m_xmf3Velocity, false);
 
-	if (m_pPlayerUpdatedContext) 
-		OnPlayerUpdateCallback(fTimeElapsed);
+	if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
 	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->Update(m_xmf3Position, fTimeElapsed);
-
 	if (m_pCameraUpdatedContext) OnCameraUpdateCallback(fTimeElapsed);
-
 	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->SetLookAt(m_xmf3Position);
 	m_pCamera->RegenerateViewMatrix();
 
@@ -267,12 +263,13 @@ void CMainPlayer::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, CC
 
 void CMainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 {
+	XMFLOAT3 xmf3CameraPosition = m_pCamera->GetPosition();
+
 	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)m_pCameraUpdatedContext;
 	XMFLOAT3 xmf3Scale = pTerrain->GetScale();
-	XMFLOAT3 xmf3CameraPosition = m_pCamera->GetPosition();
 	int z = (int)(xmf3CameraPosition.z / xmf3Scale.z);
 	bool bReverseQuad = ((z % 2) != 0);
-	float fHeight = pTerrain->GetHeight(xmf3CameraPosition.x, xmf3CameraPosition.z, bReverseQuad) + 5.0f;
+	float fHeight = pTerrain->GetHeight(xmf3CameraPosition.x, xmf3CameraPosition.z, bReverseQuad) + 20.0f;
 	if (xmf3CameraPosition.y <= fHeight)
 	{
 		xmf3CameraPosition.y = fHeight;
@@ -287,9 +284,11 @@ void CMainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 
 void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 {
+	XMFLOAT3 xmf3PlayerPosition = GetPosition();
+
 	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)m_pPlayerUpdatedContext;
 	XMFLOAT3 xmf3Scale = pTerrain->GetScale();
-	XMFLOAT3 xmf3PlayerPosition = GetPosition();
+
 	int z = (int)(xmf3PlayerPosition.z / xmf3Scale.z);
 	bool bReverseQuad = ((z % 2) != 0);
 	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 6.0f;
@@ -348,6 +347,8 @@ CCamera *CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		default:
 			break;
 	}
+	m_pCamera->SetPosition(Vector3::Add(m_xmf3Position, m_pCamera->GetOffset()));
+
 	Update(fTimeElapsed);
 
 	return(m_pCamera);

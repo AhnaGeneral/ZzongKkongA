@@ -527,6 +527,7 @@ void CGameFramework::ProcessInput()
 
 		float cxDelta = 0.0f, cyDelta = 0.0f;
 		POINT ptCursorPos;
+
 		if (GetCapture() == m_hWnd)
 		{
 			SetCursor(NULL);
@@ -545,7 +546,8 @@ void CGameFramework::ProcessInput()
 				else
 					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
 			}
-			if (dwDirection) m_pPlayer->Move(dwDirection, 50.0f * m_GameTimer.GetTimeElapsed(), true);
+			if (dwDirection) 
+				m_pPlayer->Move(dwDirection,1.0f, true);
 		}
 	}
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
