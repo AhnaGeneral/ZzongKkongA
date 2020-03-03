@@ -478,7 +478,7 @@ void CGameFramework::BuildObjects()
 	CMaterial::PrepareShaders(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
 	
 	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
-	pAirplanePlayer->SetPosition(0.0f, 0.0f, 0.0f);
+	pAirplanePlayer->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
@@ -547,7 +547,7 @@ void CGameFramework::ProcessInput()
 					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
 			}
 			if (dwDirection) 
-				m_pPlayer->Move(dwDirection,1.0f, true);
+				m_pPlayer->Move(dwDirection, 0.5f, true);
 		}
 	}
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());

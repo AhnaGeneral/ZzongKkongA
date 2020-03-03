@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Shader.h"
 
+
 // CPlayer ======================================================================================================
 CPlayer::CPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext, int nMeshes) : CGameObject()
 {
@@ -58,8 +59,6 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		if (dwDirection & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, fDistance);
 		if (dwDirection & DIR_DOWN) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, -fDistance);
 
-	/*	if (m_pCamera->GetMode() == SPACESHIP_CAMERA)
-			m_pCamera->Move(xmf3Shift);*/
 		Move(xmf3Shift, bUpdateVelocity);
 	}
 }
@@ -75,7 +74,6 @@ void CPlayer::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 		m_xmf3Position = Vector3::Add(m_xmf3Position, xmf3Shift);
 		m_pCamera->Move(xmf3Shift);
 	}
-	//SetPosition(m_xmf3Position.x, m_xmf3Position.y, m_xmf3Position.z);
 }
 
 void CPlayer::Rotate(float x, float y, float z)
@@ -211,12 +209,14 @@ CCamera *CPlayer::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)
 	return(pNewCamera);
 }
 
-void CPlayer::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
+void CPlayer::OnPrepareRender()
 {
-	m_xmf4x4World._11 = m_xmf3Right.x; m_xmf4x4World._12 = m_xmf3Right.y; m_xmf4x4World._13 = m_xmf3Right.z;
-	m_xmf4x4World._21 = m_xmf3Up.x; m_xmf4x4World._22 = m_xmf3Up.y; m_xmf4x4World._23 = m_xmf3Up.z;
-	m_xmf4x4World._31 = m_xmf3Look.x; m_xmf4x4World._32 = m_xmf3Look.y; m_xmf4x4World._33 = m_xmf3Look.z;
-	m_xmf4x4World._41 = m_xmf3Position.x; m_xmf4x4World._42 = m_xmf3Position.y; m_xmf4x4World._43 = m_xmf3Position.z;
+	m_xmf4x4Transform._11 = m_xmf3Right.x; m_xmf4x4Transform._12 = m_xmf3Right.y; m_xmf4x4Transform._13 = m_xmf3Right.z;
+	m_xmf4x4Transform._21 = m_xmf3Up.x; m_xmf4x4Transform._22 = m_xmf3Up.y; m_xmf4x4Transform._23 = m_xmf3Up.z;
+	m_xmf4x4Transform._31 = m_xmf3Look.x; m_xmf4x4Transform._32 = m_xmf3Look.y; m_xmf4x4Transform._33 = m_xmf3Look.z;
+	m_xmf4x4Transform._41 = m_xmf3Position.x; m_xmf4x4Transform._42 = m_xmf3Position.y; m_xmf4x4Transform._43 = m_xmf3Position.z;
+
+	UpdateTransform(NULL);
 }
 
 void CPlayer::SetRootParameter(ID3D12GraphicsCommandList *pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
@@ -240,7 +240,7 @@ CMainPlayer::CMainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
 	CGameObject* pGameObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Johnson/Texture_Idle.bin", NULL, true);
-	SetPosition(0.0f, 0.0f, 0.0f);
+	//SetPosition(0.0f, 0.0f, 0.0f);
 	SetChild(pGameObject, true);
 	OnInitialize();
 
@@ -253,9 +253,9 @@ CMainPlayer::CMainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd
 
 CMainPlayer::~CMainPlayer() {}
 
-void CMainPlayer::OnPrepareRender(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
+void CMainPlayer::OnPrepareRender()
 {
-	CPlayer::OnPrepareRender(pd3dCommandList, pCamera);
+	CPlayer::OnPrepareRender();
 
 	XMMATRIX mtxRotate = XMMatrixRotationRollPitchYaw(XMConvertToRadians(90.0f), 0.0f, 0.0f);
 	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
@@ -291,7 +291,7 @@ void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 
 	int z = (int)(xmf3PlayerPosition.z / xmf3Scale.z);
 	bool bReverseQuad = ((z % 2) != 0);
-	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 6.0f;
+	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 3.0f;
 	if (xmf3PlayerPosition.y < fHeight)
 	{
 		XMFLOAT3 xmf3PlayerVelocity = GetVelocity();
@@ -299,6 +299,7 @@ void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 		SetVelocity(xmf3PlayerVelocity);
 		xmf3PlayerPosition.y = fHeight;
 		SetPosition(xmf3PlayerPosition);
+		//m_xmf3Position = xmf3PlayerPosition;
 	}
 }
 
@@ -334,7 +335,7 @@ CCamera *CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 			break;
 		case THIRD_PERSON_CAMERA:
 			SetFriction(250.0f);
-			SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
+			SetGravity(XMFLOAT3(0.0f, -250.0f, 0.0f));
 			SetMaxVelocityXZ(125.0f);
 			SetMaxVelocityY(400.0f);
 			m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
