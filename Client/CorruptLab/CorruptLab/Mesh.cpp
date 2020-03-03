@@ -623,45 +623,6 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	m_MeshInfo.m_d3dTextureCoord1BufferView.StrideInBytes = sizeof(XMFLOAT2);
 	m_MeshInfo.m_d3dTextureCoord1BufferView.SizeInBytes = sizeof(XMFLOAT2) * m_nVertices;
 
-	m_MeshInfo.m_nSubMeshes = 1;
-	m_MeshInfo.m_pnSubSetIndices = new int[m_MeshInfo.m_nSubMeshes];
-	m_MeshInfo.m_ppnSubSetIndices = new UINT * [m_MeshInfo.m_nSubMeshes];
-
-	m_MeshInfo.m_ppd3dSubSetIndexBuffers = new ID3D12Resource * [m_MeshInfo.m_nSubMeshes];
-	m_MeshInfo.m_ppd3dSubSetIndexUploadBuffers = new ID3D12Resource * [m_MeshInfo.m_nSubMeshes];
-	m_MeshInfo.m_pd3dSubSetIndexBufferViews = new D3D12_INDEX_BUFFER_VIEW[m_MeshInfo.m_nSubMeshes];
-
-	m_MeshInfo.m_pnSubSetIndices[0] = ((nWidth * 2) * (nLength - 1)) + ((nLength - 1) - 1);
-	m_MeshInfo.m_ppnSubSetIndices[0] = new UINT[m_MeshInfo.m_pnSubSetIndices[0]];
-
-	for (int j = 0, z = 0; z < nLength - 1; z++)
-	{
-		if ((z % 2) == 0)
-		{
-			for (int x = 0; x < nWidth; x++)
-			{
-				if ((x == 0) && (z > 0)) m_MeshInfo.m_ppnSubSetIndices[0][j++] = (UINT)(x + (z * nWidth));
-				m_MeshInfo.m_ppnSubSetIndices[0][j++] = (UINT)(x + (z * nWidth));
-				m_MeshInfo.m_ppnSubSetIndices[0][j++] = (UINT)((x + (z * nWidth)) + nWidth);
-			}
-		}
-		else
-		{
-			for (int x = nWidth - 1; x >= 0; x--)
-			{
-				if (x == (nWidth - 1)) m_MeshInfo.m_ppnSubSetIndices[0][j++] = (UINT)(x + (z * nWidth));
-				m_MeshInfo.m_ppnSubSetIndices[0][j++] = (UINT)(x + (z * nWidth));
-				m_MeshInfo.m_ppnSubSetIndices[0][j++] = (UINT)((x + (z * nWidth)) + nWidth);
-			}
-		}
-	}
-
-	m_MeshInfo.m_ppd3dSubSetIndexBuffers[0] = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_MeshInfo.m_ppnSubSetIndices[0], sizeof(UINT) * m_MeshInfo.m_pnSubSetIndices[0], D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER, &m_MeshInfo.m_ppd3dSubSetIndexUploadBuffers[0]);
-
-	m_MeshInfo.m_pd3dSubSetIndexBufferViews[0].BufferLocation = m_MeshInfo.m_ppd3dSubSetIndexBuffers[0]->GetGPUVirtualAddress();
-	m_MeshInfo.m_pd3dSubSetIndexBufferViews[0].Format = DXGI_FORMAT_R32_UINT;
-	m_MeshInfo.m_pd3dSubSetIndexBufferViews[0].SizeInBytes = sizeof(UINT) * m_MeshInfo.m_pnSubSetIndices[0];
-
 }
 
 CHeightMapGridMesh::~CHeightMapGridMesh() {}
@@ -705,16 +666,8 @@ void CHeightMapGridMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int 
 
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[4] = { m_MeshInfo.m_d3dPositionBufferView,  m_MeshInfo.m_d3dColorBufferView, m_MeshInfo.m_d3dTextureCoord0BufferView, m_MeshInfo.m_d3dTextureCoord1BufferView };
 	pd3dCommandList->IASetVertexBuffers(m_nSlot, 4, pVertexBufferViews);
+	pd3dCommandList->DrawInstanced(m_nVertices, 1, m_nOffset, 0);
 
-	if ((m_MeshInfo.m_nSubMeshes > 0) && (nSubSet < m_MeshInfo.m_nSubMeshes))
-	{
-		pd3dCommandList->IASetIndexBuffer(&(m_MeshInfo.m_pd3dSubSetIndexBufferViews[nSubSet]));
-		pd3dCommandList->DrawIndexedInstanced(m_MeshInfo.m_pnSubSetIndices[nSubSet], 1, 0, 0, 0);
-	}
-	else
-	{
-		pd3dCommandList->DrawInstanced(m_nVertices, 1, m_nOffset, 0);
-	}
 }
 
 // CSkyBoxMesh-----------------------------------------------------------------------------------

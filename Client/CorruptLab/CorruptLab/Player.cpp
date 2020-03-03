@@ -137,11 +137,17 @@ void CPlayer::Rotate(float x, float y, float z)
 
 void CPlayer::Update(float fTimeElapsed)
 {
+	if(::IsZero(m_fVelocityXZ))
+		SetAnimationSet(JOHNSON_ANIAMATION_IDLE);
+	else
+		SetAnimationSet(JOHNSON_ANIAMATION_WALK);
+
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Gravity, fTimeElapsed, false));
 	float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
 	float fMaxVelocityXZ = m_fMaxVelocityXZ * fTimeElapsed;
-	if (fLength > m_fMaxVelocityXZ)
+	if (fLength >= 2.f)
 	{
+		SetAnimationSet(JOHNSON_ANIAMATION_RUN);
 		m_xmf3Velocity.x *= (fMaxVelocityXZ / fLength);
 		m_xmf3Velocity.z *= (fMaxVelocityXZ / fLength);
 	}
@@ -159,9 +165,10 @@ void CPlayer::Update(float fTimeElapsed)
 	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->SetLookAt(m_xmf3Position);
 	m_pCamera->RegenerateViewMatrix();
 
-	fLength = Vector3::Length(m_xmf3Velocity);
-	float fDeceleration = (m_fFriction * fTimeElapsed);
-	if (fDeceleration > fLength) fDeceleration = fLength;
+	m_fVelocityXZ = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
+	float fDeceleration = (m_fFriction * fTimeElapsed) * 0.5f;
+	if (fDeceleration > m_fVelocityXZ) 
+		fDeceleration = m_fVelocityXZ;
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Velocity, -fDeceleration, true));
 }
 
@@ -239,7 +246,7 @@ CMainPlayer::CMainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
 
-	CGameObject* pGameObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Johnson/Texture_Idle.bin", NULL, true);
+	CGameObject* pGameObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Johnson/Johnson.bin", NULL, true);
 	//SetPosition(0.0f, 0.0f, 0.0f);
 	SetChild(pGameObject, true);
 	OnInitialize();
@@ -303,6 +310,23 @@ void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 	}
 }
 
+void CMainPlayer::Update(float fTimeElapsed)
+{
+	CPlayer::Update(fTimeElapsed);
+
+	//SetAnimation();
+}
+
+void CMainPlayer::SetAnimation()
+{
+	if (::IsZero(m_fVelocityXZ))
+		SetAnimationSet(JOHNSON_ANIAMATION_IDLE);
+	else if (m_fVelocityXZ >= 1.3f)
+		SetAnimationSet(JOHNSON_ANIAMATION_RUN);
+	else
+		SetAnimationSet(JOHNSON_ANIAMATION_WALK);
+}
+
 CCamera *CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 {
 	DWORD nCurrentCameraMode = (m_pCamera) ? m_pCamera->GetMode() : 0x00;
@@ -334,13 +358,13 @@ CCamera *CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 			m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 			break;
 		case THIRD_PERSON_CAMERA:
-			SetFriction(250.0f);
+			SetFriction(300.0f);
 			SetGravity(XMFLOAT3(0.0f, -250.0f, 0.0f));
-			SetMaxVelocityXZ(125.0f);
+			SetMaxVelocityXZ(150.f);
 			SetMaxVelocityY(400.0f);
 			m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 			m_pCamera->SetTimeLag(0.25f);
-			m_pCamera->SetOffset(XMFLOAT3(0.0f, 20.0f, -15.0f));
+			m_pCamera->SetOffset(XMFLOAT3(0.0f, -10.0f, -15.0f));
 			m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 60.0f);
 			m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 			m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);

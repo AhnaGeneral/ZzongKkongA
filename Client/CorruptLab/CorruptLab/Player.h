@@ -26,6 +26,7 @@ protected:
 	float                  m_fYaw = 0.0f;
 	float                  m_fRoll = 0.0f;
 				           
+	float				   m_fVelocityXZ = 0.0f;
 	float                  m_fMaxVelocityXZ = 0.0f;
 	float                  m_fMaxVelocityY = 0.0f;
 	float                  m_fFriction = 0.0f;
@@ -64,7 +65,7 @@ public:
 	void Move(float fxOffset = 0.0f, float fyOffset = 0.0f, float fzOffset = 0.0f);
 	void Rotate(float x, float y, float z);
 
-	void Update(float fTimeElapsed);
+	virtual void Update(float fTimeElapsed);
 
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed) {}
 	void SetPlayerUpdatedContext(LPVOID pContext) { m_pPlayerUpdatedContext = pContext; }
@@ -96,6 +97,8 @@ public:
 	virtual void OnCameraUpdateCallback(float fTimeElapsed) ;
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed) ;
 
-
+	virtual void Update(float fTimeElapsed);
+	
+	void SetAnimation();
 };
 

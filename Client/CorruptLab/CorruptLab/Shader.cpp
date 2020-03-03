@@ -786,7 +786,7 @@ D3D12_INPUT_LAYOUT_DESC CSkinnedAnimationShader::CreateInputLayout()
 
  void CCloudGSShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
  {
-	 int m_nObjects = m_nInstances = 10; 
+	 int m_nObjects = m_nInstances = 100; 
 	 
 	 GS_BILLBOARD_INSTANCE* pCloudInfo = new GS_BILLBOARD_INSTANCE[m_nInstances];
 
@@ -798,11 +798,17 @@ D3D12_INPUT_LAYOUT_DESC CSkinnedAnimationShader::CreateInputLayout()
 
 	 CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 1);
 	 CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pCloudTexture, ROOT_PARAMETER_CLOUD_TEX, false);
-
+	 float randX, randY, randZ;
+	 float sizeX, sizeY;
 	 for (int i = 0; i < m_nInstances; ++i)
 	 {
-		 pCloudInfo[i].m_xmf3Position = XMFLOAT3(0.0f+i, 0.0f, 0.0f);
-		 pCloudInfo[i].m_xmf2Size = XMFLOAT2(100.f, 100.f);
+		 randX = float(rand() % 1500);
+		 randY = float(rand() % 50) + 250.f;
+		 randZ = float(rand() % 1500);
+		 sizeX = float(rand() % 40) + 80.f;
+		 sizeY = float(rand() % 20) + 80.f;
+		 pCloudInfo[i].m_xmf3Position = XMFLOAT3(randX, randY, randZ);
+		 pCloudInfo[i].m_xmf2Size = XMFLOAT2(sizeX, sizeY);
 	 }
 	 m_pd3dInstancesBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pCloudInfo, sizeof(GS_BILLBOARD_INSTANCE) * m_nInstances, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dInstanceUploadBuffer);
 
