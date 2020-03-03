@@ -259,6 +259,7 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	d3dRenderTargetViewDesc.Texture2D.MipSlice = 0;
 	d3dRenderTargetViewDesc.Texture2D.PlaneSlice = 0;
 
+	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 	for (UINT i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 	{
 		// [ GameFramework.h ]
@@ -274,6 +275,9 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pPostProcessingShader->GetGraphicsRootSignature());
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pTextureForPostProcessing);
 
+	m_pd3dCommandList->Close();
+	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
+	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 	m_TestTexture = pTextureForPostProcessing;
 }
 

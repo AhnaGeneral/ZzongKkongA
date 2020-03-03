@@ -57,7 +57,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, 3);
 	m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 
-	TriangleRect* pTrianglemesh = new TriangleRect(pd3dDevice, pd3dCommandList, 50.0f, 100.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	CTriangleRect* pTrianglemesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 50.0f, 100.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	m_pTestScreen = new CBillboard(pd3dDevice, pd3dCommandList, 50.0f, 100.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	m_pTestScreen->SetMesh(pTrianglemesh);
 

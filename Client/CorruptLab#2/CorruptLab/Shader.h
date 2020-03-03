@@ -121,6 +121,7 @@ public:
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
 };
 
+class CMesh;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class CPostProcessingShader : public CShader
 {
@@ -145,6 +146,7 @@ public:
 
 protected:
 	CTexture  *m_pTexture = NULL;
+	CMesh		*m_pRect  = NULL;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,6 +158,7 @@ public:
 	virtual ~CPostProcessingByLaplacianShader();
 
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+
 };
 
 

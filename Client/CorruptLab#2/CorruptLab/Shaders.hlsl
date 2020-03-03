@@ -199,3 +199,29 @@ float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Targe
 	return(float4(cColor, 1.0f));
 
 }
+
+struct VS_TEXTURED_INPUT
+{
+	float3 position : POSITION;
+	float2 uv : TEXCOORD;
+};
+
+struct VS_TEXTURED_OUTPUT
+{
+	float4 position : SV_POSITION;
+	float2 uv : TEXCOORD;
+};
+
+VS_TEXTURED_OUTPUT VSUI(VS_TEXTURED_INPUT input)  /// 직교투영
+{
+	VS_TEXTURED_OUTPUT output;
+	output.position = float4(input.position, 1.0f);
+	output.uv = input.uv;
+	return(output);
+}
+
+float4 PSUI(VS_TEXTURED_OUTPUT input, float4 position : SV_POSITION) : SV_TARGET //backbufferm
+{
+	float4 cColor = gtxtScene.Sample(gSamplerState, input.uv);
+	return cColor;
+}

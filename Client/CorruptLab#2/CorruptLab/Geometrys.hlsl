@@ -245,10 +245,10 @@ void GS(point VS_BILLBOARD_OUTPUT input[1], inout TriangleStream<GS_BILLBOARD_OU
 float4 PSBillboard(GS_BILLBOARD_OUTPUT input, float4 position : SV_POSITION) : SV_TARGET
 {
 	float3 uvw = float3 (input.UV,0.0f);
-	//float4 cColor = gtxCloudTextures.Sample(gSamplerState, uvw);
+	float4 cColor = gtxCloudTextures.Sample(gSamplerState, uvw);
 	//gtxtScene[int2(position.xy)].rgb
 	//float4 cColor = float4(gtxtScene[int2(position.xy)].rgb, 1.0f);
-	float4 cColor = float4(0.0f, 1.0f, 1.0f , 1.0f);
+	//float4 cColor = float4(0.0f, 1.0f, 1.0f , 1.0f);
 	//clip(cColor.a - 0.1f);
 	return(cColor);
 }
