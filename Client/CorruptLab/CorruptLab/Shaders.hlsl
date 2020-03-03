@@ -17,7 +17,7 @@ cbuffer cbCameraInfo : register(b1)
 cbuffer cbGameObjectInfo : register(b2)
 {
 	matrix		    gmtxGameObject : packoffset(c0);
-	MATERIAL        gMaterial : packoffset(c4); 
+	MATERIAL        gMaterial : packoffset(c4);
 };
 
 #include "Light.hlsl"
@@ -105,30 +105,30 @@ VS_TEXTURED_LIGHTING_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT
 
 VS_TEXTURED_LIGHTING_OUTPUT VSLighting(VS_TEXTURED_LIGHTING_INPUT input)
 {
-	VS_TEXTURED_LIGHTING_OUTPUT output; 
-	
+	VS_TEXTURED_LIGHTING_OUTPUT output;
+
 	output.normalW = mul(input.normal, (float3x3)gmtxGameObject);
 	output.positionW = (float3)mul(float4(input.position, 1.0f), gmtxGameObject);
 	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
 	output.tangentW = mul(input.tangent, (float3x3)gmtxGameObject);
 	output.bitangentW = mul(input.bitangent, (float3x3)gmtxGameObject);
 	output.uv = input.uv;
-	return output; 
+	return output;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
-	float4 color  : SV_TARGET0; 
+	float4 color  : SV_TARGET0;
 	float4 normal : SV_TARGET1;
 	float4 object : SV_TARGET2; // 필요 없어보이니까 랜덤타겟 개수 확실히 정하고 바꿀때 지울것
 };
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LIGHTING_OUTPUT input)
 {
-	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
-	
-	output.normal = float4(input.normalW,1); 
+	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+
+	output.normal = float4(input.normalW, 1);
 	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
 	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
 
@@ -141,9 +141,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 
 	if (cColorAlbedo.a < 1.0f)
 	{
-		discard; 
+		discard;
 	}
-		
+
 	output.color = lerp(cColorAlbedo, cColorLighted, 0.4f);
 	//output.color = float4(input.uv,1,1);
 	return output;
@@ -198,4 +198,30 @@ float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Targe
 
 	return(float4(cColor, 1.0f));
 
+}
+
+struct VS_TEXTURED_INPUT
+{
+	float3 position : POSITION;
+	float2 uv : TEXCOORD;
+};
+
+struct VS_TEXTURED_OUTPUT
+{
+	float4 position : SV_POSITION;
+	float2 uv : TEXCOORD;
+};
+
+VS_TEXTURED_OUTPUT VSUI(VS_TEXTURED_INPUT input)  /// 직교투영
+{
+	VS_TEXTURED_OUTPUT output;
+	output.position = float4(input.position, 1.0f);
+	output.uv = input.uv;
+	return(output);
+}
+
+float4 PSUI(VS_TEXTURED_OUTPUT input, float4 position : SV_POSITION) : SV_TARGET //backbufferm
+{
+	float4 cColor = gtxtScene.Sample(gSamplerState, input.uv);
+	return cColor;
 }
