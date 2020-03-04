@@ -6,15 +6,15 @@
 #include "Scene.h"
 #include "Geometry.h"
 
-CScene::CScene()
+CGameScene::CGameScene()
 {
 }
 
-CScene::~CScene()
+CGameScene::~CGameScene()
 {
 }
 
-void CScene::BuildLightsAndMaterials()
+void CGameScene::BuildLightsAndMaterials()
 {
 	m_pLights = new LIGHTS;
 	::ZeroMemory(m_pLights, sizeof(LIGHTS));
@@ -42,7 +42,7 @@ void CScene::BuildLightsAndMaterials()
 
 }
 
-void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
+void CGameScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
 {
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
@@ -57,12 +57,13 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, 3);
 	m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 
+
 	BuildLightsAndMaterials();
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
-void CScene::ReleaseObjects()
+void CGameScene::ReleaseObjects()
 {
 	if (m_pd3dGraphicsRootSignature)
 		m_pd3dGraphicsRootSignature->Release();
@@ -74,20 +75,34 @@ void CScene::ReleaseObjects()
 	if (m_pSkyBox)        delete m_pSkyBox;
 	if (m_pTerrain)       delete m_pTerrain;
 	if (m_pCloudGSShader) delete m_pCloudGSShader; 
+
+
+	if (m_pObjectLists) // 오브젝트 Release
+	{
+		for (int i = 0; i < m_nObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pObjectLists[i])
+			{
+				Obj->Release();
+			}
+		}
+	}
+	delete[] m_pObjectLists;
+
 }
 
-void CScene::ReleaseUploadBuffers()
+void CGameScene::ReleaseUploadBuffers()
 {
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
 	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
 }
 
-void CScene::SetTerrainPipelineState()
+void CGameScene::SetTerrainPipelineState()
 {
 	m_pTerrain->SetPipelinemode();
 }
 
-ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevice)
+ID3D12RootSignature *CGameScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevice)
 {
 	ID3D12RootSignature *pd3dGraphicsRootSignature = NULL;
 
@@ -287,7 +302,7 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 
 }
 
-void CScene::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
+void CGameScene::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
 {
 	UINT ncbElementBytes = ((sizeof(LIGHTS) + 255) & ~255); //256의 배수
 	m_pd3dcbLights = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
@@ -300,13 +315,13 @@ void CScene::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComma
 	m_pd3dcbMaterials->Map(0, NULL, (void **)&m_pcbMappedMaterials);
 }
 
-void CScene::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
+void CGameScene::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
 {
 	::memcpy(m_pcbMappedLights, m_pLights, sizeof(LIGHTS));
 	::memcpy(m_pcbMappedMaterials, m_pMaterials, sizeof(MATERIALS));
 }
 
-void CScene::ReleaseShaderVariables()
+void CGameScene::ReleaseShaderVariables()
 {
 	if (m_pd3dcbLights)
 	{
@@ -320,22 +335,89 @@ void CScene::ReleaseShaderVariables()
 	}
 }
 
-bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	return(false);
+	switch (nMessageID)
+	{
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+		::SetCapture(hWnd);
+		::GetCursorPos(&m_ptOldCursorPos);
+		break;
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+		::ReleaseCapture();
+		break;
+	case WM_MOUSEMOVE:
+		break;
+	default:
+		break;
+	}
+
+	return true;
 }
 
-bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
+bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	return(false);
+	switch (nMessageID)
+	{
+	case WM_KEYUP:
+		switch (wParam)
+		{
+		case VK_F1:
+			SetTerrainPipelineState();
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return true;
 }
 
-bool CScene::ProcessInput(UCHAR *pKeysBuffer)
+bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 {
-	return(false);
+	DWORD dwDirection = 0;
+	if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
+	if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
+	if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
+	if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
+	if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
+	if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
+
+	float cxDelta = 0.0f, cyDelta = 0.0f;
+	POINT ptCursorPos;
+
+	if (GetCapture() == hWnd)
+	{
+		SetCursor(NULL);
+		GetCursorPos(&ptCursorPos);
+		cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+		cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+		SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+	}
+
+	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
+	{
+		if (cxDelta || cyDelta)
+		{
+			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+				m_pPlayer->Rotate(cyDelta, 0.0f, -cxDelta);
+			else
+				m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
+		}
+		if (dwDirection)
+			m_pPlayer->Move(dwDirection, 0.5f, true);
+	}
+	m_pPlayer->Update(m_fElapsedTime);
+
+	return true;
 }
 
-void CScene::AnimateObjects(float fTimeElapsed)
+void CGameScene::AnimateObjects(float fTimeElapsed)
 {
 	if (m_pLights)
 	{
@@ -344,7 +426,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	}
 }
 
-void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
+void CGameScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
 {
 	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 
@@ -353,12 +435,35 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 
 	UpdateShaderVariables(pd3dCommandList);
 	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
-
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
+
+	if (m_pObjectLists) // 오브젝트 Render
+	{
+		for (int i = 0; i < m_nObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pObjectLists[i])
+			{
+				Obj->Render(pd3dCommandList, pCamera);
+			}
+		}
+	}
+
 	if (m_pCloudGSShader) m_pCloudGSShader->Render(pd3dCommandList, pCamera); 
+
 	
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT, d3dcbLightsGpuVirtualAddress); //Lights
 
+
+	m_pPlayer->Render(pd3dCommandList, pCamera);
+}
+
+
+void CGameScene::Update(float fTimeElapsed)
+{
+	m_fElapsedTime = fTimeElapsed;
+	AnimateObjects(fTimeElapsed);
+
+	m_pPlayer->Animate(fTimeElapsed, NULL);
 }
 

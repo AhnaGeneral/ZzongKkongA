@@ -93,7 +93,7 @@ public:
 	//=============================================================
 private:
 	CPostProcessingShader* m_pPostProcessingShader = NULL;
-	CScene* m_pScene = NULL;
+	CGameScene* m_pScene = NULL;
 	CPlayer* m_pPlayer = NULL;
 	CCamera* m_pCamera = NULL;
 	//=============================================================

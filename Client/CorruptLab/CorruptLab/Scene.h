@@ -6,6 +6,8 @@
 
 #include "Shader.h"
 #include "Player.h"
+#include <list>
+using namespace std;
 
 struct LIGHT
 {
@@ -46,52 +48,96 @@ struct MATERIALS
 class CHeightMapTerrain;
 class CSkyBox;
 
+
 class CScene
 {
 public:
-	CPlayer				     *m_pPlayer = NULL;
-						     		     
-	ID3D12RootSignature	     *m_pd3dGraphicsRootSignature = NULL;
-						     
-	LIGHTS				     *m_pLights = NULL;
-	CHeightMapTerrain	     *m_pTerrain = NULL;
-	CSkyBox                  *m_pSkyBox = NULL;
-	CCloudGSShader           *m_pCloudGSShader = NULL;
+	CScene() {}
+	~CScene() {}
 
-	ID3D12Resource		     *m_pd3dcbLights = NULL;
-	LIGHTS				     *m_pcbMappedLights = NULL;
-						     
-	MATERIALS			     *m_pMaterials = NULL;
-						     
-	ID3D12Resource		     *m_pd3dcbMaterials = NULL;
-	MATERIAL			     *m_pcbMappedMaterials = NULL;
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) = 0;
+	virtual void ReleaseObjects() = 0;
+
+	ID3D12RootSignature* m_pd3dGraphicsRootSignature = NULL;
+
+	virtual ID3D12RootSignature* CreateGraphicsRootSignature(ID3D12Device* pd3dDevice) = 0;
+	ID3D12RootSignature* GetGraphicsRootSignature() { return(m_pd3dGraphicsRootSignature); }
+	void SetGraphicsRootSignature(ID3D12GraphicsCommandList* pd3dCommandList) { pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature); }
+
+	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) = 0;
+	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) = 0;
+
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) = 0;
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList) = 0;
+	virtual void ReleaseShaderVariables() = 0;
+
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL) = 0;
+	virtual void Update(float fTimeElapsed) = 0;
+
+	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd) = 0;
+
+	virtual void ReleaseUploadBuffers() = 0;
+
+	CCamera* m_pCamera = NULL;
+
+protected:
+	float m_fElapsedTime;
+};
+
+
+
+class CGameScene : public CScene
+{
+public:
+	CPlayer* m_pPlayer = NULL;
+
+	LIGHTS* m_pLights = NULL;
+	CHeightMapTerrain* m_pTerrain = NULL;
+	CSkyBox* m_pSkyBox = NULL;
+	CCloudGSShader* m_pCloudGSShader = NULL;
+
+	ID3D12Resource* m_pd3dcbLights = NULL;
+	LIGHTS* m_pcbMappedLights = NULL;
+
+	MATERIALS* m_pMaterials = NULL;
+
+	ID3D12Resource* m_pd3dcbMaterials = NULL;
+	MATERIAL* m_pcbMappedMaterials = NULL;
 
 public:
-    CScene();
-    ~CScene();
+	CGameScene();
+	~CGameScene();
 
-	bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
-	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
-
-	void BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
-	void ReleaseObjects();
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void ReleaseObjects();
 
 	void BuildLightsAndMaterials();
 
-	ID3D12RootSignature *CreateGraphicsRootSignature(ID3D12Device *pd3dDevice);
-	ID3D12RootSignature *GetGraphicsRootSignature() { return(m_pd3dGraphicsRootSignature); }
-	void SetGraphicsRootSignature(ID3D12GraphicsCommandList *pd3dCommandList)
-	{ pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature); }
+	virtual ID3D12RootSignature* CreateGraphicsRootSignature(ID3D12Device* pd3dDevice);
 
-	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
-	bool ProcessInput(UCHAR *pKeysBuffer);
-    void AnimateObjects(float fTimeElapsed);
-    void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
+	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	void ReleaseUploadBuffers();
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
+	virtual void Update(float fTimeElapsed);
 
-	void SetTerrainPipelineState(); 
+	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd);
+
+	void AnimateObjects(float fTimeElapsed);
+
+	virtual void ReleaseUploadBuffers();
+
+	void SetTerrainPipelineState();
+	void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+
+
+private: // 배치되는 오브젝트들
+
+	POINT					m_ptOldCursorPos;
+	int						m_nObjectTypeNum; // 오브젝트 종류 개수
+	list<CGameObject*>** m_pObjectLists; // list<CGameObject*>*의 배열
 };
