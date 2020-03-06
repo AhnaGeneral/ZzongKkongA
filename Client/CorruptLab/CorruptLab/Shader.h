@@ -124,6 +124,17 @@ public:
 class CMesh;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+struct VS_CB_EYE_CAMERA_ORTHO
+{
+	XMFLOAT4X4						m_xmf4x4View;
+	XMFLOAT4X4						m_xmf4x4Ortho;
+	//XMFLOAT3						m_xmf3Position;
+};
+
+class CUI;
+
 class CPostProcessingShader : public CShader
 {
 public:
@@ -149,13 +160,24 @@ public:
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
+
+	void GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance);
+	XMFLOAT4X4 GetOrthoMatrix() { return m_pcbMappedOrthoCamera->m_xmf4x4Ortho; }
+	void GenerateViewMatrix();
+
 protected:
+
 	CTexture* m_pTexture = NULL;
-	CMesh* m_pRect = NULL;
+	CUI* m_pRect = NULL;
+
+	ID3D12Resource* m_pd3dcbvOrthoCamera = NULL;
+	VS_CB_EYE_CAMERA_ORTHO* m_pcbMappedOrthoCamera = NULL;
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
+
 class CPostProcessingByLaplacianShader : public CPostProcessingShader
 {
 public:

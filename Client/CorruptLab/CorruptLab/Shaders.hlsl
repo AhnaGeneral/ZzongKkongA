@@ -22,7 +22,8 @@ cbuffer cbGameObjectInfo : register(b2)
 
 cbuffer cbOrthoInfo : register(b16)
 {
-	matrix		    gmtxorhto: packoffset(c0);
+	matrix			gmtxOrthoView : packoffset(c0);
+	matrix		    gmtxOrhto: packoffset(c4);
 };
 
 #include "Light.hlsl"
@@ -223,9 +224,9 @@ struct VS_TEXTURED_OUTPUT
 VS_TEXTURED_OUTPUT VSUI(VS_TEXTURED_INPUT input)  /// 직교투영
 {
 	VS_TEXTURED_OUTPUT output;
-	//output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxorhto);
+	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxOrhto), gmtxOrthoView);
 	//output.position = mul(float4(input.position, 1.0f), gmtxGameObject);
-	output.position = float4(input.position, 1.0f);
+	//output.position = float4(input.position, 1.0f);
 	output.uv = input.uv;
 	return(output);
 }

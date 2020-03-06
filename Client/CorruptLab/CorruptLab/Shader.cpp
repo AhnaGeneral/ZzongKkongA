@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "DDSTextureLoader12.h"
+#include "UI.h"
 
 CShader::CShader()
 {
@@ -393,18 +394,24 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dDescriptorRanges[0].RegisterSpace = 0;
 	pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[2];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[3];
 
 	pd3dRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pd3dRootParameters[0].DescriptorTable.NumDescriptorRanges = 1;
 	pd3dRootParameters[0].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[0]; //Texture
 	pd3dRootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+	pd3dRootParameters[ROOT_PARAMETER_OBJECT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+	pd3dRootParameters[ROOT_PARAMETER_OBJECT].Constants.Num32BitValues = 32;
+	pd3dRootParameters[ROOT_PARAMETER_OBJECT].Constants.ShaderRegister = 2; //b2 : GameObject
+	pd3dRootParameters[ROOT_PARAMETER_OBJECT].Constants.RegisterSpace = 0;
+	pd3dRootParameters[ROOT_PARAMETER_OBJECT].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
 	pd3dRootParameters[ROOT_PARAMETER_ORTHO].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	pd3dRootParameters[ROOT_PARAMETER_ORTHO].Descriptor.ShaderRegister = 16; //b1 : Camera
+	pd3dRootParameters[ROOT_PARAMETER_ORTHO].Descriptor.ShaderRegister = 16; //b16 : OrthoCamera
 	pd3dRootParameters[ROOT_PARAMETER_ORTHO].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[ROOT_PARAMETER_ORTHO].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-
+	
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc;
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
@@ -508,26 +515,27 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pTexture->GetTextures());
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, 0, true);
-	m_pRect = new CTriangleRect(pd3dDevice, pd3dCommandList, 0.9f, 0.9f, 0, 0.5f, 0.5f, 0.1f);
+	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.1f, 1000.f);
+	GenerateViewMatrix();
+	m_pRect = new CUI(pd3dDevice, pd3dCommandList, 0.4f, 0.4f, 0, 0.6f, 0.6f, -0.4f);
 }
 
 void CPostProcessingShader::ReleaseObjects()
 {
 	if (m_pTexture) m_pTexture->Release();
-	if (m_pRect)
-	{
-		m_pRect->ReleaseUploadBuffers();
-		m_pRect->Release();
-	}
+	if (m_pRect)	m_pRect->Release();
 }
 
 void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
+	UpdateShaderVariables(pd3dCommandList);
+
 	CShader::Render(pd3dCommandList, pCamera);
 
 	if (m_pTexture) m_pTexture->UpdateShaderVariables(pd3dCommandList);
+	
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
 
@@ -538,14 +546,41 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 
 void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	// [ 직교투영 ] ------------------------------------------------------------------------------
+
+	UINT  ncbElementBytes = ((sizeof(VS_CB_EYE_CAMERA_ORTHO) + 255) & ~255); //256의 배수  
+	m_pd3dcbvOrthoCamera = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
+	m_pd3dcbvOrthoCamera->Map(0, NULL, (void**)&m_pcbMappedOrthoCamera);
 }
 
 void CPostProcessingShader::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbvOrthoCamera->GetGPUVirtualAddress();
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_ORTHO, d3dGpuVirtualAddress);
 }
 
 void CPostProcessingShader::ReleaseShaderVariables()
 {
+	if (m_pd3dcbvOrthoCamera)
+	{
+		m_pd3dcbvOrthoCamera->Unmap(0, NULL);
+		m_pd3dcbvOrthoCamera->Release();
+	}
+
+}
+
+void CPostProcessingShader::GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance)
+{
+	m_pcbMappedOrthoCamera->m_xmf4x4Ortho = Matrix4x4::OrthoLH(fWidth, fHeight, fNearPlaneDistance, fFarPlaneDistance);
+}
+
+void CPostProcessingShader::GenerateViewMatrix()
+{
+	XMFLOAT3 pos = XMFLOAT3(0, 0, -3);
+	XMFLOAT3 LookAtWorld = XMFLOAT3(0, 0, 1);
+	XMFLOAT3 Up = XMFLOAT3(0, 1, 0);
+	m_pcbMappedOrthoCamera->m_xmf4x4View = Matrix4x4::LookAtLH(pos, LookAtWorld, Up);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -562,7 +597,6 @@ D3D12_SHADER_BYTECODE CPostProcessingByLaplacianShader::CreatePixelShader(ID3DBl
 {
 	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSPostProcessing", "ps_5_1", ppd3dShaderBlob));
 }
-
 
 CStandardShader::CStandardShader()
 {
@@ -995,7 +1029,7 @@ void CCloudGSShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera*
 {
 	CShader::Render(pd3dCommandList, pCamera);
 
-	//m_pBillboardMaterial->m_ppTextures[0]->UpdateShaderVariables(pd3dCommandList);
+	m_pBillboardMaterial->m_ppTextures[0]->UpdateShaderVariables(pd3dCommandList);
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[1] = { m_d3dInstancingBufferView };
 	pd3dCommandList->IASetVertexBuffers(0, _countof(pVertexBufferViews), pVertexBufferViews);
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
