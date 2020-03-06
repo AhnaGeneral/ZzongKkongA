@@ -122,6 +122,7 @@ public:
 };
 
 class CMesh;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class CPostProcessingShader : public CShader
 {
@@ -144,6 +145,10 @@ public:
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void ReleaseShaderVariables();
+
 protected:
 	CTexture* m_pTexture = NULL;
 	CMesh* m_pRect = NULL;
@@ -160,8 +165,6 @@ public:
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
 
 };
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

@@ -393,12 +393,18 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dDescriptorRanges[0].RegisterSpace = 0;
 	pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[1];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[2];
 
 	pd3dRootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pd3dRootParameters[0].DescriptorTable.NumDescriptorRanges = 1;
 	pd3dRootParameters[0].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[0]; //Texture
 	pd3dRootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pd3dRootParameters[ROOT_PARAMETER_ORTHO].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[ROOT_PARAMETER_ORTHO].Descriptor.ShaderRegister = 16; //b1 : Camera
+	pd3dRootParameters[ROOT_PARAMETER_ORTHO].Descriptor.RegisterSpace = 0;
+	pd3dRootParameters[ROOT_PARAMETER_ORTHO].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc;
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
@@ -499,10 +505,10 @@ void CPostProcessingShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSig
 void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 	m_pTexture = (CTexture*)pContext;
-	m_pRect = new CTriangleRect(pd3dDevice, pd3dCommandList, 0.9f, 0.9f, 0, 0.5f, 0.5f, 0.1f);
 	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pTexture->GetTextures());
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, 0, false);
+	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, 0, true);
+	m_pRect = new CTriangleRect(pd3dDevice, pd3dCommandList, 0.9f, 0.9f, 0, 0.5f, 0.5f, 0.1f);
 }
 
 void CPostProcessingShader::ReleaseObjects()
@@ -513,7 +519,6 @@ void CPostProcessingShader::ReleaseObjects()
 		m_pRect->ReleaseUploadBuffers();
 		m_pRect->Release();
 	}
-
 }
 
 void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
@@ -527,7 +532,20 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
 
 	OnPrepareRender(pd3dCommandList, 1);
+
 	if (m_pRect) m_pRect->Render(pd3dCommandList, 0);
+}
+
+void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+}
+
+void CPostProcessingShader::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
+{
+}
+
+void CPostProcessingShader::ReleaseShaderVariables()
+{
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -542,7 +560,7 @@ CPostProcessingByLaplacianShader::~CPostProcessingByLaplacianShader()
 
 D3D12_SHADER_BYTECODE CPostProcessingByLaplacianShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSPostProcessingByLaplacianEdge", "ps_5_1", ppd3dShaderBlob));
+	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSPostProcessing", "ps_5_1", ppd3dShaderBlob));
 }
 
 

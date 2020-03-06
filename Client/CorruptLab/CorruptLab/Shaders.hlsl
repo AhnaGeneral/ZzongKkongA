@@ -20,6 +20,11 @@ cbuffer cbGameObjectInfo : register(b2)
 	MATERIAL        gMaterial : packoffset(c4);
 };
 
+cbuffer cbOrthoInfo : register(b16)
+{
+	matrix		    gmtxorhto: packoffset(c0);
+};
+
 #include "Light.hlsl"
 
 SamplerState gSamplerState : register(s0);
@@ -53,6 +58,7 @@ struct VS_TEXTURED_LIGHTING_OUTPUT
 	float3 tangentW : TANGENT;
 	float3 bitangentW : BITANGENT;
 	float2 uv : TEXCOORD;
+	float4 vPorjPos : TEXCOORD1; 
 };
 
 struct VS_SKINNED_STANDARD_INPUT
@@ -99,6 +105,7 @@ VS_TEXTURED_LIGHTING_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT
 
 	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
 	output.uv = input.uv;
+	output.vPorjPos = output.position;
 
 	return(output);
 }
@@ -165,6 +172,7 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
 
 float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
+	//float (input.vPosj.z / input.vProj.w , input,vProj.z / 500f,0,1) 
 	float3 cColor = gtxtScene[int2(position.xy)].rgb;
 
 	return(float4(cColor, 1.0f));
@@ -215,13 +223,15 @@ struct VS_TEXTURED_OUTPUT
 VS_TEXTURED_OUTPUT VSUI(VS_TEXTURED_INPUT input)  /// 직교투영
 {
 	VS_TEXTURED_OUTPUT output;
+	//output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxorhto);
+	//output.position = mul(float4(input.position, 1.0f), gmtxGameObject);
 	output.position = float4(input.position, 1.0f);
 	output.uv = input.uv;
 	return(output);
 }
 
-float4 PSUI(VS_TEXTURED_OUTPUT input, float4 position : SV_POSITION) : SV_TARGET //backbufferm
+float4 PSUI(VS_TEXTURED_OUTPUT input) : SV_TARGET //backbufferm
 {
-	float4 cColor = gtxtScene.Sample(gSamplerState, input.uv);
+	float4 cColor = gtxtNormal.Sample(gSamplerState, input.uv);
 	return cColor;
 }

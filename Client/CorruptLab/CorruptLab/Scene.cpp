@@ -51,7 +51,7 @@ void CGameScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLis
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("Geometry/terrain.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color);
+	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,_T("Geometry/terrain.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color);
 
 	m_pCloudGSShader = new CCloudGSShader; 
 	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, 3);

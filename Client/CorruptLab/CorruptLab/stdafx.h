@@ -319,10 +319,17 @@ namespace Matrix4x4
 		return(xmmtx4x4Result);
 	}
 
-	inline XMFLOAT4X4 PerspectiveFovLH(float FovAngleY, float AspectRatio, float NearZ, float FarZ)
+	inline XMFLOAT4X4 PerspectiveFovLH(float FovAngleY, float AspectRatio, float NearZ, float FarZ) //원근 투영
 	{
 		XMFLOAT4X4 xmmtx4x4Result;
 		XMStoreFloat4x4(&xmmtx4x4Result, XMMatrixPerspectiveFovLH(FovAngleY, AspectRatio, NearZ, FarZ));
+		return(xmmtx4x4Result);
+	}
+
+	inline XMFLOAT4X4 OrthoLH(float Width, float Height, float NearZ, float FarZ) // 직교투영
+	{
+		XMFLOAT4X4 xmmtx4x4Result;
+		XMStoreFloat4x4(&xmmtx4x4Result, XMMatrixOrthographicLH(Width, Height, NearZ, FarZ));
 		return(xmmtx4x4Result);
 	}
 

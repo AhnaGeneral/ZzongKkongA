@@ -262,9 +262,6 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 	for (UINT i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 	{
-		// [ GameFramework.h ]
-		// D3D12_CPU_DESCRIPTOR_HANDLE	m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nOffScreenRenderTargetBuffers];
-
 		m_pd3dOffScreenRenderTargetBufferCPUHandles[i] = d3dRtvCPUDescriptorHandle;
 		m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(i), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[i]);
 		d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
@@ -556,7 +553,6 @@ void CGameFramework::FrameAdvance()
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[i], pfClearColor, 0, NULL);
 
-	m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nSwapChainBufferIndex], pfClearColor, 0, NULL);// 필요 없을수도
 	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenRenderTargetBuffers, m_pd3dOffScreenRenderTargetBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
