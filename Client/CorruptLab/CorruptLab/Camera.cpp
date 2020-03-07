@@ -6,6 +6,7 @@ CCamera::CCamera()
 {
 	m_xmf4x4View = Matrix4x4::Identity();
 	m_xmf4x4Projection = Matrix4x4::Identity();
+	m_xmf4x4Ortho = Matrix4x4::Identity();
 	m_d3dViewport = { 0, 0, FRAME_BUFFER_WIDTH , FRAME_BUFFER_HEIGHT, 0.0f, 1.0f };
 	m_d3dScissorRect = { 0, 0, FRAME_BUFFER_WIDTH , FRAME_BUFFER_HEIGHT };
 	m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -32,6 +33,7 @@ CCamera::CCamera(CCamera *pCamera)
 	{
 		m_xmf4x4View = Matrix4x4::Identity();
 		m_xmf4x4Projection = Matrix4x4::Identity();
+		m_xmf4x4Ortho = Matrix4x4::Identity();
 		m_d3dViewport = { 0, 0, FRAME_BUFFER_WIDTH , FRAME_BUFFER_HEIGHT, 0.0f, 1.0f };
 		m_d3dScissorRect = { 0, 0, FRAME_BUFFER_WIDTH , FRAME_BUFFER_HEIGHT };
 		m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -74,6 +76,11 @@ void CCamera::SetScissorRect(LONG xLeft, LONG yTop, LONG xRight, LONG yBottom)
 void CCamera::GenerateProjectionMatrix(float fNearPlaneDistance, float fFarPlaneDistance, float fAspectRatio, float fFOVAngle)
 {
 	m_xmf4x4Projection = Matrix4x4::PerspectiveFovLH(XMConvertToRadians(fFOVAngle), fAspectRatio, fNearPlaneDistance, fFarPlaneDistance);
+}
+
+void CCamera::GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance)
+{
+	m_xmf4x4Ortho = Matrix4x4::OrthoLH(fWidth, fHeight, fNearPlaneDistance, fFarPlaneDistance);
 }
 
 
@@ -126,8 +133,6 @@ void CCamera::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbvProjectionCamera->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA, d3dGpuVirtualAddress);
-
-
 }
 
 void CCamera::ReleaseShaderVariables()

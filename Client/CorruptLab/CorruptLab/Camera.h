@@ -12,7 +12,6 @@ struct VS_CB_EYE_CAMERA_PROJECTION
 	XMFLOAT4X4						m_xmf4x4Projection;
 	XMFLOAT3						m_xmf3Position;
 };
-
 class CPlayer;
 
 class CCamera
@@ -35,6 +34,7 @@ protected:
 					            
 	XMFLOAT4X4		            	m_xmf4x4View;
 	XMFLOAT4X4		            	m_xmf4x4Projection;
+	XMFLOAT4X4                      m_xmf4x4Ortho; 
 					            
 	D3D12_VIEWPORT	            	m_d3dViewport;
 	D3D12_RECT		            	m_d3dScissorRect;
@@ -43,7 +43,6 @@ protected:
 					               
 	ID3D12Resource	              * m_pd3dcbvProjectionCamera = NULL;
 	VS_CB_EYE_CAMERA_PROJECTION   * m_pcbMappedProjectionCamera = NULL;
-
 
 public:
 	CCamera();
@@ -62,7 +61,8 @@ public:
 
 	// 투영변환행렬 직교, 원근 -----------------------------------------------------------
 	void GenerateProjectionMatrix(float fNearPlaneDistance, float fFarPlaneDistance, float fAspectRatio, float fFOVAngle);
-	
+	void GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance);
+
 	void SetViewport(int xTopLeft, int yTopLeft, int nWidth, int nHeight, float fMinZ = 0.0f, float fMaxZ = 1.0f);
 	void SetScissorRect(LONG xLeft, LONG yTop, LONG xRight, LONG yBottom);
 
@@ -94,6 +94,7 @@ public:
 
 	XMFLOAT4X4 GetViewMatrix() { return(m_xmf4x4View); }
 	XMFLOAT4X4 GetProjectionMatrix() { return(m_xmf4x4Projection); }
+	XMFLOAT4X4 GetOrthoMatrix() { return m_xmf4x4Ortho; }
 	D3D12_VIEWPORT GetViewport() { return(m_d3dViewport); }
 	D3D12_RECT GetScissorRect() { return(m_d3dScissorRect); }
 

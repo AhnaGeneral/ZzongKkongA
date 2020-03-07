@@ -52,9 +52,6 @@
     <ClInclude Include="Object.h">
       <Filter>05.Component</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>03.Timer</Filter>
-    </ClInclude>
     <ClInclude Include="GameFramework.h">
       <Filter>01.FrameWork</Filter>
     </ClInclude>
@@ -103,6 +100,15 @@
     <ClInclude Include="Geometry.h">
       <Filter>09.Geometry</Filter>
     </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>03.Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="UIOBJ.h">
+      <Filter>05.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="MRTShader.h">
+      <Filter>04.Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -150,6 +156,15 @@
     <ClCompile Include="Geometry.cpp">
       <Filter>09.Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="MapObjectLoader.cpp">
+      <Filter>05.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="UIOBJ.cpp">
+      <Filter>05.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="MRTShader.cpp">
+      <Filter>04.Shader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">
@@ -171,7 +186,7 @@
     <FxCompile Include="Shaders.hlsl">
       <Filter>97.HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="Terrain.hlsl">
+    <FxCompile Include="Geometrys.hlsl">
       <Filter>97.HLSL</Filter>
     </FxCompile>
   </ItemGroup>

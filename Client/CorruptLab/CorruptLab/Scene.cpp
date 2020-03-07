@@ -57,6 +57,7 @@ void CGameScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLis
 	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, 3);
 	m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 
+	CTriangleRect* UIMesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 2.0f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 
 	BuildLightsAndMaterials();
 

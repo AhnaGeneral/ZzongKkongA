@@ -42,8 +42,8 @@ using namespace DirectX::PackedVector;
 
 using Microsoft::WRL::ComPtr;
 
-#define FRAME_BUFFER_WIDTH		640
-#define FRAME_BUFFER_HEIGHT		480
+#define FRAME_BUFFER_WIDTH		760 //120 * 6 + 40
+#define FRAME_BUFFER_HEIGHT		600 //120 * 5 
 
 #define MAX_LIGHTS				8 
 #define MAX_MATERIALS			8 

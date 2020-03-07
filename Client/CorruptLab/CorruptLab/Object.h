@@ -6,7 +6,11 @@
 class CShader;
 class CAnimationController;
 
-struct CB_GAMEOBJECT_INFO  { XMFLOAT4X4 m_xmf4x4World; };
+struct CB_GAMEOBJECT_INFO  
+{ 
+	XMFLOAT4X4 m_xmf4x4World; 
+	UINT       m_xnObjectID ; 
+};
 
 class CGameObject
 {
@@ -87,7 +91,7 @@ public:
 	CGameObject* FindFrame(char* pstrFrameName);
 
 	UINT GetMeshType() { return((m_pMesh) ? m_pMesh->GetType() : 0); }
-
+	virtual UINT GetObjectID() { return 0; }
 	CTexture* FindReplicatedTexture(_TCHAR* pstrTextureName);
 
 public:

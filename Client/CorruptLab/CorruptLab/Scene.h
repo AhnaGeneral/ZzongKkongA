@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Shader.h"
+#include "MRTShader.h"
 #include "Player.h"
 #include <list>
 using namespace std;
@@ -91,10 +92,11 @@ class CGameScene : public CScene
 public:
 	CPlayer* m_pPlayer = NULL;
 
-	LIGHTS* m_pLights = NULL;
-	CHeightMapTerrain* m_pTerrain = NULL;
-	CSkyBox* m_pSkyBox = NULL;
-	CCloudGSShader* m_pCloudGSShader = NULL;
+	LIGHTS              * m_pLights = NULL;
+	CHeightMapTerrain   * m_pTerrain = NULL;
+	CSkyBox             * m_pSkyBox = NULL;
+	CCloudGSShader      * m_pCloudGSShader = NULL;
+	CUIOBJ              * m_pUIObj = NULL;
 
 	ID3D12Resource* m_pd3dcbLights = NULL;
 	LIGHTS* m_pcbMappedLights = NULL;

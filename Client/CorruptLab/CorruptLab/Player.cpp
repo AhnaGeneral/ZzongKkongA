@@ -276,7 +276,7 @@ void CMainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 	XMFLOAT3 xmf3Scale = pTerrain->GetScale();
 	int z = (int)(xmf3CameraPosition.z / xmf3Scale.z);
 	bool bReverseQuad = ((z % 2) != 0);
-	float fHeight = pTerrain->GetHeight(xmf3CameraPosition.x, xmf3CameraPosition.z, bReverseQuad) + 20.0f;
+	float fHeight = pTerrain->GetHeight(xmf3CameraPosition.x, xmf3CameraPosition.z, bReverseQuad) + 8.0f;
 	if (xmf3CameraPosition.y <= fHeight)
 	{
 		xmf3CameraPosition.y = fHeight;
@@ -298,7 +298,7 @@ void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 
 	int z = (int)(xmf3PlayerPosition.z / xmf3Scale.z);
 	bool bReverseQuad = ((z % 2) != 0);
-	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 3.0f;
+	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad) + 0.1f;
 	if (xmf3PlayerPosition.y < fHeight)
 	{
 		XMFLOAT3 xmf3PlayerVelocity = GetVelocity();
@@ -364,7 +364,7 @@ CCamera *CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 			SetMaxVelocityY(400.0f);
 			m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
 			m_pCamera->SetTimeLag(0.25f);
-			m_pCamera->SetOffset(XMFLOAT3(0.0f, -10.0f, -15.0f));
+			m_pCamera->SetOffset(XMFLOAT3(0.0f, -1.0f, -25.0f));
 			m_pCamera->GenerateProjectionMatrix(1.01f, 1000.0f, ASPECT_RATIO, 60.0f);
 			m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 			m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);

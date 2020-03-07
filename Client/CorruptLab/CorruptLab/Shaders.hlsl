@@ -16,14 +16,16 @@ cbuffer cbCameraInfo : register(b1)
 
 cbuffer cbGameObjectInfo : register(b2)
 {
+	//SetGraphicsRoot32BitConstants 함수 사용 할 때offset을 신경써주세요 
 	matrix		    gmtxGameObject : packoffset(c0);
-	MATERIAL        gMaterial : packoffset(c4);
+	uint            gnObjectID : packoffset (c4); 
+    MATERIAL        gMaterial : packoffset(c5);
 };
 
 cbuffer cbOrthoInfo : register(b16)
 {
-	matrix			gmtxOrthoView : packoffset(c0);
-	matrix		    gmtxOrhto: packoffset(c4);
+	matrix		    gmtxOrtho: packoffset(c0);
+	matrix		    gmtxOrthoView: packoffset(c4);
 };
 
 #include "Light.hlsl"
@@ -213,6 +215,7 @@ struct VS_TEXTURED_INPUT
 {
 	float3 position : POSITION;
 	float2 uv : TEXCOORD;
+	//uint object:TEXCOORD1; 
 };
 
 struct VS_TEXTURED_OUTPUT
@@ -224,15 +227,19 @@ struct VS_TEXTURED_OUTPUT
 VS_TEXTURED_OUTPUT VSUI(VS_TEXTURED_INPUT input)  /// 직교투영
 {
 	VS_TEXTURED_OUTPUT output;
-	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxOrhto), gmtxOrthoView);
-	//output.position = mul(float4(input.position, 1.0f), gmtxGameObject);
-	//output.position = float4(input.position, 1.0f);
+	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxOrthoView), gmtxOrtho);
 	output.uv = input.uv;
+	
 	return(output);
 }
 
-float4 PSUI(VS_TEXTURED_OUTPUT input) : SV_TARGET //backbufferm
+float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbufferm
 {
-	float4 cColor = gtxtNormal.Sample(gSamplerState, input.uv);
+	float4 cColor = float4 (1.0f, 0.0f, 0.0f,0.0f); 
+
+	if (gnObjectID == 0)  cColor = gtxtNormal.Sample(gSamplerState, input.uv);
+    if (gnObjectID == 1)  cColor = gtxtScene.Sample(gSamplerState, input.uv);
+    if (gnObjectID == 2)  cColor = gtxtObject.Sample(gSamplerState, input.uv);
+
 	return cColor;
 }
