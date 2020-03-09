@@ -123,6 +123,7 @@ VS_TEXTURED_LIGHTING_OUTPUT VSLighting(VS_TEXTURED_LIGHTING_INPUT input)
 	output.tangentW = mul(input.tangent, (float3x3)gmtxGameObject);
 	output.bitangentW = mul(input.bitangent, (float3x3)gmtxGameObject);
 	output.uv = input.uv;
+	output.vPorjPos = float4 (input.position, 1.0f);
 	return output;
 }
 
@@ -131,7 +132,7 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
 	float4 color  : SV_TARGET0;
 	float4 normal : SV_TARGET1;
-	float4 object : SV_TARGET2; // 필요 없어보이니까 랜덤타겟 개수 확실히 정하고 바꿀때 지울것
+	float4 depth : SV_TARGET2; // 필요 없어보이니까 랜덤타겟 개수 확실히 정하고 바꿀때 지울것
 };
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LIGHTING_OUTPUT input)
@@ -155,7 +156,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	}
 
 	output.color = lerp(cColorAlbedo, cColorLighted, 0.4f);
-	//output.color = float4(input.uv,1,1);
+
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.z / 1000.f, 0.0f, 1.0f);
+
 	return output;
 }
 

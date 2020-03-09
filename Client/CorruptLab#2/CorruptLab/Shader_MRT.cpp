@@ -172,11 +172,13 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pTexture->GetTextures());
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, 0, true);
-	m_xmf4x4OrthoView = Matrix4x4::LookAtLH(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)); // position이 왜 0 이여야 하지 ? 
-	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH / 2.0f, FRAME_BUFFER_HEIGHT / 2.0f , 0.0f, 1.0f);                                   // 모두 수직이여야 하는거 아닌가 ? 
+	m_xmf4x4OrthoView =
+		Matrix4x4::LookAtLH(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)); 
+	// position이 왜 0 이여야 하지 ? // 모두 수직이여야 하는거 아닌가 ? 
+	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH / 2.0f, FRAME_BUFFER_HEIGHT / 2.0f , 0.0f, 1.0f);                                   
 	
 	//---------------------------------------------------------------------------------
-	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH /15.f  , FRAME_BUFFER_HEIGHT/15.f, 0.0f, 0.0f, 0.0f, 1.0f);
+	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH /10.f  , FRAME_BUFFER_HEIGHT/10.f, 0.0f, 0.0f, 0.0f, 1.0f);
 	m_nUI = 3;                                                           
 	UIObject = new CGameObject*[m_nUI]; 
 
@@ -184,7 +186,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	{
 		m_pCUIobj = new CUI(pd3dDevice, pd3dCommandList);
 		m_pCUIobj->SetMesh(mesh);
-		m_pCUIobj->Set2DPosition(-170.0f+(i*(50.0f)) ,130.0f);
+		m_pCUIobj->Set2DPosition(-160.0f+(i*(70.0f)),130.0f);
 		m_pCUIobj->SetObjectID(i); 
 		UIObject[i++] = m_pCUIobj; 
 	}

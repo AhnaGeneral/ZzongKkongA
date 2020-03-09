@@ -10,14 +10,17 @@ struct VS_TERRAIN_INPUT
 	float3 normal : NORMAL;
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
+	//float4 posj : TEXCOORD2;
 };
 
 struct VS_TERRAIN_OUTPUT
 {
 	float3 position : POSITION;
 	float4 color : COLOR;
+	float3 normal : NORMAL;
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
+	float4 posj : TEXCOORD2;
 };
 
 VS_TERRAIN_OUTPUT VSTerrain(VS_TERRAIN_INPUT input)
@@ -26,9 +29,10 @@ VS_TERRAIN_OUTPUT VSTerrain(VS_TERRAIN_INPUT input)
 
 	output.color = input.color;
 	output.position = input.position;
+	output.normal = input.normal; 
 	output.uv0 = input.uv0;
 	output.uv1 = input.uv1;
-
+	output.posj = float4 (input.position, 1.0f);
 	return(output);
 }
 
@@ -42,16 +46,20 @@ struct HS_TERRAIN_TESSELLATION_OUTPUT
 {
 	float3 position : POSITION;
 	float4 color : COLOR;
+	float3 normal : NORMAL;
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
+	float4 posj : TEXCOORD2;
 };
 
 struct DS_TERRAIN_TESSELLATION_OUTPUT
 {
 	float4 position : SV_POSITION;
 	float4 color : COLOR;
+	float3 normal : NORMAL;
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
+	float4 posj : TEXCOORD2;
 };
 
 void BernsteinCoeffcient5x5(float t, out float fBernstein[5])
@@ -89,7 +97,8 @@ HS_TERRAIN_TESSELLATION_OUTPUT HSTerrainTessellation(InputPatch<VS_TERRAIN_OUTPU
 	output.color = input[i].color;
 	output.uv0 = input[i].uv0;
 	output.uv1 = input[i].uv1;
-
+	output.normal = input[i].normal; 
+	output.posj = input[i].posj;
 
 	return(output);
 }
@@ -130,20 +139,27 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	output.color = lerp(lerp(patch[0].color, patch[4].color, uv.x), lerp(patch[20].color, patch[24].color, uv.x), uv.y);
 	output.uv0 = lerp(lerp(patch[0].uv0, patch[4].uv0, uv.x), lerp(patch[20].uv0, patch[24].uv0, uv.x), uv.y);
 	output.uv1 = lerp(lerp(patch[0].uv1, patch[4].uv1, uv.x), lerp(patch[20].uv1, patch[24].uv1, uv.x), uv.y);
+	
+	output.normal = lerp(lerp(patch[0].normal, patch[4].normal, uv.x), lerp(patch[20].normal, patch[24].normal, uv.x), uv.y);
 
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, gmtxView), gmtxProjection);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
-
+	output.posj = output.position;
 	return(output);
 }
 
 
-float4 PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input) : SV_TARGET
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input) : SV_TARGET
 {
+	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
 	//float4 cBaseTexColor = float4(0.2f,0.2f,0.2f,1.f);
 	float4 cBaseTexColor = gtxtTerrainBaseTexture.Sample(gSamplerState, input.uv0);
 	float4 cDetailTexColor = gtxtTerrainDetailTexture.Sample(gSamplerState, input.uv1);
 	float4 cColor = input.color * saturate((cBaseTexColor * 0.5f) + (cDetailTexColor * 0.5f));
-	return(cColor);
+	output.color = cColor;
+	output.normal = float4(input.normal, 1.0f);
+	//float4(input.posj.z / input.posj.w, input.posj.z / 300.f, 0.0f, 1.0f);
+	output.depth = float4(input.posj.z / input.posj.w, input.posj.z / 1000.f, 0.0f, 1.0f);
+	return(output);
 }

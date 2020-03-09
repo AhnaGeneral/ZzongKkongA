@@ -29,9 +29,6 @@
     <Filter Include="05.Component">
       <UniqueIdentifier>{c8a9b285-7c5e-46bc-b5ac-0da6bfc99d91}</UniqueIdentifier>
     </Filter>
-    <Filter Include="97.HLSL">
-      <UniqueIdentifier>{5f88fd86-4f1f-4644-b782-15d2a97e961a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05.Component\GameObject">
       <UniqueIdentifier>{3dcb082b-756b-44b9-8f27-0685c71892c3}</UniqueIdentifier>
     </Filter>
@@ -139,9 +136,6 @@
     <ClInclude Include="Mesh_SkyBox.h">
       <Filter>05.Component\GameObject\06.Billboard</Filter>
     </ClInclude>
-    <ClInclude Include="Object_UIOBJ.h">
-      <Filter>05.Component\GameObject\05.UI</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>05.Component\GameObject\01.Mesh</Filter>
     </ClInclude>
@@ -168,6 +162,9 @@
     </ClInclude>
     <ClInclude Include="Shader_Standard.h">
       <Filter>04.Shader\05.Shader_Standard</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_UI.h">
+      <Filter>05.Component\GameObject\05.UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -216,9 +213,6 @@
     <ClCompile Include="Mesh_SkyBox.cpp">
       <Filter>05.Component\GameObject\06.Billboard</Filter>
     </ClCompile>
-    <ClCompile Include="Object_UIOBJ.cpp">
-      <Filter>05.Component\GameObject\05.UI</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>05.Component\GameObject\01.Mesh</Filter>
     </ClCompile>
@@ -245,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="Shader_Standard.cpp">
       <Filter>04.Shader\05.Shader_Standard</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_UI.cpp">
+      <Filter>05.Component\GameObject\05.UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

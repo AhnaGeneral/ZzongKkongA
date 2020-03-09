@@ -163,6 +163,7 @@
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Object_BillBoard.h" />
+    <ClInclude Include="Object_UI.h" />
     <ClInclude Include="Shader_Standard.h" />
     <ClInclude Include="Shader_Terrain.h" />
     <ClInclude Include="Shader_BillBoard.h" />
@@ -175,7 +176,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="Object_UIOBJ.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="WICTextureLoader12.h" />
   </ItemGroup>
@@ -193,6 +193,7 @@
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Object_BillBoard.cpp" />
+    <ClCompile Include="Object_UI.cpp" />
     <ClCompile Include="Shader-Terrain.cpp" />
     <ClCompile Include="Shader_BillBoard.cpp" />
     <ClCompile Include="Shader_MRT.cpp" />
@@ -203,7 +204,6 @@
     <ClCompile Include="Shader_Standard.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Object_UIOBJ.cpp" />
     <ClCompile Include="WICTextureLoader12.cpp" />
   </ItemGroup>
   <ItemGroup>
