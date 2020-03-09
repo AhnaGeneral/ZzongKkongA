@@ -1,0 +1,21 @@
+<WorldCreator Version="2.0">
+  <Surface HeightCenter="13.45509" MinHeightScale="-100" MaxHeightScale="500" MinHeight="-0.7676533" MaxHeight="1.02034" Height="106.496" Width="768" Length="512" ResolutionX="768" ResolutionY="512" />
+  <Texturing>
+    <SplatTexture Name="splatmap_00.tga">
+      <TextureInfo Tag="Default" Name="Ground_IslandClumpyGround" TileSize="1.05267,1.05267" TileOffset="0,0" Metallic="0" Smoothness="0" />
+      <TextureInfo Tag="Default" Name="Ground_ScrubGrassField" TileSize="1,1" TileOffset="-1.580112,-1.580112" Metallic="0" Smoothness="0" />
+      <TextureInfo Tag="Default" Name="Stone 7 " TileSize="1,1" TileOffset="0,0" Metallic="0" Smoothness="0" />
+      <TextureInfo Tag="Default" Name="Ground_KalahariRockFaces" TileSize="1,1" TileOffset="0,0" Metallic="0" Smoothness="0" />
+    </SplatTexture>
+    <SplatTexture Name="splatmap_01.tga">
+      <TextureInfo Tag="Default" Name="Ground_WetBumpyMud" TileSize="1,1" TileOffset="0,0" Metallic="0" Smoothness="0" />
+      <TextureInfo Tag="Default" Name="Stone 6 " TileSize="1,1" TileOffset="0,0" Metallic="0" Smoothness="0" />
+    </SplatTexture>
+  </Texturing>
+  <Objects>
+    <Layers />
+  </Objects>
+  <Details>
+    <Layers />
+  </Details>
+</WorldCreator>
