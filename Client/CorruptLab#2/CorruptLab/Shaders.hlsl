@@ -143,6 +143,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
 	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
 
+	cColorAlbedo.rgb = cColorAlbedo.rgb * gcGlobalAmbientLight.xyz;
+
 	float3 normalW;
 	float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
 	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] ¡æ [-1, 1]
@@ -156,7 +158,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	}
 
 	output.color = lerp(cColorAlbedo, cColorLighted, 0.4f);
-	output.color = mul(output.color, gcGlobalAmbientLight.xyz);
 	output.depth = float4(input.vPorjPos.z / 1000.f, input.vPorjPos.z / 1000.f, input.vPorjPos.z / 1000.f, 1.0f);
 
 	return output;

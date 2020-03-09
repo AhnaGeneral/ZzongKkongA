@@ -16,6 +16,10 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
 	//float (input.vPosj.z / input.vProj.w , input,vProj.z / 500f,0,1) 
 	float3 cColor = gtxtScene[int2(position.xy)].rgb;
+	float fDepth = gtxtDepth[int2(position.xy)].r;
+
+	float3 cFogColor = float3(0.05f, 0.05f, 0.05f);
+	cColor = lerp(cColor, cFogColor, fDepth * 5);
 
 	return(float4(cColor, 1.0f));
 }
@@ -28,26 +32,24 @@ static int2 gnOffsets[9] = { { -1,-1 },{ 0,-1 },{ 1,-1 },{ -1,0 },{ 0,0 },{ 1,0 
 float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Target //backbufferm
 {
 	float fEdgeness = 0.0f;
+	float fDepthEdgeness = 0.0f;
 	float3 cEdgeness = float3(0.0f, 0.0f, 0.0f);
 	if ((uint(position.x) >= 1) || (uint(position.y) >= 1) || (uint(position.x) <= gtxtNormal.Length.x - 2) || (uint(position.y) <= gtxtNormal.Length.y - 2))
 	{
-		float fObject = 0.0f;
 		for (int i = 0; i < 9; i++)
 		{
 			float3 vNormal = gtxtNormal[int2(position.xy) + gnOffsets[i]].xyz;
 			vNormal = vNormal * 2.0f - 1.0f;
 			cEdgeness += gfLaplacians[i] * vNormal;
-			fObject += gtxtDepth[int2(position.xy) + gnOffsets[i]].r * (1.0f / 9.0f);
 		}
-		fEdgeness = cEdgeness.r * 0.3f + cEdgeness.g * 0.59f + cEdgeness.b * 0.11f;
-		if ((fEdgeness < 0.15f) && (abs(fObject - gtxtDepth[int2(position.xy)].r) > 0.01f)) fEdgeness = 1.0f;
-		cEdgeness = float3(fEdgeness, fEdgeness, fEdgeness);
+		fEdgeness = 1 - (cEdgeness.r * 0.3f + cEdgeness.g * 0.59f + cEdgeness.b * 0.11f);
+		cEdgeness = float3(fEdgeness, fEdgeness, fEdgeness) ;
 	}
+
 	float3 cColor = gtxtScene[int2(position.xy)].rgb;
-	cColor = (fEdgeness < 0.15f) ? cColor : ((fEdgeness < 0.65f) ? (cColor + cEdgeness) : cEdgeness);
 	
-	cColor += gtxtDepth[int2(position.xy)];
-	//cColor = mul(cColor, gcGlobalAmbientLight.xyz);
+
+	cColor = (fEdgeness > 0.85f) ? cColor : ((fEdgeness > 0.35f) ? (cColor * cEdgeness) : cEdgeness);
 
 
 	return(float4(cColor, 1.0f));

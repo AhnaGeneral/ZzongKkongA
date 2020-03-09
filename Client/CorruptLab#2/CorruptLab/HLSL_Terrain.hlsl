@@ -158,6 +158,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	float4 cBaseTexColor = gtxtTerrainBaseTexture.Sample(gSamplerState, input.uv0);
 	float4 cDetailTexColor = gtxtTerrainDetailTexture.Sample(gSamplerState, input.uv1);
 	float4 cColor = input.color * saturate((cBaseTexColor * 0.5f) + (cDetailTexColor * 0.5f));
+	cColor.rgb = cColor * gcGlobalAmbientLight.rgb;
 	output.color = cColor;
 	output.normal = float4(input.normal, 1.0f);
 	//float4(input.posj.z / input.posj.w, input.posj.z / 300.f, 0.0f, 1.0f);
