@@ -95,7 +95,7 @@ public:
 	CHeightMapTerrain   * m_pTerrain = NULL;
 	CSkyBox             * m_pSkyBox = NULL;
 	CCloudGSShader      * m_pCloudGSShader = NULL;
-	CUIOBJ              * m_pUIObj = NULL;
+	CUI              * m_pUIObj = NULL;
 
 	ID3D12Resource* m_pd3dcbLights = NULL;
 	LIGHTS* m_pcbMappedLights = NULL;

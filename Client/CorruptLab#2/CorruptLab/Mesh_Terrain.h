@@ -1,12 +1,14 @@
 #pragma once
 #include "Mesh.h"
 
+class CDiffused2TexturedVertex;
+
 // CHeightMapImage-----------------------------------------------------------------------------------
 class CHeightMapImage
 {
 private:
 	BYTE* m_pHeightMapPixels;
-
+	
 	int							m_nWidth;
 	int							m_nLength;
 	XMFLOAT3					m_xmf3Scale;
@@ -24,12 +26,23 @@ public:
 	int GetHeightMapLength() { return(m_nLength); }
 };
 
+struct HeightMapVertex
+{
+	XMFLOAT3						m_xmf3Position;
+	XMFLOAT4						m_xmf4Color;
+	XMFLOAT3						m_xmf3Normal;
+	XMFLOAT2						m_xmf2TexCoord0;
+	XMFLOAT2						m_xmf2TexCoord1;
+};
+
 class CHeightMapGridMesh : public CMesh
 {
 protected:
 	int						m_nWidth;
 	int						m_nLength;
 	XMFLOAT3				m_xmf3Scale;
+	HeightMapVertex			*m_pVertices;
+
 
 public:
 	CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int xStart, int zStart, int nWidth,

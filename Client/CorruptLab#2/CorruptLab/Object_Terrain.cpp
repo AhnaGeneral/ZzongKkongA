@@ -5,17 +5,17 @@
 CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, LPCTSTR pFileName, int nWidth, int nLength, int nBlockWidth, int nBlockLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color)
 {
 
-	m_nWidth = nWidth; // 257 
-	m_nLength = nLength; // 257
+	m_nWidth = nWidth; // 512
+	m_nLength = nLength; // 512
 
-	int cxQuadsPerBlock = nBlockWidth - 1; //8
-	int czQuadsPerBlock = nBlockLength - 1; //8
+	int cxQuadsPerBlock = nBlockWidth - 1; //16
+	int czQuadsPerBlock = nBlockLength - 1; //16
 
 	m_xmf3Scale = xmf3Scale;
 
 	m_pHeightMapImage = new CHeightMapImage(pFileName, nWidth, nLength, xmf3Scale);
 
-	long cxBlocks = (m_nWidth - 1) / cxQuadsPerBlock; //256 / 8 = 32
+	long cxBlocks = (m_nWidth - 1) / cxQuadsPerBlock; //512 / 16 = 32
 	long czBlocks = (m_nLength - 1) / czQuadsPerBlock;
 
 	m_nMeshes = cxBlocks * czBlocks; // 32*32 = 1024

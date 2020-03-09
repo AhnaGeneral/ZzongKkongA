@@ -42,7 +42,7 @@ protected:
 
 	CGameObject ** UIObject = NULL; 
 	int m_nUI; 
-	CUIOBJ* m_pCUIobj = NULL;
+	CUI* m_pCUIobj = NULL;
 	
 	ID3D12Resource* m_pd3dcbvOrthoCamera = NULL;
 	VS_CB_EYE_CAMERA_ORTHO* m_pcbMappedOrthoCamera = NULL;

@@ -102,10 +102,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	m_nLength = nLength;
 	m_xmf3Scale = xmf3Scale;
 
-	m_MeshInfo.m_pxmf3Positions = new XMFLOAT3[m_nVertices];
-	m_MeshInfo.m_pxmf4Colors = new XMFLOAT4[m_nVertices];
-	m_MeshInfo.m_pxmf2TextureCoords0 = new XMFLOAT2[m_nVertices];
-	m_MeshInfo.m_pxmf2TextureCoords1 = new XMFLOAT2[m_nVertices];
+	m_pVertices = new HeightMapVertex[m_nVertices];
 
 	CHeightMapImage* pHeightMapImage = (CHeightMapImage*)pContext;
 	int cxHeightMap = pHeightMapImage->GetHeightMapWidth();
@@ -117,40 +114,24 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 		for (int x = xStart; x < (xStart + nWidth); x += 2, i++)
 		{
 			fHeight = OnGetHeight(x, z, pContext);
-			m_MeshInfo.m_pxmf3Positions[i] = XMFLOAT3((x * m_xmf3Scale.x), fHeight, (z * m_xmf3Scale.z));
-			m_MeshInfo.m_pxmf4Colors[i] = Vector4::Add(OnGetColor(x, z, pContext), xmf4Color);
-			m_MeshInfo.m_pxmf2TextureCoords0[i] = XMFLOAT2(float(x) / float(cxHeightMap - 1), float(czHeightMap - 1 - z) / float(czHeightMap - 1));
-			m_MeshInfo.m_pxmf2TextureCoords1[i] = XMFLOAT2(float(x) / float(m_xmf3Scale.x * 0.5f), float(z) / float(m_xmf3Scale.z * 0.5f));
+
+			m_pVertices[i].m_xmf3Position = XMFLOAT3((x * m_xmf3Scale.x), fHeight, (z * m_xmf3Scale.z));
+			m_pVertices[i].m_xmf4Color = Vector4::Add(OnGetColor(x, z, pContext), xmf4Color);
+			//m_pVertices[i].m_xmf3Normal =
+			m_pVertices[i].m_xmf2TexCoord0 = XMFLOAT2(float(x) / float(cxHeightMap - 1), float(czHeightMap - 1 - z) / float(czHeightMap - 1));
+			m_pVertices[i].m_xmf2TexCoord1 = XMFLOAT2(float(x) / float(m_xmf3Scale.x * 0.5f), float(z) / float(m_xmf3Scale.z * 0.5f));
 
 			if (fHeight < fMinHeight) fMinHeight = fHeight;
 			if (fHeight > fMaxHeight) fMaxHeight = fHeight;
 		}
 	}
 
-	m_MeshInfo.m_pd3dPositionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_MeshInfo.m_pxmf3Positions, sizeof(XMFLOAT3) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_MeshInfo.m_pd3dPositionUploadBuffer);
+	m_MeshInfo.m_pd3dPositionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pVertices, sizeof(HeightMapVertex) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_MeshInfo.m_pd3dPositionUploadBuffer);
 
 	m_MeshInfo.m_d3dPositionBufferView.BufferLocation = m_MeshInfo.m_pd3dPositionBuffer->GetGPUVirtualAddress();
-	m_MeshInfo.m_d3dPositionBufferView.StrideInBytes = sizeof(XMFLOAT3);
-	m_MeshInfo.m_d3dPositionBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_nVertices;
+	m_MeshInfo.m_d3dPositionBufferView.StrideInBytes = sizeof(HeightMapVertex);
+	m_MeshInfo.m_d3dPositionBufferView.SizeInBytes = sizeof(HeightMapVertex) * m_nVertices;
 
-	m_MeshInfo.m_pd3dColorBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_MeshInfo.m_pxmf4Colors, sizeof(XMFLOAT4) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_MeshInfo.m_pd3dColorUploadBuffer);
-
-	m_MeshInfo.m_d3dColorBufferView.BufferLocation = m_MeshInfo.m_pd3dColorBuffer->GetGPUVirtualAddress();
-	m_MeshInfo.m_d3dColorBufferView.StrideInBytes = sizeof(XMFLOAT4);
-	m_MeshInfo.m_d3dColorBufferView.SizeInBytes = sizeof(XMFLOAT4) * m_nVertices;
-
-
-	m_MeshInfo.m_pd3dTextureCoord0Buffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_MeshInfo.m_pxmf2TextureCoords0, sizeof(XMFLOAT2) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_MeshInfo.m_pd3dTextureCoord0UploadBuffer);
-
-	m_MeshInfo.m_d3dTextureCoord0BufferView.BufferLocation = m_MeshInfo.m_pd3dTextureCoord0Buffer->GetGPUVirtualAddress();
-	m_MeshInfo.m_d3dTextureCoord0BufferView.StrideInBytes = sizeof(XMFLOAT2);
-	m_MeshInfo.m_d3dTextureCoord0BufferView.SizeInBytes = sizeof(XMFLOAT2) * m_nVertices;
-
-	m_MeshInfo.m_pd3dTextureCoord1Buffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_MeshInfo.m_pxmf2TextureCoords1, sizeof(XMFLOAT2) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_MeshInfo.m_pd3dTextureCoord1UploadBuffer);
-
-	m_MeshInfo.m_d3dTextureCoord1BufferView.BufferLocation = m_MeshInfo.m_pd3dTextureCoord1Buffer->GetGPUVirtualAddress();
-	m_MeshInfo.m_d3dTextureCoord1BufferView.StrideInBytes = sizeof(XMFLOAT2);
-	m_MeshInfo.m_d3dTextureCoord1BufferView.SizeInBytes = sizeof(XMFLOAT2) * m_nVertices;
 }
 
 CHeightMapGridMesh::~CHeightMapGridMesh() {}
@@ -192,8 +173,7 @@ void CHeightMapGridMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int 
 {
 	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
 
-	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[4] = { m_MeshInfo.m_d3dPositionBufferView,  m_MeshInfo.m_d3dColorBufferView, m_MeshInfo.m_d3dTextureCoord0BufferView, m_MeshInfo.m_d3dTextureCoord1BufferView };
-	pd3dCommandList->IASetVertexBuffers(m_nSlot, 4, pVertexBufferViews);
+	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_MeshInfo.m_d3dPositionBufferView);
 
 	if ((m_MeshInfo.m_nSubMeshes > 0) && (nSubSet < m_MeshInfo.m_nSubMeshes))
 	{

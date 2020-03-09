@@ -5,7 +5,7 @@
 
 #include "Object.h"
 #include "Object_Terrain.h"
-#include "Object_UIOBJ.h"
+#include "Object_UI.h"
 #include "Object_Camera.h"
 
 class CShader

@@ -182,7 +182,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	for (int i = 0; i < m_nUI;)
 	{
-		m_pCUIobj = new CUIOBJ(pd3dDevice, pd3dCommandList);
+		m_pCUIobj = new CUI(pd3dDevice, pd3dCommandList);
 		m_pCUIobj->SetMesh(mesh);
 		m_pCUIobj->Set2DPosition(-170.0f+(i*(50.0f)) ,130.0f);
 		m_pCUIobj->SetObjectID(i); 
