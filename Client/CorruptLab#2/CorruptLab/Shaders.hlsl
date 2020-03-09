@@ -34,7 +34,7 @@ SamplerState gSamplerState : register(s0);
 
 Texture2D<float4> gtxtScene : register(t1); // scene, normal, objectID RTV 0, 1, 2를 리소스 어레이로만든것
 Texture2D<float4> gtxtNormal : register(t2);
-Texture2D<float4> gtxtObject : register(t3);
+Texture2D<float4> gtxtDepth : register(t3);
 
 Texture2D gtxtAlbedoTexture : register(t4);
 Texture2D gtxtSpecularTexture : register(t5);
@@ -156,8 +156,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	}
 
 	output.color = lerp(cColorAlbedo, cColorLighted, 0.4f);
-
-	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.z / 1000.f, 0.0f, 1.0f);
+	output.color = mul(output.color, gcGlobalAmbientLight.xyz);
+	output.depth = float4(input.vPorjPos.z / 1000.f, input.vPorjPos.z / 1000.f, input.vPorjPos.z / 1000.f, 1.0f);
 
 	return output;
 }

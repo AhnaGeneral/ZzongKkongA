@@ -37,14 +37,18 @@ float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Targe
 			float3 vNormal = gtxtNormal[int2(position.xy) + gnOffsets[i]].xyz;
 			vNormal = vNormal * 2.0f - 1.0f;
 			cEdgeness += gfLaplacians[i] * vNormal;
-			fObject += gtxtObject[int2(position.xy) + gnOffsets[i]].r * (1.0f / 9.0f);
+			fObject += gtxtDepth[int2(position.xy) + gnOffsets[i]].r * (1.0f / 9.0f);
 		}
 		fEdgeness = cEdgeness.r * 0.3f + cEdgeness.g * 0.59f + cEdgeness.b * 0.11f;
-		if ((fEdgeness < 0.15f) && (abs(fObject - gtxtObject[int2(position.xy)].r) > 0.01f)) fEdgeness = 1.0f;
+		if ((fEdgeness < 0.15f) && (abs(fObject - gtxtDepth[int2(position.xy)].r) > 0.01f)) fEdgeness = 1.0f;
 		cEdgeness = float3(fEdgeness, fEdgeness, fEdgeness);
 	}
 	float3 cColor = gtxtScene[int2(position.xy)].rgb;
 	cColor = (fEdgeness < 0.15f) ? cColor : ((fEdgeness < 0.65f) ? (cColor + cEdgeness) : cEdgeness);
+	
+	cColor += gtxtDepth[int2(position.xy)];
+	//cColor = mul(cColor, gcGlobalAmbientLight.xyz);
+
 
 	return(float4(cColor, 1.0f));
 
@@ -79,7 +83,7 @@ float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbufferm
 
 	if (gnObjectID == 0)  cColor = gtxtNormal.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 1)  cColor = gtxtScene.Sample(gSamplerState, input.uv);
-	if (gnObjectID == 2)  cColor = gtxtObject.Sample(gSamplerState, input.uv);
+	if (gnObjectID == 2)  cColor = gtxtDepth.Sample(gSamplerState, input.uv);
 
 	return cColor;
 }

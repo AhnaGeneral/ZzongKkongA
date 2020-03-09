@@ -113,7 +113,7 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 
 	float fDistanceToCamera = distance(vCenter, gvCameraPosition);
 
-	float fTessFactor = (1.f / fDistanceToCamera) * 200.f;
+	float fTessFactor = ( 1000.f - fDistanceToCamera) / 150;
 	if (fDistanceToCamera > 1000.f) fTessFactor = 1.f;
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
@@ -161,6 +161,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	output.color = cColor;
 	output.normal = float4(input.normal, 1.0f);
 	//float4(input.posj.z / input.posj.w, input.posj.z / 300.f, 0.0f, 1.0f);
-	output.depth = float4(input.posj.z / input.posj.w, input.posj.z / 1000.f, 0.0f, 1.0f);
+	output.depth = float4(input.posj.z / 1000.f, input.posj.z / 1000.f, input.posj.z / 1000.f, 1.0f);
 	return(output);
 }

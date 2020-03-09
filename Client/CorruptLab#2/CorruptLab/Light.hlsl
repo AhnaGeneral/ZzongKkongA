@@ -155,7 +155,6 @@ float4 Lighting(float3 vPosition, float3 vNormal)
 			}
 		}
 	}
-	cColor += (gcGlobalAmbientLight * gMaterial.m_cAmbient);
 	cColor.a = gMaterial.m_cDiffuse.a;
 
 	return(cColor);
