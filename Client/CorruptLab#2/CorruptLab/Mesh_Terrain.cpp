@@ -117,7 +117,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 
 			m_pVertices[i].m_xmf3Position = XMFLOAT3((x * m_xmf3Scale.x), fHeight, (z * m_xmf3Scale.z));
 			m_pVertices[i].m_xmf4Color = Vector4::Add(OnGetColor(x, z, pContext), xmf4Color);
-			m_pVertices[i].m_xmf3Normal = pHeightMapImage->GetHeightMapNormal(float(x) / float(cxHeightMap - 1), float(czHeightMap - 1 - z) / float(czHeightMap - 1));
+			m_pVertices[i].m_xmf3Normal = pHeightMapImage->GetHeightMapNormal(x,z);
 			m_pVertices[i].m_xmf2TexCoord0 = XMFLOAT2(float(x) / float(cxHeightMap - 1), float(czHeightMap - 1 - z) / float(czHeightMap - 1));
 			m_pVertices[i].m_xmf2TexCoord1 = XMFLOAT2(float(x) / float(m_xmf3Scale.x * 0.5f), float(z) / float(m_xmf3Scale.z * 0.5f));
 
@@ -134,7 +134,10 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 
 }
 
-CHeightMapGridMesh::~CHeightMapGridMesh() {}
+CHeightMapGridMesh::~CHeightMapGridMesh() {
+	if (m_pVertices) delete [] m_pVertices;
+	m_pVertices = NULL;
+}
 
 float CHeightMapGridMesh::OnGetHeight(int x, int z, void* pContext)
 {

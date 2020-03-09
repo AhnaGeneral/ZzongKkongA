@@ -113,15 +113,16 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 
 	float fDistanceToCamera = distance(vCenter, gvCameraPosition);
 
-	float fTessFactor = (1.f / fDistanceToCamera) * 500.f;
+	float fTessFactor = (1.f / fDistanceToCamera) * 200.f;
+	if (fDistanceToCamera > 1000.f) fTessFactor = 1.f;
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
-	output.fTessEdges[0] = 3.0f;
-	output.fTessEdges[1] = 3.0f;
-	output.fTessEdges[2] = 3.0f;
-	output.fTessEdges[3] = 3.0f;
-	output.fTessInsides[0] = 3.0f;
-	output.fTessInsides[1] = 3.0f;
+	output.fTessEdges[0] = fTessFactor;
+	output.fTessEdges[1] = fTessFactor;
+	output.fTessEdges[2] = fTessFactor;
+	output.fTessEdges[3] = fTessFactor;
+	output.fTessInsides[0] = fTessFactor;
+	output.fTessInsides[1] = fTessFactor;
 
 	return(output);
 }
