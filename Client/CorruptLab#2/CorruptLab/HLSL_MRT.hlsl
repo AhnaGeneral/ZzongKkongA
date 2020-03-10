@@ -18,7 +18,7 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	float3 cColor = gtxtScene[int2(position.xy)].rgb;
 	float fDepth = gtxtDepth[int2(position.xy)].r;
 
-	float3 cFogColor = float3(0.05f, 0.05f, 0.05f);
+	float3 cFogColor = float3(0.15f, 0.15f, 0.15f);
 	cColor = lerp(cColor, cFogColor, fDepth * 5);
 
 	return(float4(cColor, 1.0f));

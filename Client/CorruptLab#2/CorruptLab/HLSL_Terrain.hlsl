@@ -1,7 +1,10 @@
 #include "Shaders.hlsl"
 
-Texture2D gtxtTerrainBaseTexture : register(t11);
-Texture2D gtxtTerrainDetailTexture : register(t12);
+Texture2D gtxtTerrainBaseTexture : register(t13);
+Texture2D gtxtTerrainAlaphTexture : register(t14);
+Texture2D gtxtTerrainNormalTexture : register(t15);
+
+
 
 struct VS_TERRAIN_INPUT
 {
@@ -113,8 +116,8 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 
 	float fDistanceToCamera = distance(vCenter, gvCameraPosition);
 
-	float fTessFactor = ( 1000.f - fDistanceToCamera) / 150;
-	if (fDistanceToCamera > 1000.f) fTessFactor = 1.f;
+	float fTessFactor = (1/ fDistanceToCamera) * 150;
+	//if (fDistanceToCamera > 1000.f) fTessFactor = 1.f;
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
 	output.fTessEdges[0] = fTessFactor;
@@ -151,17 +154,45 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 }
 
 
+Texture2D gtxtStone1_BC : register(t16);
+Texture2D gtxtGrass2_BC : register(t17);
+Texture2D gtxtDryStone_BC : register(t18);
+
+//Texture2D gtxDryGround_BC : register(t19);
+//Texture2D gtxGrass1_BC : register(t20);
+//Texture2D gtxGrass2_BC : register(t21);
+
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input) : SV_TARGET
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
 	//float4 cBaseTexColor = float4(0.2f,0.2f,0.2f,1.f);
+
 	float4 cBaseTexColor = gtxtTerrainBaseTexture.Sample(gSamplerState, input.uv0);
-	float4 cDetailTexColor = gtxtTerrainDetailTexture.Sample(gSamplerState, input.uv1);
-	float4 cColor = input.color * saturate((cBaseTexColor * 0.5f) + (cDetailTexColor * 0.5f));
+	float4 cDetailTexColor = gtxtTerrainAlaphTexture.Sample(gSamplerState, input.uv0);
+	float4 cNormalTexColor = gtxtTerrainNormalTexture.Sample(gSamplerState, input.uv0);
+
+	float4 CStone01 = gtxtStone1_BC.Sample(gSamplerState, input.uv1);
+	float4 CDryStone = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
+	float4 CGrass2_BC = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
+
+
+
+	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	if (cDetailTexColor.r)
+		cColor = input.color * saturate((cBaseTexColor * 0.5f) + (CStone01 * 0.5f));
+	else if (cDetailTexColor.g)
+		cColor = input.color * saturate((cBaseTexColor * 0.5f) + (CDryStone * 0.5f));
+	else if (cDetailTexColor.b)
+		cColor = input.color * saturate((cBaseTexColor * 0.5f) + (CGrass2_BC * 0.5f));
+
+	else cColor = input.color * (cBaseTexColor * 1.0f);
+
+
 	cColor.rgb = cColor * gcGlobalAmbientLight.rgb;
 	output.color = cColor;
 	output.normal = float4(input.normal, 1.0f);
-	//float4(input.posj.z / input.posj.w, input.posj.z / 300.f, 0.0f, 1.0f);
+
 	output.depth = float4(input.posj.z / 1000.f, input.posj.z / 1000.f, input.posj.z / 1000.f, 1.0f);
 	return(output);
 }
