@@ -287,8 +287,8 @@ void CShader::CreateShaderResourceViews(ID3D12Device* pd3dDevice, ID3D12Graphics
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dSrvCPUDescriptorHandle = m_d3dSrvCPUDescriptorStartHandle;
 	D3D12_GPU_DESCRIPTOR_HANDLE d3dSrvGPUDescriptorHandle = m_d3dSrvGPUDescriptorStartHandle;
 
-	d3dSrvCPUDescriptorHandle.ptr += ::gnCbvSrvDescriptorIncrementSize * nOffsets;
-	d3dSrvGPUDescriptorHandle.ptr += ::gnCbvSrvDescriptorIncrementSize * nOffsets;
+	d3dSrvCPUDescriptorHandle.ptr += ::gnCbvSrvDescriptorIncrementSize * (m_nReferences - 1 + nOffsets);
+	d3dSrvGPUDescriptorHandle.ptr += ::gnCbvSrvDescriptorIncrementSize * (m_nReferences - 1 + nOffsets);
 
 	int nTextures = pTexture->GetTextures();
 	int nTextureType = pTexture->GetTextureType();

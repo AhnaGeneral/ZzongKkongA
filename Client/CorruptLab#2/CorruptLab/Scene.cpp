@@ -26,7 +26,7 @@ void CGameScene::BuildLightsAndMaterials()
 	m_pLights->m_pLights[0].m_xmf4Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	m_pLights->m_pLights[0].m_xmf4Diffuse = XMFLOAT4(0.4f, 0.4f, 0.4f, 1.0f);
 	m_pLights->m_pLights[0].m_xmf4Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 0.0f);
-	m_pLights->m_pLights[0].m_xmf3Direction = XMFLOAT3(1.0f, 0.0f, 0.0f);
+	m_pLights->m_pLights[0].m_xmf3Direction = XMFLOAT3(1.0f, -1.0f, 0.0f);
 	m_pLights->m_pLights[0].m_bEnable = true; 
 
 	m_pMaterials = new MATERIALS;
@@ -48,7 +48,7 @@ void CGameScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLis
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
 	std::cout << "누나 졸작 화이팅 by 은우" << std::endl;
-	XMFLOAT3 xmf3Scale(1.0f, 0.5f, 1.0f);
+	XMFLOAT3 xmf3Scale(2.0f, 0.5f, 2.0f);
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
@@ -88,6 +88,7 @@ void CGameScene::ReleaseObjects()
 			{
 				Obj->Release();
 			}
+			m_pObjectLists[i]->clear();
 		}
 	}
 	delete[] m_pObjectLists;

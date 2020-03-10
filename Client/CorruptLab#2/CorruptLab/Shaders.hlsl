@@ -123,7 +123,7 @@ VS_TEXTURED_LIGHTING_OUTPUT VSLighting(VS_TEXTURED_LIGHTING_INPUT input)
 	output.tangentW = mul(input.tangent, (float3x3)gmtxGameObject);
 	output.bitangentW = mul(input.bitangent, (float3x3)gmtxGameObject);
 	output.uv = input.uv;
-	output.vPorjPos = float4 (input.position, 1.0f);
+	output.vPorjPos = output.position;
 	return output;
 }
 
@@ -139,7 +139,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 
-	output.normal = float4(input.normalW, 1);
 	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
 	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
 
@@ -150,6 +149,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] ¡æ [-1, 1]
 	normalW = normalize(mul(vNormal, TBN));
 
+
 	float4 cColorLighted = Lighting(input.positionW, normalW);
 
 	if (cColorAlbedo.a < 1.0f)
@@ -157,6 +157,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 		discard;
 	}
 
+	output.normal = float4(normalW, 1);
 	output.color = lerp(cColorAlbedo, cColorLighted, 0.4f);
 	output.depth = float4(input.vPorjPos.z / 1000.f, input.vPorjPos.z / 1000.f, input.vPorjPos.z / 1000.f, 1.0f);
 

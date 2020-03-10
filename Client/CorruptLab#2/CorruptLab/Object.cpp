@@ -219,9 +219,10 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 		{
 			if (m_ppMaterials[i])
 			{
+				m_ppMaterials[i]->UpdateShaderVariable(pd3dCommandList);
+
 				if (m_ppMaterials[i]->m_pShader) 
 					m_ppMaterials[i]->m_pShader->Render(pd3dCommandList, pCamera);
-				m_ppMaterials[i]->UpdateShaderVariable(pd3dCommandList);
 			}
 
 			if (m_pMesh) 
