@@ -133,7 +133,7 @@ public:
 	virtual void ReleaseUploadBuffers();
 
 	void SetTerrainPipelineState();
-	void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList);
 
 
 private: // 배치되는 오브젝트들
