@@ -20,10 +20,15 @@ struct VS_TERRAIN_OUTPUT
 {
 	float3 position : POSITION;
 	float4 color : COLOR;
+
 	float3 normal : NORMAL;
+	//float3 tangent : TANGET ;
+	//float3 bitanget : BITANGENT; 
+
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
 	float4 posj : TEXCOORD2;
+
 };
 
 VS_TERRAIN_OUTPUT VSTerrain(VS_TERRAIN_INPUT input)
@@ -32,9 +37,29 @@ VS_TERRAIN_OUTPUT VSTerrain(VS_TERRAIN_INPUT input)
 
 	output.color = input.color;
 	output.position = input.position;
+
+	//float3 worldnormal = float3(1.0f, 1.0f, 1.0f); 
+	//float3 worldtanget = float3(1.0f, 1.0f, 1.0f);
+	//float3 worldbitanget = float3(1.0f, 1.0f, 1.0f);
+
+
+	//worldnormal = mul(input.normal, (float3x3)gmtxGameObject);
+	//output.normal = normalize(worldnormal);
+
+	//float3 tmptanget = cross(input.normal, float3(0.0f, 1.0f, 0.0f)); 
+	//worldtanget = mul(tmptanget, (float3x3)gmtxGameObject);
+	//output.tangent = normalize(worldtanget);
+
+	//float3 tmpbitanget = cross(input.normal, tmptanget);
+	//worldbitanget = mul(tmpbitanget, (float3x3)gmtxGameObject);
+
+	//output.bitanget = normalize(worldbitanget);
+	
 	output.normal = input.normal; 
+
 	output.uv0 = input.uv0;
 	output.uv1 = input.uv1;
+
 	output.posj = float4 (input.position, 1.0f);
 	return(output);
 }
@@ -49,7 +74,11 @@ struct HS_TERRAIN_TESSELLATION_OUTPUT
 {
 	float3 position : POSITION;
 	float4 color : COLOR;
+
 	float3 normal : NORMAL;
+	//float3 tangent : TANGET;
+	//float3 bitanget : BITANGENT;
+
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
 	float4 posj : TEXCOORD2;
@@ -59,7 +88,11 @@ struct DS_TERRAIN_TESSELLATION_OUTPUT
 {
 	float4 position : SV_POSITION;
 	float4 color : COLOR;
+
 	float3 normal : NORMAL;
+	float3 tangent : TANGET;
+	float3 bitanget : BITANGENT;
+
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
 	float4 posj : TEXCOORD2;
@@ -101,6 +134,10 @@ HS_TERRAIN_TESSELLATION_OUTPUT HSTerrainTessellation(InputPatch<VS_TERRAIN_OUTPU
 	output.uv0 = input[i].uv0;
 	output.uv1 = input[i].uv1;
 	output.normal = input[i].normal; 
+
+	//output.tangent = input[i].tangent;
+	//output.bitanget = input[i].bitanget;
+
 	output.posj = input[i].posj;
 
 	return(output);
@@ -120,12 +157,21 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 	//if (fDistanceToCamera > 1000.f) fTessFactor = 1.f;
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
-	output.fTessEdges[0] = fTessFactor;
-	output.fTessEdges[1] = fTessFactor;
-	output.fTessEdges[2] = fTessFactor;
-	output.fTessEdges[3] = fTessFactor;
-	output.fTessInsides[0] = fTessFactor;
-	output.fTessInsides[1] = fTessFactor;
+	//output.fTessEdges[0] = fTessFactor;
+	//output.fTessEdges[1] = fTessFactor;
+	//output.fTessEdges[2] = fTessFactor;
+	//output.fTessEdges[3] = fTessFactor;
+	//output.fTessInsides[0] = fTessFactor;
+	//output.fTessInsides[1] = fTessFactor;
+
+	// 일정한 격자로 보고 싶을 때 
+
+	output.fTessEdges[0] = 3.0f;
+	output.fTessEdges[1] = 3.0f;
+	output.fTessEdges[2] = 3.0f;
+	output.fTessEdges[3] = 3.0f;
+	output.fTessInsides[0] = 3.0f;
+	output.fTessInsides[1] = 3.0f;
 
 	return(output);
 }
@@ -143,12 +189,28 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	output.color = lerp(lerp(patch[0].color, patch[4].color, uv.x), lerp(patch[20].color, patch[24].color, uv.x), uv.y);
 	output.uv0 = lerp(lerp(patch[0].uv0, patch[4].uv0, uv.x), lerp(patch[20].uv0, patch[24].uv0, uv.x), uv.y);
 	output.uv1 = lerp(lerp(patch[0].uv1, patch[4].uv1, uv.x), lerp(patch[20].uv1, patch[24].uv1, uv.x), uv.y);
-	
-	output.normal = lerp(lerp(patch[0].normal, patch[4].normal, uv.x), lerp(patch[20].normal, patch[24].normal, uv.x), uv.y);
+	float3 worldnormal = lerp(lerp(patch[0].normal, patch[4].normal, uv.x), lerp(patch[20].normal, patch[24].normal, uv.x), uv.y);
+		
+	//float3 worldnormal = float3(1.0f, 1.0f, 1.0f); 
+    float3 worldtanget = float3(1.0f, 1.0f, 1.0f);
+    float3 worldbitanget = float3(1.0f, 1.0f, 1.0f);
+
+    float3 tmpnormal = mul(worldnormal, (float3x3)gmtxGameObject);
+    output.normal = normalize(tmpnormal);
+
+    float3 tmptanget = cross(tmpnormal, float3(0.0f, 1.0f, 0.0f));
+    worldtanget = mul(tmptanget, (float3x3)gmtxGameObject);
+    output.tangent = normalize(worldtanget);
+    
+    float3 tmpbitanget = cross(tmpnormal, tmptanget);
+    worldbitanget = mul(tmpbitanget, (float3x3)gmtxGameObject);
+    output.bitanget = worldbitanget;
 
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, gmtxView), gmtxProjection);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
+
+
 	output.posj = output.position;
 	return(output);
 }
@@ -175,8 +237,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	float4 CDryStone = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
 	float4 CGrass2_BC = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
 
-
-
 	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	if (cDetailTexColor.r)
@@ -188,11 +248,17 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	else cColor = input.color * (cBaseTexColor * 1.0f);
 
+	float3 ncColor = cColor.rgb * gcGlobalAmbientLight.rgb;
+	output.color = float4 (ncColor, 1.0f);
 
-	cColor.rgb = cColor * gcGlobalAmbientLight.rgb;
-	output.color = cColor;
-	output.normal = float4(input.normal, 1.0f);
+	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);
+	float3 vNormal = normalize(cNormalTexColor.rgb * 2.0f - 1.0f);//0.0 ~ 1.0 -> -1.0 ~ 1.0 
+	vNormal = normalize(mul(vNormal, TBN));
+
+	output.normal = float4(vNormal, 1.0f);
 
 	output.depth = float4(input.posj.z / 1000.f, input.posj.z / 1000.f, input.posj.z / 1000.f, 1.0f);
-	return(output);
+
+
+	return output;
 }
