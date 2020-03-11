@@ -241,15 +241,15 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	if (cDetailTexColor.r)
-		cColor = input.color * saturate((cBaseTexColor * 0.5f) + (CStone01 * 0.5f));
+		cColor = saturate((cBaseTexColor * 0.5f) + (CStone01 * 0.5f));
 	else if (cDetailTexColor.g)
-		cColor = input.color * saturate((cBaseTexColor * 0.5f) + (CDryStone * 0.5f));
+		cColor = saturate((cBaseTexColor * 0.5f) + (CDryStone * 0.5f));
 	else if (cDetailTexColor.b)
-		cColor = input.color * saturate((cBaseTexColor * 0.5f) + (CGrass2_BC * 0.5f));
+		cColor = saturate((cBaseTexColor * 0.5f) + (CGrass2_BC * 0.5f));
 	else 
-		cColor = input.color * (cBaseTexColor * 1.0f);
+		cColor = (cBaseTexColor * 1.0f);
 
-	float3 ncColor = cColor.rgb * gcGlobalAmbientLight.rgb;
+	float3 ncColor = cColor.rgb;
 	output.color = float4 (ncColor, 1.0f);
 
 	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);

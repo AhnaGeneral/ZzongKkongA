@@ -19,7 +19,6 @@ cbuffer cbGameObjectInfo : register(b2)
 	//SetGraphicsRoot32BitConstants 함수 사용 할 때offset을 신경써주세요 
 	matrix		    gmtxGameObject : packoffset(c0);
 	uint            gnObjectID : packoffset (c4); 
-    MATERIAL        gMaterial : packoffset(c5);
 };
 
 cbuffer cbOrthoInfo : register(b16)
@@ -35,6 +34,7 @@ SamplerState gSamplerState : register(s0);
 Texture2D<float4> gtxtScene : register(t1); // scene, normal, objectID RTV 0, 1, 2를 리소스 어레이로만든것
 Texture2D<float4> gtxtNormal : register(t2);
 Texture2D<float4> gtxtDepth : register(t3);
+Texture2D<float4> gtxtLight : register(t23);
 
 Texture2D gtxtAlbedoTexture : register(t4);
 Texture2D gtxtSpecularTexture : register(t5);
@@ -142,15 +142,12 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
 	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
 
-	cColorAlbedo.rgb = cColorAlbedo.rgb * gcGlobalAmbientLight.xyz;
+	cColorAlbedo.rgb = cColorAlbedo.rgb;
 
 	float3 normalW;
 	float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
 	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] → [-1, 1]
 	normalW = normalize(mul(vNormal, TBN));
-
-
-	float4 cColorLighted = Lighting(input.positionW, normalW);
 
 	if (cColorAlbedo.a < 1.0f)
 	{
@@ -158,7 +155,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	}
 
 	output.normal = float4(normalW, 1);
-	output.color = lerp(cColorAlbedo, cColorLighted, 0.4f);
+	output.color = cColorAlbedo;
 	output.depth = float4(input.vPorjPos.z / 1000.f, input.vPorjPos.z / 1000.f, input.vPorjPos.z / 1000.f, 1.0f);
 
 	return output;

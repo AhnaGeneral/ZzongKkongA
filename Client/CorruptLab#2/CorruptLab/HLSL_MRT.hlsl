@@ -86,6 +86,8 @@ float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbufferm
 	if (gnObjectID == 0)  cColor = gtxtNormal.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 1)  cColor = gtxtScene.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 2)  cColor = gtxtDepth.Sample(gSamplerState, input.uv);
+	if (gnObjectID == 3)  cColor = gtxtLight.Sample(gSamplerState, input.uv);
+
 
 	return cColor;
 }

@@ -14,6 +14,11 @@ CGameFramework::CGameFramework()
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 		m_ppd3dOffScreenRenderTargetBuffers[i] = NULL;
 
+
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+		m_ppd3dLightMapRenderTargetBuffers[i] = NULL;
+
+
 	for (int i = 0; i < m_nSwapChainBuffers; i++)
 		m_ppd3dSwapChainBackBuffers[i] = NULL;
 
@@ -57,6 +62,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateDepthStencilView();
 
 	CreateOffScreenRenderTargetViews();
+	CreateLightRenderTargetViews();
 
 	BuildObjects();
 
@@ -205,12 +211,22 @@ void CGameFramework::CreateRtvAndDsvDescriptorHeaps()
 	//RenderTarget ========================================================================================================
 	D3D12_DESCRIPTOR_HEAP_DESC d3dDescriptorHeapDesc;
 	::ZeroMemory(&d3dDescriptorHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
-	d3dDescriptorHeapDesc.NumDescriptors = m_nSwapChainBuffers + m_nOffScreenRenderTargetBuffers; // SwapChain + MRT (now : 5)
+	d3dDescriptorHeapDesc.NumDescriptors = m_nSwapChainBuffers + m_nOffScreenRenderTargetBuffers; // SwapChain + MRT (now : 6)
 	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 	d3dDescriptorHeapDesc.NodeMask = 0;
 	HRESULT hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dRtvDescriptorHeap);
 	m_nRtvDescriptorIncrementSize = m_pd3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+	//LightTarget==========================================================================================================
+
+	::ZeroMemory(&d3dDescriptorHeapDesc, sizeof(D3D12_DESCRIPTOR_HEAP_DESC));
+	d3dDescriptorHeapDesc.NumDescriptors = m_nOffScreenLightBuffers; // SwapChain + Light (now : 6)
+	d3dDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	d3dDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	d3dDescriptorHeapDesc.NodeMask = 0;
+	hResult = m_pd3dDevice->CreateDescriptorHeap(&d3dDescriptorHeapDesc, __uuidof(ID3D12DescriptorHeap), (void**)&m_pd3dLightDescriptorHeap);
+
 
 	//DeptStencilTarget ====================================================================================================
 	d3dDescriptorHeapDesc.NumDescriptors = 1;
@@ -276,6 +292,47 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 	m_TestTexture = pTextureForPostProcessing;
+}
+
+void CGameFramework::CreateLightRenderTargetViews()
+{
+	CTexture* pLightMap = new CTexture(m_nOffScreenLightBuffers, RESOURCE_TEXTURE2D_ARRAY, 0);
+
+	D3D12_CLEAR_VALUE d3dClearValue = { DXGI_FORMAT_R8G8B8A8_UNORM, { 0.0f, 0.0f, 0.0f, 1.0f } };
+
+	for (UINT i = 0; i < m_nOffScreenLightBuffers; i++)
+	{
+		m_ppd3dLightMapRenderTargetBuffers[i] = pLightMap->CreateTexture(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth, m_nWndClientHeight,
+			DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
+		m_ppd3dLightMapRenderTargetBuffers[i]->AddRef();
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dLightDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	//d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBuffers * m_nRtvDescriptorIncrementSize); // ptr : 2 + 128 
+
+	D3D12_RENDER_TARGET_VIEW_DESC d3dRenderTargetViewDesc;
+	d3dRenderTargetViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	d3dRenderTargetViewDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	d3dRenderTargetViewDesc.Texture2D.MipSlice = 0;
+	d3dRenderTargetViewDesc.Texture2D.PlaneSlice = 0;
+
+	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
+	for (UINT i = 0; i < m_nOffScreenLightBuffers; i++)
+	{
+		m_pd3dOffScreenLightBufferCPUHandles[i] = d3dRtvCPUDescriptorHandle;
+		m_pd3dDevice->CreateRenderTargetView(pLightMap->GetTexture(i), &d3dRenderTargetViewDesc, m_pd3dOffScreenLightBufferCPUHandles[i]);
+		d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
+	}
+
+	m_pLightProcessingShader = new CLightTarget();
+	m_pLightProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
+	m_pLightProcessingShader->CreateShader(m_pd3dDevice, m_pLightProcessingShader->GetGraphicsRootSignature());
+	m_pLightProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pLightMap);
+
+	m_pd3dCommandList->Close();
+	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
+	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
+	//m_TestTexture = pTextureForPostProcessing;
 }
 
 void CGameFramework::CreateDepthStencilView()
@@ -426,6 +483,11 @@ void CGameFramework::OnDestroy()
 		if (m_ppd3dOffScreenRenderTargetBuffers[i])
 			m_ppd3dOffScreenRenderTargetBuffers[i]->Release();
 
+
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+		if (m_ppd3dLightMapRenderTargetBuffers[i])
+			m_ppd3dLightMapRenderTargetBuffers[i]->Release();
+
 	for (int i = 0; i < m_nSwapChainBuffers; i++)
 		if (m_ppd3dSwapChainBackBuffers[i])
 			m_ppd3dSwapChainBackBuffers[i]->Release();
@@ -557,11 +619,27 @@ void CGameFramework::FrameAdvance()
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenRenderTargetBuffers, m_pd3dOffScreenRenderTargetBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
-	m_pScene->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
+	m_pScene->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2s에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
 													// write 용으로 사용하고 있었음
 
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 되? 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],
+	                                 D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+	m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenLightBufferCPUHandles[i], pfClearColor, 0, NULL);
+
+	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenLightBuffers, m_pd3dOffScreenLightBufferCPUHandles, TRUE, NULL);
+
+	m_pLightProcessingShader->Render(m_pd3dCommandList, m_pCamera);
+
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],   D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+
 
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 

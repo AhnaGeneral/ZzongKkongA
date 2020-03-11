@@ -4,6 +4,7 @@
 #include "Shader_MRT.h"
 #include "Object_Player.h"
 #include "Scene.h"
+#include "Shader_LightMRT.h"
 
 class CGameFramework
 {
@@ -27,6 +28,7 @@ public:
 	void ChangeSwapChainState();
 
 	void CreateOffScreenRenderTargetViews();
+	void CreateLightRenderTargetViews();
 
 	void BuildObjects();
 	void ReleaseObjects();
@@ -61,6 +63,7 @@ private:
 
 	ID3D12Resource                    * m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
 	ID3D12DescriptorHeap              * m_pd3dRtvDescriptorHeap = NULL;
+	ID3D12DescriptorHeap			  * m_pd3dLightDescriptorHeap = NULL;
 
 	UINT							    m_nRtvDescriptorIncrementSize;
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBuffers];
@@ -80,8 +83,14 @@ private:
 	CGameTimer						    m_GameTimer;
 
 	static const UINT				    m_nOffScreenRenderTargetBuffers = 3;
-	ID3D12Resource* m_ppd3dOffScreenRenderTargetBuffers[m_nOffScreenRenderTargetBuffers];
+	static const UINT				    m_nOffScreenLightBuffers = 1;
+
+	ID3D12Resource                    * m_ppd3dLightMapRenderTargetBuffers[m_nOffScreenLightBuffers];
+	ID3D12Resource                    * m_ppd3dOffScreenRenderTargetBuffers[m_nOffScreenRenderTargetBuffers];
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nOffScreenRenderTargetBuffers];
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenLightBufferCPUHandles[m_nOffScreenLightBuffers];
+
+
 
 	POINT							    m_ptOldCursorPos;
 
@@ -91,6 +100,7 @@ public:
 	//=============================================================
 private:
 	CPostProcessingShader* m_pPostProcessingShader = NULL;
+	CLightTarget* m_pLightProcessingShader = NULL; 
 	CGameScene* m_pScene = NULL;
 	CPlayer* m_pPlayer = NULL;
 	CCamera* m_pCamera = NULL;
