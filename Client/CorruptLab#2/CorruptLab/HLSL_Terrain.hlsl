@@ -190,15 +190,16 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	output.uv0 = lerp(lerp(patch[0].uv0, patch[4].uv0, uv.x), lerp(patch[20].uv0, patch[24].uv0, uv.x), uv.y);
 	output.uv1 = lerp(lerp(patch[0].uv1, patch[4].uv1, uv.x), lerp(patch[20].uv1, patch[24].uv1, uv.x), uv.y);
 	float3 worldnormal = lerp(lerp(patch[0].normal, patch[4].normal, uv.x), lerp(patch[20].normal, patch[24].normal, uv.x), uv.y);
-		
-	//float3 worldnormal = float3(1.0f, 1.0f, 1.0f); 
+	
+	///float3 tangentuv = float3(output.uv0, 0.0f); //텍스처의 UV값을  
+
     float3 worldtanget = float3(1.0f, 1.0f, 1.0f);
     float3 worldbitanget = float3(1.0f, 1.0f, 1.0f);
 
     float3 tmpnormal = mul(worldnormal, (float3x3)gmtxGameObject);
     output.normal = normalize(tmpnormal);
 
-    float3 tmptanget = cross(tmpnormal, float3(0.0f, 1.0f, 0.0f));
+    float3 tmptanget = cross(tmpnormal, float3(output.uv0.x, 0.0f, 0.0f));
     worldtanget = mul(tmptanget, (float3x3)gmtxGameObject);
     output.tangent = normalize(worldtanget);
     
@@ -245,8 +246,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 		cColor = input.color * saturate((cBaseTexColor * 0.5f) + (CDryStone * 0.5f));
 	else if (cDetailTexColor.b)
 		cColor = input.color * saturate((cBaseTexColor * 0.5f) + (CGrass2_BC * 0.5f));
-
-	else cColor = input.color * (cBaseTexColor * 1.0f);
+	else 
+		cColor = input.color * (cBaseTexColor * 1.0f);
 
 	float3 ncColor = cColor.rgb * gcGlobalAmbientLight.rgb;
 	output.color = float4 (ncColor, 1.0f);
