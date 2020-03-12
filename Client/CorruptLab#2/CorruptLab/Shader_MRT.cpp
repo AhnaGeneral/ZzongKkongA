@@ -194,7 +194,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	if (pLightContext != NULL)
 	{
 		m_pLightTexture = (CTexture*)pLightContext;
-		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pLightTexture, 3, true);
+		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pLightTexture, 3, 4);
 	}
 
 	m_xmf4x4OrthoView =
@@ -230,7 +230,7 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 	CShader::Render(pd3dCommandList, pCamera);
 
 	if (m_pTexture) m_pTexture->UpdateShaderVariables(pd3dCommandList);
-	//if (m_pLightTexture) m_pLightTexture->UpdateShaderVariables(pd3dCommandList);
+	if (m_pLightTexture) m_pLightTexture->UpdateShaderVariables(pd3dCommandList);
 
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
