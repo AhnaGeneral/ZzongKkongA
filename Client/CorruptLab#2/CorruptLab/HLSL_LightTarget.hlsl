@@ -25,7 +25,8 @@ PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 	//float fDepth = gtxtDepth[int2(position.xy)].r;
 
 	//float3 cFogColor = float3(0.15f, 0.15f, 0.15f);
-	output.Light = float4(0.0f, 1.0f, 1.0f, 0.0f);
-
+	float4 vNormal = gtxtNormal[int2(position.xy)];
+	float4 vLightedColor = DirectionalLight(0, vNormal, float3(0, 0, -1));
+	output.Light = vLightedColor;
 	return output;
 }

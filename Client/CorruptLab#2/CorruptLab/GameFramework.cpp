@@ -328,7 +328,7 @@ void CGameFramework::CreateLightRenderTargetViews()
 	m_pLightProcessingShader = new CLightTarget();
 	m_pLightProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
 	m_pLightProcessingShader->CreateShader(m_pd3dDevice, m_pLightProcessingShader->GetGraphicsRootSignature());
-	m_pLightProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pLightMap);
+	m_pLightProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_TestTexture);
 
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL, pLightMap);
 

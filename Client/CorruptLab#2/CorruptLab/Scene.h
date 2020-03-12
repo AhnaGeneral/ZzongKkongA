@@ -8,42 +8,7 @@
 #include "Object_Player.h"
 #include <list>
 using namespace std;
-
-struct LIGHT
-{
-	XMFLOAT4	      m_xmf4Ambient;
-	XMFLOAT4	      m_xmf4Diffuse;
-	XMFLOAT4	      m_xmf4Specular;
-	XMFLOAT3	      m_xmf3Position;
-	float 		      m_fFalloff;
-	XMFLOAT3	      m_xmf3Direction;
-	float 		      m_fTheta; //cos(m_fTheta)
-	XMFLOAT3	      m_xmf3Attenuation;
-	float		      m_fPhi; //cos(m_fPhi)
-	bool		      m_bEnable;
-	int			      m_nType;
-	float		      m_fRange;
-	float		      padding;
-};				      
-				      
-struct LIGHTS	      
-{				      
-	XMFLOAT4	      m_xmf4GlobalAmbient;
-	LIGHT		      m_pLights[MAX_LIGHTS];
-};				      
-				      
-struct MATERIAL	      
-{				      
-	XMFLOAT4	      m_xmf4Ambient;
-	XMFLOAT4	      m_xmf4Diffuse;
-	XMFLOAT4	      m_xmf4Specular; //(r,g,b,a=power)
-	XMFLOAT4	      m_xmf4Emissive;
-};
-
-struct MATERIALS
-{
-	MATERIAL	     m_pReflections[MAX_MATERIALS];
-};
+		      
 
 class CHeightMapTerrain;
 class CSkyBox;
@@ -91,19 +56,11 @@ class CGameScene : public CScene
 public:
 	CPlayer* m_pPlayer = NULL;
 
-	LIGHTS              * m_pLights = NULL;
 	CHeightMapTerrain   * m_pTerrain = NULL;
 	CSkyBox             * m_pSkyBox = NULL;
 	CCloudGSShader      * m_pCloudGSShader = NULL;
 	CUI              * m_pUIObj = NULL;
 
-	ID3D12Resource* m_pd3dcbLights = NULL;
-	LIGHTS* m_pcbMappedLights = NULL;
-
-	MATERIALS* m_pMaterials = NULL;
-
-	ID3D12Resource* m_pd3dcbMaterials = NULL;
-	MATERIAL* m_pcbMappedMaterials = NULL;
 
 public:
 	CGameScene();
@@ -112,7 +69,6 @@ public:
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseObjects();
 
-	void BuildLightsAndMaterials();
 
 	virtual ID3D12RootSignature* CreateGraphicsRootSignature(ID3D12Device* pd3dDevice);
 

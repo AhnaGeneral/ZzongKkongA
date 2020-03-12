@@ -35,11 +35,11 @@ cbuffer cbLights : register(b3)
 
 float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 {
-//	float3 vToLight = -gLights[nIndex].m_vDirection;
-//	float fDiffuseFactor = dot(vToLight, vNormal);
-//	float fSpecularFactor = 0.0f;
-//	if (fDiffuseFactor > 0.0f)
-//	{
+	float3 vToLight = -gLights[nIndex].m_vDirection;
+	float fDiffuseFactor = dot(vToLight, vNormal);
+	float fSpecularFactor = 0.0f;
+	if (fDiffuseFactor > 0.0f)
+	{
 //		if (gMaterial.m_cSpecular.a != 0.0f)
 //		{
 //#ifdef _WITH_REFLECT
@@ -54,9 +54,9 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 //			fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), gMaterial.m_cSpecular.a);
 //#endif
 //		}
-//	}
+	}
 
-	return(float4(0.0f, 0.0f, 0.0f, 0.0f));
+	return(gLights[nIndex].m_cDiffuse * fDiffuseFactor);
 }
 
 float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera)
