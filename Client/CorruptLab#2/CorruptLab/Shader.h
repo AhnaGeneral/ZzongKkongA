@@ -44,10 +44,10 @@ public:
 	void CreateConstantBufferViews(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int nConstantBufferViews, ID3D12Resource* pd3dConstantBuffers, UINT nStride);
 	void CreateShaderResourceViews(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, CTexture* pTexture, UINT nRootParameterStartIndex, bool bAutoIncrement);
 	void CreateShaderResourceViews(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, CTexture* pTexture, UINT nRootParameterStartIndex, int nOffsets);
-
-
+	
 	virtual void CreateGraphicsRootSignature(ID3D12Device* pd3dDevice) { }
 	ID3D12RootSignature* GetGraphicsRootSignature() { return(m_pd3dGraphicsRootSignature); }
+	void SetGraphicsRootSignature(ID3D12RootSignature* pSignature) { m_pd3dGraphicsRootSignature = pSignature; }
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);

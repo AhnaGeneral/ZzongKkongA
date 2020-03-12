@@ -109,7 +109,7 @@ void CLightTarget::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* p
 void CLightTarget::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 	m_pLightTexture = (CTexture*)pContext;
-	//CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pLightTexture->GetTextures());
+	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pLightTexture->GetTextures());
 	//CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	//CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pLightTexture, ROOT_PARAMETER_CDN_MRT, true);
 

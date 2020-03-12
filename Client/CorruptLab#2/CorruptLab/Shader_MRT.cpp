@@ -186,7 +186,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	if (pContext != NULL)
 	{
 		m_pTexture = (CTexture*)pContext;
-		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pTexture->GetTextures());
+		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 4);
 		CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, 0, true);
 	}
@@ -194,8 +194,6 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	if (pLightContext != NULL)
 	{
 		m_pLightTexture = (CTexture*)pLightContext;
-		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pLightTexture->GetTextures());
-		CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pLightTexture, 3, true);
 	}
 

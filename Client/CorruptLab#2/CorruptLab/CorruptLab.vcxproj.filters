@@ -166,6 +166,9 @@
     <ClInclude Include="Object_UI.h">
       <Filter>05.Component\GameObject\05.UI</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_LightMRT.h">
+      <Filter>04.Shader\01.Shader_MRT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -243,6 +246,9 @@
     <ClCompile Include="Object_UI.cpp">
       <Filter>05.Component\GameObject\05.UI</Filter>
     </ClCompile>
+    <ClCompile Include="Shader_LightMRT.cpp">
+      <Filter>04.Shader\01.Shader_MRT</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">
@@ -275,6 +281,9 @@
     </FxCompile>
     <FxCompile Include="HLSL_SkyBox.hlsl">
       <Filter>04.Shader\04.Shader_SkyBox</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_LightTarget.hlsl">
+      <Filter>04.Shader\01.Shader_MRT</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -329,7 +329,7 @@ void CShader::OnPrepareRender(ID3D12GraphicsCommandList* pd3dCommandList, int nP
 
 	if (m_ppd3dPipelineStates)
 		pd3dCommandList->SetPipelineState(m_ppd3dPipelineStates[nPipelineState]);
-	pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
+	if(m_pd3dCbvSrvDescriptorHeap) pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
 
 	UpdateShaderVariables(pd3dCommandList);
 }
