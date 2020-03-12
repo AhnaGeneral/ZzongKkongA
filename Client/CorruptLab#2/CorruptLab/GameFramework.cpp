@@ -62,7 +62,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateDepthStencilView();
 
 	CreateOffScreenRenderTargetViews();
-	CreateLightRenderTargetViews();
+	//CreateLightRenderTargetViews();
 
 	BuildObjects();
 
@@ -286,7 +286,7 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	m_pPostProcessingShader = new CPostProcessingByLaplacianShader();
 	m_pPostProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
 	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pPostProcessingShader->GetGraphicsRootSignature());
-	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pTextureForPostProcessing);
+	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pTextureForPostProcessing, NULL);
 
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
@@ -296,7 +296,7 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 
 void CGameFramework::CreateLightRenderTargetViews()
 {
-	CTexture* pLightMap = new CTexture(m_nOffScreenLightBuffers, RESOURCE_TEXTURE2D_ARRAY, 0);
+	CTexture* pLightMap = new CTexture(m_nOffScreenLightBuffers, RESOURCE_TEXTURE2D, 0);
 
 	D3D12_CLEAR_VALUE d3dClearValue = { DXGI_FORMAT_R8G8B8A8_UNORM, { 0.0f, 0.0f, 0.0f, 1.0f } };
 
@@ -324,10 +324,13 @@ void CGameFramework::CreateLightRenderTargetViews()
 		d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 	}
 
+
 	m_pLightProcessingShader = new CLightTarget();
-	m_pLightProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
-	m_pLightProcessingShader->CreateShader(m_pd3dDevice, m_pLightProcessingShader->GetGraphicsRootSignature());
-	m_pLightProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pLightMap);
+	//m_pLightProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
+	//m_pLightProcessingShader->CreateShader(m_pd3dDevice, m_pLightProcessingShader->GetGraphicsRootSignature());
+	//m_pLightProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pLightMap);
+
+	//m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL, pLightMap);
 
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
@@ -625,21 +628,22 @@ void CGameFramework::FrameAdvance()
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 되? 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 
+	//---------------------------------------------------------------------------------------------------------------------
+	//for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+	//::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],
+	//                                 D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],
-	                                 D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	//for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+	//m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenLightBufferCPUHandles[i], pfClearColor, 0, NULL);
 
-	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
-	m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenLightBufferCPUHandles[i], pfClearColor, 0, NULL);
+	//m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenLightBuffers, m_pd3dOffScreenLightBufferCPUHandles, TRUE, NULL);
 
-	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenLightBuffers, m_pd3dOffScreenLightBufferCPUHandles, TRUE, NULL);
+	//m_pLightProcessingShader->Render(m_pd3dCommandList, m_pCamera);
 
-	m_pLightProcessingShader->Render(m_pd3dCommandList, m_pCamera);
+	//for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+	//::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],   D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],   D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
-
+	//---------------------------------------------------------------------------------------------------------------------
 
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 

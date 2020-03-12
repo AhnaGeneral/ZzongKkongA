@@ -247,7 +247,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	else if (cDetailTexColor.b)
 		cColor = saturate((cBaseTexColor * 0.5f) + (CGrass2_BC * 0.5f));
 	else 
-		cColor = (cBaseTexColor * 1.0f);
+		cColor = saturate((cBaseTexColor * 0.5f) + (CGrass2_BC * 0.5f));
 
 	float3 ncColor = cColor.rgb;
 	output.color = float4 (ncColor, 1.0f);

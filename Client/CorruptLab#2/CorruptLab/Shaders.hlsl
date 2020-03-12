@@ -149,10 +149,10 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] ¡æ [-1, 1]
 	normalW = normalize(mul(vNormal, TBN));
 
-	if (cColorAlbedo.a < 1.0f)
-	{
-		discard;
-	}
+	//if (cColorAlbedo.a < 1.0f)
+	//{
+	//	discard;
+	//}
 
 	output.normal = float4(normalW, 1);
 	output.color = cColorAlbedo;

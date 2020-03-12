@@ -24,20 +24,20 @@ D3D12_DEPTH_STENCIL_DESC CLightTarget::CreateDepthStencilState()
 
 void CLightTarget::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 {
-	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[1];
+	//D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[1];
 
-	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dDescriptorRanges[0].NumDescriptors = 3;
-	pd3dDescriptorRanges[0].BaseShaderRegister = 1; //Texture
-	pd3dDescriptorRanges[0].RegisterSpace = 0;
-	pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
+	//pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	//pd3dDescriptorRanges[0].NumDescriptors = 3;
+	//pd3dDescriptorRanges[0].BaseShaderRegister = 1; //Texture
+	//pd3dDescriptorRanges[0].RegisterSpace = 0;
+	//pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[1];
+	//D3D12_ROOT_PARAMETER pd3dRootParameters[1];
 
-	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].DescriptorTable.NumDescriptorRanges = 1;
-	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[0]; //Texture
-	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	//pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	//pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].DescriptorTable.NumDescriptorRanges = 1;
+	//pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[0]; //Texture
+	//pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc;
@@ -58,8 +58,8 @@ void CLightTarget::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 	D3D12_ROOT_SIGNATURE_DESC d3dRootSignatureDesc;
 	::ZeroMemory(&d3dRootSignatureDesc, sizeof(D3D12_ROOT_SIGNATURE_DESC));
-	d3dRootSignatureDesc.NumParameters = _countof(pd3dRootParameters);
-	d3dRootSignatureDesc.pParameters = pd3dRootParameters;
+	//d3dRootSignatureDesc.NumParameters = _countof(pd3dRootParameters);
+	//d3dRootSignatureDesc.pParameters = pd3dRootParameters;
 	d3dRootSignatureDesc.NumStaticSamplers = 1;
 	d3dRootSignatureDesc.pStaticSamplers = &d3dSamplerDesc;
 	d3dRootSignatureDesc.Flags = d3dRootSignatureFlags;
@@ -109,9 +109,9 @@ void CLightTarget::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* p
 void CLightTarget::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 	m_pLightTexture = (CTexture*)pContext;
-	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pLightTexture->GetTextures());
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pLightTexture, ROOT_PARAMETER_CDN_MRT, true);
+	//CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pLightTexture->GetTextures());
+	//CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pLightTexture, ROOT_PARAMETER_CDN_MRT, true);
 
 }
 
@@ -120,7 +120,7 @@ void CLightTarget::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
 	CShader::Render(pd3dCommandList, pCamera);
-	if (m_pLightTexture) m_pLightTexture->UpdateShaderVariables(pd3dCommandList);
+	//if (m_pLightTexture) m_pLightTexture->UpdateShaderVariables(pd3dCommandList);
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
 }

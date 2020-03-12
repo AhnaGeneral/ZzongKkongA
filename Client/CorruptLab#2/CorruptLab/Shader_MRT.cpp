@@ -80,6 +80,11 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dRootParameters[3].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[1]; //Texture
 	pd3dRootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+	//pd3dRootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	//pd3dRootParameters[4].DescriptorTable.NumDescriptorRanges = 1;
+	//pd3dRootParameters[4].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[0]; //Texture
+	//pd3dRootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc;
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
 	d3dSamplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
@@ -176,12 +181,24 @@ void CPostProcessingShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSig
 	if (d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] d3dPipelineStateDesc.InputLayout.pInputElementDescs;
 }
 
-void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
+void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext, void* pLightContext)
 {
-	m_pTexture = (CTexture*)pContext;
-	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pTexture->GetTextures());
-	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, 0, true);
+	if (pContext != NULL)
+	{
+		m_pTexture = (CTexture*)pContext;
+		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pTexture->GetTextures());
+		CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, 0, true);
+	}
+
+	if (pLightContext != NULL)
+	{
+		m_pLightTexture = (CTexture*)pLightContext;
+		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, m_pLightTexture->GetTextures());
+		CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pLightTexture, 3, true);
+	}
+
 	m_xmf4x4OrthoView =
 		Matrix4x4::LookAtLH(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)); 
 	// position이 왜 0 이여야 하지 ? // 모두 수직이여야 하는거 아닌가 ? 
@@ -205,6 +222,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 void CPostProcessingShader::ReleaseObjects()
 {
 	if (m_pTexture) m_pTexture->Release();
+	if (m_pLightTexture) m_pLightTexture->Release();
 }
 
 void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
@@ -214,6 +232,8 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 	CShader::Render(pd3dCommandList, pCamera);
 
 	if (m_pTexture) m_pTexture->UpdateShaderVariables(pd3dCommandList);
+	//if (m_pLightTexture) m_pLightTexture->UpdateShaderVariables(pd3dCommandList);
+
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
 

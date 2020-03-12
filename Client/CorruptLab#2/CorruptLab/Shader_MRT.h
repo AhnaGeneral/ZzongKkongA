@@ -27,7 +27,7 @@ public:
 
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets = 1);
 
-	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext = NULL);
+	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext = NULL, void* pLightContext = NULL);
 	virtual void ReleaseObjects();
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
@@ -40,6 +40,8 @@ public:
 
 protected:
 	CTexture* m_pTexture = NULL;
+	CTexture* m_pLightTexture = NULL;
+
 
 	CGameObject ** UIObject = NULL; 
 	int m_nUI; 

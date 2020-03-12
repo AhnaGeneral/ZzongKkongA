@@ -205,7 +205,7 @@ void CCloudGSShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera*
 {
 	CShader::Render(pd3dCommandList, pCamera);
 
-	//m_pBillboardMaterial->m_ppTextures[0]->UpdateShaderVariables(pd3dCommandList);
+	m_pBillboardMaterial->m_ppTextures[0]->UpdateShaderVariables(pd3dCommandList);
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[1] = { m_d3dInstancingBufferView };
 	pd3dCommandList->IASetVertexBuffers(0, _countof(pVertexBufferViews), pVertexBufferViews);
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
