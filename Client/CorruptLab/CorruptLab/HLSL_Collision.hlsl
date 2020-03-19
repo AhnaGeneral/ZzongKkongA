@@ -84,6 +84,7 @@ void GS(point VS_COLLISIONBOX_OUTPUT input[1], inout TriangleStream<GS_COLLISION
     {
         output.Position = mul(mul (pVertices[i].xyz, (float3x3 )gmtxView), (float3x3) gmtxProjection);
         output.Center = mul(mul(pVertices[i], gmtxView), gmtxProjection);
+    
         outStream.Append(output);
     }
 
