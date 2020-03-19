@@ -16,6 +16,7 @@ public:
 
 private:
 	int	 m_nReferences = 0;
+	int	 m_nCurreuntOffest = 0;
 
 public:
 	void AddRef() { m_nReferences++; }

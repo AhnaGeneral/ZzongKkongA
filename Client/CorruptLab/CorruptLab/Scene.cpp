@@ -386,7 +386,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCa
 			for (auto Obj : *m_pObjectLists[i])
 			{
 				Obj->UpdateTransform(NULL);
-				Obj->Render(pd3dCommandList, pCamera,1);
+				Obj->Render(pd3dCommandList, pCamera,0);
 			}
 		}
 	}

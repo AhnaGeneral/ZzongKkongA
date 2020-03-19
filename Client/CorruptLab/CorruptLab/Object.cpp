@@ -71,6 +71,8 @@ void CGameObject::Release()
 	if(m_pBoundingBoxes)
 		delete[] m_pBoundingBoxes;
 
+	m_pBoundingBoxes = NULL;
+
 	if (--m_nReferences <= 0) delete this;
 }
 
@@ -237,8 +239,12 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 	if (m_pSibling) m_pSibling->Render(pd3dCommandList, pCamera, nPipelineState);
 	if (m_pChild) m_pChild->Render(pd3dCommandList, pCamera, nPipelineState);
 
-	if(m_pCollisionBoxShader)
+
+	if (m_pCollisionBoxShader)
+	{
+		UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
+	}
 }
 
 CMaterialColors::CMaterialColors(MATERIALLOADINFO* pMaterialInfo)
@@ -402,7 +408,6 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 	BYTE nStrLength = 0;
 	char pstrToken[64] = { '\0' };
 
-	m_pCollisionBoxShader = new Shader_CollisionBox(); 
 
 	(UINT)::fread(&nStrLength, sizeof(BYTE), 1, pInFile);
 	(UINT)::fread(pstrToken, sizeof(char), nStrLength, pInFile);
@@ -411,6 +416,8 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 
 	if (!strcmp(pstrToken, "<Bounds>:"))
 	{
+		m_pCollisionBoxShader = new Shader_CollisionBox(); 
+
 		(UINT)::fread(&pGameObject->m_nBoundingBoxes, sizeof(int), 1, pInFile);
 		pGameObject->m_pBoundingBoxes = new BoundingOrientedBox[pGameObject->m_nBoundingBoxes];
 

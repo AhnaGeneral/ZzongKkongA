@@ -50,32 +50,32 @@
     <Filter Include="04.Shader\05.Shader_Standard">
       <UniqueIdentifier>{551857dd-c2ce-4ba2-9ba7-514d17e0b07c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05.Component\Material\GameObject">
-      <UniqueIdentifier>{3dcb082b-756b-44b9-8f27-0685c71892c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05.Component\Material\GameObject\00.Object">
-      <UniqueIdentifier>{6037695c-9c5a-4825-a36d-cca8882b3368}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05.Component\Material\GameObject\01.Mesh">
-      <UniqueIdentifier>{c951d617-b4dc-41e2-b5dc-a665fdef1042}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05.Component\Material\GameObject\02.Camera">
-      <UniqueIdentifier>{d3fece7e-8279-4b8f-bd0c-ea9c853bad08}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05.Component\Material\GameObject\03.Player">
-      <UniqueIdentifier>{6eb052ae-533f-4970-b7f8-3074f9952be1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05.Component\Material\GameObject\04.Terrain">
-      <UniqueIdentifier>{c8e9f728-2b04-4b92-95d4-6f367b3d8f06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05.Component\Material\GameObject\05.UI">
-      <UniqueIdentifier>{529f9ee9-b331-44aa-ba4d-6b60349ea885}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05.Component\Material\GameObject\06.Billboard">
-      <UniqueIdentifier>{4e9e31ff-232b-4a8f-a444-95d4ec8d4505}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04.Shader\06.Shader_Collision">
       <UniqueIdentifier>{d28c95c1-116a-4aa6-8620-f9814d3e3c9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject">
+      <UniqueIdentifier>{3dcb082b-756b-44b9-8f27-0685c71892c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\00.Object">
+      <UniqueIdentifier>{6037695c-9c5a-4825-a36d-cca8882b3368}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\01.Mesh">
+      <UniqueIdentifier>{c951d617-b4dc-41e2-b5dc-a665fdef1042}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\02.Camera">
+      <UniqueIdentifier>{d3fece7e-8279-4b8f-bd0c-ea9c853bad08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\03.Player">
+      <UniqueIdentifier>{6eb052ae-533f-4970-b7f8-3074f9952be1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\04.Terrain">
+      <UniqueIdentifier>{c8e9f728-2b04-4b92-95d4-6f367b3d8f06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\05.UI">
+      <UniqueIdentifier>{529f9ee9-b331-44aa-ba4d-6b60349ea885}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\06.Billboard">
+      <UniqueIdentifier>{4e9e31ff-232b-4a8f-a444-95d4ec8d4505}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -122,28 +122,28 @@
       <Filter>05.Component</Filter>
     </ClInclude>
     <ClInclude Include="Object_BillBoard.h">
-      <Filter>05.Component\Material\GameObject\06.Billboard</Filter>
+      <Filter>05.Component\GameObject\06.Billboard</Filter>
     </ClInclude>
     <ClInclude Include="Object_Terrain.h">
-      <Filter>05.Component\Material\GameObject\04.Terrain</Filter>
+      <Filter>05.Component\GameObject\04.Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Object_Player.h">
-      <Filter>05.Component\Material\GameObject\03.Player</Filter>
+      <Filter>05.Component\GameObject\03.Player</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>05.Component\Material</Filter>
     </ClInclude>
     <ClInclude Include="Mesh_Terrain.h">
-      <Filter>05.Component\Material\GameObject\04.Terrain</Filter>
+      <Filter>05.Component\GameObject\04.Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Mesh_SkyBox.h">
-      <Filter>05.Component\Material\GameObject\06.Billboard</Filter>
+      <Filter>05.Component\GameObject\06.Billboard</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>05.Component\Material\GameObject\01.Mesh</Filter>
+      <Filter>05.Component\GameObject\01.Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>05.Component\Material\GameObject\00.Object</Filter>
+      <Filter>05.Component\GameObject\00.Object</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>04.Shader\00.Shader_Basic</Filter>
@@ -152,10 +152,10 @@
       <Filter>04.Shader\01.Shader_MRT</Filter>
     </ClInclude>
     <ClInclude Include="Mesh_Skinned.h">
-      <Filter>05.Component\Material\GameObject\01.Mesh</Filter>
+      <Filter>05.Component\GameObject\01.Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Object_Camera.h">
-      <Filter>05.Component\Material\GameObject\02.Camera</Filter>
+      <Filter>05.Component\GameObject\02.Camera</Filter>
     </ClInclude>
     <ClInclude Include="Shader_Terrain.h">
       <Filter>04.Shader\02.Shader_Terrain</Filter>
@@ -167,7 +167,7 @@
       <Filter>04.Shader\05.Shader_Standard</Filter>
     </ClInclude>
     <ClInclude Include="Object_UI.h">
-      <Filter>05.Component\Material\GameObject\05.UI</Filter>
+      <Filter>05.Component\GameObject\05.UI</Filter>
     </ClInclude>
     <ClInclude Include="Shader_LightMRT.h">
       <Filter>04.Shader\01.Shader_MRT</Filter>
@@ -202,31 +202,31 @@
       <Filter>08.Animation</Filter>
     </ClCompile>
     <ClCompile Include="Object_BillBoard.cpp">
-      <Filter>05.Component\Material\GameObject\06.Billboard</Filter>
+      <Filter>05.Component\GameObject\06.Billboard</Filter>
     </ClCompile>
     <ClCompile Include="Object_Terrain.cpp">
-      <Filter>05.Component\Material\GameObject\04.Terrain</Filter>
+      <Filter>05.Component\GameObject\04.Terrain</Filter>
     </ClCompile>
     <ClCompile Include="Object_Player.cpp">
-      <Filter>05.Component\Material\GameObject\03.Player</Filter>
+      <Filter>05.Component\GameObject\03.Player</Filter>
     </ClCompile>
     <ClCompile Include="MapObjectLoader.cpp">
-      <Filter>05.Component\Material\GameObject</Filter>
+      <Filter>05.Component\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>05.Component\Material</Filter>
     </ClCompile>
     <ClCompile Include="Mesh_Terrain.cpp">
-      <Filter>05.Component\Material\GameObject\04.Terrain</Filter>
+      <Filter>05.Component\GameObject\04.Terrain</Filter>
     </ClCompile>
     <ClCompile Include="Mesh_SkyBox.cpp">
-      <Filter>05.Component\Material\GameObject\06.Billboard</Filter>
+      <Filter>05.Component\GameObject\06.Billboard</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>05.Component\Material\GameObject\01.Mesh</Filter>
+      <Filter>05.Component\GameObject\01.Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>05.Component\Material\GameObject\00.Object</Filter>
+      <Filter>05.Component\GameObject\00.Object</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>04.Shader\00.Shader_Basic</Filter>
@@ -235,10 +235,10 @@
       <Filter>04.Shader\01.Shader_MRT</Filter>
     </ClCompile>
     <ClCompile Include="Mesh_Skinned.cpp">
-      <Filter>05.Component\Material\GameObject\01.Mesh</Filter>
+      <Filter>05.Component\GameObject\01.Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Object_Camera.cpp">
-      <Filter>05.Component\Material\GameObject\02.Camera</Filter>
+      <Filter>05.Component\GameObject\02.Camera</Filter>
     </ClCompile>
     <ClCompile Include="Shader-Terrain.cpp">
       <Filter>04.Shader\02.Shader_Terrain</Filter>
@@ -250,7 +250,7 @@
       <Filter>04.Shader\05.Shader_Standard</Filter>
     </ClCompile>
     <ClCompile Include="Object_UI.cpp">
-      <Filter>05.Component\Material\GameObject\05.UI</Filter>
+      <Filter>05.Component\GameObject\05.UI</Filter>
     </ClCompile>
     <ClCompile Include="Shader_LightMRT.cpp">
       <Filter>04.Shader\01.Shader_MRT</Filter>
@@ -282,9 +282,6 @@
     <FxCompile Include="HLSL_Terrain.hlsl">
       <Filter>04.Shader\02.Shader_Terrain</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL_BillBoard.hlsl">
-      <Filter>04.Shader\03.Shader_BillBoard</Filter>
-    </FxCompile>
     <FxCompile Include="Light.hlsl">
       <Filter>04.Shader\00.Shader_Basic</Filter>
     </FxCompile>
@@ -296,6 +293,9 @@
     </FxCompile>
     <FxCompile Include="HLSL_Collision.hlsl">
       <Filter>04.Shader\06.Shader_Collision</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_BillBoard.hlsl">
+      <Filter>04.Shader\03.Shader_BillBoard</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -32,6 +32,7 @@
 
 #define OBJECT_TYPE_ROCK				0
 #define OBJECT_TYPE_FENCE				1
+#define OBJECT_TYPE_TRMTOWER			2
 
 //---------------------------------------------------
 

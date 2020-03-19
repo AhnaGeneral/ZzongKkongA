@@ -35,7 +35,7 @@ public:
 public:
 
 	int								m_nBoundingBoxes;
-	BoundingOrientedBox				*m_pBoundingBoxes;
+	BoundingOrientedBox				*m_pBoundingBoxes = NULL;
 
 	char							m_pstrFrameName[64];
 
