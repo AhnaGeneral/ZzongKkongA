@@ -151,8 +151,10 @@ public:
 	CTexture                     ** m_ppTextures = NULL; //0:Albedo, 1:Specular, 2:Metallic, 3:Normal, 4:Emission, 5:DetailAlbedo, 6:DetailNormal
 
 	CTexture                      * m_pTexture = NULL; 
+
 	static CShader                * m_pStandardShader;
 	static CShader                * m_pSkinnedAnimationShader;
+	static CShader                * m_pCollisionShader; 
 
 public:
 	static void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);

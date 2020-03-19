@@ -10,8 +10,9 @@ public :
 	virtual ~CUI();
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 
-	void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
-	void SetObjectID(UINT objectID); 
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
+
+	void SetObjectID(UINT objectID);
 	virtual UINT GetObjectID() { return m_nobjectID; }
 	void Set2DPosition(float x, float y); 
 };

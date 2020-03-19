@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "Shader.h"
 #include "Shader_Standard.h"
+//#include "Shader_CollisionBox.h"
 
 // CTexture =======================================================================================================
 CTexture::CTexture(int nTextures, UINT nTextureType, int nSamplers)
@@ -95,6 +96,7 @@ ID3D12Resource* CTexture::CreateTexture(ID3D12Device* pd3dDevice, ID3D12Graphics
 //____________________________________________________
 CShader* CMaterial::m_pSkinnedAnimationShader = NULL;
 CShader* CMaterial::m_pStandardShader = NULL;
+//CShader* CMaterial::m_pCollisionShader = NULL;
 //____________________________________________________
 
 CMaterial::CMaterial() 
@@ -159,6 +161,10 @@ void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
 	m_pSkinnedAnimationShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	m_pSkinnedAnimationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 3, 7);
+
+	//m_pCollisionShader = new Shader_CollisionBox(); 
+	//m_pCollisionShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3); 
+	//
 
 }
 

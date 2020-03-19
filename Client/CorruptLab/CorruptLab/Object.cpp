@@ -5,6 +5,8 @@
 #include "Object.h"
 #include "Shader.h"
 #include "Animation.h"
+#include "Shader_CollisionBox.h"
+//#include ""
 
  int ReadIntegerFromFile(FILE* pInFile)
 {
@@ -234,6 +236,9 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 	}
 	if (m_pSibling) m_pSibling->Render(pd3dCommandList, pCamera, nPipelineState);
 	if (m_pChild) m_pChild->Render(pd3dCommandList, pCamera, nPipelineState);
+
+	if(m_pCollisionBoxShader)
+		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
 }
 
 CMaterialColors::CMaterialColors(MATERIALLOADINFO* pMaterialInfo)
@@ -387,15 +392,17 @@ CGameObject* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDev
 		pGameObject->m_pAnimationController->SetAnimationSet(0);
 	}
 
-	LoadBoundingBox(pGameObject, pInFile);
+	pGameObject->LoadBoundingBox(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pGameObject, pInFile);
 
 	return(pGameObject);
 }
 
-void CGameObject::LoadBoundingBox(CGameObject* pGameObject, FILE* pInFile)
+void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pGameObject, FILE* pInFile)
 {
 	BYTE nStrLength = 0;
 	char pstrToken[64] = { '\0' };
+
+	m_pCollisionBoxShader = new Shader_CollisionBox(); 
 
 	(UINT)::fread(&nStrLength, sizeof(BYTE), 1, pInFile);
 	(UINT)::fread(pstrToken, sizeof(char), nStrLength, pInFile);
@@ -406,13 +413,30 @@ void CGameObject::LoadBoundingBox(CGameObject* pGameObject, FILE* pInFile)
 	{
 		(UINT)::fread(&pGameObject->m_nBoundingBoxes, sizeof(int), 1, pInFile);
 		pGameObject->m_pBoundingBoxes = new BoundingOrientedBox[pGameObject->m_nBoundingBoxes];
+
+		m_pCollisionBoxShader->m_pBoxInfo = new GS_COLLISION_BOX_INFO[pGameObject->m_nBoundingBoxes];
+		m_pCollisionBoxShader->m_nInstance = pGameObject->m_nBoundingBoxes;
+
 		for (int i = 0; i < pGameObject->m_nBoundingBoxes; i++)
 		{
-			(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Center, sizeof(float), 3, pInFile);
-			(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Extents, sizeof(float), 3, pInFile);
-			(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Orientation, sizeof(float), 4, pInFile);
+			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Center, sizeof(float), 3, pInFile);
+			pGameObject->m_pBoundingBoxes[i].Center = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Center; 
+
+			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Extent, sizeof(float), 3, pInFile);
+			pGameObject->m_pBoundingBoxes[i].Extents = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Extent;
+
+			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf4Orientation, sizeof(float), 3, pInFile);
+			pGameObject->m_pBoundingBoxes[i].Orientation = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf4Orientation;
+
+			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Center, sizeof(float), 3, pInFile);
+			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Extents, sizeof(float), 3, pInFile);
+			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Orientation, sizeof(float), 4, pInFile);
 		}
+		m_pCollisionBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3); 
+		m_pCollisionBoxShader->BuildObjects(pd3dDevice, pd3dCommandList);
 	}
+
+	
 }
 
 CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader)
@@ -519,6 +543,9 @@ void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 	for (int i = 0; i < m_nMaterials; i++) m_ppMaterials[i] = NULL;
 
 	CMaterial* pMaterial = NULL;
+	//m_pCollisionBoxShader = NULL;
+
+	//Shader_CollisionBox* pCollisionShader = NULL; 
 
 	for (; ; )
 	{
@@ -530,7 +557,8 @@ void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 		{
 			nReads = (UINT)::fread(&nMaterial, sizeof(int), 1, pInFile);
 
-			pMaterial = new CMaterial(7); //0:Albedo, 1:Specular, 2:Metallic, 3:Normal, 4:Emission, 5:DetailAlbedo, 6:DetailNormal
+			pMaterial = new CMaterial(7); 
+			//0:Albedo, 1:Specular, 2:Metallic, 3:Normal, 4:Emission, 5:DetailAlbedo, 6:DetailNormal
 
 			if (!pShader)
 			{
@@ -545,7 +573,8 @@ void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 					{
 						pMaterial->SetStandardShader();
 					}
-				}
+				}			
+				
 			}
 			SetMaterial(nMaterial, pMaterial);
 		}

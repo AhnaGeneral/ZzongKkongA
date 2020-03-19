@@ -3,15 +3,18 @@
 #include "Mesh.h"
 #include "Mesh_Skinned.h"
 #include "Object_Camera.h"
+//#include "Shader_CollisionBox.h"
 
 class CShader;
 class CAnimationController;
+class Shader_CollisionBox; 
 
 struct CB_GAMEOBJECT_INFO  
 { 
 	XMFLOAT4X4 m_xmf4x4World; 
 	UINT       m_xnObjectID ; 
 };
+
 
 class CGameObject
 {
@@ -51,6 +54,12 @@ public:
 	ID3D12Resource                  * m_pd3dcbGameObjects = NULL;	
 	CB_GAMEOBJECT_INFO              * m_pcbMappedGameObjects = NULL;
 
+	Shader_CollisionBox             * m_pCollisionBoxShader = NULL; 
+	//ID3D12Resource                * m_pd3dCollisionBuffer = NULL;
+	//ID3D12Resource                * m_pd3dBoneWeightUploadBuffer = NULL;
+	//D3D12_VERTEX_BUFFER_VIEW		m_d3dBoneWeightBufferView;
+	
+	//Shader_CollisionBox * m
 
 	void SetMesh(CMesh* pMesh);
 	void SetShader(CShader* pShader);
@@ -98,6 +107,7 @@ public:
 	void UpdateTransform(XMFLOAT4X4* pxmf4x4Parent = NULL);
 	CGameObject* FindFrame(char* pstrFrameName);
 
+
 	UINT GetMeshType() { return((m_pMesh) ? m_pMesh->GetType() : 0); }
 	virtual UINT GetObjectID() { return 0; }
 	CTexture* FindReplicatedTexture(_TCHAR* pstrTextureName);
@@ -112,11 +122,12 @@ public:
 	void CacheSkinningBoneFrames(CGameObject* pRootFrame);
 
 	void LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, CGameObject* pParent, FILE* pInFile, CShader* pShader);
+	void LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pGameObject, FILE* pInFile);
 	void LoadAnimationFromFile(FILE* pInFile);
+	 
 
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader);
 	static CGameObject* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader, bool bHasAnimation);
-	static void LoadBoundingBox(CGameObject* pGameObject, FILE* pInFile);
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);
 
 };

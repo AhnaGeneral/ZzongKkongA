@@ -21,7 +21,7 @@ void CUI::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLO
 
 }
 
-void CUI::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+void CUI::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);

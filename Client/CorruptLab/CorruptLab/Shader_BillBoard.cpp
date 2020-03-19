@@ -245,29 +245,3 @@ void CCloudGSShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature*
 	if (m_d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] m_d3dPipelineStateDesc.InputLayout.pInputElementDescs;
 }
 
-CBillboardShader::CBillboardShader()
-{
-}
-
-CBillboardShader::~CBillboardShader()
-{
-}
-
-D3D12_INPUT_LAYOUT_DESC CBillboardShader::CreateInputLayout()
-{
-	return D3D12_INPUT_LAYOUT_DESC();
-}
-
-D3D12_SHADER_BYTECODE CBillboardShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
-{
-	return D3D12_SHADER_BYTECODE();
-}
-
-D3D12_SHADER_BYTECODE CBillboardShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
-{
-	return D3D12_SHADER_BYTECODE();
-}
-
-void CBillboardShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
-{
-}
