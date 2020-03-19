@@ -425,7 +425,7 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Extent, sizeof(float), 3, pInFile);
 			pGameObject->m_pBoundingBoxes[i].Extents = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Extent;
 
-			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf4Orientation, sizeof(float), 3, pInFile);
+			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf4Orientation, sizeof(float), 4, pInFile);
 			pGameObject->m_pBoundingBoxes[i].Orientation = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf4Orientation;
 
 			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Center, sizeof(float), 3, pInFile);

@@ -5,7 +5,7 @@ using System.IO;
 using UnityEditor;
 using System.Text;
 
-public class BinaryHierarchicalModelExtract : MonoBehaviour
+public class ModelExtractWithCollision : MonoBehaviour
 {
     public GameObject CollisionBox;
     public AnimationClip[] animationClips;
@@ -259,11 +259,16 @@ public class BinaryHierarchicalModelExtract : MonoBehaviour
     {
         binaryWriter.Write(strName);
         int nBoxes = CollisionBox.transform.childCount;
+        Debug.Log("nBoxes : " + nBoxes);
         binaryWriter.Write(nBoxes);
         for (int i = 0; i < nBoxes; i++)
         {
-            WriteVector(CollisionBox.transform.GetChild(i).position);
+            WriteVector(CollisionBox.transform.GetChild(i).localPosition);
+            Debug.Log("Position : "+ CollisionBox.transform.GetChild(i).localPosition);
+
             WriteVector(CollisionBox.transform.GetChild(i).localScale);
+            Debug.Log("Scale : " + CollisionBox.transform.GetChild(i).localScale);
+
             WriteVector(CollisionBox.transform.GetChild(i).rotation);
         }
     }
