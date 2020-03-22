@@ -96,8 +96,9 @@ void Shader_CollisionBox::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 {
 	for (int i = 0; i < m_nInstance; ++i)
 	{
-		std::cout <<"Center : "<< m_pBoxInfo[i].m_xmf3Center.x << "	"<< m_pBoxInfo[i].m_xmf3Center.y <<"	"<< m_pBoxInfo[i].m_xmf3Center.z <<std::endl;
-		std::cout << "Extent : " << m_pBoxInfo[i].m_xmf3Extent.x << "	" << m_pBoxInfo[i].m_xmf3Extent.y << "	" << m_pBoxInfo[i].m_xmf3Extent.z << std::endl<< std::endl;
+		std::cout << "Orientation :	" << m_pBoxInfo[i].m_xmf4Orientation.x << "	" << m_pBoxInfo[i].m_xmf4Orientation.y << "	" << m_pBoxInfo[i].m_xmf4Orientation.z <<"	"<<m_pBoxInfo[i].m_xmf4Orientation.w << std::endl;
+		std::cout <<"Center :	"<< m_pBoxInfo[i].m_xmf3Center.x << "	"<< m_pBoxInfo[i].m_xmf3Center.y <<"	"<< m_pBoxInfo[i].m_xmf3Center.z <<std::endl;
+		std::cout << "Extent :	" << m_pBoxInfo[i].m_xmf3Extent.x << "	" << m_pBoxInfo[i].m_xmf3Extent.y << "	" << m_pBoxInfo[i].m_xmf3Extent.z << std::endl<< std::endl;
 
 	}
 	m_pd3dCollisionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pBoxInfo,

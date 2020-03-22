@@ -132,7 +132,7 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
 	float4 color  : SV_TARGET0;
 	float4 normal : SV_TARGET1;
-	float4 depth : SV_TARGET2; // 필요 없어보이니까 랜덤타겟 개수 확실히 정하고 바꿀때 지울것
+	float4 depth : SV_TARGET2;
 };
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LIGHTING_OUTPUT input)
@@ -149,14 +149,10 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] → [-1, 1]
 	normalW = normalize(mul(vNormal, TBN));
 
-	//if (cColorAlbedo.a < 1.0f)
-	//{
-	//	discard;
-	//}
-
+	float fdepth = input.vPorjPos.z / 1000.f;
 	output.normal = float4(normalW, 1);
 	output.color = cColorAlbedo;
-	output.depth = float4(input.vPorjPos.z / 1000.f, input.vPorjPos.z / 1000.f, input.vPorjPos.z / 1000.f, 1.0f);
+	output.depth = float4(fdepth, fdepth, fdepth, 1.0f);
 
 	return output;
 }

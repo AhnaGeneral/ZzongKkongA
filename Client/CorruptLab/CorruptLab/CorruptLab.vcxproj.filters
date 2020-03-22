@@ -77,6 +77,9 @@
     <Filter Include="05.Component\GameObject\06.Billboard">
       <UniqueIdentifier>{4e9e31ff-232b-4a8f-a444-95d4ec8d4505}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Shader\07.Shader_Water">
+      <UniqueIdentifier>{e4e42729-7729-4bc3-8d37-c9cd7064afed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -175,6 +178,9 @@
     <ClInclude Include="Shader_CollisionBox.h">
       <Filter>04.Shader\06.Shader_Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_Water.h">
+      <Filter>04.Shader\07.Shader_Water</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -258,6 +264,9 @@
     <ClCompile Include="Shader_CollisionBox.cpp">
       <Filter>04.Shader\06.Shader_Collision</Filter>
     </ClCompile>
+    <ClCompile Include="Shader_Water.cpp">
+      <Filter>04.Shader\07.Shader_Water</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">
@@ -296,6 +305,9 @@
     </FxCompile>
     <FxCompile Include="HLSL_BillBoard.hlsl">
       <Filter>04.Shader\03.Shader_BillBoard</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_Water.hlsl">
+      <Filter>04.Shader\07.Shader_Water</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

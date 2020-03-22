@@ -163,9 +163,9 @@ void CLightTarget::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 {
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
-	UpdateShaderVariables(pd3dCommandList);
-
 	CShader::Render(pd3dCommandList, pCamera);
+
+	UpdateShaderVariables(pd3dCommandList);
 	if (m_pTextures) m_pTextures->UpdateShaderVariables(pd3dCommandList);
 
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

@@ -12,7 +12,7 @@ using namespace std;
 
 class CHeightMapTerrain;
 class CSkyBox;
-
+class CWaterShader;
 
 class CScene
 {
@@ -59,7 +59,8 @@ public:
 	CHeightMapTerrain   * m_pTerrain = NULL;
 	CSkyBox             * m_pSkyBox = NULL;
 	CCloudGSShader      * m_pCloudGSShader = NULL;
-	CUI              * m_pUIObj = NULL;
+	CWaterShader		* m_pWaterShader = NULL;
+	CUI                 * m_pUIObj = NULL;
 
 
 public:
