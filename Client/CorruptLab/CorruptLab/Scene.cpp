@@ -35,7 +35,9 @@ void CGameScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLis
 	m_pWaterShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, 3);
 	m_pWaterShader->BuildObjects(pd3dDevice, pd3dCommandList);
 
-	CTriangleRect* UIMesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 2.0f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	m_pNoiseObject = new CObjectNosie(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+	m_pNoiseObject->SetPosition(XMFLOAT3(458.0f, 55.0f, 198.0f));
+	m_pNoiseObject->GenerateShaderDistortionBuffer();
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
@@ -155,8 +157,14 @@ ID3D12RootSignature *CGameScene::CreateGraphicsRootSignature(ID3D12Device *pd3dD
 	pd3dWaterTexRanges.RegisterSpace = 0;
 	pd3dWaterTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+	D3D12_DESCRIPTOR_RANGE pd3dNoiseTexRanges;
+	pd3dNoiseTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dNoiseTexRanges.NumDescriptors = 3;
+	pd3dNoiseTexRanges.BaseShaderRegister = 19;
+	pd3dNoiseTexRanges.RegisterSpace = 0;
+	pd3dNoiseTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[15];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[18];
 
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].Descriptor.ShaderRegister = 1; //b1 : Camera
@@ -234,6 +242,20 @@ ID3D12RootSignature *CGameScene::CreateGraphicsRootSignature(ID3D12Device *pd3dD
 	pd3dRootParameters[ROOT_PARMAMETER_WATER_NORMAL_TEX].DescriptorTable.pDescriptorRanges = &pd3dWaterTexRanges;
 	pd3dRootParameters[ROOT_PARMAMETER_WATER_NORMAL_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+	pd3dRootParameters[ROOT_PARAMETER_NOISEBUFFER].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[ROOT_PARAMETER_NOISEBUFFER].Constants.ShaderRegister = 22;
+	pd3dRootParameters[ROOT_PARAMETER_NOISEBUFFER].Constants.RegisterSpace = 0;
+	pd3dRootParameters[ROOT_PARAMETER_NOISEBUFFER].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	pd3dRootParameters[ROOT_PARAMETER_DISTORTIONBUFFER].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[ROOT_PARAMETER_DISTORTIONBUFFER].Constants.ShaderRegister = 23;
+	pd3dRootParameters[ROOT_PARAMETER_DISTORTIONBUFFER].Constants.RegisterSpace = 0;
+	pd3dRootParameters[ROOT_PARAMETER_DISTORTIONBUFFER].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	pd3dRootParameters[ROOT_PARAMETER_NOISE_TEX].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_NOISE_TEX].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_NOISE_TEX].DescriptorTable.pDescriptorRanges = &pd3dNoiseTexRanges;
+	pd3dRootParameters[ROOT_PARAMETER_NOISE_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
@@ -410,7 +432,10 @@ void CGameScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCa
 	}
 
 	if (m_pCloudGSShader) m_pCloudGSShader->Render(pd3dCommandList, pCamera); 
+	if (m_pNoiseObject) m_pNoiseObject->Render(pd3dCommandList, pCamera); 
 	m_pPlayer->Render(pd3dCommandList, pCamera);
+	
+	
 	if(m_pWaterShader) m_pWaterShader->Render(pd3dCommandList, pCamera);
 	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
 

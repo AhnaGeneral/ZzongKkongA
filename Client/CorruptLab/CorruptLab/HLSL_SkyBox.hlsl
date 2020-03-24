@@ -23,11 +23,10 @@ VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
 }
 
 TextureCube gtxtSkyCubeTexture : register(t11);
-SamplerState gssClamp : register(s1);
 
 float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 {
-	float4 cColor = gtxtSkyCubeTexture.Sample(gssClamp, input.positionL);
+	float4 cColor = gtxtSkyCubeTexture.Sample(gSamplerClamp, input.positionL);
 	cColor.rgb = cColor.rgb /** gcGlobalAmbientLight.rgb*/;
 
 	return(cColor);

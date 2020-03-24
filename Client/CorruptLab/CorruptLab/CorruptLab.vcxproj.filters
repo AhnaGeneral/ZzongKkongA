@@ -178,9 +178,9 @@
     <ClInclude Include="Shader_CollisionBox.h">
       <Filter>04.Shader\06.Shader_Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Shader_Water.h">
-      <Filter>04.Shader\07.Shader_Water</Filter>
-    </ClInclude>
+    <ClInclude Include="Mesh_Water.h" />
+    <ClInclude Include="Shader_Water.h" />
+    <ClInclude Include="Shader_Noise.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -264,9 +264,9 @@
     <ClCompile Include="Shader_CollisionBox.cpp">
       <Filter>04.Shader\06.Shader_Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Shader_Water.cpp">
-      <Filter>04.Shader\07.Shader_Water</Filter>
-    </ClCompile>
+    <ClCompile Include="Mesh_Water.cpp" />
+    <ClCompile Include="Shader_Water.cpp" />
+    <ClCompile Include="Shader_Noise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">
@@ -306,8 +306,7 @@
     <FxCompile Include="HLSL_BillBoard.hlsl">
       <Filter>04.Shader\03.Shader_BillBoard</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL_Water.hlsl">
-      <Filter>04.Shader\07.Shader_Water</Filter>
-    </FxCompile>
+    <FxCompile Include="HLSL_Water.hlsl" />
+    <FxCompile Include="HLSL_Noise.hlsl" />
   </ItemGroup>
 </Project>

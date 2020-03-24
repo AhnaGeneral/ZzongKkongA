@@ -54,13 +54,14 @@ protected:
 class CGameScene : public CScene
 {
 public:
-	CPlayer* m_pPlayer = NULL;
+	CPlayer             * m_pPlayer = NULL;
 
 	CHeightMapTerrain   * m_pTerrain = NULL;
 	CSkyBox             * m_pSkyBox = NULL;
 	CCloudGSShader      * m_pCloudGSShader = NULL;
 	CWaterShader		* m_pWaterShader = NULL;
 	CUI                 * m_pUIObj = NULL;
+	CObjectNosie        * m_pNoiseObject = NULL;
 
 
 public:

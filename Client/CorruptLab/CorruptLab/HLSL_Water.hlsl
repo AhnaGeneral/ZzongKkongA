@@ -69,7 +69,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSWater(GS_WATER_OUTPUT input)  : SV_TARGET
 
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 	
-	float4 normal = gtxtWaterNormal.Sample(gSamplerState, input.uv);
+	float4 normal = gtxtWaterNormal.Sample(gSamplerState, input.UV);
 	float3 tangent = float3(0, 0, -1);
 	normal = float4(cross(normal.xyz, tangent),0.6f);
 

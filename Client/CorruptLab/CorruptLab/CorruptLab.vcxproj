@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Mesh_Water.h" />
     <ClInclude Include="Object_Camera.h" />
     <ClInclude Include="CorruptLab.h" />
     <ClInclude Include="Define.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Object_UI.h" />
     <ClInclude Include="Shader_CollisionBox.h" />
     <ClInclude Include="Shader_LightMRT.h" />
+    <ClInclude Include="Shader_Noise.h" />
     <ClInclude Include="Shader_Standard.h" />
     <ClInclude Include="Shader_Terrain.h" />
     <ClInclude Include="Shader_BillBoard.h" />
@@ -175,6 +177,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Shader_Water.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
@@ -183,6 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Mesh_Water.cpp" />
     <ClCompile Include="Object_Camera.cpp" />
     <ClCompile Include="CorruptLab.cpp" />
     <ClCompile Include="Mesh_Skinned.cpp" />
@@ -205,7 +209,9 @@
     <ClCompile Include="Object_Player.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Shader_Noise.cpp" />
     <ClCompile Include="Shader_Standard.cpp" />
+    <ClCompile Include="Shader_Water.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="WICTextureLoader12.cpp" />
@@ -230,10 +236,16 @@
     <FxCompile Include="HLSL_MRT.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="HLSL_Noise.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="HLSL_SkyBox.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="HLSL_Terrain.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="HLSL_Water.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Light.hlsl">

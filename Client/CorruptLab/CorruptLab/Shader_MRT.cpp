@@ -203,7 +203,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH / 2.0f, FRAME_BUFFER_HEIGHT / 2.0f , 0.0f, 1.0f);                                   
 	
 	//---------------------------------------------------------------------------------
-	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH /10.f  , FRAME_BUFFER_HEIGHT/10.f, 0.0f, 0.0f, 0.0f, 1.0f);
+	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH /10.f  , FRAME_BUFFER_HEIGHT/10.f, 0.0f, 1.0f);
 	m_nUI = 4;                                                           
 	UIObject = new CGameObject*[m_nUI]; 
 

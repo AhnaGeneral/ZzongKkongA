@@ -30,6 +30,7 @@ cbuffer cbOrthoInfo : register(b16)
 #include "Light.hlsl"
 
 SamplerState gSamplerState : register(s0);
+SamplerState gSamplerClamp : register(s1);
 
 Texture2D<float4> gtxtScene : register(t1); // scene, normal, objectID RTV 0, 1, 2를 리소스 어레이로만든것
 Texture2D<float4> gtxtNormal : register(t2);

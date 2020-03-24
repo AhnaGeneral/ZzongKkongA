@@ -131,7 +131,7 @@ class CTriangleRect : public CMesh
 {
 public:
 	CTriangleRect(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
-		float fWidth, float fHeight, float fDepth, float fxPosition, float fyPosition, float fzPosition);
+		float fWidth, float fHeight, float fDepth, float fzPosition);
 	virtual ~CTriangleRect();
 	virtual void ReleaseUploadBuffers();
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet);
