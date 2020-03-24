@@ -32,7 +32,7 @@ void CGameScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLis
 	m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 
 	m_pWaterShader = new CWaterShader;
-	m_pWaterShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, 2);
+	m_pWaterShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, 3);
 	m_pWaterShader->BuildObjects(pd3dDevice, pd3dCommandList);
 
 	CTriangleRect* UIMesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 2.0f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f);
@@ -393,7 +393,8 @@ void CGameScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCa
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 
 	UpdateShaderVariables(pd3dCommandList);
-	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
+
+	pd3dCommandList->OMSetStencilRef(1);
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 
 	if (m_pObjectLists) // 오브젝트 Render
@@ -411,6 +412,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCa
 	if (m_pCloudGSShader) m_pCloudGSShader->Render(pd3dCommandList, pCamera); 
 	m_pPlayer->Render(pd3dCommandList, pCamera);
 	if(m_pWaterShader) m_pWaterShader->Render(pd3dCommandList, pCamera);
+	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
 
 }
 

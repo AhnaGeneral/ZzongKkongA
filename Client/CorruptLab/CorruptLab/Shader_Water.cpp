@@ -27,6 +27,7 @@ void CWaterShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* p
 	m_d3dPipelineStateDesc.SampleDesc.Count = 1;
 	m_d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
+
 	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[0]);
 
 	if (pd3dVertexShaderBlob) pd3dVertexShaderBlob->Release();
@@ -35,6 +36,10 @@ void CWaterShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* p
 	if (m_d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] m_d3dPipelineStateDesc.InputLayout.pInputElementDescs;
 
 }
+
+
+
+
 
 D3D12_SHADER_BYTECODE CWaterShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
@@ -93,7 +98,7 @@ void CWaterShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandL
 	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1);
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pWaterNormal, ROOT_PARMAMETER_WATER_NORMAL_TEX, false);
 
-	m_Info.m_xmf2Scale = XMFLOAT2(512.f, 512.f);
+	m_Info.m_xmf2Scale = XMFLOAT2(2000.f, 2000.f);
 	m_Info.m_xmf3Position = XMFLOAT3(256.f, 30.f, 256.f);
 
 	m_pd3dInstancesBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, &m_Info, sizeof(Water_Info) , D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dInstanceUploadBuffer);

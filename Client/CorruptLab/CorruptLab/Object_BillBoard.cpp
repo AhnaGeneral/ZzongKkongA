@@ -34,11 +34,13 @@ CSkyBox::~CSkyBox()
 
 void CSkyBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
+	//pd3dCommandList->OMSetStencilRef(2);
 	XMFLOAT3 xmf3CameraPos = pCamera->GetPosition();
 	SetPosition(xmf3CameraPos.x, xmf3CameraPos.y, xmf3CameraPos.z);
 
 	CGameObject::Render(pd3dCommandList, pCamera);
 
+	pd3dCommandList->OMSetStencilRef(0);
 }
 
 CBillboard::CBillboard ( ID3D12Device* pd3dDevice,

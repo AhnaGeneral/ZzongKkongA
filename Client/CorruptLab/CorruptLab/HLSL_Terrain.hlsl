@@ -87,6 +87,7 @@ struct HS_TERRAIN_TESSELLATION_OUTPUT
 struct DS_TERRAIN_TESSELLATION_OUTPUT
 {
 	float4 position : SV_POSITION;
+	float3 positionW : POSITION;
 	float4 color : COLOR;
 
 	float3 normal : NORMAL;
@@ -209,10 +210,11 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, gmtxView), gmtxProjection);
+
+	output.positionW = mul(float4(position, 1.0f), gmtxGameObject);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
-
-
 	output.posj = output.position;
+
 	return(output);
 }
 
@@ -250,8 +252,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 		cColor = saturate((cBaseTexColor * 0.5f) + (CGrass2_BC * 0.5f));
 
 	float3 ncColor = cColor.rgb;
-	output.color = float4 (ncColor, 1.0f);
 
+	output.color = float4 (ncColor, 1.0f);
 	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);
 	float3 vNormal = normalize(cNormalTexColor.rgb * 2.0f - 1.0f);//0.0 ~ 1.0 -> -1.0 ~ 1.0 
 	vNormal = normalize(mul(vNormal, TBN));
@@ -260,6 +262,14 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	output.depth = float4(input.posj.z / 1000.f, input.posj.z / 1000.f, input.posj.z / 1000.f, 1.0f);
 
+	if (input.positionW.y < 30.f)
+	{
+		float fAlpha = (30.f - input.positionW.y) / 10.f ;
+		output.color.w -= fAlpha;
+		output.depth.w == fAlpha;
+		output.normal.w -= fAlpha;
+		//discard;
+	}
 
 	return output;
 }

@@ -15,15 +15,16 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
 float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
 	//float (input.vPosj.z / input.vProj.w , input,vProj.z / 500f,0,1) 
-	float3 cColor = gtxtScene[int2(position.xy)].rgb;
-	//float fDepth = gtxtDepth[int2(position.xy)].r;
-	float3 fLighted = gtxtLight[int2(position.xy)].rgb;
+	float4 cColor = gtxtScene[int2(position.xy)];
+	float fDepth = gtxtDepth[int2(position.xy)].r;
+	float4 fLighted = gtxtLight[int2(position.xy)];
 
 	cColor = lerp(cColor, fLighted, 0.5f);
-	//float3 cFogColor = float3(0.15f, 0.15f, 0.15f);
-	//cColor = lerp(cColor, cFogColor, fDepth * 5);
+	float4 cFogColor = float4(0.15f, 0.15f, 0.15f,1.f);
 
-	return(float4(cColor, 1.0f));
+	cColor = lerp(cColor, cFogColor, fDepth * 5);
+
+	return(cColor);
 }
 
 static float gfLaplacians[9] = { -1.0f, -1.0f, -1.0f, -1.0f, 8.0f, -1.0f, -1.0f, -1.0f, -1.0f };
@@ -81,7 +82,7 @@ VS_TEXTURED_OUTPUT VSUI(VS_TEXTURED_INPUT input)  /// 직교투영
 	return(output);
 }
 
-float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbufferm
+float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 {
 	float4 cColor = float4 (1.0f, 0.0f, 0.0f,0.0f);
 
