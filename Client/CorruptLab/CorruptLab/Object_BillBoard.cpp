@@ -42,10 +42,10 @@ void CSkyBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamer
 	pd3dCommandList->OMSetStencilRef(0);
 }
 
-CBillboard::CBillboard ( ID3D12Device* pd3dDevice,
-	                     ID3D12GraphicsCommandList* pd3dCommandList,
-	                     float fWidth, float fHeight, float fDepth, 
-	                     float fPosX, float fPosY, float fPosZ )
+CBillboard::CBillboard(ID3D12Device* pd3dDevice,
+	ID3D12GraphicsCommandList* pd3dCommandList,
+	float fWidth, float fHeight, float fDepth,
+	float fPosX, float fPosY, float fPosZ)
 {
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }

@@ -8,19 +8,12 @@
 class CShader;
 class CAnimationController;
 class Shader_CollisionBox; 
+class CCollisionBox;
 
 struct CB_GAMEOBJECT_INFO  
 { 
 	XMFLOAT4X4 m_xmf4x4World; 
 	UINT       m_xnObjectID ; 
-};
-
-struct CollisionBox
-{
-	BoundingOrientedBox boundingBox;
-	XMFLOAT3 m_Center;
-	XMFLOAT3 m_Extents;
-	XMFLOAT4 m_Orientation;
 };
 
 class CGameObject
@@ -42,7 +35,7 @@ public:
 public:
 
 	int								m_nBoundingBoxes;
-	CollisionBox					*m_pBoundingBoxes = NULL;
+	CCollisionBox					*m_pBoundingBoxes = NULL;
 
 	char							m_pstrFrameName[64];
 
@@ -89,7 +82,7 @@ public:
 
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial);
-	virtual void UpdateCollisionBoxes();
+	virtual void UpdateCollisionBoxes(ID3D12GraphicsCommandList* pd3dCommandList);
 
 	virtual void ReleaseUploadBuffers();
 
@@ -137,5 +130,29 @@ public:
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader);
 	static CGameObject* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader, bool bHasAnimation);
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);
+
+};
+
+
+class CCollisionBox {
+
+public:
+	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
+	void BuildBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
+
+	BoundingOrientedBox boundingBox;
+	XMFLOAT3 m_Center;
+	XMFLOAT3 m_Extents;
+	XMFLOAT4 m_Orientation;
+	int		 m_iBoneIndex;
+
+	XMFLOAT4X4						m_xmf4x4World;
+	CGameObject*					m_pParent = NULL;
+
+	ID3D12Resource* m_pd3dCollisionBuffer = NULL;
+	ID3D12Resource* m_pd3dCollisionUploadBuffer = NULL;
+	D3D12_VERTEX_BUFFER_VIEW		 m_d3dCollisionBufferView;
+
 
 };

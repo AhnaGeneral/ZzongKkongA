@@ -219,7 +219,7 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 	//UpdateTransform(NULL);
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
-	if (m_nBoundingBoxes > 0) UpdateCollisionBoxes();
+	if (m_nBoundingBoxes > 0) UpdateCollisionBoxes(pd3dCommandList);
 
 	if (m_nMaterials > 0)
 	{
@@ -241,11 +241,13 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 	if (m_pSibling) m_pSibling->Render(pd3dCommandList, pCamera, nPipelineState);
 	if (m_pChild) m_pChild->Render(pd3dCommandList, pCamera, nPipelineState);
 
-
-	if (m_pCollisionBoxShader)
+	if (m_pBoundingBoxes)
 	{
-		UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
+		for (int i= 0; i< m_nBoundingBoxes; i++)
+		{
+			m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera);
+		}
 	}
 }
 
@@ -313,7 +315,7 @@ void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLis
 
 void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial){}
 
-void CGameObject::UpdateCollisionBoxes()
+void CGameObject::UpdateCollisionBoxes(ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	XMFLOAT4X4 world = m_xmf4x4World;
 	XMFLOAT4 orientation;
@@ -322,6 +324,7 @@ void CGameObject::UpdateCollisionBoxes()
 	{
 		m_pBoundingBoxes[i].boundingBox.Center = Vector3::Add(m_pBoundingBoxes[i].m_Center , GetPosition());
 		m_pBoundingBoxes[i].boundingBox.Orientation = Vector4::Multiply(orientation, m_pBoundingBoxes[i].m_Orientation);
+
 	}
 	
 }
@@ -434,22 +437,23 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 		m_pCollisionBoxShader = new Shader_CollisionBox(); 
 
 		(UINT)::fread(&pGameObject->m_nBoundingBoxes, sizeof(int), 1, pInFile);
-		pGameObject->m_pBoundingBoxes = new CollisionBox[pGameObject->m_nBoundingBoxes];
+		pGameObject->m_pBoundingBoxes = new CCollisionBox[pGameObject->m_nBoundingBoxes];
 
-		m_pCollisionBoxShader->m_pBoxInfo = new GS_COLLISION_BOX_INFO[pGameObject->m_nBoundingBoxes];
-		m_pCollisionBoxShader->m_nInstance = pGameObject->m_nBoundingBoxes;
+		GS_COLLISION_BOX_INFO* boxes = new GS_COLLISION_BOX_INFO[pGameObject->m_nBoundingBoxes];
 
 		for (int i = 0; i < pGameObject->m_nBoundingBoxes; i++)
 		{
-			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Center, sizeof(float), 3, pInFile);
-			pGameObject->m_pBoundingBoxes[i].m_Center = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Center;
+			(UINT)::fread(&boxes[i].m_xmf3Center, sizeof(float), 3, pInFile);
+			pGameObject->m_pBoundingBoxes[i].m_Center =boxes[i].m_xmf3Center;
 
-			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Extent, sizeof(float), 3, pInFile);
-			pGameObject->m_pBoundingBoxes[i].m_Extents = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Extent;
+			(UINT)::fread(&boxes[i].m_xmf3Extent, sizeof(float), 3, pInFile);
+			pGameObject->m_pBoundingBoxes[i].m_Extents = boxes[i].m_xmf3Extent;
 
-			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf4Orientation, sizeof(float), 4, pInFile);
-			pGameObject->m_pBoundingBoxes[i].m_Orientation = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf4Orientation;
+			(UINT)::fread(&boxes[i].m_xmf4Orientation, sizeof(float), 4, pInFile);
+			pGameObject->m_pBoundingBoxes[i].m_Orientation =boxes[i].m_xmf4Orientation;
 
+			m_pBoundingBoxes[i].BuildBuffer(pd3dDevice, pd3dCommandList,NULL);
+			m_pBoundingBoxes[i].m_pParent = pGameObject;
 			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Center, sizeof(float), 3, pInFile);
 			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Extents, sizeof(float), 3, pInFile);
 			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Orientation, sizeof(float), 4, pInFile);
@@ -769,5 +773,37 @@ void CGameObject::PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent)
 	if (pGameObject->m_pChild) CGameObject::PrintFrameInfo(pGameObject->m_pChild, pGameObject);
 }
 
+void CCollisionBox::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	m_xmf4x4World = m_pParent->m_xmf4x4World;
+	XMFLOAT4X4 xmf4x4World;
+	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4World)));
 
+	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
 
+}
+
+void CCollisionBox::BuildBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
+{
+
+	GS_COLLISION_BOX_INFO info;
+	info.m_xmf3Center = m_Center;
+	info.m_xmf3Extent = m_Extents;
+	info.m_xmf4Orientation = m_Orientation;
+	m_pd3dCollisionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList,	&info,
+		sizeof(GS_COLLISION_BOX_INFO), D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dCollisionUploadBuffer);
+
+	m_d3dCollisionBufferView.BufferLocation = m_pd3dCollisionBuffer->GetGPUVirtualAddress();
+	m_d3dCollisionBufferView.StrideInBytes = sizeof(GS_COLLISION_BOX_INFO);
+	m_d3dCollisionBufferView.SizeInBytes = sizeof(GS_COLLISION_BOX_INFO) ;
+}
+
+void CCollisionBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+{
+	UpdateShaderVariables(pd3dCommandList);
+
+	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[1] = { m_d3dCollisionBufferView };
+	pd3dCommandList->IASetVertexBuffers(0, _countof(pVertexBufferViews), pVertexBufferViews);
+	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	pd3dCommandList->DrawInstanced(1, 1, 0, 0);
+}

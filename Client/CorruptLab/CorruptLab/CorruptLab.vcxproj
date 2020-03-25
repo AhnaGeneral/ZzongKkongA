@@ -149,7 +149,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
-    <ClInclude Include="Mesh_Water.h" />
     <ClInclude Include="Object_Camera.h" />
     <ClInclude Include="CorruptLab.h" />
     <ClInclude Include="Define.h" />
@@ -186,7 +185,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="Mesh_Water.cpp" />
     <ClCompile Include="Object_Camera.cpp" />
     <ClCompile Include="CorruptLab.cpp" />
     <ClCompile Include="Mesh_Skinned.cpp" />

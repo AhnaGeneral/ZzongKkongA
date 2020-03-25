@@ -8,7 +8,7 @@
 #include "Object_Player.h"
 #include <list>
 using namespace std;
-		      
+
 
 class CHeightMapTerrain;
 class CSkyBox;
@@ -54,15 +54,15 @@ protected:
 class CGameScene : public CScene
 {
 public:
-	CPlayer             * m_pPlayer = NULL;
+	CPlayer* m_pPlayer = NULL;
 
-	CHeightMapTerrain   * m_pTerrain = NULL;
-	CSkyBox             * m_pSkyBox = NULL;
-	CCloudGSShader      * m_pCloudGSShader = NULL;
-	CWaterShader		* m_pWaterShader = NULL;
-	CUI                 * m_pUIObj = NULL;
-	CObjectNosie        * m_pNoiseObject = NULL;
-	CObjectFog          * m_pCObjectFog = NULL; 
+	CHeightMapTerrain* m_pTerrain = NULL;
+	CSkyBox* m_pSkyBox = NULL;
+	CCloudGSShader* m_pCloudGSShader = NULL;
+	CWaterShader* m_pWaterShader = NULL;
+	CUI* m_pUIObj = NULL;
+	CObjectNosie* m_pNoiseObject = NULL;
+	CObjectFog* m_pCObjectFog = NULL;
 
 
 public:

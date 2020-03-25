@@ -6,20 +6,12 @@ struct GS_COLLISION_BOX_INFO
 	XMFLOAT3  m_xmf3Center;
 	XMFLOAT3  m_xmf3Extent;
 	XMFLOAT4  m_xmf4Orientation;
+
 };
 
 class Shader_CollisionBox : public CShader
 {
-private:
-	int								 m_nCollisionBoxs = 0;
-	ID3D12Resource                 * m_pd3dCollisionBuffer = NULL;
-	ID3D12Resource                 * m_pd3dCollisionUploadBuffer = NULL;
-	D3D12_VERTEX_BUFFER_VIEW		 m_d3dCollisionBufferView;
-
-
 public:
-	int m_nInstance; 
-	GS_COLLISION_BOX_INFO* m_pBoxInfo = NULL; 
 
 	Shader_CollisionBox();
 	virtual ~Shader_CollisionBox();
@@ -31,7 +23,6 @@ public:
 	virtual D3D12_RASTERIZER_DESC	 CreateRasterizerState();
 
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets = 1);
-	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext = NULL);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 
 

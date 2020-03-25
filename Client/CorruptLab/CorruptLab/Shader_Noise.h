@@ -1,11 +1,11 @@
 #pragma once
 #include "Shader.h"
 
-class Shader_Noise: public CShader
+class Shader_Noise : public CShader
 {
 public:
-    Shader_Noise(); 
-    virtual ~Shader_Noise(); 
+    Shader_Noise();
+    virtual ~Shader_Noise();
 
 public:
 

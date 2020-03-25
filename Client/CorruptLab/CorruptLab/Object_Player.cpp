@@ -253,7 +253,8 @@ CMainPlayer::CMainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd
 	//SetPosition(0.0f, 0.0f, 0.0f);
 
 	m_pRightHand = pGameObject->FindFrame("Bip001_R_Hand");
-
+	pHandCollision = &(pGameObject->m_pBoundingBoxes[2]);
+	pHandCollision->m_pParent = m_pRightHand;
 	SetChild(pGameObject, true);
 	OnInitialize();
 

@@ -85,7 +85,7 @@ public:
 	virtual void OnPrepareRender();
 	virtual void SetRootParameter(ID3D12GraphicsCommandList *pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera = NULL);
-
+	
 };
 
 class CMainPlayer : public CPlayer
@@ -102,5 +102,6 @@ public:
 	virtual void Update(float fTimeElapsed);
 	
 	void SetAnimation();
+	CCollisionBox* pHandCollision = NULL;
 };
 
