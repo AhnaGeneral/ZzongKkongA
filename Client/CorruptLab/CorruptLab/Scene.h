@@ -62,6 +62,7 @@ public:
 	CWaterShader		* m_pWaterShader = NULL;
 	CUI                 * m_pUIObj = NULL;
 	CObjectNosie        * m_pNoiseObject = NULL;
+	CObjectFog          * m_pCObjectFog = NULL; 
 
 
 public:

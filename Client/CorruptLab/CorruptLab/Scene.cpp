@@ -39,6 +39,10 @@ void CGameScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLis
 	m_pNoiseObject->SetPosition(XMFLOAT3(458.0f, 55.0f, 198.0f));
 	m_pNoiseObject->GenerateShaderDistortionBuffer();
 
+	m_pCObjectFog = new CObjectFog(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+	m_pCObjectFog->SetPosition(XMFLOAT3(410.0f, 55.0f, 198.0f));
+	m_pCObjectFog->GenerateShaderDistortionBuffer();
+
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -438,6 +442,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCa
 	if(m_pWaterShader) m_pWaterShader->Render(pd3dCommandList, pCamera);
 	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
 	if (m_pNoiseObject) m_pNoiseObject->Render(pd3dCommandList, pCamera); 
+	if (m_pCObjectFog) m_pCObjectFog->Render(pd3dCommandList, pCamera);
 
 }
 

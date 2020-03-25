@@ -79,19 +79,7 @@ CObjectNosie::CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	CTexture* pNoiseTexture = new CTexture(3, RESOURCE_TEXTURE2D, 0);
-	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/fire01.dds", 0);
-	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/alpha01.dds", 1);
-	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/noise01.dds", 2);
-
-	Shader_Noise* pNosieShader = new Shader_Noise();
-	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
-	pNosieShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	pNosieShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); // 힙이 달라서... OnPrepareRender
-	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARAMETER_NOISE_TEX, true);
-	SetShader(pNosieShader);
-	m_ppMaterials[0]->SetTexture(pNoiseTexture);
-
+	NoiseSetTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 }
 
 CObjectNosie::~CObjectNosie()
@@ -240,9 +228,53 @@ void CObjectNosie::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 	// 2020 03 23 텍스처 여러개 불렀을 때 해결 방법 
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
-	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
-
 	if (m_pMesh)
 		m_pMesh->Render(pd3dCommandList, 0);
+}
+
+void CObjectNosie::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+{
+	CTexture* pNoiseTexture = new CTexture(3, RESOURCE_TEXTURE2D, 0);
+	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/fire01.dds", 0);
+	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/alpha01.dds", 1);
+	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/noise01.dds", 2);
+
+	Shader_Noise* pNosieShader = new Shader_Noise();
+	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
+	pNosieShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	pNosieShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); // 힙이 달라서... OnPrepareRender
+	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARAMETER_NOISE_TEX, true);
+	SetShader(pNosieShader);
+	m_ppMaterials[0]->SetTexture(pNoiseTexture);
+
+}
+
+
+CObjectFog::CObjectFog(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+	: CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature)
+{
+	CTriangleRect* pNoise = new CTriangleRect(pd3dDevice, pd3dCommandList, 50.0f, 50.0f, 1.0f, 1.0f);
+	SetMesh(pNoise);
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	NoiseSetTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+}
+
+CObjectFog::~CObjectFog()
+{
+}
+
+void CObjectFog::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+{
+	CTexture* pNoiseTexture = new CTexture(3, RESOURCE_TEXTURE2D, 0);
+	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/fire01.dds", 0);
+	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/alpha01.dds", 1);
+	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/noise01.dds", 2);
+
+	Shader_FogNoise* pNosieShader = new Shader_FogNoise();
+	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
+	pNosieShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	pNosieShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); // 힙이 달라서... OnPrepareRender
+	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARAMETER_NOISE_TEX, true);
+	SetShader(pNosieShader);
+	m_ppMaterials[0]->SetTexture(pNoiseTexture);
 }

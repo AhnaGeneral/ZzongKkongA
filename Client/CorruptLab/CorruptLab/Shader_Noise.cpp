@@ -67,4 +67,20 @@ void Shader_Noise::ReleaseObjects()
 {
 }
 
+Shader_FogNoise::Shader_FogNoise()
+{
+}
 
+Shader_FogNoise::~Shader_FogNoise()
+{
+}
+
+D3D12_SHADER_BYTECODE Shader_FogNoise::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Noise.hlsl", "FogVertexShader", "vs_5_1", ppd3dShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE Shader_FogNoise::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Noise.hlsl", "FogPixelShader", "ps_5_1", ppd3dShaderBlob));
+}
