@@ -219,6 +219,7 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 	//UpdateTransform(NULL);
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
+	if (m_nBoundingBoxes > 0) UpdateCollisionBoxes();
 
 	if (m_nMaterials > 0)
 	{
@@ -311,6 +312,19 @@ void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLis
 }
 
 void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial){}
+
+void CGameObject::UpdateCollisionBoxes()
+{
+	XMFLOAT4X4 world = m_xmf4x4World;
+	XMFLOAT4 orientation;
+	XMStoreFloat4(&orientation,XMQuaternionRotationMatrix(XMLoadFloat4x4(&world)));
+	for (int i = 0; i < m_nBoundingBoxes; i++)
+	{
+		m_pBoundingBoxes[i].boundingBox.Center = Vector3::Add(m_pBoundingBoxes[i].m_Center , GetPosition());
+		m_pBoundingBoxes[i].boundingBox.Orientation = Vector4::Multiply(orientation, m_pBoundingBoxes[i].m_Orientation);
+	}
+	
+}
 
 void CGameObject::ReleaseUploadBuffers()
 {
@@ -420,7 +434,7 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 		m_pCollisionBoxShader = new Shader_CollisionBox(); 
 
 		(UINT)::fread(&pGameObject->m_nBoundingBoxes, sizeof(int), 1, pInFile);
-		pGameObject->m_pBoundingBoxes = new BoundingOrientedBox[pGameObject->m_nBoundingBoxes];
+		pGameObject->m_pBoundingBoxes = new CollisionBox[pGameObject->m_nBoundingBoxes];
 
 		m_pCollisionBoxShader->m_pBoxInfo = new GS_COLLISION_BOX_INFO[pGameObject->m_nBoundingBoxes];
 		m_pCollisionBoxShader->m_nInstance = pGameObject->m_nBoundingBoxes;
@@ -428,13 +442,13 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 		for (int i = 0; i < pGameObject->m_nBoundingBoxes; i++)
 		{
 			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Center, sizeof(float), 3, pInFile);
-			pGameObject->m_pBoundingBoxes[i].Center = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Center; 
+			pGameObject->m_pBoundingBoxes[i].m_Center = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Center;
 
 			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Extent, sizeof(float), 3, pInFile);
-			pGameObject->m_pBoundingBoxes[i].Extents = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Extent;
+			pGameObject->m_pBoundingBoxes[i].m_Extents = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf3Extent;
 
 			(UINT)::fread(&m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf4Orientation, sizeof(float), 4, pInFile);
-			pGameObject->m_pBoundingBoxes[i].Orientation = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf4Orientation;
+			pGameObject->m_pBoundingBoxes[i].m_Orientation = m_pCollisionBoxShader->m_pBoxInfo[i].m_xmf4Orientation;
 
 			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Center, sizeof(float), 3, pInFile);
 			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Extents, sizeof(float), 3, pInFile);

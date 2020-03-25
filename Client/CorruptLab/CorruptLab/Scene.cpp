@@ -432,12 +432,12 @@ void CGameScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCa
 	}
 
 	if (m_pCloudGSShader) m_pCloudGSShader->Render(pd3dCommandList, pCamera); 
-	if (m_pNoiseObject) m_pNoiseObject->Render(pd3dCommandList, pCamera); 
 	m_pPlayer->Render(pd3dCommandList, pCamera);
 	
 	
 	if(m_pWaterShader) m_pWaterShader->Render(pd3dCommandList, pCamera);
 	if (m_pSkyBox) m_pSkyBox->Render(pd3dCommandList, pCamera);
+	if (m_pNoiseObject) m_pNoiseObject->Render(pd3dCommandList, pCamera); 
 
 }
 

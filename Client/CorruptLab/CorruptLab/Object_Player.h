@@ -33,8 +33,10 @@ protected:
 				           
 	LPVOID		           m_pPlayerUpdatedContext = NULL;
 	LPVOID		           m_pCameraUpdatedContext = NULL;
-				           
+				          
 	CCamera		           *m_pCamera = NULL;
+	CGameObject			   *m_pRightHand = NULL;
+	int						m_nRightHandIndex = 25;
 
 public:
 	CPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, void *pContext=NULL, int nMeshes = 1);

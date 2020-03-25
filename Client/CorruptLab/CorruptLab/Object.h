@@ -15,6 +15,13 @@ struct CB_GAMEOBJECT_INFO
 	UINT       m_xnObjectID ; 
 };
 
+struct CollisionBox
+{
+	BoundingOrientedBox boundingBox;
+	XMFLOAT3 m_Center;
+	XMFLOAT3 m_Extents;
+	XMFLOAT4 m_Orientation;
+};
 
 class CGameObject
 {
@@ -35,7 +42,7 @@ public:
 public:
 
 	int								m_nBoundingBoxes;
-	BoundingOrientedBox				*m_pBoundingBoxes = NULL;
+	CollisionBox					*m_pBoundingBoxes = NULL;
 
 	char							m_pstrFrameName[64];
 
@@ -82,6 +89,7 @@ public:
 
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial);
+	virtual void UpdateCollisionBoxes();
 
 	virtual void ReleaseUploadBuffers();
 

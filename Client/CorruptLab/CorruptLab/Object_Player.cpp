@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Object_Player.h"
+#include "Animation.h"
 #include "Shader.h"
 
 
@@ -250,6 +251,9 @@ CMainPlayer::CMainPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd
 
 	CGameObject* pGameObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Johnson/PlayerWithCol.bin", NULL, true);
 	//SetPosition(0.0f, 0.0f, 0.0f);
+
+	m_pRightHand = pGameObject->FindFrame("Bip001_R_Hand");
+
 	SetChild(pGameObject, true);
 	OnInitialize();
 
