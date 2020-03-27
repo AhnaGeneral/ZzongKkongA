@@ -20,7 +20,6 @@ public:
 
 };
 
-
 class Shader_FogNoise : public Shader_Noise
 {
 public:
@@ -31,3 +30,12 @@ public:
     virtual D3D12_SHADER_BYTECODE    CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
 };
 
+class Shader_WaterNoise : public Shader_Noise
+{
+public:
+    Shader_WaterNoise();
+    virtual ~Shader_WaterNoise();
+
+    virtual D3D12_SHADER_BYTECODE    CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
+    virtual D3D12_SHADER_BYTECODE    CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+};

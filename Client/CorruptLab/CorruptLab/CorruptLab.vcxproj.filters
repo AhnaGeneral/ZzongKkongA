@@ -83,6 +83,9 @@
     <Filter Include="04.Shader\08.Shader_Noise">
       <UniqueIdentifier>{9c489511-bc7d-41a1-b46b-ceb308c6bb73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Component\GameObject\07.Noise">
+      <UniqueIdentifier>{100b3df3-19ca-46de-b25c-335348b52b9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -181,11 +184,11 @@
     <ClInclude Include="Shader_CollisionBox.h">
       <Filter>04.Shader\06.Shader_Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Shader_Water.h">
-      <Filter>04.Shader\07.Shader_Water</Filter>
-    </ClInclude>
     <ClInclude Include="Shader_Noise.h">
       <Filter>04.Shader\08.Shader_Noise</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_Nosie.h">
+      <Filter>05.Component\GameObject\07.Noise</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -270,11 +273,11 @@
     <ClCompile Include="Shader_CollisionBox.cpp">
       <Filter>04.Shader\06.Shader_Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Shader_Water.cpp">
-      <Filter>04.Shader\07.Shader_Water</Filter>
-    </ClCompile>
     <ClCompile Include="Shader_Noise.cpp">
       <Filter>04.Shader\08.Shader_Noise</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_Nosie.cpp">
+      <Filter>05.Component\GameObject\07.Noise</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -315,10 +318,13 @@
     <FxCompile Include="HLSL_BillBoard.hlsl">
       <Filter>04.Shader\03.Shader_BillBoard</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL_Water.hlsl">
-      <Filter>04.Shader\07.Shader_Water</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL_Noise.hlsl">
+      <Filter>04.Shader\08.Shader_Noise</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_Fog.hlsl">
+      <Filter>04.Shader\08.Shader_Noise</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_waters.hlsl">
       <Filter>04.Shader\08.Shader_Noise</Filter>
     </FxCompile>
   </ItemGroup>

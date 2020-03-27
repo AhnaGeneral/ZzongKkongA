@@ -67,6 +67,8 @@ void Shader_Noise::ReleaseObjects()
 {
 }
 
+//======================================================================================================
+
 Shader_FogNoise::Shader_FogNoise()
 {
 }
@@ -77,10 +79,31 @@ Shader_FogNoise::~Shader_FogNoise()
 
 D3D12_SHADER_BYTECODE Shader_FogNoise::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"HLSL_Noise.hlsl", "FogVertexShader", "vs_5_1", ppd3dShaderBlob));
+	return(CShader::CompileShaderFromFile(L"HLSL_Fog.hlsl", "FogVertexShader", "vs_5_1", ppd3dShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE Shader_FogNoise::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"HLSL_Noise.hlsl", "FogPixelShader", "ps_5_1", ppd3dShaderBlob));
+	return(CShader::CompileShaderFromFile(L"HLSL_Fog.hlsl", "FogPixelShader", "ps_5_1", ppd3dShaderBlob));
+}
+
+
+//======================================================================================================
+Shader_WaterNoise::Shader_WaterNoise()
+{
+}
+
+Shader_WaterNoise::~Shader_WaterNoise()
+{
+}
+
+D3D12_SHADER_BYTECODE Shader_WaterNoise::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_waters.hlsl", "WaterVertexShader", "vs_5_1", ppd3dShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE Shader_WaterNoise::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_waters.hlsl", "WaterPixelShader", "ps_5_1", ppd3dShaderBlob));
+
 }

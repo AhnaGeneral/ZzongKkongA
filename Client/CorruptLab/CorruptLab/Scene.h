@@ -6,13 +6,13 @@
 #include "Shader.h"
 #include "Shader_BillBoard.h"
 #include "Object_Player.h"
+#include "Object_Nosie.h"
 #include <list>
 using namespace std;
 
 
 class CHeightMapTerrain;
 class CSkyBox;
-class CWaterShader;
 
 class CScene
 {
@@ -56,13 +56,13 @@ class CGameScene : public CScene
 public:
 	CPlayer* m_pPlayer = NULL;
 
-	CHeightMapTerrain* m_pTerrain = NULL;
-	CSkyBox* m_pSkyBox = NULL;
-	CCloudGSShader* m_pCloudGSShader = NULL;
-	CWaterShader* m_pWaterShader = NULL;
-	CUI* m_pUIObj = NULL;
-	CObjectNosie* m_pNoiseObject = NULL;
-	CObjectFog* m_pCObjectFog = NULL;
+	CHeightMapTerrain    * m_pTerrain = NULL;
+	CSkyBox              * m_pSkyBox = NULL;
+	CCloudGSShader       * m_pCloudGSShader = NULL;
+	CUI                  * m_pUIObj = NULL;
+	CObjectNosie         * m_pNoiseObject = NULL;
+	CObjectFog           * m_pCObjectFog = NULL;
+	CObjectWater         * m_pCObjectWater = NULL; 
 
 
 public:

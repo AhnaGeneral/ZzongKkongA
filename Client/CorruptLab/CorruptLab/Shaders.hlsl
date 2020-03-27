@@ -45,6 +45,8 @@ Texture2D gtxtEmissionTexture : register(t8);
 Texture2D gtxtDetailAlbedoTexture : register(t9);
 Texture2D gtxtDetailNormalTexture : register(t10);
 
+Texture2D<float4> gtxtWaterNormal : register(t24);
+
 struct VS_TEXTURED_LIGHTING_INPUT
 {
 	float3 position : POSITION;
