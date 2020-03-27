@@ -86,6 +86,9 @@
     <Filter Include="05.Component\GameObject\07.Noise">
       <UniqueIdentifier>{100b3df3-19ca-46de-b25c-335348b52b9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="09.GameManager">
+      <UniqueIdentifier>{919efc28-c14b-4ded-a521-4abcc39834b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">

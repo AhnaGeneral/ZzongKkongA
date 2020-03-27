@@ -7,13 +7,13 @@
 
 class CShader;
 class CAnimationController;
-class Shader_CollisionBox; 
+class Shader_CollisionBox;
 class CCollisionBox;
 
-struct CB_GAMEOBJECT_INFO  
-{ 
-	XMFLOAT4X4 m_xmf4x4World; 
-	UINT       m_xnObjectID ; 
+struct CB_GAMEOBJECT_INFO
+{
+	XMFLOAT4X4 m_xmf4x4World;
+	UINT       m_xnObjectID;
 };
 
 class CGameObject
@@ -21,12 +21,12 @@ class CGameObject
 private:
 	int								m_nReferences = 0;
 
-	XMFLOAT3             	        *m_xmf3AABBCenter;
-	XMFLOAT3             	        *m_xmf3AABBExtents;
+	XMFLOAT3* m_xmf3AABBCenter;
+	XMFLOAT3* m_xmf3AABBExtents;
 
 public:
-	void AddRef()  ;
-	void Release() ;
+	void AddRef();
+	void Release();
 
 public:
 	CGameObject();
@@ -35,32 +35,33 @@ public:
 public:
 
 	int								m_nBoundingBoxes;
-	CCollisionBox					*m_pBoundingBoxes = NULL;
+	CCollisionBox* m_pBoundingBoxes = NULL;
 
 	char							m_pstrFrameName[64];
 
-	CMesh                           *m_pMesh = NULL;
+	CMesh* m_pMesh = NULL;
 
 	int								m_nMaterials = 0;
-	CMaterial                       ** m_ppMaterials = NULL;
+	CMaterial** m_ppMaterials = NULL;
 
 	XMFLOAT4X4						m_xmf4x4Transform; // animation ¿¡¼­´Â m_xmf4x4ToParent
 	XMFLOAT4X4						m_xmf4x4World;
 
-	CGameObject                     * m_pParent = NULL;
-	CGameObject                     * m_pChild = NULL;
-	CGameObject                     * m_pSibling = NULL;
+	CGameObject* m_pParent = NULL;
+	CGameObject* m_pChild = NULL;
+	CGameObject* m_pSibling = NULL;
 
-	ID3D12Resource                  * m_pd3dcbGameObjects = NULL;	
-	CB_GAMEOBJECT_INFO              * m_pcbMappedGameObjects = NULL;
+	ID3D12Resource* m_pd3dcbGameObjects = NULL;
+	CB_GAMEOBJECT_INFO* m_pcbMappedGameObjects = NULL;
 
-	Shader_CollisionBox             * m_pCollisionBoxShader = NULL; 
+	Shader_CollisionBox* m_pCollisionBoxShader = NULL;
 	//ID3D12Resource                * m_pd3dCollisionBuffer = NULL;
 	//ID3D12Resource                * m_pd3dBoneWeightUploadBuffer = NULL;
 	//D3D12_VERTEX_BUFFER_VIEW		m_d3dBoneWeightBufferView;
-	
+
 	//Shader_CollisionBox * m
 
+	CCollisionBox* GetCollisionBoxes();
 	void SetMesh(CMesh* pMesh);
 	void SetShader(CShader* pShader);
 	void SetShader(int nMaterial, CShader* pShader);
@@ -82,13 +83,13 @@ public:
 
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial);
-	virtual void UpdateCollisionBoxes(ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void UpdateCollisionBoxes(XMFLOAT4X4* world = NULL);
 
 	virtual void ReleaseUploadBuffers();
 
 	XMFLOAT3 GetPosition() { return(XMFLOAT3(m_xmf4x4World._41, m_xmf4x4World._42, m_xmf4x4World._43)); }
 	XMFLOAT3 GetLook() { return(Vector3::Normalize(XMFLOAT3(m_xmf4x4World._31, m_xmf4x4World._32, m_xmf4x4World._33))); }
-	XMFLOAT3 GetUp() { return(Vector3::Normalize(XMFLOAT3(m_xmf4x4World._21, m_xmf4x4World._22, m_xmf4x4World._23)));}
+	XMFLOAT3 GetUp() { return(Vector3::Normalize(XMFLOAT3(m_xmf4x4World._21, m_xmf4x4World._22, m_xmf4x4World._23))); }
 	XMFLOAT3 GetRight() { return(Vector3::Normalize(XMFLOAT3(m_xmf4x4World._11, m_xmf4x4World._12, m_xmf4x4World._13))); }
 
 	void SetPosition(float x, float y, float z);
@@ -125,7 +126,7 @@ public:
 	void LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, CGameObject* pParent, FILE* pInFile, CShader* pShader);
 	void LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pGameObject, FILE* pInFile);
 	void LoadAnimationFromFile(FILE* pInFile);
-	 
+
 
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader);
 	static CGameObject* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader, bool bHasAnimation);
@@ -137,9 +138,10 @@ public:
 class CCollisionBox {
 
 public:
-	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
+	void Update(XMFLOAT4X4* Parentworld);
+	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* ParentWorld = NULL);
 	void BuildBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext);
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, XMFLOAT4X4* ParentWorld = NULL);
 
 	BoundingOrientedBox boundingBox;
 	XMFLOAT3 m_Center;
@@ -148,7 +150,7 @@ public:
 	int		 m_iBoneIndex;
 
 	XMFLOAT4X4						m_xmf4x4World;
-	CGameObject*					m_pParent = NULL;
+	CGameObject* m_pParent = NULL;
 
 	ID3D12Resource* m_pd3dCollisionBuffer = NULL;
 	ID3D12Resource* m_pd3dCollisionUploadBuffer = NULL;

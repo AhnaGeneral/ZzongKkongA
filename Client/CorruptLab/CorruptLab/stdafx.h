@@ -230,6 +230,13 @@ namespace Vector4
 		XMStoreFloat4(&xmf4Result, fScalar * XMLoadFloat4(&xmf4Vector));
 		return(xmf4Result);
 	}
+
+	inline XMFLOAT4 MultiflyMATRIX(XMFLOAT4 xmf4Vector, XMFLOAT4X4& xmmtx4x4Matrix2)
+	{
+		XMFLOAT4 xmf4Result;
+		XMStoreFloat4(&xmf4Result, XMVector4Transform(XMLoadFloat4(&xmf4Vector), XMLoadFloat4x4(&xmmtx4x4Matrix2)));
+		return(xmf4Result);
+	}
 }
 
 namespace Matrix4x4

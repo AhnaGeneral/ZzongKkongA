@@ -91,6 +91,9 @@ public:
 
 	virtual void ReleaseUploadBuffers();
 
+	void CheckCollisions();
+	void CheckPlayerCollision();
+
 	void SetTerrainPipelineState();
 	void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList);
 

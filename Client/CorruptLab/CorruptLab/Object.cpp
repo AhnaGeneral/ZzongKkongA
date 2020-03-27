@@ -8,21 +8,21 @@
 #include "Shader_CollisionBox.h"
 //#include ""
 
- int ReadIntegerFromFile(FILE* pInFile)
+int ReadIntegerFromFile(FILE* pInFile)
 {
 	int nValue = 0;
 	UINT nReads = (UINT)::fread(&nValue, sizeof(int), 1, pInFile);
 	return(nValue);
 }
 
- float ReadFloatFromFile(FILE* pInFile)
+float ReadFloatFromFile(FILE* pInFile)
 {
 	float fValue = 0;
 	UINT nReads = (UINT)::fread(&fValue, sizeof(float), 1, pInFile);
 	return(fValue);
 }
 
- BYTE ReadStringFromFile(FILE* pInFile, char* pstrToken)
+BYTE ReadStringFromFile(FILE* pInFile, char* pstrToken)
 {
 	BYTE nStrLength = 0;
 	UINT nReads = 0;
@@ -33,7 +33,7 @@
 	return(nStrLength);
 }
 
- //=========================================================================================================================
+//=========================================================================================================================
 CGameObject::CGameObject()
 {
 	m_xmf4x4Transform = Matrix4x4::Identity();
@@ -42,7 +42,7 @@ CGameObject::CGameObject()
 
 CGameObject::~CGameObject()
 {
-	if (m_pMesh) 
+	if (m_pMesh)
 		m_pMesh->Release();
 
 	if (m_nMaterials > 0)
@@ -68,7 +68,7 @@ void CGameObject::Release()
 	if (m_pChild) m_pChild->Release();
 	if (m_pSibling) m_pSibling->Release();
 
-	if(m_pBoundingBoxes)
+	if (m_pBoundingBoxes)
 		delete[] m_pBoundingBoxes;
 
 	m_pBoundingBoxes = NULL;
@@ -76,14 +76,23 @@ void CGameObject::Release()
 	if (--m_nReferences <= 0) delete this;
 }
 
-void CGameObject::SetMesh( CMesh *pMesh)
+CCollisionBox* CGameObject::GetCollisionBoxes()
+{
+	if (m_pBoundingBoxes) return m_pBoundingBoxes;
+	if (m_pSibling) return m_pSibling->GetCollisionBoxes();
+	if (m_pChild)	return m_pChild->GetCollisionBoxes();
+
+	return NULL;
+}
+
+void CGameObject::SetMesh(CMesh* pMesh)
 {
 	if (m_pMesh) m_pMesh->Release();
 	m_pMesh = pMesh;
 	if (m_pMesh) m_pMesh->AddRef();
 }
 
-void CGameObject::SetShader(CShader *pShader)
+void CGameObject::SetShader(CShader* pShader)
 {
 	m_nMaterials = 1;
 	m_ppMaterials = new CMaterial * [m_nMaterials];
@@ -97,7 +106,7 @@ void CGameObject::SetShader(int nMaterial, CShader* pShader)
 		m_ppMaterials[nMaterial]->SetShader(pShader);
 }
 
-void CGameObject::SetMaterial(int nMaterial, CMaterial *pMaterial)
+void CGameObject::SetMaterial(int nMaterial, CMaterial* pMaterial)
 {
 	if (m_ppMaterials[nMaterial]) m_ppMaterials[nMaterial]->Release();
 	m_ppMaterials[nMaterial] = pMaterial;
@@ -150,7 +159,7 @@ void CGameObject::SetScale(float x, float y, float z)
 
 void CGameObject::SetTexture(CTexture* tex)
 {
-	if(m_ppMaterials)
+	if (m_ppMaterials)
 		m_ppMaterials[0]->SetTexture(tex);
 	if (m_pChild) m_pChild->SetTexture(tex);
 	if (m_pSibling) m_pSibling->SetTexture(tex);
@@ -187,7 +196,7 @@ void CGameObject::Rotate(float fPitch, float fYaw, float fRoll)
 	UpdateTransform(NULL);
 }
 
-void CGameObject::Rotate(XMFLOAT3 *pxmf3Axis, float fAngle)
+void CGameObject::Rotate(XMFLOAT3* pxmf3Axis, float fAngle)
 {
 	XMMATRIX mtxRotate = XMMatrixRotationAxis(XMLoadFloat3(pxmf3Axis), XMConvertToRadians(fAngle));
 	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
@@ -213,14 +222,13 @@ CGameObject* CGameObject::FindFrame(char* pstrFrameName)
 	return(NULL);
 }
 
-void CGameObject::OnPrepareRender(){}
+void CGameObject::OnPrepareRender() {}
 
-void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera, int nPipelineState)
+void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	//UpdateTransform(NULL);
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
-	if (m_nBoundingBoxes > 0) UpdateCollisionBoxes(pd3dCommandList);
 
 	if (m_nMaterials > 0)
 	{
@@ -228,14 +236,14 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 		{
 			if (m_ppMaterials[i])
 			{
-				if (m_ppMaterials[i]->m_pShader) 
+				if (m_ppMaterials[i]->m_pShader)
 					m_ppMaterials[i]->m_pShader->Render(pd3dCommandList, pCamera, nPipelineState);
 
 				m_ppMaterials[i]->UpdateShaderVariable(pd3dCommandList);
 
 			}
 
-			if (m_pMesh) 
+			if (m_pMesh)
 				m_pMesh->Render(pd3dCommandList, i);
 		}
 	}
@@ -245,9 +253,9 @@ void CGameObject::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pC
 	if (m_pBoundingBoxes)
 	{
 		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
-		for (int i= 0; i< m_nBoundingBoxes; i++)
+		for (int i = 0; i < m_nBoundingBoxes; i++)
 		{
-			m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera);
+			m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
 		}
 	}
 }
@@ -291,7 +299,7 @@ void CGameObject::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graphics
 	m_pd3dcbGameObjects->Map(0, NULL, (void**)&m_pcbMappedGameObjects);
 }
 
-void CGameObject::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList){}
+void CGameObject::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList) {}
 
 void CGameObject::ReleaseShaderVariables()
 {
@@ -300,7 +308,7 @@ void CGameObject::ReleaseShaderVariables()
 		m_pd3dcbGameObjects->Unmap(0, NULL);
 		m_pd3dcbGameObjects->Release();
 	}
-	if (m_pcbMappedGameObjects) delete m_pcbMappedGameObjects; 
+	if (m_pcbMappedGameObjects) delete m_pcbMappedGameObjects;
 }
 
 void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
@@ -314,20 +322,21 @@ void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLis
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
 }
 
-void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial){}
+void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial) {}
 
-void CGameObject::UpdateCollisionBoxes(ID3D12GraphicsCommandList* pd3dCommandList)
+void CGameObject::UpdateCollisionBoxes(XMFLOAT4X4* world)
 {
-	XMFLOAT4X4 world = m_xmf4x4World;
-	XMFLOAT4 orientation;
-	XMStoreFloat4(&orientation,XMQuaternionRotationMatrix(XMLoadFloat4x4(&world)));
-	for (int i = 0; i < m_nBoundingBoxes; i++)
+	if (m_nBoundingBoxes > 0)
 	{
-		m_pBoundingBoxes[i].boundingBox.Center = Vector3::Add(m_pBoundingBoxes[i].m_Center , GetPosition());
-		m_pBoundingBoxes[i].boundingBox.Orientation = Vector4::Multiply(orientation, m_pBoundingBoxes[i].m_Orientation);
-
+		for (int i = 0; i < m_nBoundingBoxes; i++)
+		{
+			if (world)
+				m_pBoundingBoxes[i].Update(world);
+		}
 	}
-	
+	if (m_pSibling) m_pSibling->UpdateCollisionBoxes(&m_xmf4x4World);
+	if (m_pChild) m_pChild->UpdateCollisionBoxes(&m_xmf4x4World);
+
 }
 
 void CGameObject::ReleaseUploadBuffers()
@@ -435,7 +444,7 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 
 	if (!strcmp(pstrToken, "<Bounds>:"))
 	{
-		m_pCollisionBoxShader = new Shader_CollisionBox(); 
+		m_pCollisionBoxShader = new Shader_CollisionBox();
 
 		(UINT)::fread(&pGameObject->m_nBoundingBoxes, sizeof(int), 1, pInFile);
 		pGameObject->m_pBoundingBoxes = new CCollisionBox[pGameObject->m_nBoundingBoxes];
@@ -445,25 +454,24 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 		for (int i = 0; i < pGameObject->m_nBoundingBoxes; i++)
 		{
 			(UINT)::fread(&boxes[i].m_xmf3Center, sizeof(float), 3, pInFile);
-			pGameObject->m_pBoundingBoxes[i].m_Center =boxes[i].m_xmf3Center;
+			pGameObject->m_pBoundingBoxes[i].m_Center = boxes[i].m_xmf3Center;
 
 			(UINT)::fread(&boxes[i].m_xmf3Extent, sizeof(float), 3, pInFile);
 			pGameObject->m_pBoundingBoxes[i].m_Extents = boxes[i].m_xmf3Extent;
 
 			(UINT)::fread(&boxes[i].m_xmf4Orientation, sizeof(float), 4, pInFile);
-			pGameObject->m_pBoundingBoxes[i].m_Orientation =boxes[i].m_xmf4Orientation;
+			pGameObject->m_pBoundingBoxes[i].m_Orientation = boxes[i].m_xmf4Orientation;
 
-			m_pBoundingBoxes[i].BuildBuffer(pd3dDevice, pd3dCommandList,NULL);
-			m_pBoundingBoxes[i].m_pParent = pGameObject;
+			m_pBoundingBoxes[i].BuildBuffer(pd3dDevice, pd3dCommandList, NULL);
 			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Center, sizeof(float), 3, pInFile);
 			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Extents, sizeof(float), 3, pInFile);
 			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Orientation, sizeof(float), 4, pInFile);
 		}
-		m_pCollisionBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3); 
+		m_pCollisionBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
 		m_pCollisionBoxShader->BuildObjects(pd3dDevice, pd3dCommandList);
 	}
 
-	
+
 }
 
 CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader)
@@ -546,14 +554,14 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 					_stprintf_s(pstrDebug, 256, "(Frame: %p) (Parent: %p)\n"), pChild, pGameObject);
 					OutputDebugString(pstrDebug);
 #endif
+				}
 			}
 		}
-	}
 		else if (!strcmp(pstrToken, "</Frame>"))
 		{
 			break;
 		}
-}
+	}
 	return(pGameObject);
 }
 
@@ -584,7 +592,7 @@ void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 		{
 			nReads = (UINT)::fread(&nMaterial, sizeof(int), 1, pInFile);
 
-			pMaterial = new CMaterial(7); 
+			pMaterial = new CMaterial(7);
 			//0:Albedo, 1:Specular, 2:Metallic, 3:Normal, 4:Emission, 5:DetailAlbedo, 6:DetailNormal
 
 			if (!pShader)
@@ -600,8 +608,8 @@ void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 					{
 						pMaterial->SetStandardShader();
 					}
-				}			
-				
+				}
+
 			}
 			SetMaterial(nMaterial, pMaterial);
 		}
@@ -755,13 +763,13 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile)
 			pAnimationSet->m_ppxmf3KeyFrameTranslations = new XMFLOAT3 * [pAnimationSet->m_nKeyFrameTranslations];
 			for (int i = 0; i < pAnimationSet->m_nKeyFrameTranslations; i++) pAnimationSet->m_ppxmf3KeyFrameTranslations[i] = new XMFLOAT3[m_pAnimationController->m_nAnimationBoneFrames];
 #endif
-			}
+		}
 		else if (!strcmp(pstrToken, "</AnimationSets>"))
 		{
 			break;
 		}
-		}
 	}
+}
 
 void CGameObject::PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent)
 {
@@ -774,9 +782,30 @@ void CGameObject::PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent)
 	if (pGameObject->m_pChild) CGameObject::PrintFrameInfo(pGameObject->m_pChild, pGameObject);
 }
 
-void CCollisionBox::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
+void CCollisionBox::Update(XMFLOAT4X4* Parentworld)
 {
-	m_xmf4x4World = m_pParent->m_xmf4x4World;
+	XMFLOAT4X4 world;
+	if (m_pParent)
+		world = m_pParent->m_xmf4x4World;
+	else
+		world = *Parentworld;
+
+	XMFLOAT4 Position = XMFLOAT4(m_Center.x, m_Center.y, m_Center.z, 1);
+	Position = Vector4::MultiflyMATRIX(Position, world);
+	boundingBox.Center = XMFLOAT3(Position.x, Position.y, Position.z);
+	XMFLOAT4 orientation;
+	XMStoreFloat4(&orientation, XMQuaternionRotationMatrix(XMLoadFloat4x4(&world)));
+	boundingBox.Orientation = orientation;
+
+}
+
+void CCollisionBox::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* ParentWorld)
+{
+	if (m_pParent)
+		m_xmf4x4World = m_pParent->m_xmf4x4World;
+	else
+		m_xmf4x4World = *ParentWorld;
+
 	XMFLOAT4X4 xmf4x4World;
 	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4World)));
 
@@ -789,19 +818,19 @@ void CCollisionBox::BuildBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandL
 
 	GS_COLLISION_BOX_INFO info;
 	info.m_xmf3Center = m_Center;
-	info.m_xmf3Extent = m_Extents;
+	info.m_xmf3Extent = boundingBox.Extents = m_Extents;
 	info.m_xmf4Orientation = m_Orientation;
-	m_pd3dCollisionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList,	&info,
+	m_pd3dCollisionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, &info,
 		sizeof(GS_COLLISION_BOX_INFO), D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dCollisionUploadBuffer);
 
 	m_d3dCollisionBufferView.BufferLocation = m_pd3dCollisionBuffer->GetGPUVirtualAddress();
 	m_d3dCollisionBufferView.StrideInBytes = sizeof(GS_COLLISION_BOX_INFO);
-	m_d3dCollisionBufferView.SizeInBytes = sizeof(GS_COLLISION_BOX_INFO) ;
+	m_d3dCollisionBufferView.SizeInBytes = sizeof(GS_COLLISION_BOX_INFO);
 }
 
-void CCollisionBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+void CCollisionBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, XMFLOAT4X4* ParentWorld)
 {
-	UpdateShaderVariables(pd3dCommandList);
+	UpdateShaderVariables(pd3dCommandList, ParentWorld);
 
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[1] = { m_d3dCollisionBufferView };
 	pd3dCommandList->IASetVertexBuffers(0, _countof(pVertexBufferViews), pVertexBufferViews);

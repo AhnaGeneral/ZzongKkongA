@@ -82,6 +82,32 @@ void CGameScene::ReleaseUploadBuffers()
 	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
 }
 
+
+void CGameScene::CheckCollisions()
+{
+	CheckPlayerCollision();
+}
+
+void CGameScene::CheckPlayerCollision()
+{
+	m_pPlayer->UpdateCollisionBoxes();
+	CCollisionBox* playerBodybox = m_pPlayer->m_pBodyCollision;
+	CCollisionBox* objectbox;
+	for (auto& object : *(m_pObjectLists[OBJECT_TYPE_TRMTOWER]))
+	{
+		object->UpdateCollisionBoxes(NULL);
+		objectbox = object->GetCollisionBoxes();
+		int nobjectBox = 5;
+		{
+			for (int j = 0; j < nobjectBox; j++)
+			{
+				if (playerBodybox->boundingBox.Intersects(objectbox[0].boundingBox))
+					break;
+			}
+		}
+	}
+}
+
 void CGameScene::SetTerrainPipelineState()
 {
 	m_pTerrain->SetPipelinemode();
@@ -449,6 +475,8 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 			}
 		}
 	}
+
+	CheckCollisions();
 
 	if (m_pCloudGSShader) m_pCloudGSShader->Render(pd3dCommandList, pCamera);
 	m_pPlayer->Render(pd3dCommandList, pCamera);
