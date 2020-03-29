@@ -36,6 +36,7 @@
 #include <wrl.h>
 
 #include <vector>
+#include <list>
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
@@ -236,6 +237,13 @@ namespace Vector4
 		XMFLOAT4 xmf4Result;
 		XMStoreFloat4(&xmf4Result, XMVector4Transform(XMLoadFloat4(&xmf4Vector), XMLoadFloat4x4(&xmmtx4x4Matrix2)));
 		return(xmf4Result);
+	}
+	
+	inline XMFLOAT4 Normalize(XMFLOAT4 xmf4Vector)
+	{
+		XMFLOAT4 xmf4Result;
+		XMStoreFloat4(&xmf4Result, XMVector4Normalize(XMLoadFloat4(&xmf4Vector)));
+		return xmf4Result;
 	}
 }
 

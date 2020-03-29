@@ -7,7 +7,6 @@
 #include "Shader_BillBoard.h"
 #include "Object_Player.h"
 #include "Object_Nosie.h"
-#include <list>
 using namespace std;
 
 
@@ -102,5 +101,5 @@ private: // 배치되는 오브젝트들
 
 	POINT					m_ptOldCursorPos;
 	int						m_nObjectTypeNum; // 오브젝트 종류 개수
-	list<CGameObject*>** m_pObjectLists; // list<CGameObject*>*의 배열
+	list<CGameObject*>**	m_pStaticObjLists; // list<CGameObject*>*의 배열
 };

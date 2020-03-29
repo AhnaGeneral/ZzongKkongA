@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include "Object_Terrain.h"
+#include "Mgr_Collision.h"
 
 CGameScene::CGameScene()
 {
@@ -61,18 +62,18 @@ void CGameScene::ReleaseObjects()
 	if (m_pCloudGSShader) delete m_pCloudGSShader;
 
 
-	if (m_pObjectLists) // 오브젝트 Release
+	if (m_pStaticObjLists) // 오브젝트 Release
 	{
 		for (int i = 0; i < m_nObjectTypeNum; i++)
 		{
-			for (auto Obj : *m_pObjectLists[i])
+			for (auto Obj : *m_pStaticObjLists[i])
 			{
 				Obj->Release();
 			}
-			m_pObjectLists[i]->clear();
+			m_pStaticObjLists[i]->clear();
 		}
 	}
-	delete[] m_pObjectLists;
+	delete[] m_pStaticObjLists;
 
 }
 
@@ -90,22 +91,6 @@ void CGameScene::CheckCollisions()
 
 void CGameScene::CheckPlayerCollision()
 {
-	m_pPlayer->UpdateCollisionBoxes();
-	CCollisionBox* playerBodybox = m_pPlayer->m_pBodyCollision;
-	CCollisionBox* objectbox;
-	for (auto& object : *(m_pObjectLists[OBJECT_TYPE_TRMTOWER]))
-	{
-		object->UpdateCollisionBoxes(NULL);
-		objectbox = object->GetCollisionBoxes();
-		int nobjectBox = 5;
-		{
-			for (int j = 0; j < nobjectBox; j++)
-			{
-				if (playerBodybox->boundingBox.Intersects(objectbox[0].boundingBox))
-					break;
-			}
-		}
-	}
 }
 
 void CGameScene::SetTerrainPipelineState()
@@ -464,11 +449,11 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	pd3dCommandList->OMSetStencilRef(1);
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
 
-	if (m_pObjectLists) // 오브젝트 Render
+	if (m_pStaticObjLists) // 오브젝트 Render
 	{
 		for (int i = 0; i < m_nObjectTypeNum; i++)
 		{
-			for (auto Obj : *m_pObjectLists[i])
+			for (auto Obj : *m_pStaticObjLists[i])
 			{
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 0);

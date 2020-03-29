@@ -795,7 +795,8 @@ void CCollisionBox::Update(XMFLOAT4X4* Parentworld)
 	boundingBox.Center = XMFLOAT3(Position.x, Position.y, Position.z);
 	XMFLOAT4 orientation;
 	XMStoreFloat4(&orientation, XMQuaternionRotationMatrix(XMLoadFloat4x4(&world)));
-	boundingBox.Orientation = orientation;
+	XMStoreFloat4(&boundingBox.Orientation , XMVector4Normalize(XMLoadFloat4(&boundingBox.Orientation) * XMLoadFloat4(&orientation)));
+	
 
 }
 

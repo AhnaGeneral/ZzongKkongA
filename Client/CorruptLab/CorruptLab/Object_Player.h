@@ -14,6 +14,7 @@
 class CPlayer : public CGameObject
 {
 protected:
+	XMFLOAT3			   m_xmf3PrePosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	XMFLOAT3	           m_xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	XMFLOAT3	           m_xmf3Right = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	XMFLOAT3	           m_xmf3Up = XMFLOAT3(0.0f, 1.0f, 0.0f);
@@ -57,7 +58,8 @@ public:
 	void SetMaxVelocityY(float fMaxVelocity) { m_fMaxVelocityY = fMaxVelocity; }
 	void SetVelocity(const XMFLOAT3& xmf3Velocity) { m_xmf3Velocity = xmf3Velocity; }
 	void SetPosition(const XMFLOAT3& xmf3Position) { Move(XMFLOAT3(xmf3Position.x - m_xmf3Position.x, xmf3Position.y - m_xmf3Position.y, xmf3Position.z - m_xmf3Position.z), false); }
-
+	
+	virtual void UpdateCollisionBoxes(XMFLOAT4X4* world = NULL);
 
 	const XMFLOAT3& GetVelocity() const { return(m_xmf3Velocity); }
 	float GetYaw() const { return(m_fYaw); }

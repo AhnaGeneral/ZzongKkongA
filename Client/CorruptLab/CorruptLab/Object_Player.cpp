@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Object_Player.h"
+#include "Mgr_Collision.h"
 #include "Animation.h"
 #include "Shader.h"
 
@@ -25,6 +26,8 @@ CPlayer::CPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComman
 	m_fPitch = 0.0f;
 	m_fRoll = 0.0f;
 	m_fYaw = 0.0f;
+
+	CCollisionMgr::GetInstance()->SetPlayer(this);
 }
 
 CPlayer::~CPlayer()
@@ -47,6 +50,14 @@ void CPlayer::ReleaseShaderVariables()
 }
 
 void CPlayer::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList) {}
+
+
+void CPlayer::UpdateCollisionBoxes(XMFLOAT4X4* world)
+{
+	OnPrepareRender();
+	if(m_pHandCollision) m_pHandCollision->Update(NULL);
+	if(m_pBodyCollision) m_pBodyCollision->Update(&m_xmf4x4Transform);
+}
 
 void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
@@ -163,6 +174,7 @@ void CPlayer::Update(float fTimeElapsed)
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
 	XMFLOAT3 pos = m_xmf3Position;
 	pos.y += 12.f;
+
 	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->Update(pos, fTimeElapsed);
 	if (m_pCameraUpdatedContext) OnCameraUpdateCallback(fTimeElapsed);
 	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->SetLookAt(pos);
@@ -173,6 +185,8 @@ void CPlayer::Update(float fTimeElapsed)
 	if (fDeceleration > m_fVelocityXZ)
 		fDeceleration = m_fVelocityXZ;
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Velocity, -fDeceleration, true));
+
+
 }
 
 CCamera* CPlayer::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)
@@ -266,6 +280,7 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)pContext;
 	SetPlayerUpdatedContext(pTerrain);
 	SetCameraUpdatedContext(pTerrain);
+	
 }
 
 CMainPlayer::~CMainPlayer() {}
@@ -320,9 +335,16 @@ void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 	}
 }
 
+
 void CMainPlayer::Update(float fTimeElapsed)
 {
 	CPlayer::Update(fTimeElapsed);
+
+	UpdateCollisionBoxes();
+	if (CCollisionMgr::GetInstance()->StaticCollisionCheck() )
+		m_xmf3Position = m_xmf3PrePosition;
+
+	m_xmf3PrePosition = m_xmf3Position;
 
 	//SetAnimation();
 }

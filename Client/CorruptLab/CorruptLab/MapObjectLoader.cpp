@@ -1,15 +1,15 @@
 
 #include "stdafx.h"
 #include "Scene.h"
-#include "Object_Terrain.h"
+#include "Object_StaticObj.h"
 
 void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	m_nObjectTypeNum = 3;
-	m_pObjectLists = new list<CGameObject*> * [m_nObjectTypeNum];
+	m_pStaticObjLists = new list<CGameObject*> * [m_nObjectTypeNum];
 
 	for (int i = 0; i < m_nObjectTypeNum; i++) // ÃÊ±âÈ­
-		m_pObjectLists[i] = new list<CGameObject*>();
+		m_pStaticObjLists[i] = new list<CGameObject*>();
 
 
 	//Rocks-------------------------------------------------------
@@ -27,11 +27,12 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	{
 		XMFLOAT4X4 xmmtxWorld;
 		(UINT)::fread(&xmmtxWorld, sizeof(XMFLOAT4X4), 1, pInFile);
-		pGameObject = new CGameObject();
+		pGameObject = new CStaticObject();
 		pGameObject->SetChild(pRockModel, true);
 		pGameObject->m_xmf4x4Transform = xmmtxWorld;
 		pGameObject->UpdateTransform(NULL);
-		m_pObjectLists[OBJECT_TYPE_ROCK]->push_back(pGameObject);
+		pGameObject->OnInitialize();
+		m_pStaticObjLists[OBJECT_TYPE_ROCK]->push_back(pGameObject);
 	}
 
 	//Fence-----------------------------------------------
@@ -47,12 +48,13 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	{
 		XMFLOAT4X4 xmmtxWorld;
 		(UINT)::fread(&xmmtxWorld, sizeof(XMFLOAT4X4), 1, pInFile);
-		pGameObject = new CGameObject();
+		pGameObject = new CStaticObject();
 		pGameObject->SetChild(pFenceModel, true);
 		pGameObject->m_xmf4x4Transform = xmmtxWorld;
 		pGameObject->Rotate(0, -90, 0);
 		pGameObject->UpdateTransform(NULL);
-		m_pObjectLists[OBJECT_TYPE_FENCE]->push_back(pGameObject);
+		pGameObject->OnInitialize();
+		m_pStaticObjLists[OBJECT_TYPE_FENCE]->push_back(pGameObject);
 	}
 
 
@@ -69,11 +71,12 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	{
 		XMFLOAT4X4 xmmtxWorld;
 		(UINT)::fread(&xmmtxWorld, sizeof(XMFLOAT4X4), 1, pInFile);
-		pGameObject = new CGameObject();
+		pGameObject = new CStaticObject();
 		pGameObject->SetChild(pTowerModel, true);
 		pGameObject->m_xmf4x4Transform = xmmtxWorld;
 		pGameObject->UpdateTransform(NULL);
-		m_pObjectLists[OBJECT_TYPE_TRMTOWER]->push_back(pGameObject);
+		pGameObject->OnInitialize();
+		m_pStaticObjLists[OBJECT_TYPE_TRMTOWER]->push_back(pGameObject);
 	}
 
 }
