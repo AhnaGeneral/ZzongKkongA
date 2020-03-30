@@ -463,11 +463,9 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 			pGameObject->m_pBoundingBoxes[i].m_Orientation = boxes[i].m_xmf4Orientation;
 
 			m_pBoundingBoxes[i].BuildBuffer(pd3dDevice, pd3dCommandList, NULL);
-			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Center, sizeof(float), 3, pInFile);
-			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Extents, sizeof(float), 3, pInFile);
-			//(UINT)::fread(&pGameObject->m_pBoundingBoxes[i].Orientation, sizeof(float), 4, pInFile);
 		}
-		m_pCollisionBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
+
+		m_pCollisionBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 4);
 		m_pCollisionBoxShader->BuildObjects(pd3dDevice, pd3dCommandList);
 	}
 
@@ -664,14 +662,6 @@ void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 		else if (!strcmp(pstrToken, "<EmissionMap>:"))
 		{
 			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_EMISSION_MAP, ROOT_PARAMETER_EMISSION_TEX, pMaterial->m_ppstrTextureNames[4], &(pMaterial->m_ppTextures[4]), pParent, pInFile, pShader);
-		}
-		else if (!strcmp(pstrToken, "<DetailAlbedoMap>:"))
-		{
-			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_DETAIL_ALBEDO_MAP, 9, pMaterial->m_ppstrTextureNames[5], &(pMaterial->m_ppTextures[5]), pParent, pInFile, pShader);
-		}
-		else if (!strcmp(pstrToken, "<DetailNormalMap>:"))
-		{
-			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_DETAIL_NORMAL_MAP, 9, pMaterial->m_ppstrTextureNames[6], &(pMaterial->m_ppTextures[6]), pParent, pInFile, pShader);
 		}
 		else if (!strcmp(pstrToken, "</Materials>"))
 		{

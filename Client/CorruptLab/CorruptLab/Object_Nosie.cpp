@@ -171,7 +171,7 @@ void CObjectNosie::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/noise01.dds", 2);
 
 	Shader_Noise* pNosieShader = new Shader_Noise();
-	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
+	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 4);
 	pNosieShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	pNosieShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); // ÈüÀÌ ´Þ¶ó¼­... OnPrepareRender
 	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARAMETER_NOISE_TEX, true);
@@ -202,7 +202,7 @@ void CObjectFog::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Fog/Fog2.dds", 2);
 
 	Shader_FogNoise* pNosieShader = new Shader_FogNoise();
-	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
+	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 4);
 	pNosieShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	pNosieShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); // ÈüÀÌ ´Þ¶ó¼­... OnPrepareRender
 	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARAMETER_FOG_TEX, true);
@@ -243,7 +243,7 @@ void CObjectWater::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Water/Water_NM.dds", 0);
 
 	Shader_WaterNoise* pNosieShader = new Shader_WaterNoise();
-	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
+	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 4);
 	pNosieShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	pNosieShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1); // ÈüÀÌ ´Þ¶ó¼­... OnPrepareRender
 	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARMAMETER_WATER_NORMAL_TEX, false);

@@ -22,8 +22,6 @@ VS_SKYBOX_CUBEMAP_OUTPUT VSSkyBox(VS_SKYBOX_CUBEMAP_INPUT input)
 	return(output);
 }
 
-TextureCube gtxtSkyCubeTexture : register(t11);
-
 float4 PSSkyBox(VS_SKYBOX_CUBEMAP_OUTPUT input) : SV_TARGET
 {
 	float4 cColor = gtxtSkyCubeTexture.Sample(gSamplerClamp, input.positionL);

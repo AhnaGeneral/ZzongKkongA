@@ -193,6 +193,8 @@
     <ClInclude Include="Object_Nosie.h">
       <Filter>05.Component\GameObject\07.Noise</Filter>
     </ClInclude>
+    <ClInclude Include="Mgr_Collision.h" />
+    <ClInclude Include="Object_StaticObj.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -282,6 +284,8 @@
     <ClCompile Include="Object_Nosie.cpp">
       <Filter>05.Component\GameObject\07.Noise</Filter>
     </ClCompile>
+    <ClCompile Include="Mgr_Collision.cpp" />
+    <ClCompile Include="Object_StaticObj.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">

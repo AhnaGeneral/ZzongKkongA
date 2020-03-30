@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Mgr_Collision.h" />
     <ClInclude Include="Object_Camera.h" />
     <ClInclude Include="CorruptLab.h" />
     <ClInclude Include="Define.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Mesh_SkyBox.h" />
     <ClInclude Include="Mesh_Terrain.h" />
     <ClInclude Include="Object_Nosie.h" />
+    <ClInclude Include="Object_StaticObj.h" />
     <ClInclude Include="Object_Terrain.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="d3dx12.h" />
@@ -185,12 +187,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Mgr_Collision.cpp" />
     <ClCompile Include="Object_Camera.cpp" />
     <ClCompile Include="CorruptLab.cpp" />
     <ClCompile Include="Mesh_Skinned.cpp" />
     <ClCompile Include="Mesh_SkyBox.cpp" />
     <ClCompile Include="Mesh_Terrain.cpp" />
     <ClCompile Include="Object_Nosie.cpp" />
+    <ClCompile Include="Object_StaticObj.cpp" />
     <ClCompile Include="Object_Terrain.cpp" />
     <ClCompile Include="MapObjectLoader.cpp" />
     <ClCompile Include="Material.cpp" />

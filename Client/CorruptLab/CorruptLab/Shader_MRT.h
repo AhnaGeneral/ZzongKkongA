@@ -37,6 +37,8 @@ public:
 	virtual void ReleaseShaderVariables();
 	
 	void GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance);
+	int GetUIControl() { return UIcontrol; }
+	void SetUIControl(int iunder) { UIcontrol = iunder; }
 
 protected:
 	CTexture* m_pTexture = NULL;
@@ -46,6 +48,7 @@ protected:
 	CGameObject ** UIObject = NULL; 
 	int m_nUI; 
 	CUI* m_pCUIobj = NULL;
+	int  UIcontrol = 1; 
 	
 	ID3D12Resource* m_pd3dcbvOrthoCamera = NULL;
 	VS_CB_EYE_CAMERA_ORTHO* m_pcbMappedOrthoCamera = NULL;

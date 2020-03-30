@@ -14,23 +14,22 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
 
 float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
-	//float (input.vPosj.z / input.vProj.w , input,vProj.z / 500f,0,1) 
 	float4 cColor = gtxtScene[int2(position.xy)];
 	float fDepth = gtxtDepth[int2(position.xy)].r;
 	float4 fLighted = gtxtLight[int2(position.xy)];
+	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
 
 	cColor = lerp(cColor, fLighted, 0.5f);
 	float4 cFogColor = float4(0.15f, 0.15f, 0.15f,1.f);
 
 	cColor = lerp(cColor, cFogColor, fDepth * 5);
+	cColor = cColor + cNonLight; 
 
 	return(cColor);
 }
 
 static float gfLaplacians[9] = { -1.0f, -1.0f, -1.0f, -1.0f, 8.0f, -1.0f, -1.0f, -1.0f, -1.0f };
 static int2 gnOffsets[9] = { { -1,-1 },{ 0,-1 },{ 1,-1 },{ -1,0 },{ 0,0 },{ 1,0 },{ -1,1 },{ 0,1 },{ 1,1 } };
-//static int2 gnOffsets[9] = { {-1,-1}, {0,-1}, int2(1,-1), int2(-1,0), int2(0,0), int2(1,0), int2(-1,1), int2(0,1), int2(1,1) };
-
 
 float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Target //backbufferm
 {
@@ -89,8 +88,8 @@ float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 	if (gnObjectID == 0)  cColor = gtxtNormal.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 1)  cColor = gtxtScene.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 2)  cColor = gtxtDepth.Sample(gSamplerState, input.uv);
-	if (gnObjectID == 3)  cColor = gtxtLight.Sample(gSamplerState, input.uv);
-
+	if (gnObjectID == 3)  cColor = gtxtNonLightNoise.Sample(gSamplerState, input.uv);
+	if (gnObjectID == 4)  cColor = gtxtLight.Sample(gSamplerState, input.uv);
 
 	return cColor;
 }

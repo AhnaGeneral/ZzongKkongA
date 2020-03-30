@@ -46,14 +46,14 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[2];
 
 	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dDescriptorRanges[0].NumDescriptors = 3;
+	pd3dDescriptorRanges[0].NumDescriptors = 4;
 	pd3dDescriptorRanges[0].BaseShaderRegister = 1; //Texture[]
 	pd3dDescriptorRanges[0].RegisterSpace = 0;
 	pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
 	pd3dDescriptorRanges[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[1].NumDescriptors = 1;
-	pd3dDescriptorRanges[1].BaseShaderRegister = 23; //Texture[]
+	pd3dDescriptorRanges[1].BaseShaderRegister = 25; //Texture[]
 	pd3dDescriptorRanges[1].RegisterSpace = 0;
 	pd3dDescriptorRanges[1].OffsetInDescriptorsFromTableStart = 0;
 
@@ -79,11 +79,6 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dRootParameters[ROOT_PARAMETER_LIGHT_MRT].DescriptorTable.NumDescriptorRanges = 1;
 	pd3dRootParameters[ROOT_PARAMETER_LIGHT_MRT].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[1]; //Texture
 	pd3dRootParameters[ROOT_PARAMETER_LIGHT_MRT].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-
-	//pd3dRootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	//pd3dRootParameters[4].DescriptorTable.NumDescriptorRanges = 1;
-	//pd3dRootParameters[4].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[0]; //Texture
-	//pd3dRootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc;
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
@@ -186,7 +181,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	if (pContext != NULL)
 	{
 		m_pTexture = (CTexture*)pContext;
-		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 4);
+		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 5);
 		CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, 0, true);
 	}
@@ -203,15 +198,15 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH / 2.0f, FRAME_BUFFER_HEIGHT / 2.0f , 0.0f, 1.0f);                                   
 	
 	//---------------------------------------------------------------------------------
-	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH /10.f  , FRAME_BUFFER_HEIGHT/10.f, 0.0f, 1.0f);
-	m_nUI = 4;                                                           
+	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH /11.f  , FRAME_BUFFER_HEIGHT/11.f, 0.0f, 1.0f);
+	m_nUI = 5;                                                           
 	UIObject = new CGameObject*[m_nUI]; 
 
 	for (int i = 0; i < m_nUI;)
 	{
 		m_pCUIobj = new CUI(pd3dDevice, pd3dCommandList);
 		m_pCUIobj->SetMesh(mesh);
-		m_pCUIobj->Set2DPosition(-150.0f+(i*(80.0f)),120.0f);
+		m_pCUIobj->Set2DPosition(-155.0f+(i*(70.0f)),120.0f);
 		m_pCUIobj->SetObjectID(i); 
 		UIObject[i++] = m_pCUIobj; 
 	}
@@ -237,15 +232,16 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 
 	OnPrepareRender(pd3dCommandList, 1);
 	
-	for (int i = 0; i < m_nUI; i++)
+	if (UIcontrol)
 	{
-		if (UIObject[i])
+		for (int i = 0; i < m_nUI; i++)
 		{
-			UIObject[i]->Render(pd3dCommandList, 0);
+			if (UIObject[i])
+			{
+				UIObject[i]->Render(pd3dCommandList, 0);
+			}
 		}
 	}
-	//if (m_pCUIobj) 
-	//	m_pCUIobj->Render(pd3dCommandList, 0);
 }
 
 void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)

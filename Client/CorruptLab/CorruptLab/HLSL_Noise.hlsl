@@ -1,10 +1,6 @@
 #include "Shaders.hlsl"
 
-Texture2D gtxtBaseColorNoiseTex : register(t19);
-Texture2D gtxtAlphaNoiseTex : register(t20);
-Texture2D gtxtNoiseTex : register(t21);
-
-cbuffer DistortionBuffer : register(b23)
+cbuffer DistortionBuffer : register(b10)
 {
 	float2 distortion1 : packoffset(c0);
 	float2 distortion2 : packoffset(c0.z);
@@ -13,7 +9,7 @@ cbuffer DistortionBuffer : register(b23)
 	float distortionBias : packoffset(c1.w);
 };
 
-cbuffer cbNoiseBuffer : register(b22)
+cbuffer cbNoiseBuffer : register(b9)
 {
 	float    frameTime : packoffset(c0);
 	float3   scrollSpeeds : packoffset(c0.y);
@@ -58,8 +54,10 @@ PS_NOISE_INPUT NoiseVertexShader(VS_NOISE_INPUT input)
 	return output;
 }
 
-float4 NoisePixelShader(PS_NOISE_INPUT input) : SV_TARGET
+PS_NONLIGHT_MRT_OUTPUT NoisePixelShader(PS_NOISE_INPUT input) 
 {
+
+	PS_NONLIGHT_MRT_OUTPUT output; 
 
 	float4 noise1 = gtxtNoiseTex.Sample(gSamplerState, input.tex1);
 	float4 noise2 = gtxtNoiseTex.Sample(gSamplerState, input.tex2);
@@ -83,6 +81,6 @@ float4 NoisePixelShader(PS_NOISE_INPUT input) : SV_TARGET
 	float4 fireColor = gtxtBaseColorNoiseTex.Sample(gSamplerClamp, noiseCoords.xy);
 	float4 alphaColor = gtxtAlphaNoiseTex.Sample(gSamplerClamp, noiseCoords.xy);
 	fireColor.a = alphaColor;
-
-	return fireColor;
+	output.NonLight = fireColor;
+	return output;
 }

@@ -78,15 +78,6 @@ void GS(point VS_COLLISIONBOX_OUTPUT input[1], inout TriangleStream<GS_COLLISION
     pVertices[34] = float4(+fx + input[0].Center.x , -fy + input[0].Center.y, +fz + input[0].Center.z , 1.0f);
     pVertices[35] = float4(+fx + input[0].Center.x , -fy + input[0].Center.y, -fz + input[0].Center.z , 1.0f);
 
-    //float3 Look = input[0].Orientation;
-    //float3 Right = cross(float3(0,1,0), Look);
-    //float3 Up   =  cross(Look, Right);
-
-    //float4x4 rotateMat = { { 1.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f } };
-    //rotateMat._13_23_33 = Look;
-    //rotateMat._11_21_31 = Right;
-    //rotateMat._12_22_32 = Up;
-    //rotateMat = mul(rotateMat, gmtxGameObject);
 
     GS_COLLISIONBOX_OUTPUT output;
 
@@ -102,8 +93,11 @@ void GS(point VS_COLLISIONBOX_OUTPUT input[1], inout TriangleStream<GS_COLLISION
 }
 
 
-float4 PSCollisionBox(GS_COLLISIONBOX_OUTPUT input) : SV_TARGET
+PS_NONLIGHT_MRT_OUTPUT PSCollisionBox(GS_COLLISIONBOX_OUTPUT input)
 {
+    PS_NONLIGHT_MRT_OUTPUT output; 
+
     float4 cColor = float4(1.0f,0.0f,0.0f, 1.0f);
-    return(cColor);
+    output.NonLight = cColor; 
+    return(output);
 }

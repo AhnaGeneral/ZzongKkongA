@@ -37,7 +37,7 @@ struct MATERIALS
 	MATERIAL	     m_pReflections[MAX_MATERIALS];
 };
 
-class CLightTarget : public CShader
+class CLightTarget : public CPostProcessingShader
 {
 public:
 	CLightTarget() {}

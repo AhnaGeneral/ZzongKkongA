@@ -2,9 +2,6 @@
 #include "HLSL_Noise.hlsl"
 
 // FogAlpha.hlsl =========================================================
-Texture2D gtxtFinalAlpha : register(t25);
-Texture2D gtxtAlpha01 : register(t26);
-Texture2D gtxtAlpha02 : register(t27);
 
 struct VS_FOG_INPUT
 {
@@ -39,15 +36,17 @@ PS_FOG_INPUT FogVertexShader(VS_FOG_INPUT input)
 	return output;
 }
 
-float4 FogPixelShader(PS_FOG_INPUT input) : SV_TARGET
+PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 {
+	PS_NONLIGHT_MRT_OUTPUT output; 
+
 	float4 noise1 = gtxtAlpha01.Sample(gSamplerState, input.tex1);
 	float4 noise2 = gtxtAlpha02.Sample(gSamplerState, input.tex2);
 
-
-
-	float4 finalNoise = lerp (noise1, noise2, 0.5);
+	float4 finalNoise = lerp (noise1, noise2, 0.7);
 	float4 alphaColor = gtxtFinalAlpha.Sample(gSamplerClamp, input.tex);
-	return float4(1,1,1, alphaColor.a * (finalNoise.a*1.5) );
+	output.NonLight = float4(1, 1, 1, alphaColor.a * (finalNoise.a * 1.5));
+
+	return output;
 
 }

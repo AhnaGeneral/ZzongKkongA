@@ -261,8 +261,9 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 
 	for (UINT i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 	{
-		m_ppd3dOffScreenRenderTargetBuffers[i] = pTextureForPostProcessing->CreateTexture(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth, m_nWndClientHeight,
-			DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
+		m_ppd3dOffScreenRenderTargetBuffers[i] = pTextureForPostProcessing->CreateTexture(m_pd3dDevice, m_pd3dCommandList,
+			m_nWndClientWidth, m_nWndClientHeight,DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, 
+			D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
 		m_ppd3dOffScreenRenderTargetBuffers[i]->AddRef();
 	}
 
@@ -276,6 +277,7 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	d3dRenderTargetViewDesc.Texture2D.PlaneSlice = 0;
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
+
 	for (UINT i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 	{
 		m_pd3dOffScreenRenderTargetBufferCPUHandles[i] = d3dRtvCPUDescriptorHandle;
@@ -285,7 +287,7 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 
 	m_pPostProcessingShader = new CPostProcessingByLaplacianShader();
 	m_pPostProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
-	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pPostProcessingShader->GetGraphicsRootSignature());
+	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pPostProcessingShader->GetGraphicsRootSignature(), 4);
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pTextureForPostProcessing, NULL);
 
 	m_pd3dCommandList->Close();
@@ -308,7 +310,6 @@ void CGameFramework::CreateLightRenderTargetViews()
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dLightDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	//d3dRtvCPUDescriptorHandle.ptr += (m_nSwapChainBuffers * m_nRtvDescriptorIncrementSize); // ptr : 2 + 128 
 
 	D3D12_RENDER_TARGET_VIEW_DESC d3dRenderTargetViewDesc;
 	d3dRenderTargetViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -324,7 +325,6 @@ void CGameFramework::CreateLightRenderTargetViews()
 		d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 	}
 
-
 	m_pLightProcessingShader = new CLightTarget();
 	m_pLightProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
 	m_pLightProcessingShader->CreateShader(m_pd3dDevice, m_pLightProcessingShader->GetGraphicsRootSignature());
@@ -335,7 +335,6 @@ void CGameFramework::CreateLightRenderTargetViews()
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
-	//m_TestTexture = pTextureForPostProcessing;
 }
 
 void CGameFramework::CreateDepthStencilView()
@@ -429,6 +428,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case VK_F2:
 		case VK_F3:
 			m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
+			break;
+		case VK_F7:
+			if (m_pPostProcessingShader->GetUIControl())
+				m_pPostProcessingShader->SetUIControl(0); 
+			else
+				m_pPostProcessingShader->SetUIControl(1);
 			break;
 		case VK_F9:
 			ChangeSwapChainState();

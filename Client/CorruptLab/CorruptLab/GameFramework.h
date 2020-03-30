@@ -82,7 +82,7 @@ private:
 
 	CGameTimer						    m_GameTimer;
 
-	static const UINT				    m_nOffScreenRenderTargetBuffers = 3;
+	static const UINT				    m_nOffScreenRenderTargetBuffers = 4;
 	static const UINT				    m_nOffScreenLightBuffers = 1;
 
 	ID3D12Resource                    * m_ppd3dLightMapRenderTargetBuffers[m_nOffScreenLightBuffers];
@@ -96,7 +96,7 @@ private:
 
 	_TCHAR							    m_pszFrameRate[50];
 public:
-	CTexture* m_TestTexture = NULL;
+	CTexture                          * m_TestTexture = NULL;
 	//=============================================================
 private:
 	CPostProcessingShader* m_pPostProcessingShader = NULL;

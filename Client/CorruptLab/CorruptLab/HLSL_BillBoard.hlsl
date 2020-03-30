@@ -1,7 +1,6 @@
 #include "Shaders.hlsl"
 
  //=====================================================================================
-Texture2D gtxCloudTextures : register(t12); 
 
 struct VS_BILLBOARD_INPUT
 {

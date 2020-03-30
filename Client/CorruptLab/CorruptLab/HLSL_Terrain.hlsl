@@ -1,10 +1,5 @@
 #include "Shaders.hlsl"
 
-Texture2D gtxtTerrainBaseTexture : register(t13);
-Texture2D gtxtTerrainAlaphTexture : register(t14);
-Texture2D gtxtTerrainNormalTexture : register(t15);
-
-
 
 struct VS_TERRAIN_INPUT
 {
@@ -219,9 +214,6 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 }
 
 
-Texture2D gtxtStone1_BC : register(t16);
-Texture2D gtxtGrass2_BC : register(t17);
-Texture2D gtxtDryStone_BC : register(t18);
 
 //Texture2D gtxDryGround_BC : register(t19);
 //Texture2D gtxGrass1_BC : register(t20);
@@ -270,6 +262,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 		output.normal.w -= fAlpha;
 		//discard;
 	}
+	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 
 	return output;
 }

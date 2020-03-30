@@ -58,8 +58,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT WaterPixelShader(PS_WATER_INPUT input) : SV_TA
 	float3 finalNormal = normalW2 + normalW3 + Stop;
 	//float3 finalNormal = normalW2 + normalW3 ;
 	output.normal = float4 (finalNormal, 0.7f);
-	output.depth = float4 (input.position.z / input.position.w,
-		input.position.z / 1000.0f, input.position.z / 1000.f, 1.0f);
-
+	//output.depth = float4 (input.position.z / input.position.w,
+		//input.position.z / 1000.0f, input.position.z / 1000.f, 1.0f);
+	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	return output;
 }

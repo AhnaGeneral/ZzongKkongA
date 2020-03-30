@@ -153,12 +153,12 @@ void CMaterial::ReleaseUploadBuffers()
 void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
 	m_pStandardShader = new CStandardShader();
-	m_pStandardShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
+	m_pStandardShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature,4);
 	m_pStandardShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	m_pStandardShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 7);
 
 	m_pSkinnedAnimationShader = new CSkinnedAnimationShader();
-	m_pSkinnedAnimationShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3);
+	m_pSkinnedAnimationShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 4);
 	m_pSkinnedAnimationShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	m_pSkinnedAnimationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 3, 7);
 

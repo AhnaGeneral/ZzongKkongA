@@ -16,7 +16,6 @@ cbuffer cbCameraInfo : register(b1)
 
 cbuffer cbGameObjectInfo : register(b2)
 {
-	//SetGraphicsRoot32BitConstants 함수 사용 할 때offset을 신경써주세요 
 	matrix		    gmtxGameObject : packoffset(c0);
 	uint            gnObjectID : packoffset (c4); 
 };
@@ -31,21 +30,32 @@ cbuffer cbOrthoInfo : register(b16)
 
 SamplerState gSamplerState : register(s0);
 SamplerState gSamplerClamp : register(s1);
+Texture2D gtxtScene : register(t1); 
+Texture2D gtxtNormal : register(t2);
+Texture2D gtxtDepth : register(t3);
+Texture2D gtxtNonLightNoise : register(t4);
+Texture2D gtxtAlbedoTexture : register(t5);
+Texture2D gtxtSpecularTexture : register(t6);
+Texture2D gtxtNormalTexture : register(t7);
+Texture2D gtxtMetallicTexture : register(t8);
+Texture2D gtxtEmissionTexture : register(t9);
+TextureCube gtxtSkyCubeTexture : register(t10);
+Texture2D gtxCloudTextures : register(t11);
+Texture2D gtxtTerrainBaseTexture : register(t12);
+Texture2D gtxtTerrainAlaphTexture : register(t13);
+Texture2D gtxtTerrainNormalTexture : register(t14);
+Texture2D gtxtStone1_BC : register(t15);
+Texture2D gtxtGrass2_BC : register(t16);
+Texture2D gtxtDryStone_BC : register(t17);
+Texture2D gtxtBaseColorNoiseTex : register(t18);
+Texture2D gtxtAlphaNoiseTex : register(t19);
+Texture2D gtxtNoiseTex : register(t20);
+Texture2D gtxtFinalAlpha : register(t21);
+Texture2D gtxtAlpha01 : register(t22);
+Texture2D gtxtAlpha02 : register(t23);
+Texture2D gtxtWaterNormal : register(t24);
+Texture2D gtxtLight : register(t25);
 
-Texture2D<float4> gtxtScene : register(t1); // scene, normal, objectID RTV 0, 1, 2를 리소스 어레이로만든것
-Texture2D<float4> gtxtNormal : register(t2);
-Texture2D<float4> gtxtDepth : register(t3);
-Texture2D<float4> gtxtLight : register(t23);
-
-Texture2D gtxtAlbedoTexture : register(t4);
-Texture2D gtxtSpecularTexture : register(t5);
-Texture2D gtxtNormalTexture : register(t6);
-Texture2D gtxtMetallicTexture : register(t7);
-Texture2D gtxtEmissionTexture : register(t8);
-Texture2D gtxtDetailAlbedoTexture : register(t9);
-Texture2D gtxtDetailNormalTexture : register(t10);
-
-Texture2D<float4> gtxtWaterNormal : register(t24);
 
 struct VS_TEXTURED_LIGHTING_INPUT
 {
@@ -133,9 +143,14 @@ VS_TEXTURED_LIGHTING_OUTPUT VSLighting(VS_TEXTURED_LIGHTING_INPUT input)
 /////////////////////////////////////////////////////////////////////////////////////////////
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
-	float4 color  : SV_TARGET0;
-	float4 normal : SV_TARGET1;
-	float4 depth : SV_TARGET2;
+	float4 color    : SV_TARGET0;
+	float4 normal   : SV_TARGET1;
+	float4 depth    : SV_TARGET2;
+};
+
+struct PS_NONLIGHT_MRT_OUTPUT
+{
+	float4 NonLight : SV_TARGET3;
 };
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LIGHTING_OUTPUT input)
@@ -156,6 +171,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	output.normal = float4(normalW, 1);
 	output.color = cColorAlbedo;
 	output.depth = float4(fdepth, fdepth, fdepth, 1.0f);
+	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 
 	return output;
 }
