@@ -32,7 +32,7 @@ void CLightTarget::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 	pd3dDescriptorRanges[0].RegisterSpace = 0;
 	pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[2];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[3];
 
 	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].DescriptorTable.NumDescriptorRanges = 1;
@@ -43,6 +43,11 @@ void CLightTarget::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 	pd3dRootParameters[ROOT_PARAMETER_LIGHT].Descriptor.ShaderRegister = 3; //b3 : Lights
 	pd3dRootParameters[ROOT_PARAMETER_LIGHT].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[ROOT_PARAMETER_LIGHT].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	pd3dRootParameters[ROOT_PARAMETER_CAMERA2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[ROOT_PARAMETER_CAMERA2].Descriptor.ShaderRegister = 1; //b1 : Camera
+	pd3dRootParameters[ROOT_PARAMETER_CAMERA2].Descriptor.RegisterSpace = 0;
+	pd3dRootParameters[ROOT_PARAMETER_CAMERA2].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc;
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
@@ -118,6 +123,7 @@ void CLightTarget::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandL
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTextures, ROOT_PARAMETER_CDN_MRT, true);
 
 	BuildLightsAndMaterials();
+
 }
 
 void CLightTarget::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
@@ -127,6 +133,8 @@ void CLightTarget::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandL
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_LIGHT, d3dcbLightsGpuVirtualAddress); //Lights
+
+
 }
 
 void CLightTarget::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -159,6 +167,7 @@ void CLightTarget::ReleaseShaderVariables()
 void CLightTarget::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
+	pCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_CAMERA2);
 
 	CShader::Render(pd3dCommandList, pCamera);
 

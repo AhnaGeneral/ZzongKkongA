@@ -464,7 +464,6 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 
 			m_pBoundingBoxes[i].BuildBuffer(pd3dDevice, pd3dCommandList, NULL);
 		}
-
 		m_pCollisionBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 4);
 		m_pCollisionBoxShader->BuildObjects(pd3dDevice, pd3dCommandList);
 	}
@@ -508,6 +507,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 			nReads = (UINT)::fread(&xmf3Rotation, sizeof(float), 3, pInFile); //Euler Angle
 			nReads = (UINT)::fread(&xmf3Scale, sizeof(float), 3, pInFile);
 			nReads = (UINT)::fread(&xmf4Rotation, sizeof(float), 4, pInFile); //Quaternion
+
 		}
 		else if (!strcmp(pstrToken, "<TransformMatrix>:"))
 		{
@@ -663,6 +663,7 @@ void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 		{
 			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_EMISSION_MAP, ROOT_PARAMETER_EMISSION_TEX, pMaterial->m_ppstrTextureNames[4], &(pMaterial->m_ppTextures[4]), pParent, pInFile, pShader);
 		}
+	
 		else if (!strcmp(pstrToken, "</Materials>"))
 		{
 			break;
@@ -772,7 +773,7 @@ void CGameObject::PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent)
 	if (pGameObject->m_pChild) CGameObject::PrintFrameInfo(pGameObject->m_pChild, pGameObject);
 }
 
-void CCollisionBox::Update(XMFLOAT4X4* Parentworld)
+void CCollisionBox::Update(XMFLOAT4X4* Parentworld, XMFLOAT4* ParentOrientation, XMFLOAT3* ParentScale)
 {
 	XMFLOAT4X4 world;
 	if (m_pParent)
@@ -782,12 +783,17 @@ void CCollisionBox::Update(XMFLOAT4X4* Parentworld)
 
 	XMFLOAT4 Position = XMFLOAT4(m_Center.x, m_Center.y, m_Center.z, 1);
 	Position = Vector4::MultiflyMATRIX(Position, world);
-	boundingBox.Center = XMFLOAT3(Position.x, Position.y, Position.z);
-	XMFLOAT4 orientation;
-	XMStoreFloat4(&orientation, XMQuaternionRotationMatrix(XMLoadFloat4x4(&world)));
-	XMStoreFloat4(&boundingBox.Orientation , XMVector4Normalize(XMLoadFloat4(&boundingBox.Orientation) * XMLoadFloat4(&orientation)));
-	
 
+	XMFLOAT4 orientation = m_Orientation;
+	
+	if (ParentOrientation) orientation = *ParentOrientation;
+	
+	if (ParentScale) boundingBox.Extents = Vector3::Multiply(m_Extents, *ParentScale);
+
+	boundingBox.Orientation = orientation;
+	
+	boundingBox.Center = XMFLOAT3(Position.x, Position.y, Position.z);
+	
 }
 
 void CCollisionBox::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* ParentWorld)

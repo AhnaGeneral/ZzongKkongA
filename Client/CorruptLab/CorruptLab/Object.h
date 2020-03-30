@@ -47,6 +47,9 @@ public:
 	XMFLOAT4X4						m_xmf4x4Transform; // animation ¿¡¼­´Â m_xmf4x4ToParent
 	XMFLOAT4X4						m_xmf4x4World;
 
+	XMFLOAT3						m_xmf3Scale = XMFLOAT3(0.0f,0.0f,0.0f);
+	XMFLOAT4						m_xmf4Rotation = XMFLOAT4(0.0f,0.0f,0.0f,0.0f);
+
 	CGameObject* m_pParent = NULL;
 	CGameObject* m_pChild = NULL;
 	CGameObject* m_pSibling = NULL;
@@ -138,7 +141,7 @@ public:
 class CCollisionBox {
 
 public:
-	void Update(XMFLOAT4X4* Parentworld);
+	void Update(XMFLOAT4X4* Parentworld,  XMFLOAT4* ParentOrientation = NULL, XMFLOAT3* ParentScale = NULL);
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* ParentWorld = NULL);
 	void BuildBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, XMFLOAT4X4* ParentWorld = NULL);

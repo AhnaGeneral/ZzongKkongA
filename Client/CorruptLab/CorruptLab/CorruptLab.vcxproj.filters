@@ -89,6 +89,9 @@
     <Filter Include="09.GameManager">
       <UniqueIdentifier>{919efc28-c14b-4ded-a521-4abcc39834b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Component\GameObject\00.Object\00.StaticObject">
+      <UniqueIdentifier>{6ba15521-172a-4b67-bb7d-f30e680d3e9c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -193,8 +196,12 @@
     <ClInclude Include="Object_Nosie.h">
       <Filter>05.Component\GameObject\07.Noise</Filter>
     </ClInclude>
-    <ClInclude Include="Mgr_Collision.h" />
-    <ClInclude Include="Object_StaticObj.h" />
+    <ClInclude Include="Mgr_Collision.h">
+      <Filter>09.GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_StaticObj.h">
+      <Filter>05.Component\GameObject\00.Object\00.StaticObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -284,8 +291,12 @@
     <ClCompile Include="Object_Nosie.cpp">
       <Filter>05.Component\GameObject\07.Noise</Filter>
     </ClCompile>
-    <ClCompile Include="Mgr_Collision.cpp" />
-    <ClCompile Include="Object_StaticObj.cpp" />
+    <ClCompile Include="Mgr_Collision.cpp">
+      <Filter>09.GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_StaticObj.cpp">
+      <Filter>05.Component\GameObject\00.Object\00.StaticObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">
@@ -332,7 +343,7 @@
       <Filter>04.Shader\08.Shader_Noise</Filter>
     </FxCompile>
     <FxCompile Include="HLSL_waters.hlsl">
-      <Filter>04.Shader\08.Shader_Noise</Filter>
+      <Filter>04.Shader\07.Shader_Water</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

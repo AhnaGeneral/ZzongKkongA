@@ -124,15 +124,21 @@ void CCamera::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComm
 
 }
 
-void CCamera::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
+void CCamera::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, int RootParameterIndex)
 {
 	// [ 원근투영 ] --------------------------------------------------------------------------------
 	XMStoreFloat4x4(&m_pcbMappedProjectionCamera->m_xmf4x4View, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4View)));
 	XMStoreFloat4x4(&m_pcbMappedProjectionCamera->m_xmf4x4Projection, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4Projection)));
 	::memcpy(&m_pcbMappedProjectionCamera->m_xmf3Position, &m_xmf3Position, sizeof(XMFLOAT3));
 
+	m_xmf4x4InverseView =  Matrix4x4::Inverse(m_xmf4x4View);
+	m_xmf4x4InverseProjection = Matrix4x4::Inverse(m_xmf4x4Projection);
+
+	XMStoreFloat4x4(&m_pcbMappedProjectionCamera->m_xmf4x4InverseView, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4InverseView)));
+	XMStoreFloat4x4(&m_pcbMappedProjectionCamera->m_xmf4x4InverseProjection, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4InverseProjection)));
+
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbvProjectionCamera->GetGPUVirtualAddress();
-	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_CAMERA, d3dGpuVirtualAddress);
+	pd3dCommandList->SetGraphicsRootConstantBufferView(RootParameterIndex, d3dGpuVirtualAddress);
 }
 
 void CCamera::ReleaseShaderVariables()

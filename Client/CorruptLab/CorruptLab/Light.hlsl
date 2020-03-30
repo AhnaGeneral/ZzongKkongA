@@ -33,13 +33,45 @@ cbuffer cbLights : register(b3)
 	LIGHT					gLights[MAX_LIGHTS];
 };
 
+// Schlick gives an approximation to Fresnel reflectance (see pg. 233 "Real-Time Rendering 3rd Ed.").
+// R0 = ( (n-1)/(n+1) )^2, where n is the index of refraction.
+float3 SchlickFresnel(float3 R0, float3 normal, float3 lightVec)
+{
+	float cosIncidentAngle = saturate(dot(normal, lightVec));
+
+	float f0 = 1.0f - cosIncidentAngle;
+	float3 reflectPercent = R0 + (1.0f - R0) * (f0 * f0 * f0 * f0 * f0);
+
+	return reflectPercent;
+}
+
+
+
+float4 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye)
+{
+	const float m = 0.1f * 256.0f;
+	float3 halfVec = normalize(toEye + lightVec);
+
+	float roughnessFactor = (m + 8.0f) * pow(max(dot(halfVec, normal), 0.0f), m) / 8.0f;
+	float3 fresnelFactor = SchlickFresnel(0.25f, halfVec, lightVec);
+
+	float3 specAlbedo = fresnelFactor ;
+
+	// Our spec formula goes outside [0,1] range, but we are 
+	// doing LDR rendering.  So scale it down a bit.
+	specAlbedo = specAlbedo / (specAlbedo + 1.0f);
+	float3 cColor = ( specAlbedo) ;
+	return float4(cColor,1.f);
+}
+
+
 float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 {
 	float3 vToLight = -gLights[nIndex].m_vDirection;
 	float fDiffuseFactor = dot(vToLight, vNormal);
 	float fSpecularFactor = 0.0f;
-	if (fDiffuseFactor > 0.0f)
-	{
+	//if (fDiffuseFactor > 0.0f)
+	//{
 //		if (gMaterial.m_cSpecular.a != 0.0f)
 //		{
 //#ifdef _WITH_REFLECT
@@ -54,7 +86,7 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 //			fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), gMaterial.m_cSpecular.a);
 //#endif
 //		}
-	}
+//	}
 
 	return(gLights[nIndex].m_cDiffuse * fDiffuseFactor);
 }
@@ -143,7 +175,8 @@ float4 Lighting(float3 vPosition, float3 vNormal)
 		{
 			if (gLights[i].m_nType == DIRECTIONAL_LIGHT)
 			{
-				cColor += DirectionalLight(i, vNormal, vToCamera);
+				cColor += BlinnPhong(gLights[i].m_cDiffuse, gLights[i].m_vDirection, vNormal, vToCamera);
+				//cColor += DirectionalLight(i, vNormal, vToCamera);
 			}
 			else if (gLights[i].m_nType == POINT_LIGHT)
 			{

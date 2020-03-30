@@ -11,8 +11,11 @@ cbuffer cbCameraInfo : register(b1)
 {
 	matrix		    gmtxView : packoffset(c0);
 	matrix		    gmtxProjection : packoffset(c4);
-	float3		    gvCameraPosition : packoffset(c8);
+	matrix			gmtxInverseView : packoffset(c8);
+	matrix			gmtxInverseProjection : packoffset(c12);
+	float3		    gvCameraPosition : packoffset(c16);
 };
+
 
 cbuffer cbGameObjectInfo : register(b2)
 {

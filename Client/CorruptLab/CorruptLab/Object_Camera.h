@@ -10,7 +10,11 @@ struct VS_CB_EYE_CAMERA_PROJECTION
 {
 	XMFLOAT4X4						m_xmf4x4View;
 	XMFLOAT4X4						m_xmf4x4Projection;
+	XMFLOAT4X4						m_xmf4x4InverseView;
+	XMFLOAT4X4						m_xmf4x4InverseProjection;
+
 	XMFLOAT3						m_xmf3Position;
+
 };
 class CPlayer;
 
@@ -34,7 +38,10 @@ protected:
 					            
 	XMFLOAT4X4		            	m_xmf4x4View;
 	XMFLOAT4X4		            	m_xmf4x4Projection;
-	XMFLOAT4X4                      m_xmf4x4Ortho; 
+	XMFLOAT4X4                      m_xmf4x4Ortho;
+
+	XMFLOAT4X4						m_xmf4x4InverseView;
+	XMFLOAT4X4						m_xmf4x4InverseProjection;
 					            
 	D3D12_VIEWPORT	            	m_d3dViewport;
 	D3D12_RECT		            	m_d3dScissorRect;
@@ -51,7 +58,7 @@ public:
 
 	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
 	virtual void ReleaseShaderVariables();
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, int RootParameterIndex = ROOT_PARAMETER_CAMERA);
 
 	virtual void SetViewportsAndScissorRects(ID3D12GraphicsCommandList *pd3dCommandList);
 

@@ -9,7 +9,7 @@ using System.IO;
 using UnityEditor;
 using System.Text;
 
-public class BinarySceneWriter : MonoBehaviour
+public class OurBinarySceneWriter : MonoBehaviour
 {
     private List<string> m_strGameObjectNames = new List<string>();
     private List<string> m_strTextureNames = new List<string>();
@@ -155,6 +155,23 @@ public class BinarySceneWriter : MonoBehaviour
 #endif
         }
     }
+    
+
+    void WriteVector(Vector3 v, BinaryWriter binaryWriter)
+    {
+        binaryWriter.Write(v.x);
+        binaryWriter.Write(v.y);
+        binaryWriter.Write(v.z);
+    }
+
+
+    void WriteVector(Quaternion q, BinaryWriter binaryWriter)
+    {
+        binaryWriter.Write(q.x);
+        binaryWriter.Write(q.y);
+        binaryWriter.Write(q.z);
+        binaryWriter.Write(q.w);
+    }
 
     void WriteMesh(Mesh mesh, string strObjectName)
     {
@@ -183,6 +200,14 @@ public class BinarySceneWriter : MonoBehaviour
         }
         m_strTextureNames.Add(strTextureName);
         return (false);
+    }
+
+    void WriteTransform(string strHeader, Transform current, BinaryWriter binaryWriter)
+    {
+        WriteVector(current.localPosition, binaryWriter);
+        WriteVector(current.localEulerAngles, binaryWriter);
+        WriteVector(current.localScale, binaryWriter);
+        WriteVector(current.localRotation, binaryWriter);
     }
 
     bool FindObjectByName(string strObjectName)
@@ -298,6 +323,8 @@ public class BinarySceneWriter : MonoBehaviour
  
         for(int i = 0; i< nChild; i++)
         {
+
+            WriteTransform("<Transform>:", transform.GetChild(i), sceneBinaryWriter);
             WriteWorldMatrix(sceneBinaryWriter, transform.GetChild(i));
         }
         
