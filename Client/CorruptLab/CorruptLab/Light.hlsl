@@ -47,21 +47,29 @@ float3 SchlickFresnel(float3 R0, float3 normal, float3 lightVec)
 
 
 
-float4 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye)
+float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye)
 {
-	const float m = 0.1f * 256.0f;
-	float3 halfVec = normalize(toEye + lightVec);
 
-	float roughnessFactor = (m + 8.0f) * pow(max(dot(halfVec, normal), 0.0f), m) / 8.0f;
-	float3 fresnelFactor = SchlickFresnel(0.25f, halfVec, lightVec);
+	float3 vToLight = -lightVec;
+	float fDiffuseFactor = dot(vToLight, normal);
+	float fSpecularFactor = 0.0f;
+	if (fDiffuseFactor > 0.0f)
+	{
+		//#ifdef _WITH_REFLECT
+		//			float3 vReflect = reflect(-vToLight, vNormal);
+		//			fSpecularFactor = pow(max(dot(vReflect, vToCamera), 0.0f), 50);
+		//#else
+		//#ifdef _WITH_LOCAL_VIEWER_HIGHLIGHTING
+		float3 vHalf = normalize(float3(toEye + vToLight));
+		//#else
+		//			float3 vHalf = float3(0.0f, 1.0f, 0.0f);
+		//#endif
+		fSpecularFactor = pow(max(dot(vHalf, normal), 0.0f), 4.8);
+		//#endif
 
-	float3 specAlbedo = fresnelFactor ;
+	}
 
-	// Our spec formula goes outside [0,1] range, but we are 
-	// doing LDR rendering.  So scale it down a bit.
-	specAlbedo = specAlbedo / (specAlbedo + 1.0f);
-	float3 cColor = ( specAlbedo) ;
-	return float4(cColor,1.f);
+	return((lightStrength * fDiffuseFactor) * float3(0.4f, 0.4f, 0.4f) + fSpecularFactor * float3(0.4f,0.4f,0.4f) * float3(0.4f, 0.4f, 0.4f));
 }
 
 
@@ -70,25 +78,23 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 	float3 vToLight = -gLights[nIndex].m_vDirection;
 	float fDiffuseFactor = dot(vToLight, vNormal);
 	float fSpecularFactor = 0.0f;
-	//if (fDiffuseFactor > 0.0f)
-	//{
-//		if (gMaterial.m_cSpecular.a != 0.0f)
-//		{
+	if (fDiffuseFactor > 0.0f)
+	{	
 //#ifdef _WITH_REFLECT
 //			float3 vReflect = reflect(-vToLight, vNormal);
-//			fSpecularFactor = pow(max(dot(vReflect, vToCamera), 0.0f), gMaterial.m_cSpecular.a);
+//			fSpecularFactor = pow(max(dot(vReflect, vToCamera), 0.0f), 50);
 //#else
 //#ifdef _WITH_LOCAL_VIEWER_HIGHLIGHTING
-//			float3 vHalf = normalize(vToCamera + vToLight);
+			float3 vHalf = normalize(float3(vToCamera + vToLight));
 //#else
 //			float3 vHalf = float3(0.0f, 1.0f, 0.0f);
 //#endif
-//			fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), gMaterial.m_cSpecular.a);
+			fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f),10);
 //#endif
-//		}
-//	}
 
-	return(gLights[nIndex].m_cDiffuse * fDiffuseFactor);
+	}
+
+	return((gLights[nIndex].m_cDiffuse * fDiffuseFactor) *float4(0.4f,0.4f,0.4f,1.f) + fSpecularFactor * gLights[nIndex].m_cSpecular * float4(0.4f,0.4f,0.4f, 1.f));
 }
 
 float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera)
@@ -175,7 +181,7 @@ float4 Lighting(float3 vPosition, float3 vNormal)
 		{
 			if (gLights[i].m_nType == DIRECTIONAL_LIGHT)
 			{
-				cColor += BlinnPhong(gLights[i].m_cDiffuse, gLights[i].m_vDirection, vNormal, vToCamera);
+				//cColor += BlinnPhong(gLights[i].m_cDiffuse, gLights[i].m_vDirection, vNormal, vToCamera);
 				//cColor += DirectionalLight(i, vNormal, vToCamera);
 			}
 			else if (gLights[i].m_nType == POINT_LIGHT)

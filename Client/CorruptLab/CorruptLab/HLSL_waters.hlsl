@@ -3,6 +3,7 @@
 struct PS_WATER_INPUT
 {
 	float4 position : SV_POSITION;
+	float3 positionW : POSITION;
 	float2 tex : TEXCOORD0;
 	float2 tex1 : TEXCOORD1;
 	float2 tex2 : TEXCOORD2;
@@ -32,6 +33,7 @@ PS_WATER_INPUT WaterVertexShader(VS_NOISE_INPUT input)
 	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.tangent = float3 (1.0f, 0.0f, 0.0f);
 	output.bitangent = float3 (0.0f, 1.0f, -1.0f);
+	output.positionW = input.position;
 
 	return output;
 }
@@ -49,7 +51,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT WaterPixelShader(PS_WATER_INPUT input) : SV_TA
 	float3 normalizenoise3 = normalize(noise3.rgb * 2.0f - 1.0f);
 	float3 normalizestop = normalize(stopnoise.rgb * 2.0f - 1.0f);
 
-	output.color = float4(0.4, 0.6, 1.2, 0.7f);
+	output.color = float4(0.4, 0.6, 1.2, 1.f);
 
 	float3x3 TBN = float3x3((input.tangent), (input.bitangent), (input.normal));
 	float3 normalW2 = normalize(mul(normalizenoise2, TBN));
@@ -58,8 +60,14 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT WaterPixelShader(PS_WATER_INPUT input) : SV_TA
 	float3 finalNormal = normalW2 + normalW3 + Stop;
 	//float3 finalNormal = normalW2 + normalW3 ;
 	output.normal = float4 (finalNormal, 0.7f);
-	//output.depth = float4 (input.position.z / input.position.w,
-		//input.position.z / 1000.0f, input.position.z / 1000.f, 1.0f);
+
+	float3 toCamera = normalize(gvCameraPosition - input.position);
+	float3 cColor = lerp(output.color, BlinnPhong(float3(0.5f, 0.5f, 0.5f), float3(1, -1, 1), finalNormal, toCamera),0.5f);
+	output.color = float4( cColor, 0.7f) ;
+
+	output.depth = float4 (input.position.z / input.position.w,
+		input.position.z / 1000.0f, 0.f, 1.0f);
+
 	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	return output;
 }

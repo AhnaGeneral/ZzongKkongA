@@ -19,10 +19,10 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	float4 fLighted = gtxtLight[int2(position.xy)];
 	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
 
-	cColor = lerp(cColor, fLighted, 0.5f);
+    cColor = lerp(cColor, fLighted, 0.5f);
 	float4 cFogColor = float4(0.15f, 0.15f, 0.15f,1.f);
-
-	cColor = lerp(cColor, cFogColor, fDepth * 5);
+	
+	//cColor = lerp(cColor, cFogColor, fDepth * 5);
 	cColor = cColor + cNonLight; 
 
 	return(cColor);

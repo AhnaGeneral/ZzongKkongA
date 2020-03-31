@@ -245,14 +245,19 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	float3 ncColor = cColor.rgb;
 
-	output.color = float4 (ncColor, 1.0f);
 	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);
 	float3 vNormal = normalize(cNormalTexColor.rgb * 2.0f - 1.0f);//0.0 ~ 1.0 -> -1.0 ~ 1.0 
 	vNormal = normalize(mul(vNormal, TBN));
 
 	output.normal = float4(vNormal, 1.0f);
 
-	output.depth = float4(input.posj.z / 1000.f, input.posj.z / 1000.f, input.posj.z / 1000.f, 1.0f);
+	output.depth = float4(input.posj.z / input.posj.w, input.posj.z /500.f, 0.0f, 1.0f);
+
+	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
+
+	//float3 toCamera = normalize(gvCameraPosition - input.position.xyz);
+	//cColor = lerp(cColor, BlinnPhong(float3(0.5f, 0.5f, 0.5f), -float3(1, -1, 1), vNormal, toCamera), 0.5f);
+	output.color = cColor;
 
 	if (input.positionW.y < 30.f)
 	{
@@ -262,7 +267,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 		output.normal.w -= fAlpha;
 		//discard;
 	}
-	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 
 	return output;
 }

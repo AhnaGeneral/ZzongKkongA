@@ -22,15 +22,22 @@ PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 	PS_LRT_OUTPUT output; 
 
 	//float3 cColor = gtxtScene[int2(position.xy)].rgb;
-	//float fDepth = gtxtDepth[int2(position.xy)].r;
+	float vPorjPosZ = gtxtDepth[int2(position.xy)].y * 500.f;
+	float uvX = position.x / 720;
+	float uvY = position.y / 600;
 
-	//float3 cFogColor = float3(0.15f, 0.15f, 0.15f);
-	float3 vPosition = float3(position.x, position.y, gtxtDepth[position.xy].r);
+	float4 vPosition;
+	vPosition.x = uvX * vPorjPosZ;
+	vPosition.y = uvY * vPorjPosZ;
+	vPosition.z = gtxtDepth[int2(position.xy)].x * vPorjPosZ;
+	vPosition.w = 1 * vPorjPosZ;
+
 	vPosition = mul(mul(vPosition, gmtxInverseProjection), gmtxInverseView);
-	float3 vToCamera = gvCameraPosition.xyz - vPosition;
+
+	float3 vToCamera = normalize(gvCameraPosition.xyz - vPosition.xyz);
 	float4 vNormal = gtxtNormal[int2(position.xy)];
-	float4 vLightedColor = float4(gvCameraPosition.x,1,1, 1.0f);
-		// BlinnPhong(gLights[0].m_cDiffuse, gLights[0].m_vDirection, vNormal, vToCamera);
+	float4 vLightedColor = DirectionalLight(0, vNormal, vToCamera);
+		
 	output.Light = vLightedColor;
 	return output;
 }

@@ -173,7 +173,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	float fdepth = input.vPorjPos.z / 1000.f;
 	output.normal = float4(normalW, 1);
 	output.color = cColorAlbedo;
-	output.depth = float4(fdepth, fdepth, fdepth, 1.0f);
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.z / 500.f, 0.0f, 1.0f);
 	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 
 	return output;
