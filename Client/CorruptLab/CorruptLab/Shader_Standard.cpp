@@ -81,6 +81,8 @@ void CStandardShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature
 	for (UINT i = 0; i < nRenderTargets; i++)
 		m_d3dPipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
 
+	m_d3dPipelineStateDesc.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
 	m_d3dPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	m_d3dPipelineStateDesc.SampleDesc.Count = 1;
 	m_d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
