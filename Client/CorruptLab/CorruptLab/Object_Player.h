@@ -35,7 +35,7 @@ protected:
 	LPVOID		           m_pPlayerUpdatedContext = NULL;
 	LPVOID		           m_pCameraUpdatedContext = NULL;
 
-	CCamera* m_pCamera = NULL;
+	CPlayerCamera* m_pCamera = NULL;
 	CGameObject* m_pRightHand = NULL;
 	int						m_nRightHandIndex = 25;
 
@@ -67,7 +67,7 @@ public:
 	float GetRoll() const { return(m_fRoll); }
 
 	CCamera* GetCamera() { return(m_pCamera); }
-	void SetCamera(CCamera* pCamera) { m_pCamera = pCamera; }
+	void SetCamera(CPlayerCamera* pCamera) { m_pCamera = pCamera; }
 	void Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity = false);
 	void Move(const XMFLOAT3& xmf3Shift, bool bVelocity = false);
 	void Move(float fxOffset = 0.0f, float fyOffset = 0.0f, float fzOffset = 0.0f);
@@ -87,7 +87,7 @@ public:
 
 	CCamera* OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode);
 
-	virtual CCamera* ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed) { return(NULL); }
+	virtual CPlayerCamera* ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed) { return(NULL); }
 	virtual void OnPrepareRender();
 	virtual void SetRootParameter(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
@@ -99,8 +99,8 @@ class CMainPlayer : public CPlayer
 public:
 	CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext = NULL, int nMeshes = 1);
 	virtual ~CMainPlayer();
-
-	virtual CCamera* ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
+	
+	virtual CPlayerCamera* ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed);
 	virtual void OnPrepareRender();
 	virtual void OnCameraUpdateCallback(float fTimeElapsed);
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed);

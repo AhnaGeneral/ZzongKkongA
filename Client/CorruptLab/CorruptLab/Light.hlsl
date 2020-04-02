@@ -89,7 +89,7 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 //#else
 //			float3 vHalf = float3(0.0f, 1.0f, 0.0f);
 //#endif
-			fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f),10);
+			fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f),20);
 //#endif
 
 	}

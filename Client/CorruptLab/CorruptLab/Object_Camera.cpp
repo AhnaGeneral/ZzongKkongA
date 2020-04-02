@@ -19,11 +19,10 @@ CCamera::CCamera()
 	m_xmf3Offset = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_fTimeLag = 0.0f;
 	m_xmf3LookAtWorld = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	m_nMode = 0x00;
-	m_pPlayer = NULL;
 }
 
-CCamera::CCamera(CCamera *pCamera)
+
+CPlayerCamera::CPlayerCamera(CPlayerCamera* pCamera)
 {
 	if (pCamera)
 	{
@@ -51,7 +50,7 @@ CCamera::CCamera(CCamera *pCamera)
 	}
 }
 
-CCamera::~CCamera()
+CPlayerCamera::~CPlayerCamera()
 { 
 }
 
@@ -76,6 +75,11 @@ void CCamera::SetScissorRect(LONG xLeft, LONG yTop, LONG xRight, LONG yBottom)
 void CCamera::GenerateProjectionMatrix(float fNearPlaneDistance, float fFarPlaneDistance, float fAspectRatio, float fFOVAngle)
 {
 	m_xmf4x4Projection = Matrix4x4::PerspectiveFovLH(XMConvertToRadians(fFOVAngle), fAspectRatio, fNearPlaneDistance, fFarPlaneDistance);
+
+	m_xmf4x4InverseProjection = Matrix4x4::Inverse(m_xmf4x4Projection);
+	m_boundingFrustum.CreateFromMatrix(m_boundingFrustum, XMLoadFloat4x4(&m_xmf4x4Projection));
+	m_boundingFrustum.Far = 400;
+
 }
 
 void CCamera::GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance)
@@ -90,6 +94,7 @@ void CCamera::GenerateViewMatrix(XMFLOAT3 xmf3Position, XMFLOAT3 xmf3LookAt, XMF
 	m_xmf3Position = xmf3Position;
 	m_xmf3LookAtWorld = xmf3LookAt;
 	m_xmf3Up = xmf3Up;
+
 
 	GenerateViewMatrix();
 }
@@ -112,9 +117,18 @@ void CCamera::RegenerateViewMatrix()
 	m_xmf4x4View._41 = -Vector3::DotProduct(m_xmf3Position, m_xmf3Right);
 	m_xmf4x4View._42 = -Vector3::DotProduct(m_xmf3Position, m_xmf3Up);
 	m_xmf4x4View._43 = -Vector3::DotProduct(m_xmf3Position, m_xmf3Look);
+
+	m_xmf4x4InverseView = Matrix4x4::Inverse(m_xmf4x4View);
+
+	XMMATRIX M = XMLoadFloat4x4(&m_xmf4x4InverseView);
+	XMFLOAT4 Rot;
+	XMStoreFloat4(&Rot, XMQuaternionRotationMatrix(M));
+
+	m_boundingFrustum.Origin = m_xmf3Position;
+	m_boundingFrustum.Orientation = Rot;
 }
 
-void CCamera::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
+void CPlayerCamera::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
 {
 	// [ 원근투영 ] --------------------------------------------------------------------------------
 	UINT ncbElementBytes = ((sizeof(VS_CB_EYE_CAMERA_PROJECTION) + 255) & ~255); //256의 배수 [ 원근투영 ]
@@ -124,15 +138,13 @@ void CCamera::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsComm
 
 }
 
-void CCamera::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, int RootParameterIndex)
+void CPlayerCamera::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, int RootParameterIndex)
 {
 	// [ 원근투영 ] --------------------------------------------------------------------------------
 	XMStoreFloat4x4(&m_pcbMappedProjectionCamera->m_xmf4x4View, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4View)));
 	XMStoreFloat4x4(&m_pcbMappedProjectionCamera->m_xmf4x4Projection, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4Projection)));
 	::memcpy(&m_pcbMappedProjectionCamera->m_xmf3Position, &m_xmf3Position, sizeof(XMFLOAT3));
 
-	m_xmf4x4InverseView =  Matrix4x4::Inverse(m_xmf4x4View);
-	m_xmf4x4InverseProjection = Matrix4x4::Inverse(m_xmf4x4Projection);
 
 	XMStoreFloat4x4(&m_pcbMappedProjectionCamera->m_xmf4x4InverseView, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4InverseView)));
 	XMStoreFloat4x4(&m_pcbMappedProjectionCamera->m_xmf4x4InverseProjection, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4InverseProjection)));
@@ -141,7 +153,7 @@ void CCamera::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, 
 	pd3dCommandList->SetGraphicsRootConstantBufferView(RootParameterIndex, d3dGpuVirtualAddress);
 }
 
-void CCamera::ReleaseShaderVariables()
+void CPlayerCamera::ReleaseShaderVariables()
 {
 	if (m_pd3dcbvProjectionCamera)
 	{
@@ -159,7 +171,7 @@ void CCamera::SetViewportsAndScissorRects(ID3D12GraphicsCommandList *pd3dCommand
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CSpaceShipCamera
 
-CSpaceShipCamera::CSpaceShipCamera(CCamera *pCamera) : CCamera(pCamera)
+CSpaceShipCamera::CSpaceShipCamera(CPlayerCamera *pCamera) : CPlayerCamera(pCamera)
 {
 	m_nMode = SPACESHIP_CAMERA;
 }
@@ -204,7 +216,7 @@ void CSpaceShipCamera::Rotate(float x, float y, float z)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CFirstPersonCamera
 
-CFirstPersonCamera::CFirstPersonCamera(CCamera *pCamera) : CCamera(pCamera)
+CFirstPersonCamera::CFirstPersonCamera(CPlayerCamera *pCamera) : CPlayerCamera(pCamera)
 {
 	m_nMode = FIRST_PERSON_CAMERA;
 	if (pCamera)
@@ -253,7 +265,7 @@ void CFirstPersonCamera::Rotate(float x, float y, float z)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CThirdPersonCamera
 
-CThirdPersonCamera::CThirdPersonCamera(CCamera *pCamera) : CCamera(pCamera)
+CThirdPersonCamera::CThirdPersonCamera(CPlayerCamera *pCamera) : CPlayerCamera(pCamera)
 {
 	m_nMode = THIRD_PERSON_CAMERA;
 	if (pCamera)
@@ -304,4 +316,16 @@ void CThirdPersonCamera::SetLookAt(XMFLOAT3& xmf3LookAt)
 	m_xmf3Right = XMFLOAT3(mtxLookAt._11, mtxLookAt._21, mtxLookAt._31);
 	m_xmf3Up = XMFLOAT3(mtxLookAt._12, mtxLookAt._22, mtxLookAt._32);
 	m_xmf3Look = XMFLOAT3(mtxLookAt._13, mtxLookAt._23, mtxLookAt._33);
+}
+
+CSunCamera::CSunCamera()
+{
+	XMFLOAT3 xmf3Look = Vector3::Normalize(XMFLOAT3(1.f, -1.f, 1.f));
+	XMFLOAT3 xmf3Right = Vector3::CrossProduct(XMFLOAT3(0.f,1.f,0.f), xmf3Look, true);
+	XMFLOAT3 xmf3Up = Vector3::CrossProduct(xmf3Look, xmf3Right, true);
+
+
+	GenerateViewMatrix(XMFLOAT3(0.f,300.f,0.f), xmf3Look, xmf3Up);
+	GenerateProjectionMatrix(1.01f, 500.0f, ASPECT_RATIO, 60.0f);
+
 }

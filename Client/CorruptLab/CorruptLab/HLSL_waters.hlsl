@@ -59,14 +59,10 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT WaterPixelShader(PS_WATER_INPUT input) : SV_TA
 	float3 Stop = normalize(mul(normalizestop, TBN));
 	float3 finalNormal = normalW2 + normalW3 + Stop;
 	//float3 finalNormal = normalW2 + normalW3 ;
-	output.normal = float4 (finalNormal, 0.7f);
 
 	float3 toCamera = normalize(gvCameraPosition - input.position);
-	float3 cColor = lerp(output.color, BlinnPhong(float3(0.5f, 0.5f, 0.5f), float3(1, -1, 1), finalNormal, toCamera),0.5f);
+	float3 cColor = lerp(output.color, BlinnPhong(float3(0.5f, 0.5f, 0.5f), float3(1, -1, 1), finalNormal, toCamera),0.2f);
 	output.color = float4( cColor, 0.7f) ;
-
-	output.depth = float4 (input.position.z / input.position.w,
-		input.position.z / 1000.0f, 0.f, 1.0f);
 
 	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	return output;

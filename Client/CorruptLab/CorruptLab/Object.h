@@ -159,5 +159,4 @@ public:
 	ID3D12Resource* m_pd3dCollisionUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		 m_d3dCollisionBufferView;
 
-
 };

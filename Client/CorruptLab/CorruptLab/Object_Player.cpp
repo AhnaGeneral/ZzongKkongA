@@ -191,7 +191,7 @@ void CPlayer::Update(float fTimeElapsed)
 
 CCamera* CPlayer::OnChangeCamera(DWORD nNewCameraMode, DWORD nCurrentCameraMode)
 {
-	CCamera* pNewCamera = NULL;
+	CPlayerCamera* pNewCamera = NULL;
 	switch (nNewCameraMode)
 	{
 	case FIRST_PERSON_CAMERA:
@@ -359,7 +359,7 @@ void CMainPlayer::SetAnimation()
 		SetAnimationSet(JOHNSON_ANIAMATION_WALK);
 }
 
-CCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
+CPlayerCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 {
 	DWORD nCurrentCameraMode = (m_pCamera) ? m_pCamera->GetMode() : 0x00;
 	if (nCurrentCameraMode == nNewCameraMode) return(m_pCamera);
@@ -370,7 +370,7 @@ CCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
 		SetMaxVelocityXZ(125.0f);
 		SetMaxVelocityY(400.0f);
-		m_pCamera = OnChangeCamera(FIRST_PERSON_CAMERA, nCurrentCameraMode);
+		m_pCamera = dynamic_cast<CPlayerCamera*>(OnChangeCamera(FIRST_PERSON_CAMERA, nCurrentCameraMode));
 		m_pCamera->SetTimeLag(0.0f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 20.0f, 0.0f));
 		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 60.0f);
@@ -382,7 +382,7 @@ CCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetGravity(XMFLOAT3(0.0f, 0.0f, 0.0f));
 		SetMaxVelocityXZ(400.0f);
 		SetMaxVelocityY(400.0f);
-		m_pCamera = OnChangeCamera(SPACESHIP_CAMERA, nCurrentCameraMode);
+		m_pCamera = dynamic_cast<CPlayerCamera*>(OnChangeCamera(SPACESHIP_CAMERA, nCurrentCameraMode));
 		m_pCamera->SetTimeLag(0.0f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 0.0f, 0.0f));
 		m_pCamera->GenerateProjectionMatrix(1.01f, 5000.0f, ASPECT_RATIO, 60.0f);
@@ -394,7 +394,7 @@ CCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)
 		SetGravity(XMFLOAT3(0.0f, -250.0f, 0.0f));
 		SetMaxVelocityXZ(150.f);
 		SetMaxVelocityY(400.0f);
-		m_pCamera = OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode);
+		m_pCamera = dynamic_cast<CPlayerCamera*>(OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode));
 		m_pCamera->SetTimeLag(0.25f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 1.0f, -15.0f));
 		m_pCamera->GenerateProjectionMatrix(1.01f, 500.0f, ASPECT_RATIO, 60.0f);

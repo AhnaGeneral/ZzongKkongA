@@ -50,6 +50,7 @@ void CTexture::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 	if (m_nTextureType == RESOURCE_TEXTURE2D_ARRAY)
 	{
 		pd3dCommandList->SetGraphicsRootDescriptorTable(m_pRootArgumentInfos[0].m_nRootParameterIndex, m_pRootArgumentInfos[0].m_d3dSrvGpuDescriptorHandle);
+
 	}
 	else
 	{
