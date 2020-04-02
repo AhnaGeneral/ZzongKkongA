@@ -119,7 +119,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 			m_pVertices[i].m_xmf4Color = Vector4::Add(OnGetColor(x, z, pContext), xmf4Color);
 			m_pVertices[i].m_xmf3Normal = pHeightMapImage->GetHeightMapNormal(x,z);
 			m_pVertices[i].m_xmf2TexCoord0 = XMFLOAT2(float(x) / float(cxHeightMap - 1), float(czHeightMap - 1 - z) / float(czHeightMap - 1));
-			m_pVertices[i].m_xmf2TexCoord1 = XMFLOAT2(float(x) / float(m_xmf3Scale.x * 10), float(z) / float(m_xmf3Scale. z * 10));
+			m_pVertices[i].m_xmf2TexCoord1 = XMFLOAT2(float(x) / float(m_xmf3Scale.x * 3 ), float(z) / float(m_xmf3Scale. z * 3 ));
 
 			if (fHeight < fMinHeight) fMinHeight = fHeight;
 			if (fHeight > fMaxHeight) fMaxHeight = fHeight;

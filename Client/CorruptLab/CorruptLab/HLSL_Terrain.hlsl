@@ -8,22 +8,19 @@ struct VS_TERRAIN_INPUT
 	float3 normal : NORMAL;
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
-	//float4 posj : TEXCOORD2;
 };
 
 struct VS_TERRAIN_OUTPUT
 {
 	float3 position : POSITION;
 	float4 color : COLOR;
-
 	float3 normal : NORMAL;
-	//float3 tangent : TANGET ;
-	//float3 bitanget : BITANGENT; 
-
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
 	float4 posj : TEXCOORD2;
-
+	//float4 TextureNormal : TEXCOORD3;
+	//float4 TextureTangent : TEXCOORD4;
+	//float4 TextureBiTangent : TEXCOORD5;
 };
 
 VS_TERRAIN_OUTPUT VSTerrain(VS_TERRAIN_INPUT input)
@@ -33,10 +30,9 @@ VS_TERRAIN_OUTPUT VSTerrain(VS_TERRAIN_INPUT input)
 	output.color = input.color;
 	output.position = input.position;
 
-	//float3 worldnormal = float3(1.0f, 1.0f, 1.0f); 
-	//float3 worldtanget = float3(1.0f, 1.0f, 1.0f);
-	//float3 worldbitanget = float3(1.0f, 1.0f, 1.0f);
-
+	//output.TextureNormal    = float3(0.0f, 1.0f, 0.0f);
+	//output.TextureTangent   = float3 (1.0f, 0.0f, 0.0f);
+	//output.TextureBiTangent = float3 (0.0f, 1.0f, -1.0f);
 
 	//worldnormal = mul(input.normal, (float3x3)gmtxGameObject);
 	//output.normal = normalize(worldnormal);
@@ -71,8 +67,6 @@ struct HS_TERRAIN_TESSELLATION_OUTPUT
 	float4 color : COLOR;
 
 	float3 normal : NORMAL;
-	//float3 tangent : TANGET;
-	//float3 bitanget : BITANGENT;
 
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
@@ -213,60 +207,73 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	return(output);
 }
 
+Texture2D gtxtTerrainColor   : register(t50);
+Texture2D gtxtTerrainAlaph01 : register(t51);
+Texture2D gtxtTerrainAlaph02 : register(t52);
+Texture2D gtxtTerrainNormal  : register(t53);
 
+Texture2D gtxtDryGround_BC   : register(t54);
+Texture2D gtxtDryStone_BC    : register(t55);
+Texture2D gtxtDryStone_NM    : register(t56);
+Texture2D gtxtGrass1_BC      : register(t57);
+Texture2D gtxtGrass2_BC      : register(t58);
+Texture2D gtxtSand1          : register(t59);
+Texture2D gtxtStone1_BC      : register(t60);
+Texture2D gtxtStone1_NM      : register(t61);
+Texture2D gtxtStone1_NM01    : register(t62);
 
-//Texture2D gtxDryGround_BC : register(t19);
-//Texture2D gtxGrass1_BC : register(t20);
-//Texture2D gtxGrass2_BC : register(t21);
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input) : SV_TARGET
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
 	//float4 cBaseTexColor = float4(0.2f,0.2f,0.2f,1.f);
 
-	float4 cBaseTexColor = gtxtTerrainBaseTexture.Sample(gSamplerState, input.uv0);
-	float4 cDetailTexColor = gtxtTerrainAlaphTexture.Sample(gSamplerState, input.uv0);
-	float4 cNormalTexColor = gtxtTerrainNormalTexture.Sample(gSamplerState, input.uv0);
+	float4 t_BaseTexColor   = gtxtTerrainColor.Sample(gSamplerState, input.uv0);
+	float4 t_DetailTexColor = gtxtTerrainAlaph01.Sample(gSamplerState, input.uv0);
+	float4 t_NormalTexColor = gtxtTerrainNormal.Sample(gSamplerState, input.uv0);
 
-	float4 CStone01 = gtxtStone1_BC.Sample(gSamplerState, input.uv1);
-	float4 CDryStone = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
-	float4 CGrass2_BC = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
+	float4 t_DryGround_BC   = gtxtDryGround_BC.Sample(gSamplerState, input.uv1);
+	float4 t_DryStone_BC    = gtxtDryStone_BC.Sample(gSamplerState, input.uv1);
+	float3 t_DryStone_NM    = normalize(gtxtDryStone_NM.Sample(gSamplerState, input.uv1).rgb * 2.0f - 1.0f);
+	float4 t_Grass1_BC      = gtxtGrass1_BC.Sample(gSamplerState, input.uv1);
+	float4 t_Grass2_BC      = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
+	float4 t_Sand1          = gtxtSand1.Sample(gSamplerState, input.uv1);
+	float4 t_Stone1_BC      = gtxtStone1_BC.Sample(gSamplerState, input.uv1);
+	float3 t_Stone1_NM      = normalize(gtxtStone1_NM.Sample(gSamplerState, input.uv1).rgb * 2.0f - 1.0f);
+	float3 t_Stone1_NM01    = normalize(gtxtStone1_NM01.Sample(gSamplerState, input.uv1).rgb * 2.0f - 1.0f);
 
 	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	if (cDetailTexColor.r)
-		cColor = saturate((cBaseTexColor * 0.5f) + (CStone01 * 0.5f));
-	else if (cDetailTexColor.g)
-		cColor = saturate((cBaseTexColor * 0.5f) + (CDryStone * 0.5f));
-	else if (cDetailTexColor.b)
-		cColor = saturate((cBaseTexColor * 0.5f) + (CGrass2_BC * 0.5f));
-	else 
-		cColor = saturate((cBaseTexColor * 0.5f) + (CGrass2_BC * 0.5f));
-
-	float3 ncColor = cColor.rgb;
-
 	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);
-	float3 vNormal = normalize(cNormalTexColor.rgb * 2.0f - 1.0f);//0.0 ~ 1.0 -> -1.0 ~ 1.0 
-	vNormal = normalize(mul(vNormal, TBN));
+	if (t_DetailTexColor.r)
+	{
+		cColor = saturate((t_BaseTexColor * 0.5f) + (t_DryStone_BC * 0.5f));
+		output.normal = float4(normalize(mul(t_DryStone_NM, TBN)),1.0f);
+	}
+	else if (t_DetailTexColor.g)
+	{
+		cColor = saturate((t_BaseTexColor * 0.5f) + (t_Stone1_BC * 0.5f));
+		output.normal = float4(normalize(mul(t_Stone1_NM, TBN)),1.0f );
+	}
+	else if (t_DetailTexColor.b)
+	{
+		cColor = saturate((t_BaseTexColor * 0.5f) + (t_Stone1_BC * 0.5f));
+		output.normal = float4(normalize(mul(t_Stone1_NM, TBN)),1.0f);
+	}
+	else
+	{
+		cColor = saturate((t_BaseTexColor * 0.5f) + (t_Sand1 * 0.5f));
+	}
 
-	output.normal = float4(vNormal, 1.0f);
+	//float3 vNormal = normalize(t_NormalTexColor.rgb * 2.0f - 1.0f); //0.0 ~ 1.0 -> -1.0 ~ 1.0 
+	//vNormal = normalize(mul(vNormal, TBN));
+
+	//output.normal = float4(vNormal, 1.0f);
 
 	output.depth = float4(input.posj.z / input.posj.w, input.posj.z /500.f, 0.0f, 1.0f);
 
-	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
-
-	//float3 toCamera = normalize(gvCameraPosition - input.position.xyz);
-	//cColor = lerp(cColor, BlinnPhong(float3(0.5f, 0.5f, 0.5f), -float3(1, -1, 1), vNormal, toCamera), 0.5f);
 	output.color = cColor;
 
-	if (input.positionW.y < 25.f)
-	{
-		float fAlpha = (25.f - input.positionW.y) / 10.f ;
-		output.color.w -= fAlpha;
-		output.depth.w == fAlpha;
-		output.normal.w -= fAlpha;
-		//discard;
-	}
 
 	return output;
 }

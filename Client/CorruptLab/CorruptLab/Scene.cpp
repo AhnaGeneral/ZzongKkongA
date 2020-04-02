@@ -20,12 +20,12 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
 	std::cout << "누나 졸작 화이팅 by 은우" << std::endl;
-	XMFLOAT3 xmf3Scale(2.0f, 0.6f, 2.0f);
+	XMFLOAT3 xmf3Scale(2.0f, 0.4f, 2.0f);
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,
-		_T("Geometry/terrain3.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color);
+		_T("Geometry/OneStageTerrain.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color);
 
 	m_pCloudGSShader = new CCloudGSShader;
 	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, 4);
@@ -148,33 +148,33 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dCloudTexRange.RegisterSpace = 0;
 	pd3dCloudTexRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_DESCRIPTOR_RANGE pd3dTerrainTexRanges;
-	pd3dTerrainTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dTerrainTexRanges.NumDescriptors = 6;
-	pd3dTerrainTexRanges.BaseShaderRegister = 12;
-	pd3dTerrainTexRanges.RegisterSpace = 0;
-	pd3dTerrainTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-	D3D12_DESCRIPTOR_RANGE pd3dNoiseTexRanges;
+	D3D12_DESCRIPTOR_RANGE pd3dNoiseTexRanges;  // ( 12~14 ) firenosie 
 	pd3dNoiseTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dNoiseTexRanges.NumDescriptors = 3;
-	pd3dNoiseTexRanges.BaseShaderRegister = 18;
+	pd3dNoiseTexRanges.NumDescriptors = 3; 
+	pd3dNoiseTexRanges.BaseShaderRegister = 12;
 	pd3dNoiseTexRanges.RegisterSpace = 0;
 	pd3dNoiseTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_DESCRIPTOR_RANGE pd3dWaterTexRanges;
+	D3D12_DESCRIPTOR_RANGE pd3dFogTexRanges;    //( 15 ~ 17 ) Fognoise
+	pd3dFogTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dFogTexRanges.NumDescriptors = 3;
+	pd3dFogTexRanges.BaseShaderRegister = 15;
+	pd3dFogTexRanges.RegisterSpace = 0;
+	pd3dFogTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	D3D12_DESCRIPTOR_RANGE pd3dWaterTexRanges;  // ( 18 ) waternoise
 	pd3dWaterTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dWaterTexRanges.NumDescriptors = 1;
-	pd3dWaterTexRanges.BaseShaderRegister = 24;
+	pd3dWaterTexRanges.NumDescriptors = 1; 
+	pd3dWaterTexRanges.BaseShaderRegister = 18;
 	pd3dWaterTexRanges.RegisterSpace = 0;
 	pd3dWaterTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_DESCRIPTOR_RANGE pd3dFogTexRanges;
-	pd3dFogTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dFogTexRanges.NumDescriptors = 3;
-	pd3dFogTexRanges.BaseShaderRegister = 21;
-	pd3dFogTexRanges.RegisterSpace = 0;
-	pd3dFogTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+	D3D12_DESCRIPTOR_RANGE pd3dTerrainTexRanges; // ( 50 ~ 62 ) onsstageterrain
+	pd3dTerrainTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dTerrainTexRanges.NumDescriptors = 13;
+	pd3dTerrainTexRanges.BaseShaderRegister = 50;
+	pd3dTerrainTexRanges.RegisterSpace = 0;
+	pd3dTerrainTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_ROOT_PARAMETER pd3dRootParameters[17];
 

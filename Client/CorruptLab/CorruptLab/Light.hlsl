@@ -89,12 +89,12 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 //#else
 //			float3 vHalf = float3(0.0f, 1.0f, 0.0f);
 //#endif
-			fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f),20);
+			fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f),50);
 //#endif
 
 	}
 
-	return((gLights[nIndex].m_cDiffuse * fDiffuseFactor) *float4(0.4f,0.4f,0.4f,1.f) + fSpecularFactor * gLights[nIndex].m_cSpecular * float4(0.4f,0.4f,0.4f, 1.f));
+	return((gLights[nIndex].m_cDiffuse * fDiffuseFactor) * float4(0.4f,0.4f,0.4f,1.f) + fSpecularFactor * gLights[nIndex].m_cSpecular * float4(0.4f,0.4f,0.4f, 1.f));
 }
 
 float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera)

@@ -33,31 +33,32 @@ cbuffer cbOrthoInfo : register(b16)
 
 SamplerState gSamplerState : register(s0);
 SamplerState gSamplerClamp : register(s1);
+
 Texture2D gtxtScene : register(t1); 
 Texture2D gtxtNormal : register(t2);
 Texture2D gtxtDepth : register(t3);
 Texture2D gtxtNonLightNoise : register(t4);
+
+Texture2D gtxtLight : register(t19);
+
 Texture2D gtxtAlbedoTexture : register(t5);
 Texture2D gtxtSpecularTexture : register(t6);
 Texture2D gtxtNormalTexture : register(t7);
 Texture2D gtxtMetallicTexture : register(t8);
 Texture2D gtxtEmissionTexture : register(t9);
+
 TextureCube gtxtSkyCubeTexture : register(t10);
 Texture2D gtxCloudTextures : register(t11);
-Texture2D gtxtTerrainBaseTexture : register(t12);
-Texture2D gtxtTerrainAlaphTexture : register(t13);
-Texture2D gtxtTerrainNormalTexture : register(t14);
-Texture2D gtxtStone1_BC : register(t15);
-Texture2D gtxtGrass2_BC : register(t16);
-Texture2D gtxtDryStone_BC : register(t17);
-Texture2D gtxtBaseColorNoiseTex : register(t18);
-Texture2D gtxtAlphaNoiseTex : register(t19);
-Texture2D gtxtNoiseTex : register(t20);
-Texture2D gtxtFinalAlpha : register(t21);
-Texture2D gtxtAlpha01 : register(t22);
-Texture2D gtxtAlpha02 : register(t23);
-Texture2D gtxtWaterNormal : register(t24);
-Texture2D gtxtLight : register(t25);
+
+Texture2D gtxtBaseColorNoiseTex : register(t12);
+Texture2D gtxtAlphaNoiseTex : register(t13);
+Texture2D gtxtNoiseTex : register(t14);
+
+Texture2D gtxtFinalAlpha : register(t15);
+Texture2D gtxtAlpha01 : register(t16);
+Texture2D gtxtAlpha02 : register(t17);
+
+Texture2D gtxtWaterNormal : register(t18);
 
 
 struct VS_TEXTURED_LIGHTING_INPUT
@@ -167,7 +168,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 
 	float3 normalW;
 	float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
+
 	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] ¡æ [-1, 1]
+
 	normalW = normalize(mul(vNormal, TBN));
 
 	float fdepth = input.vPorjPos.z / 1000.f;
