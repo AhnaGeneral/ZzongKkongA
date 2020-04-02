@@ -259,9 +259,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	//cColor = lerp(cColor, BlinnPhong(float3(0.5f, 0.5f, 0.5f), -float3(1, -1, 1), vNormal, toCamera), 0.5f);
 	output.color = cColor;
 
-	if (input.positionW.y < 30.f)
+	if (input.positionW.y < 25.f)
 	{
-		float fAlpha = (30.f - input.positionW.y) / 10.f ;
+		float fAlpha = (25.f - input.positionW.y) / 10.f ;
 		output.color.w -= fAlpha;
 		output.depth.w == fAlpha;
 		output.normal.w -= fAlpha;

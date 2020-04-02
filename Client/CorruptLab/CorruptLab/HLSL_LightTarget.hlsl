@@ -34,10 +34,9 @@ PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 
 	vPosition = mul(mul(vPosition, gmtxInverseProjection), gmtxInverseView);
 
-	float3 vToCamera = normalize(gvCameraPosition.xyz - vPosition.xyz);
 	float4 vNormal = gtxtNormal[int2(position.xy)];
-	float4 vLightedColor = float4(vPosition.x / 512, vPosition.y / 512, vPosition.z / 512.f, 1);
-		//DirectionalLight(0, vNormal, vToCamera);
+	float4 vLightedColor = //float4(vPosition.x / 512, vPosition.y / 512, vPosition.z / 512.f, 1);
+		Lighting(vPosition, vNormal);
 		
 	output.Light = vLightedColor;
 	return output;

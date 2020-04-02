@@ -44,7 +44,6 @@ protected:
 	CTexture* m_pTexture = NULL;
 	CTexture* m_pLightTexture = NULL;
 
-
 	CGameObject ** UIObject = NULL; 
 	int m_nUI; 
 	CUI* m_pCUIobj = NULL;

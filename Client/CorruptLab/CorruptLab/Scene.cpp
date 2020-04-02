@@ -20,12 +20,12 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
 	std::cout << "누나 졸작 화이팅 by 은우" << std::endl;
-	XMFLOAT3 xmf3Scale(2.0f, 0.5f, 2.0f);
+	XMFLOAT3 xmf3Scale(2.0f, 0.6f, 2.0f);
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,
-		_T("Geometry/terrain2.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color);
+		_T("Geometry/terrain3.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color);
 
 	m_pCloudGSShader = new CCloudGSShader;
 	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, 4);
@@ -42,7 +42,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	m_pCObjectWater = new CObjectWater(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature); //object
 	m_pCObjectWater->SetScale(400.0f, 1.0f, 400.0f);
-	m_pCObjectWater->SetPosition(XMFLOAT3(256.0f, 30.0f, 256.0f));
+	m_pCObjectWater->SetPosition(XMFLOAT3(256.0f, 25.0f, 256.0f));
 	m_pCObjectWater->Rotate(90.0f, 0.0f, 0.0f);
 	m_pCObjectWater->GenerateShaderDistortionBuffer();
 
