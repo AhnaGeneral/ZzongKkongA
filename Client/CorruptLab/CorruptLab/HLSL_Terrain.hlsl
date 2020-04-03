@@ -207,68 +207,97 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	return(output);
 }
 
-Texture2D gtxtTerrainColor   : register(t50);
-Texture2D gtxtTerrainAlaph01 : register(t51);
-Texture2D gtxtTerrainAlaph02 : register(t52);
-Texture2D gtxtTerrainNormal  : register(t53);
+Texture2D gtxtStage1SplatAlpha1 : register(t50);
+Texture2D gtxtStage1SplatAlpha2 : register(t51);
+Texture2D gtxtStage1TerrainNM   : register(t52);
 
-Texture2D gtxtDryGround_BC   : register(t54);
-Texture2D gtxtDryStone_BC    : register(t55);
-Texture2D gtxtDryStone_NM    : register(t56);
-Texture2D gtxtGrass1_BC      : register(t57);
-Texture2D gtxtGrass2_BC      : register(t58);
-Texture2D gtxtSand1          : register(t59);
-Texture2D gtxtStone1_BC      : register(t60);
-Texture2D gtxtStone1_NM      : register(t61);
-Texture2D gtxtStone1_NM01    : register(t62);
+Texture2D gtxtDryGround_BC      : register(t53);
+Texture2D gtxtDryGround_NM      : register(t54);
+
+Texture2D gtxtDryStone_BC       : register(t55);
+Texture2D gtxtDryStone_NM       : register(t56);
+
+Texture2D gtxtGrass1_BC         : register(t57);
+
+Texture2D gtxtGrass2_BC         : register(t58);
+
+Texture2D gtxtSand1             : register(t59);
+
+Texture2D gtxtStone1_BC         : register(t60);
+Texture2D gtxtStone1_NM         : register(t61);
 
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input) : SV_TARGET
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
-	//float4 cBaseTexColor = float4(0.2f,0.2f,0.2f,1.f);
 
-	float4 t_BaseTexColor   = gtxtTerrainColor.Sample(gSamplerState, input.uv0);
-	float4 t_DetailTexColor = gtxtTerrainAlaph01.Sample(gSamplerState, input.uv0);
-	float4 t_NormalTexColor = gtxtTerrainNormal.Sample(gSamplerState, input.uv0);
+	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);
 
-	float4 t_DryGround_BC   = gtxtDryGround_BC.Sample(gSamplerState, input.uv1);
-	float4 t_DryStone_BC    = gtxtDryStone_BC.Sample(gSamplerState, input.uv1);
-	float3 t_DryStone_NM    = normalize(gtxtDryStone_NM.Sample(gSamplerState, input.uv1).rgb * 2.0f - 1.0f);
-	float4 t_Grass1_BC      = gtxtGrass1_BC.Sample(gSamplerState, input.uv1);
-	float4 t_Grass2_BC      = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
-	float4 t_Sand1          = gtxtSand1.Sample(gSamplerState, input.uv1);
-	float4 t_Stone1_BC      = gtxtStone1_BC.Sample(gSamplerState, input.uv1);
-	float3 t_Stone1_NM      = normalize(gtxtStone1_NM.Sample(gSamplerState, input.uv1).rgb * 2.0f - 1.0f);
-	float3 t_Stone1_NM01    = normalize(gtxtStone1_NM01.Sample(gSamplerState, input.uv1).rgb * 2.0f - 1.0f);
+	float4 t_gtxtStage1SplatAlpha1 = gtxtStage1SplatAlpha1.Sample(gSamplerState, input.uv0);
+	float4 t_gtxtStage1SplatAlpha2 = gtxtStage1SplatAlpha2.Sample(gSamplerState, input.uv0);
+	float4 t_gtxtStage1TerrainNM   = gtxtStage1TerrainNM.Sample(gSamplerState, input.uv0);
+
+	float4 t_gtxtDryGround_BC      = gtxtDryGround_BC.Sample(gSamplerState, input.uv1);
+	float4 t_gtxtDryGround_NM      = gtxtDryGround_NM.Sample(gSamplerState, input.uv1);
+
+	float4 t_gtxtDryStone_BC       = gtxtDryStone_BC.Sample(gSamplerState, input.uv1);
+	float4 t_gtxtDryStone_NM       = gtxtDryStone_NM.Sample(gSamplerState, input.uv1);
+
+	float4 t_gtxtGrass1_BC         = gtxtGrass1_BC.Sample(gSamplerState, input.uv1);
+	float4 t_gtxtGrass2_BC         = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
+
+	float4 t_gtxtSand1             = gtxtStone1_BC.Sample(gSamplerState, input.uv1);
+
+	float4 t_gtxtStone1_BC         = gtxtStone1_BC.Sample(gSamplerState, input.uv1);
+	float4 t_gtxtStone1_NM         = gtxtStone1_NM.Sample(gSamplerState, input.uv1);
 
 	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);
-	float3 vNormal = normalize(t_NormalTexColor.rgb * 2.0f - 1.0f); //0.0 ~ 1.0 -> -1.0 ~ 1.0 
+	float3 vNormal = normalize(t_gtxtStage1TerrainNM.rgb * 2.0f - 1.0f); 
+	float3 vNormalDryGround_NM = normalize(t_gtxtDryGround_NM.rgb * 2.0f - 1.0f);
+	float3 vNormalDryStone_NM = normalize(t_gtxtDryStone_NM.rgb * 2.0f - 1.0f);
+	float3 vNormalStone1_NM = normalize(t_gtxtStone1_NM.rgb * 2.0f - 1.0f);
+
+
 	vNormal = normalize(mul(vNormal, TBN));
 
-	if (t_DetailTexColor.r)
-	{
-		cColor = saturate((t_BaseTexColor * 0.5f) + (t_DryStone_BC * 0.5f));
-		vNormal = normalize(mul(t_DryStone_NM, TBN));
-	}
-	else if (t_DetailTexColor.g)
-	{
-		cColor = saturate((t_BaseTexColor * 0.5f) + (t_Stone1_BC * 0.5f));
-		vNormal = normalize(mul(t_Stone1_NM, TBN));
-	}
-	else if (t_DetailTexColor.b)
-	{
-		cColor = saturate((t_BaseTexColor * 0.5f) + (t_Stone1_BC * 0.5f));
-		vNormal = normalize(mul(t_Stone1_NM, TBN));
-	}
-	else
-	{
-		cColor = saturate((t_BaseTexColor * 0.5f) + (t_Sand1 * 0.5f));
-	}
+	cColor = (t_gtxtStage1SplatAlpha1.r * t_gtxtDryGround_BC) +
+		(t_gtxtStage1SplatAlpha1.g * t_gtxtDryStone_BC) +
+		(t_gtxtStage1SplatAlpha1.b * t_gtxtGrass2_BC) +
+		(t_gtxtStage1SplatAlpha1.a * t_gtxtGrass1_BC) +
+		(t_gtxtStage1SplatAlpha2.r * t_gtxtStone1_BC) +
+		(t_gtxtStage1SplatAlpha2.g * t_gtxtSand1) +
+		(t_gtxtStage1SplatAlpha2.b * t_gtxtSand1);
 
-	
+	//if (t_gtxtStage1SplatAlpha1.r)
+	//{
+	//	cColor = t_gtxtDryGround_BC;
+	//}
+	//if (t_gtxtStage1SplatAlpha1.g)
+	//{
+	//	cColor = t_gtxtDryStone_BC;
+	//}
+	//if (t_gtxtStage1SplatAlpha1.b)
+	//{
+	//	cColor = t_gtxtGrass2_BC;
+	//}
+	//if (t_gtxtStage1SplatAlpha1.a)
+	//{
+	//	cColor = t_gtxtGrass1_BC;
+	//}
+
+	//if (t_gtxtStage1SplatAlpha2.r)
+	//{
+	//	cColor = t_gtxtStone1_BC;
+	//}
+	//if (t_gtxtStage1SplatAlpha2.g)
+	//{
+	//	cColor = t_gtxtSand1;
+	//}
+	//if (t_gtxtStage1SplatAlpha2.b)
+	//{
+	//	cColor = t_gtxtSand1;
+	//}
 
 	output.normal = float4(vNormal, 1.0f);
 
