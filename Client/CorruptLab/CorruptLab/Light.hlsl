@@ -49,7 +49,6 @@ float3 SchlickFresnel(float3 R0, float3 normal, float3 lightVec)
 
 float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye)
 {
-
 	float3 vToLight = -lightVec;
 	float fDiffuseFactor = dot(vToLight, normal);
 	float fSpecularFactor = 0.0f;
@@ -64,7 +63,7 @@ float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 t
 		//#else
 		//			float3 vHalf = float3(0.0f, 1.0f, 0.0f);
 		//#endif
-		fSpecularFactor = pow(max(dot(vHalf, normal), 0.0f), 4.8);
+		fSpecularFactor = pow(max(dot(vHalf, normal), 0.0f), 2);
 		//#endif
 
 	}
@@ -80,26 +79,16 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 	float fSpecularFactor = 0.0f;
 	if (fDiffuseFactor > 0.0f)
 	{	
-//#ifdef _WITH_REFLECT
-//			float3 vReflect = reflect(-vToLight, vNormal);
-//			fSpecularFactor = pow(max(dot(vReflect, vToCamera), 0.0f), 50);
-//#else
-//#ifdef _WITH_LOCAL_VIEWER_HIGHLIGHTING
-			float3 vHalf = normalize(float3(vToCamera + vToLight));
-//#else
-//			float3 vHalf = float3(0.0f, 1.0f, 0.0f);
-//#endif
-			fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f),50);
-//#endif
-
+		float3 vHalf = normalize(float3(vToCamera + vToLight));
+		fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), 10.f);
 	}
 
-	return((gLights[nIndex].m_cDiffuse * fDiffuseFactor) * float4(0.4f,0.4f,0.4f,1.f) + fSpecularFactor * gLights[nIndex].m_cSpecular * float4(0.4f,0.4f,0.4f, 1.f));
+	return((gLights[nIndex].m_cDiffuse * fDiffuseFactor) *float4(0.4f,0.4f,0.4f,1.f) + fSpecularFactor * gLights[nIndex].m_cSpecular * float4(0.4f,0.4f,0.4f, 1.f));
 }
 
 float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera)
 {
-	/*float3 vToLight = gLights[nIndex].m_vPosition - vPosition;
+	float3 vToLight = gLights[nIndex].m_vPosition - vPosition;
 	float fDistance = length(vToLight);
 	if (fDistance <= gLights[nIndex].m_fRange)
 	{
@@ -108,25 +97,13 @@ float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera
 		float fDiffuseFactor = dot(vToLight, vNormal);
 		if (fDiffuseFactor > 0.0f)
 		{
-			if (gMaterial.m_cSpecular.a != 0.0f)
-			{
-#ifdef _WITH_REFLECT
-				float3 vReflect = reflect(-vToLight, vNormal);
-				fSpecularFactor = pow(max(dot(vReflect, vToCamera), 0.0f), gMaterial.m_cSpecular.a);
-#else
-#ifdef _WITH_LOCAL_VIEWER_HIGHLIGHTING
 				float3 vHalf = normalize(vToCamera + vToLight);
-#else
-				float3 vHalf = float3(0.0f, 1.0f, 0.0f);
-#endif
-				fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), gMaterial.m_cSpecular.a);
-#endif
-			}
+				fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), 10.f);
 		}
 		float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
 
-		return(((gLights[nIndex].m_cAmbient * gMaterial.m_cAmbient) + (gLights[nIndex].m_cDiffuse * fDiffuseFactor * gMaterial.m_cDiffuse) + (gLights[nIndex].m_cSpecular * fSpecularFactor * gMaterial.m_cSpecular)) * fAttenuationFactor);
-	}*/
+		return((gLights[nIndex].m_cDiffuse * fDiffuseFactor ) + (gLights[nIndex].m_cSpecular * fSpecularFactor) * fAttenuationFactor);
+	}
 	return(float4(0.0f, 0.0f, 0.0f, 0.0f));
 }
 

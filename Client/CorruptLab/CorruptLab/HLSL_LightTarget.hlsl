@@ -19,25 +19,17 @@ float4 VSLightTarget(uint nVertexID : SV_VertexID) : SV_POSITION
 
 PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 {
-	PS_LRT_OUTPUT output; 
+	PS_LRT_OUTPUT output;
 
 	//float3 cColor = gtxtScene[int2(position.xy)].rgb;
-	float vPorjPosZ = gtxtDepth[int2(position.xy)].y * 500.f;
-	float uvX = position.x / 720;
-	float uvY = position.y / 600;
 
-	float4 vPosition;
-	vPosition.x = uvX * vPorjPosZ;
-	vPosition.y = uvY * vPorjPosZ;
-	vPosition.z = gtxtDepth[int2(position.xy)].x * vPorjPosZ;
-	vPosition.w = 1 * vPorjPosZ;
-
-	vPosition = mul(mul(vPosition, gmtxInverseProjection), gmtxInverseView);
-
+	float4 vPosition = gtxtDepth[int2(position.xy)];
 	float4 vNormal = gtxtNormal[int2(position.xy)];
-	float4 vLightedColor = //float4(vPosition.x / 512, vPosition.y / 512, vPosition.z / 512.f, 1);
-		Lighting(vPosition, vNormal);
-		
-	output.Light = vLightedColor;
+
+	float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
+	float3 vToCamera = normalize(vCameraPosition - vPosition);
+
+	output.Light = Lighting(vPosition, vNormal);
 	return output;
+
 }

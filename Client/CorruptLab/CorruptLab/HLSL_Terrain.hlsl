@@ -245,32 +245,34 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);
+	float3 vNormal = normalize(t_NormalTexColor.rgb * 2.0f - 1.0f); //0.0 ~ 1.0 -> -1.0 ~ 1.0 
+	vNormal = normalize(mul(vNormal, TBN));
+
 	if (t_DetailTexColor.r)
 	{
 		cColor = saturate((t_BaseTexColor * 0.5f) + (t_DryStone_BC * 0.5f));
-		output.normal = float4(normalize(mul(t_DryStone_NM, TBN)),1.0f);
+		vNormal = normalize(mul(t_DryStone_NM, TBN));
 	}
 	else if (t_DetailTexColor.g)
 	{
 		cColor = saturate((t_BaseTexColor * 0.5f) + (t_Stone1_BC * 0.5f));
-		output.normal = float4(normalize(mul(t_Stone1_NM, TBN)),1.0f );
+		vNormal = normalize(mul(t_Stone1_NM, TBN));
 	}
 	else if (t_DetailTexColor.b)
 	{
 		cColor = saturate((t_BaseTexColor * 0.5f) + (t_Stone1_BC * 0.5f));
-		output.normal = float4(normalize(mul(t_Stone1_NM, TBN)),1.0f);
+		vNormal = normalize(mul(t_Stone1_NM, TBN));
 	}
 	else
 	{
 		cColor = saturate((t_BaseTexColor * 0.5f) + (t_Sand1 * 0.5f));
 	}
 
-	//float3 vNormal = normalize(t_NormalTexColor.rgb * 2.0f - 1.0f); //0.0 ~ 1.0 -> -1.0 ~ 1.0 
-	//vNormal = normalize(mul(vNormal, TBN));
+	
 
-	//output.normal = float4(vNormal, 1.0f);
+	output.normal = float4(vNormal, 1.0f);
 
-	output.depth = float4(input.posj.z / input.posj.w, input.posj.z /500.f, 0.0f, 1.0f);
+	output.depth = float4(input.positionW, 1);
 
 	output.color = cColor;
 
