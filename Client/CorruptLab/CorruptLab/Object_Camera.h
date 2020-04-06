@@ -12,9 +12,7 @@ struct VS_CB_EYE_CAMERA_PROJECTION
 	XMFLOAT4X4						m_xmf4x4Projection;
 	XMFLOAT4X4						m_xmf4x4InverseView;
 	XMFLOAT4X4						m_xmf4x4InverseProjection;
-
 	XMFLOAT3						m_xmf3Position;
-
 };
 class CPlayer;
 
@@ -53,8 +51,8 @@ protected:
 	D3D12_RECT		            	m_d3dScissorRect;
 
 
-	ID3D12Resource* m_pd3dcbvProjectionCamera = NULL;
-	VS_CB_EYE_CAMERA_PROJECTION* m_pcbMappedProjectionCamera = NULL;
+	ID3D12Resource                * m_pd3dcbvProjectionCamera = NULL;
+	VS_CB_EYE_CAMERA_PROJECTION   * m_pcbMappedProjectionCamera = NULL;
 
 public:
 
@@ -98,9 +96,10 @@ public:
 
 	virtual void SetViewportsAndScissorRects(ID3D12GraphicsCommandList* pd3dCommandList);
 
-	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) {}
-	virtual void ReleaseShaderVariables() {}
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, int RootParameterIndex = ROOT_PARAMETER_CAMERA) {}
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void ReleaseShaderVariables();
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList,
+		int RootParameterIndex = ROOT_PARAMETER_CAMERA);
 
 	DWORD GetMode() { return(m_nMode); }
 
@@ -125,9 +124,9 @@ public:
 	void SetOffset(XMFLOAT3 xmfOffset) { m_xmf3Offset = xmfOffset; }
 	XMFLOAT3& GetOffset() { return m_xmf3Offset; }
 
-	virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
-	virtual void ReleaseShaderVariables();
-	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, int RootParameterIndex = ROOT_PARAMETER_CAMERA);
+	//virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
+	//virtual void ReleaseShaderVariables();
+	//virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, int RootParameterIndex = ROOT_PARAMETER_CAMERA);
 
 
 	void SetPlayer(CPlayer *pPlayer) { m_pPlayer = pPlayer; }

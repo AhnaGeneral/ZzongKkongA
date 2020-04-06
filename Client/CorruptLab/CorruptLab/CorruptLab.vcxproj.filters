@@ -202,6 +202,9 @@
     <ClInclude Include="Object_StaticObj.h">
       <Filter>05.Component\GameObject\00.Object\00.StaticObject</Filter>
     </ClInclude>
+    <ClInclude Include="CShader_ShadowMRT.h">
+      <Filter>04.Shader\01.Shader_MRT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -297,6 +300,9 @@
     <ClCompile Include="Object_StaticObj.cpp">
       <Filter>05.Component\GameObject\00.Object\00.StaticObject</Filter>
     </ClCompile>
+    <ClCompile Include="CShader_ShadowMRT.cpp">
+      <Filter>04.Shader\01.Shader_MRT</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">
@@ -345,5 +351,8 @@
     <FxCompile Include="HLSL_waters.hlsl">
       <Filter>04.Shader\07.Shader_Water</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="소스.txt" />
   </ItemGroup>
 </Project>

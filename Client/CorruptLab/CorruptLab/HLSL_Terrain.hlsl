@@ -200,6 +200,8 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, gmtxView), gmtxProjection);
 
+	//matrix
+	
 	output.positionW = mul(float4(position, 1.0f), gmtxGameObject);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
 	output.posj = output.position;
@@ -261,21 +263,21 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	vNormal = normalize(mul(vNormal, TBN));
 
-	cColor = (t_gtxtStage1SplatAlpha1.r * t_gtxtDryGround_BC) +
-		(t_gtxtStage1SplatAlpha1.g * t_gtxtDryStone_BC) +
-		(t_gtxtStage1SplatAlpha1.b * t_gtxtGrass2_BC) +
-		(t_gtxtStage1SplatAlpha1.a * t_gtxtGrass1_BC) +
-		(t_gtxtStage1SplatAlpha2.r * t_gtxtStone1_BC) +
-		(t_gtxtStage1SplatAlpha2.g * t_gtxtSand1) +
-		(t_gtxtStage1SplatAlpha2.b * t_gtxtSand1);
+	//cColor = (t_gtxtStage1SplatAlpha1.r * t_gtxtDryGround_BC) +
+	//	     (t_gtxtStage1SplatAlpha1.g * t_gtxtDryStone_BC) +
+	//	(t_gtxtStage1SplatAlpha1.b * t_gtxtGrass2_BC) +
+	//	(t_gtxtStage1SplatAlpha1.a * t_gtxtGrass1_BC) +
+	//	(t_gtxtStage1SplatAlpha2.r * t_gtxtStone1_BC) +
+	//	(t_gtxtStage1SplatAlpha2.g * t_gtxtSand1) +
+	//	(t_gtxtStage1SplatAlpha2.b * t_gtxtSand1);
 
 	//if (t_gtxtStage1SplatAlpha1.r)
 	//{
 	//	cColor = t_gtxtDryGround_BC;
-	//}
+	//}v
 	//if (t_gtxtStage1SplatAlpha1.g)
 	//{
-	//	cColor = t_gtxtDryStone_BC;
+		cColor = t_gtxtGrass2_BC;
 	//}
 	//if (t_gtxtStage1SplatAlpha1.b)
 	//{
@@ -305,6 +307,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	output.color = cColor;
 
+	output.ShadowCamera = float4(1.0f, 0.0f, 1.0f, 1.0f);
 
 	return output;
 }

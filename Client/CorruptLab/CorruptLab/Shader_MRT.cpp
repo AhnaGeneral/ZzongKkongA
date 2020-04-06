@@ -46,14 +46,14 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[2];
 
 	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dDescriptorRanges[0].NumDescriptors = 4;
+	pd3dDescriptorRanges[0].NumDescriptors = 5;
 	pd3dDescriptorRanges[0].BaseShaderRegister = 1; //Texture[]
 	pd3dDescriptorRanges[0].RegisterSpace = 0;
 	pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
 	pd3dDescriptorRanges[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[1].NumDescriptors = 1;
-	pd3dDescriptorRanges[1].BaseShaderRegister = 19; //LightTexture
+	pd3dDescriptorRanges[1].BaseShaderRegister = 20; //LightTexture
 	pd3dDescriptorRanges[1].RegisterSpace = 0;
 	pd3dDescriptorRanges[1].OffsetInDescriptorsFromTableStart = 0;
 
@@ -181,15 +181,15 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	if (pContext != NULL)
 	{
 		m_pTexture = (CTexture*)pContext;
-		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 5);
+		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 6);
 		CreateShaderVariables(pd3dDevice, pd3dCommandList);
-		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, 0, true);
+		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, ROOT_PARAMETER_CDN_MRT, true);
 	}
 
 	if (pLightContext != NULL)
 	{
 		m_pLightTexture = (CTexture*)pLightContext;
-		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pLightTexture, 3, 4);
+		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pLightTexture, ROOT_PARAMETER_LIGHT_MRT, 0);
 	}
 
 	m_xmf4x4OrthoView =
@@ -199,14 +199,16 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	
 	//---------------------------------------------------------------------------------
 	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH /11.f  , FRAME_BUFFER_HEIGHT/11.f, 0.0f, 1.0f);
-	m_nUI = 5;                                                           
+	m_nUI = 6;                                                           
 	UIObject = new CGameObject*[m_nUI]; 
 
 	for (int i = 0; i < m_nUI;)
 	{
+		int remainder = i % 5;
+		int tmp = i / 5;
 		m_pCUIobj = new CUI(pd3dDevice, pd3dCommandList);
 		m_pCUIobj->SetMesh(mesh);
-		m_pCUIobj->Set2DPosition(-155.0f+(i*(70.0f)),120.0f);
+		m_pCUIobj->Set2DPosition(-155.0f+(remainder *(70.0f)), 120.0f + (-tmp * 60));
 		m_pCUIobj->SetObjectID(i); 
 		UIObject[i++] = m_pCUIobj; 
 	}

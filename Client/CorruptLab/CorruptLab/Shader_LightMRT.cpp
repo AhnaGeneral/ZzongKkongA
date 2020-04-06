@@ -27,7 +27,7 @@ void CLightTarget::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[1];
 
 	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dDescriptorRanges[0].NumDescriptors = 4;
+	pd3dDescriptorRanges[0].NumDescriptors = 5;
 	pd3dDescriptorRanges[0].BaseShaderRegister = 1; //Texture[]
 	pd3dDescriptorRanges[0].RegisterSpace = 0;
 	pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
@@ -118,12 +118,10 @@ void CLightTarget::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* p
 void CLightTarget::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 	m_pTextures = (CTexture*)pContext;
-	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0,4);
+	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0,5);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTextures, ROOT_PARAMETER_CDN_MRT, true);
-
 	BuildLightsAndMaterials();
-
 }
 
 void CLightTarget::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)

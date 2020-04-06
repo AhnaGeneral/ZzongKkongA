@@ -42,7 +42,7 @@ public:
 
 	virtual void ReleaseUploadBuffers() = 0;
 
-	CCamera* m_pCamera = NULL;
+	CCamera* m_pShadowCamera = NULL;
 
 protected:
 	float m_fElapsedTime;
@@ -53,7 +53,7 @@ protected:
 class CGameScene : public CScene
 {
 public:
-	CPlayer* m_pPlayer = NULL;
+	CPlayer              * m_pPlayer = NULL;
 
 	CHeightMapTerrain    * m_pTerrain = NULL;
 	CSkyBox              * m_pSkyBox = NULL;

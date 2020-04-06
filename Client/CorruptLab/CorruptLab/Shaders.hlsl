@@ -29,36 +29,48 @@ cbuffer cbOrthoInfo : register(b16)
 	matrix		    gmtxOrthoView: packoffset(c4);
 };
 
+
+cbuffer cbShadowCameraInfo : register(b5)
+{
+	matrix		    shadowgmtxView : packoffset(c0);
+	matrix		    shadowgmtxProjection : packoffset(c4);
+	matrix			shadowgmtxInverseView : packoffset(c8);
+	matrix			shadowgmtxInverseProjection : packoffset(c12);
+	float3		    shadowgvCameraPosition : packoffset(c16);
+};
+
 #include "Light.hlsl"
 
 SamplerState gSamplerState : register(s0);
 SamplerState gSamplerClamp : register(s1);
 
-Texture2D gtxtScene : register(t1); 
-Texture2D gtxtNormal : register(t2);
-Texture2D gtxtDepth : register(t3);
-Texture2D gtxtNonLightNoise : register(t4);
+Texture2D gtxtScene : register(t1);  // 0  
+Texture2D gtxtNormal : register(t2); // 1
+Texture2D gtxtDepth : register(t3);  // 2 
+Texture2D gtxtShadowCameraViewDepth : register(t4); // 3
+Texture2D gtxtNonLightNoise : register(t5); // 4 
 
-Texture2D gtxtLight : register(t19);
 
-Texture2D gtxtAlbedoTexture : register(t5);
-Texture2D gtxtSpecularTexture : register(t6);
-Texture2D gtxtNormalTexture : register(t7);
-Texture2D gtxtMetallicTexture : register(t8);
-Texture2D gtxtEmissionTexture : register(t9);
+Texture2D gtxtLight : register(t20);
 
-TextureCube gtxtSkyCubeTexture : register(t10);
-Texture2D gtxCloudTextures : register(t11);
+Texture2D gtxtAlbedoTexture : register(t6);
+Texture2D gtxtSpecularTexture : register(t7);
+Texture2D gtxtNormalTexture : register(t8);
+Texture2D gtxtMetallicTexture : register(t9);
+Texture2D gtxtEmissionTexture : register(t10);
 
-Texture2D gtxtBaseColorNoiseTex : register(t12);
-Texture2D gtxtAlphaNoiseTex : register(t13);
-Texture2D gtxtNoiseTex : register(t14);
+TextureCube gtxtSkyCubeTexture : register(t11);
+Texture2D gtxCloudTextures : register(t12);
 
-Texture2D gtxtFinalAlpha : register(t15);
-Texture2D gtxtAlpha01 : register(t16);
-Texture2D gtxtAlpha02 : register(t17);
+Texture2D gtxtBaseColorNoiseTex : register(t13);
+Texture2D gtxtAlphaNoiseTex : register(t14);
+Texture2D gtxtNoiseTex : register(t15);
 
-Texture2D gtxtWaterNormal : register(t18);
+Texture2D gtxtFinalAlpha : register(t16);
+Texture2D gtxtAlpha01 : register(t17);
+Texture2D gtxtAlpha02 : register(t18);
+
+Texture2D gtxtWaterNormal : register(t19);
 
 
 struct VS_TEXTURED_LIGHTING_INPUT
@@ -147,15 +159,17 @@ VS_TEXTURED_LIGHTING_OUTPUT VSLighting(VS_TEXTURED_LIGHTING_INPUT input)
 /////////////////////////////////////////////////////////////////////////////////////////////
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
-	float4 color    : SV_TARGET0;
-	float4 normal   : SV_TARGET1;
-	float4 depth    : SV_TARGET2;
+	float4 color        : SV_TARGET0;
+	float4 normal       : SV_TARGET1;
+	float4 depth        : SV_TARGET2;
+	float4 ShadowCamera : SV_TARGET3; 
 };
 
 struct PS_NONLIGHT_MRT_OUTPUT
 {
-	float4 NonLight : SV_TARGET3;
+	float4 NonLight : SV_TARGET4;
 };
+
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LIGHTING_OUTPUT input)
 {
@@ -177,6 +191,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	output.normal = float4(normalW, 1);
 	output.color = cColorAlbedo;
 	output.depth = float4(input.positionW, 1);
+	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 
 	return output;

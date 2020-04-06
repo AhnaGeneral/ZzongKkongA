@@ -29,6 +29,8 @@ public:
 
 	void CreateOffScreenRenderTargetViews();
 	void CreateLightRenderTargetViews();
+	//void CreateShadowRenderTargetViews();
+
 
 	void BuildObjects();
 	void ReleaseObjects();
@@ -68,13 +70,13 @@ private:
 	UINT							    m_nRtvDescriptorIncrementSize;
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBuffers];
 
-	ID3D12Resource* m_pd3dDepthStencilBuffer = NULL;
-	ID3D12DescriptorHeap* m_pd3dDsvDescriptorHeap = NULL;
+	ID3D12Resource                    * m_pd3dDepthStencilBuffer = NULL;
+	ID3D12DescriptorHeap              * m_pd3dDsvDescriptorHeap = NULL;
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_d3dDsvDepthStencilBufferCPUHandle;
 
-	ID3D12CommandAllocator* m_pd3dCommandAllocator = NULL;
-	ID3D12CommandQueue* m_pd3dCommandQueue = NULL;
-	ID3D12GraphicsCommandList* m_pd3dCommandList = NULL;
+	ID3D12CommandAllocator            * m_pd3dCommandAllocator = NULL;
+	ID3D12CommandQueue                * m_pd3dCommandQueue = NULL;
+	ID3D12GraphicsCommandList         * m_pd3dCommandList = NULL;
 
 	ID3D12Fence* m_pd3dFence = NULL;
 	UINT64							    m_nFenceValues[m_nSwapChainBuffers];
@@ -82,17 +84,19 @@ private:
 
 	CGameTimer						    m_GameTimer;
 
-	static const UINT				    m_nOffScreenRenderTargetBuffers = 4;
-	static const UINT				    m_nOffScreenLightBuffers = 1;
-
-	ID3D12Resource                    * m_ppd3dLightMapRenderTargetBuffers[m_nOffScreenLightBuffers];
+	static const UINT				    m_nOffScreenRenderTargetBuffers = 5;
 	ID3D12Resource                    * m_ppd3dOffScreenRenderTargetBuffers[m_nOffScreenRenderTargetBuffers];
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nOffScreenRenderTargetBuffers];
+	
+	static const UINT				    m_nOffScreenLightBuffers = 1;
+	ID3D12Resource                    * m_ppd3dLightMapRenderTargetBuffers[m_nOffScreenLightBuffers];
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenLightBufferCPUHandles[m_nOffScreenLightBuffers];
 
+	//static const UINT				    m_nOffScreenShadowBuffers = 1;
+	//ID3D12Resource                    * m_ppd3dShadowRenderTargetBuffers[m_nOffScreenShadowBuffers];
+	//D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenShadowBufferCPUHandles[m_nOffScreenShadowBuffers];
 
-
-	POINT							    m_ptOldCursorPos;
+     POINT							    m_ptOldCursorPos;
 
 	_TCHAR							    m_pszFrameRate[50];
 public:

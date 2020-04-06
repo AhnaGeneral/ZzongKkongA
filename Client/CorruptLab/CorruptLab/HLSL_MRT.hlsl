@@ -19,7 +19,7 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	float4 fLighted = gtxtLight[int2(position.xy)];
 	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
 
-    cColor = lerp(cColor, fLighted, 0.5f);
+    cColor = lerp(cColor, fLighted, 0.6f);
 	float4 cFogColor = float4(0.15f, 0.15f, 0.15f,1.f);
 	
 	//cColor = lerp(cColor, cFogColor, fDepth * 5);
@@ -89,7 +89,9 @@ float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 	if (gnObjectID == 1)  cColor = gtxtScene.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 2)  cColor = gtxtDepth.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 3)  cColor = gtxtNonLightNoise.Sample(gSamplerState, input.uv);
-	if (gnObjectID == 4)  cColor = gtxtLight.Sample(gSamplerState, input.uv);
+	if (gnObjectID == 4)  cColor = gtxtShadowCameraViewDepth.Sample(gSamplerState, input.uv);
+	if (gnObjectID == 5)  cColor = gtxtLight.Sample(gSamplerState, input.uv);
+
 
 	return cColor;
 }

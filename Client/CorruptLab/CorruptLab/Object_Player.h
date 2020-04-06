@@ -35,9 +35,9 @@ protected:
 	LPVOID		           m_pPlayerUpdatedContext = NULL;
 	LPVOID		           m_pCameraUpdatedContext = NULL;
 
-	CPlayerCamera* m_pCamera = NULL;
-	CGameObject* m_pRightHand = NULL;
-	int						m_nRightHandIndex = 25;
+	CPlayerCamera        * m_pCamera = NULL;
+	CGameObject          * m_pRightHand = NULL;
+	int					   m_nRightHandIndex = 25;
 
 public:
 

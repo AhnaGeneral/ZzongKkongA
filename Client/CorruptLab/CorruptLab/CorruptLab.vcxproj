@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="CShader_ShadowMRT.h" />
     <ClInclude Include="Mgr_Collision.h" />
     <ClInclude Include="Object_Camera.h" />
     <ClInclude Include="CorruptLab.h" />
@@ -187,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="CShader_ShadowMRT.cpp" />
     <ClCompile Include="Mgr_Collision.cpp" />
     <ClCompile Include="Object_Camera.cpp" />
     <ClCompile Include="CorruptLab.cpp" />
@@ -259,6 +261,9 @@
     <FxCompile Include="Shaders.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="소스.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

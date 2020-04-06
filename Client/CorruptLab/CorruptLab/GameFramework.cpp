@@ -267,13 +267,15 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 		m_ppd3dOffScreenRenderTargetBuffers[i]->AddRef();
 	}
 	d3dClearValue = { DXGI_FORMAT_R32G32B32A32_FLOAT, { 0.0f, 0.0f, 0.0f, 1.0f } };
-
 	m_ppd3dOffScreenRenderTargetBuffers[2] = pTextureForPostProcessing->CreateTexture(m_pd3dDevice, m_pd3dCommandList,
 		m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, 2);
 	m_ppd3dOffScreenRenderTargetBuffers[2]->AddRef();
 
-
+	//m_ppd3dOffScreenRenderTargetBuffers[2] = pTextureForPostProcessing->CreateTexture(m_pd3dDevice, m_pd3dCommandList,
+	//	m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
+	//	D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, 2);
+	//m_ppd3dOffScreenRenderTargetBuffers[2]->AddRef();
 
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dRtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
@@ -295,10 +297,7 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	m_pd3dOffScreenRenderTargetBufferCPUHandles[1] = d3dRtvCPUDescriptorHandle;
 	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(1), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[1]);
 	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
-
-
 	d3dRenderTargetViewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-
 
 	m_pd3dOffScreenRenderTargetBufferCPUHandles[2] = d3dRtvCPUDescriptorHandle;
 	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(2), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[2]);
@@ -306,14 +305,17 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 
 	d3dRenderTargetViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
-
 	m_pd3dOffScreenRenderTargetBufferCPUHandles[3] = d3dRtvCPUDescriptorHandle;
 	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(3), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[3]);
 	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 
+	m_pd3dOffScreenRenderTargetBufferCPUHandles[4] = d3dRtvCPUDescriptorHandle;
+	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(4), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[4]);
+	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
+
 	m_pPostProcessingShader = new CPostProcessingByLaplacianShader();
 	m_pPostProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
-	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pPostProcessingShader->GetGraphicsRootSignature(), 4);
+	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pPostProcessingShader->GetGraphicsRootSignature(), 5);
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pTextureForPostProcessing, NULL);
 
 	m_pd3dCommandList->Close();

@@ -1,7 +1,6 @@
 //-----------------------------------------------------------------------------
 // File: CScene.cpp
 //-----------------------------------------------------------------------------
-
 #include "stdafx.h"
 #include "Scene.h"
 #include "Object_Terrain.h"
@@ -23,12 +22,21 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	XMFLOAT3 xmf3Scale(2.0f, 0.6f, 2.0f);
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
 
+	m_pShadowCamera = new CCamera();
+	XMFLOAT3 xmf3Look = Vector3::Normalize(XMFLOAT3(1.f, -1.f, 1.f));
+	XMFLOAT3 xmf3Right = Vector3::CrossProduct(XMFLOAT3(0.f, 1.f, 0.f), xmf3Look, true);
+	XMFLOAT3 xmf3Up = Vector3::CrossProduct(xmf3Look, xmf3Right, true);
+
+	m_pShadowCamera->GenerateViewMatrix(XMFLOAT3(0.f, 300.f, 0.f), xmf3Look, xmf3Up);
+	m_pShadowCamera->GenerateProjectionMatrix(1.01f, 500.0f, ASPECT_RATIO, 60.0f);
+
+
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,
 		_T("Geometry/OneStageTerrain.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color);
 
 	m_pCloudGSShader = new CCloudGSShader;
-	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, 4);
+	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
 	m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 
 	m_pNoiseObject = new CObjectNosie(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);  //object
@@ -106,66 +114,66 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 
 	pd3dMaterialTexRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dMaterialTexRanges[0].NumDescriptors = 1;
-	pd3dMaterialTexRanges[0].BaseShaderRegister = 5; //t4: gtxtAlbedoTexture
+	pd3dMaterialTexRanges[0].BaseShaderRegister = 6; //t4: gtxtAlbedoTexture
 	pd3dMaterialTexRanges[0].RegisterSpace = 0;
 	pd3dMaterialTexRanges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	pd3dMaterialTexRanges[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dMaterialTexRanges[1].NumDescriptors = 1;
-	pd3dMaterialTexRanges[1].BaseShaderRegister = 6; //t7: gtxtSpecularTexture
+	pd3dMaterialTexRanges[1].BaseShaderRegister = 7; //t7: gtxtSpecularTexture
 	pd3dMaterialTexRanges[1].RegisterSpace = 0;
 	pd3dMaterialTexRanges[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	pd3dMaterialTexRanges[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dMaterialTexRanges[2].NumDescriptors = 1;
-	pd3dMaterialTexRanges[2].BaseShaderRegister = 7; //t8: gtxtNormalTexture
+	pd3dMaterialTexRanges[2].BaseShaderRegister = 8; //t8: gtxtNormalTexture
 	pd3dMaterialTexRanges[2].RegisterSpace = 0;
 	pd3dMaterialTexRanges[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	pd3dMaterialTexRanges[3].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dMaterialTexRanges[3].NumDescriptors = 1;
-	pd3dMaterialTexRanges[3].BaseShaderRegister = 8; //t9: gtxtMetallicTexture
+	pd3dMaterialTexRanges[3].BaseShaderRegister = 9; //t9: gtxtMetallicTexture
 	pd3dMaterialTexRanges[3].RegisterSpace = 0;
 	pd3dMaterialTexRanges[3].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	pd3dMaterialTexRanges[4].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dMaterialTexRanges[4].NumDescriptors = 1;
-	pd3dMaterialTexRanges[4].BaseShaderRegister = 9; //t10: gtxtEmissionTexture
+	pd3dMaterialTexRanges[4].BaseShaderRegister = 10; //t10: gtxtEmissionTexture
 	pd3dMaterialTexRanges[4].RegisterSpace = 0;
 	pd3dMaterialTexRanges[4].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dSkyTexRange;
 	pd3dSkyTexRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dSkyTexRange.NumDescriptors = 1;
-	pd3dSkyTexRange.BaseShaderRegister = 10; // t13:gtxtSkyCubeTexture
+	pd3dSkyTexRange.BaseShaderRegister = 11; // t13:gtxtSkyCubeTexture
 	pd3dSkyTexRange.RegisterSpace = 0;
 	pd3dSkyTexRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dCloudTexRange;
 	pd3dCloudTexRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dCloudTexRange.NumDescriptors = 1;
-	pd3dCloudTexRange.BaseShaderRegister = 11; // t14:gtxtCloudTexture
+	pd3dCloudTexRange.BaseShaderRegister = 12; // t14:gtxtCloudTexture
 	pd3dCloudTexRange.RegisterSpace = 0;
 	pd3dCloudTexRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dNoiseTexRanges;  // ( 12~14 ) firenosie 
 	pd3dNoiseTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dNoiseTexRanges.NumDescriptors = 3; 
-	pd3dNoiseTexRanges.BaseShaderRegister = 12;
+	pd3dNoiseTexRanges.BaseShaderRegister = 13;
 	pd3dNoiseTexRanges.RegisterSpace = 0;
 	pd3dNoiseTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dFogTexRanges;    //( 15 ~ 17 ) Fognoise
 	pd3dFogTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dFogTexRanges.NumDescriptors = 3;
-	pd3dFogTexRanges.BaseShaderRegister = 15;
+	pd3dFogTexRanges.BaseShaderRegister = 16;
 	pd3dFogTexRanges.RegisterSpace = 0;
 	pd3dFogTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dWaterTexRanges;  // ( 18 ) waternoise
 	pd3dWaterTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dWaterTexRanges.NumDescriptors = 1; 
-	pd3dWaterTexRanges.BaseShaderRegister = 18;
+	pd3dWaterTexRanges.BaseShaderRegister = 19;
 	pd3dWaterTexRanges.RegisterSpace = 0;
 	pd3dWaterTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -176,7 +184,7 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dTerrainTexRanges.RegisterSpace = 0;
 	pd3dTerrainTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[17];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[18];
 
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].Descriptor.ShaderRegister = 1; //b1 : Camera
@@ -264,6 +272,11 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dRootParameters[ROOT_PARAMETER_FOG_TEX].DescriptorTable.pDescriptorRanges = &pd3dFogTexRanges;
 	pd3dRootParameters[ROOT_PARAMETER_FOG_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+	pd3dRootParameters[ROOT_PARAMETER_SHADOWCAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[ROOT_PARAMETER_SHADOWCAMERA].Descriptor.ShaderRegister = 5; //b1 : Camera
+	pd3dRootParameters[ROOT_PARAMETER_SHADOWCAMERA].Descriptor.RegisterSpace = 0;
+	pd3dRootParameters[ROOT_PARAMETER_SHADOWCAMERA].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
 	d3dSamplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
@@ -316,11 +329,12 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 
 void CGameScene::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-
+	m_pShadowCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
 void CGameScene::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	m_pShadowCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_SHADOWCAMERA);
 }
 
 void CGameScene::ReleaseShaderVariables()

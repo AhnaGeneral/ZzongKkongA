@@ -28,6 +28,8 @@
 #define ROOT_PARAMETER_NOISE_TEX            15
 #define ROOT_PARAMETER_FOG_TEX              16
 
+#define ROOT_PARAMETER_SHADOWCAMERA	        17
+
 
 #define ROOT_PARAMETER_LIGHT_MRT			3
 #define ROOT_PARAMETER_CDN_MRT				0
@@ -36,6 +38,7 @@
 #define ROOT_PARAMETER_ORTHO				2
 
 #define ROOT_PARAMETER_LIGHT				1
+
 //=====================================================
 
 #define OBJECT_TYPE_ROCK				0

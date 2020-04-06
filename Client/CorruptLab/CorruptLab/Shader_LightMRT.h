@@ -1,5 +1,6 @@
 #pragma once
-#include "Shader_MRT.h"
+#include "stdafx.h"
+#include "Shader.h"
 
 struct LIGHT
 {
@@ -37,7 +38,7 @@ struct MATERIALS
 	MATERIAL	     m_pReflections[MAX_MATERIALS];
 };
 
-class CLightTarget : public CPostProcessingShader
+class CLightTarget : public CShader
 {
 public:
 	CLightTarget() {}

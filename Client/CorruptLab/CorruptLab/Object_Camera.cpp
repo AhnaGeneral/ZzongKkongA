@@ -128,7 +128,7 @@ void CCamera::RegenerateViewMatrix()
 	m_boundingFrustum.Orientation = Rot;
 }
 
-void CPlayerCamera::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
+void CCamera::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
 {
 	// [ 원근투영 ] --------------------------------------------------------------------------------
 	UINT ncbElementBytes = ((sizeof(VS_CB_EYE_CAMERA_PROJECTION) + 255) & ~255); //256의 배수 [ 원근투영 ]
@@ -138,7 +138,7 @@ void CPlayerCamera::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12Graphi
 
 }
 
-void CPlayerCamera::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, int RootParameterIndex)
+void CCamera::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, int RootParameterIndex)
 {
 	// [ 원근투영 ] --------------------------------------------------------------------------------
 	XMStoreFloat4x4(&m_pcbMappedProjectionCamera->m_xmf4x4View, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4View)));
@@ -153,7 +153,7 @@ void CPlayerCamera::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommand
 	pd3dCommandList->SetGraphicsRootConstantBufferView(RootParameterIndex, d3dGpuVirtualAddress);
 }
 
-void CPlayerCamera::ReleaseShaderVariables()
+void CCamera::ReleaseShaderVariables()
 {
 	if (m_pd3dcbvProjectionCamera)
 	{
@@ -167,6 +167,8 @@ void CCamera::SetViewportsAndScissorRects(ID3D12GraphicsCommandList *pd3dCommand
 	pd3dCommandList->RSSetViewports(1, &m_d3dViewport);
 	pd3dCommandList->RSSetScissorRects(1, &m_d3dScissorRect);
 }
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CSpaceShipCamera
