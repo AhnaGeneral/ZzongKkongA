@@ -188,10 +188,10 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 
 	normalW = normalize(mul(vNormal, TBN));
 
-	float fdepth = input.vPorjPos.z / 1000.f;
+	//float fdepth = input.vPorjPos.z / 1000.f;
 	output.normal = float4(normalW, 1);
 	output.color = cColorAlbedo;
-	output.depth = float4(input.positionW, 1);
+	output.depth = float4(input.vPorjPos.z/ input.vPorjPos.w, input.vPorjPos.w /150.0f,0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 
@@ -207,6 +207,7 @@ struct VS_STANDARD_SHADOWOUTPUT
 {
 	float3 positionW : POSITION;
 	float4 position : SV_POSITION;
+	float4 posj : TEXCOORD0; 
 };
 
 VS_STANDARD_SHADOWOUTPUT VSStandardShadow(VS_TEXTURED_LIGHTING_INPUT input)
@@ -214,7 +215,7 @@ VS_STANDARD_SHADOWOUTPUT VSStandardShadow(VS_TEXTURED_LIGHTING_INPUT input)
 	VS_STANDARD_SHADOWOUTPUT output;
 	output.positionW = (float3)mul(float4(input.position, 1.0f), gmtxGameObject);
 	output.position = mul(mul(float4(output.positionW, 1.0f), shadowgmtxView), shadowgmtxProjection);
-
+	output.posj = output.position;
 	return output;
 }
 
@@ -231,7 +232,7 @@ VS_STANDARD_SHADOWOUTPUT VSSkinnedShadow(VS_SKINNED_STANDARD_INPUT input)
 	}
 
 	output.position = mul(mul(float4(output.positionW, 1.0f), shadowgmtxView), shadowgmtxProjection);
-
+	output.posj = output.position;
 	return(output);
 }
 
@@ -239,7 +240,7 @@ PS_SHADOW_OUTPUT PSStandardShadow(VS_STANDARD_SHADOWOUTPUT input)
 {
 	PS_SHADOW_OUTPUT output; 
 	
-	output.ShadowTex = float4(input.position.z / 10.f , input.position.z / input.position.w, 0.0f, 1.0f);
+	output.ShadowTex = float4(input.posj.z/input.posj.w , input.posj.w/600.0f, 0.0f, 1.0f);
 
 	return output;
 }

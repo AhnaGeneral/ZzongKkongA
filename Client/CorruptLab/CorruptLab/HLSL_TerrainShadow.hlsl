@@ -1,25 +1,22 @@
 #include "HLSL_Terrain.hlsl"
 
-
-//============================================================================================================================
-
-
 struct VS_TERRAIN_SHADOW_OUTPUT
 {
 	float3 position : POSITION;
-	float4 posj : TEXCOORD2;
+	float4 posj : TEXCOORD0;
 };
 
 struct HS_TERRAIN_TESSELLATION_SHADOW_OUTPUT
 {
 	float3 position : POSITION;
-	float4 posj : TEXCOORD2;
+	float4 posj : TEXCOORD0;
 };
 
 struct DS_TERRAIN_TESSELLATION_SHADOW_OUTPUT
 {
 	float4 position : SV_POSITION;
 	float3 positionW : POSITION;
+	float4 posj : TEXCOORD0;
 };
 
 
@@ -97,7 +94,7 @@ DS_TERRAIN_TESSELLATION_SHADOW_OUTPUT DSTerrainTessellationShadow(HS_TERRAIN_TES
 	//matrix
 	output.positionW = mul(float4(position, 1.0f), gmtxGameObject);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
-
+	output.posj = output.position;
 	return(output);
 }
 
@@ -106,7 +103,7 @@ PS_SHADOW_OUTPUT PSTerrainShadow(DS_TERRAIN_TESSELLATION_SHADOW_OUTPUT input)
 {
 	PS_SHADOW_OUTPUT output;
 
-	output.ShadowTex = float4(input.position.z / 300.f, input.position.w / 300.f, 0.0f, 1.0f);
+	output.ShadowTex = float4(input.posj.z/input.posj.w, input.posj.w/ 600.0f , 0.0f, 1.0f);
 	//output.ShadowTex = float4(input.position.z  , 0, 0.0f, 1.0f);
 	return output;
 }

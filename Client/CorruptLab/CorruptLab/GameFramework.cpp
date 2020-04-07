@@ -14,7 +14,6 @@ CGameFramework::CGameFramework()
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 		m_ppd3dOffScreenRenderTargetBuffers[i] = NULL;
 
-
 	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
 		m_ppd3dLightMapRenderTargetBuffers[i] = NULL;
 

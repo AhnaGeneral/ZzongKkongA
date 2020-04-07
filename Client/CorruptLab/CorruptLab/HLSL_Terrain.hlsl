@@ -205,7 +205,7 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	output.positionW = mul(float4(position, 1.0f), gmtxGameObject);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
 	
-	output.posj = mul(float4(position, 1.0f), mtxShadowViewProjection);
+	output.posj = output.position ;
 
 	return(output);
 }
@@ -304,7 +304,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	output.normal = float4(vNormal, 1.0f);
 
-	output.depth = float4(input.positionW, 1);
+	output.depth = float4(input.posj.z/input.posj.w, input.posj.w/ 150.0f, 0, 1);
 
 	output.color = cColor;
 
