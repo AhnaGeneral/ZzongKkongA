@@ -80,7 +80,7 @@ public:
 
 	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
-
+	virtual void DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Update(float fTimeElapsed);
 
@@ -93,12 +93,14 @@ public:
 	void CheckCollisions();
 	void CheckPlayerCollision();
 
-	void SetTerrainPipelineState();
 	void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList);
 	void PlaceObjectsFromFile(CGameObject* pModel, char* FileName, int index);
 
+	void ChangeTerrainPipeline();
+
 private: // 배치되는 오브젝트들
 
+	bool					m_bPipelineStateIndex = 0;
 	POINT					m_ptOldCursorPos;
 	int						m_nObjectTypeNum; // 오브젝트 종류 개수
 	list<CGameObject*>**	m_pStaticObjLists; // list<CGameObject*>*의 배열

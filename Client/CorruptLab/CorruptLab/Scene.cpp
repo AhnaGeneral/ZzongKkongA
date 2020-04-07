@@ -25,9 +25,9 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pShadowCamera = new CCamera();
 	XMFLOAT3 xmf3Look = Vector3::Normalize(XMFLOAT3(1.f, -1.f, 1.f));
 	XMFLOAT3 xmf3Right = Vector3::CrossProduct(XMFLOAT3(0.f, 1.f, 0.f), xmf3Look, true);
-	XMFLOAT3 xmf3Up = Vector3::CrossProduct(xmf3Look, xmf3Right, true);
-
-	m_pShadowCamera->GenerateViewMatrix(XMFLOAT3(0.f, 300.f, 0.f), xmf3Look, xmf3Up);
+	XMFLOAT3 xmf3Up = XMFLOAT3(0.f, 1.f, 0.f);
+	//m_pShadowCamera->SetPosition()
+	m_pShadowCamera->GenerateViewMatrix(XMFLOAT3(0.0f, 500.f, 0.f), xmf3Look, xmf3Up);
 	m_pShadowCamera->GenerateProjectionMatrix(1.01f, 500.0f, ASPECT_RATIO, 60.0f);
 
 
@@ -99,11 +99,6 @@ void CGameScene::CheckCollisions()
 
 void CGameScene::CheckPlayerCollision()
 {
-}
-
-void CGameScene::SetTerrainPipelineState()
-{
-	m_pTerrain->SetPipelinemode();
 }
 
 ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
@@ -371,7 +366,7 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 		switch (wParam)
 		{
 		case VK_F1:
-			SetTerrainPipelineState();
+			ChangeTerrainPipeline();
 			break;
 		default:
 			break;
@@ -437,7 +432,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	UpdateShaderVariables(pd3dCommandList);
 
 	pd3dCommandList->OMSetStencilRef(1);
-	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
+	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, m_bPipelineStateIndex);
 
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
@@ -464,6 +459,28 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	if (m_pCObjectFog)   m_pCObjectFog->Render(pd3dCommandList, pCamera);
 
+}
+
+
+void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	pCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_SHADOWCAMERA);
+
+	//if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, 2 );
+
+	if (m_pStaticObjLists) // 오브젝트 Render
+	{
+		for (int i = 0; i < m_nObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pStaticObjLists[i])
+			{
+				Obj->UpdateTransform(NULL);
+				Obj->Render(pd3dCommandList, pCamera, 1);
+			}
+		}
+	}
+
+	m_pPlayer->Render(pd3dCommandList, pCamera, 1);
 }
 
 

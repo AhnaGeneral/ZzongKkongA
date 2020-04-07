@@ -351,6 +351,9 @@
     <FxCompile Include="HLSL_waters.hlsl">
       <Filter>04.Shader\07.Shader_Water</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL_ShadowTarget.hlsl">
+      <Filter>04.Shader\01.Shader_MRT</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="소스.txt" />

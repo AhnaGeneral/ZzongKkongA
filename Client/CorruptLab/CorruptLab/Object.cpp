@@ -469,7 +469,7 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 
 			m_pBoundingBoxes[i].BuildBuffer(pd3dDevice, pd3dCommandList, NULL);
 		}
-		m_pCollisionBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 4);
+		m_pCollisionBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
 		m_pCollisionBoxShader->BuildObjects(pd3dDevice, pd3dCommandList);
 	}
 

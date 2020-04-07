@@ -47,6 +47,21 @@ D3D12_SHADER_BYTECODE CTerrainShader::CreateDomainShader(ID3DBlob** ppd3dShaderB
 	return(CShader::CompileShaderFromFile(L"HLSL_Terrain.hlsl", "DSTerrainTessellation", "ds_5_1", ppd3dShaderBlob));
 }
 
+D3D12_SHADER_BYTECODE CTerrainShader::CreateShadowVertexShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_TerrainShadow.hlsl", "VSTerrainShadow", "vs_5_1", ppd3dShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CTerrainShader::CreateShadowHullShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Terrain.hlsl", "HSTerrainTessellationShadow", "hs_5_1", ppd3dShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CTerrainShader::CreateShadowDomainShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Terrain.hlsl", "DSTerrainTessellationShadow", "ds_5_1", ppd3dShaderBlob));
+}
+
 D3D12_BLEND_DESC CTerrainShader::CreateBlendState()
 {
 	D3D12_BLEND_DESC d3dBlendDesc;
@@ -69,7 +84,7 @@ D3D12_BLEND_DESC CTerrainShader::CreateBlendState()
 
 void CTerrainShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets)
 {
-	m_nPipelineStates = 2;
+	m_nPipelineStates = 3;
 	m_ppd3dPipelineStates = new ID3D12PipelineState * [m_nPipelineStates];
 
 	ID3DBlob* pd3dVertexShaderBlob = NULL, * pd3dPixelShaderBlob = NULL, * pd3dHullShaderBlob = NULL, * pd3dDomainShaderBlob = NULL, * pd3dGeometryShaderBlob = NULL;
@@ -100,8 +115,24 @@ void CTerrainShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature*
 
 	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[0]);
 	m_d3dPipelineStateDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-
 	hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[1]);
+
+
+	// --------------------Shadow
+
+	m_d3dPipelineStateDesc.VS = CreateShadowVertexShader(&pd3dVertexShaderBlob);
+	m_d3dPipelineStateDesc.PS = CShader::CreatePixelShader(&pd3dPixelShaderBlob);
+	m_d3dPipelineStateDesc.HS = CreateShadowHullShader(&pd3dHullShaderBlob);
+	m_d3dPipelineStateDesc.DS = CreateShadowDomainShader(&pd3dDomainShaderBlob);
+
+	m_d3dPipelineStateDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+
+	m_d3dPipelineStateDesc.NumRenderTargets = 0;
+	for (UINT i = 0; i < nRenderTargets; i++)
+		m_d3dPipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
+
+	hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[2]);
+
 
 	if (pd3dVertexShaderBlob) pd3dVertexShaderBlob->Release();
 	if (pd3dPixelShaderBlob) pd3dPixelShaderBlob->Release();

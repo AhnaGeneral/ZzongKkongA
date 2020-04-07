@@ -64,3 +64,8 @@ void CGameScene::PlaceObjectsFromFile(CGameObject* pModel, char* FileName, int i
 		m_pStaticObjLists[index]->push_back(pGameObject);
 	}
 }
+
+void CGameScene::ChangeTerrainPipeline()
+{
+	m_bPipelineStateIndex = (!m_bPipelineStateIndex);
+}

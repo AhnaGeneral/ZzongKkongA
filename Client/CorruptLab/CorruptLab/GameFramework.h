@@ -5,6 +5,7 @@
 #include "Object_Player.h"
 #include "Scene.h"
 #include "Shader_LightMRT.h"
+#include "CShader_ShadowMRT.h"
 
 class CGameFramework
 {
@@ -23,13 +24,13 @@ public:
 
 	void CreateSwapChainRenderTargetViews();
 	void CreateDepthStencilView();
-	void CreateRenderTargetViewsAndDepthStencilView();
+	
 
 	void ChangeSwapChainState();
 
 	void CreateOffScreenRenderTargetViews();
 	void CreateLightRenderTargetViews();
-	//void CreateShadowRenderTargetViews();
+	void CreateShadowRenderTargetViews();
 
 
 	void BuildObjects();
@@ -66,6 +67,8 @@ private:
 	ID3D12Resource                    * m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
 	ID3D12DescriptorHeap              * m_pd3dRtvDescriptorHeap = NULL;
 	ID3D12DescriptorHeap			  * m_pd3dLightDescriptorHeap = NULL;
+	ID3D12DescriptorHeap              * m_pd3dShadowDescriptorHeap = NULL;
+
 
 	UINT							    m_nRtvDescriptorIncrementSize;
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBuffers];
@@ -78,7 +81,7 @@ private:
 	ID3D12CommandQueue                * m_pd3dCommandQueue = NULL;
 	ID3D12GraphicsCommandList         * m_pd3dCommandList = NULL;
 
-	ID3D12Fence* m_pd3dFence = NULL;
+	ID3D12Fence                       * m_pd3dFence = NULL;
 	UINT64							    m_nFenceValues[m_nSwapChainBuffers];
 	HANDLE							    m_hFenceEvent;
 
@@ -92,9 +95,9 @@ private:
 	ID3D12Resource                    * m_ppd3dLightMapRenderTargetBuffers[m_nOffScreenLightBuffers];
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenLightBufferCPUHandles[m_nOffScreenLightBuffers];
 
-	//static const UINT				    m_nOffScreenShadowBuffers = 1;
-	//ID3D12Resource                    * m_ppd3dShadowRenderTargetBuffers[m_nOffScreenShadowBuffers];
-	//D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenShadowBufferCPUHandles[m_nOffScreenShadowBuffers];
+	static const UINT				    m_nOffScreenShadowBuffers = 1;
+	ID3D12Resource                    * m_ppd3dShadowRenderTargetBuffers[m_nOffScreenShadowBuffers];
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenShadowBufferCPUHandles[m_nOffScreenShadowBuffers];
 
      POINT							    m_ptOldCursorPos;
 
@@ -103,11 +106,15 @@ public:
 	CTexture                          * m_TestTexture = NULL;
 	//=============================================================
 private:
-	CPostProcessingShader* m_pPostProcessingShader = NULL;
-	CLightTarget* m_pLightProcessingShader = NULL; 
-	CGameScene* m_pScene = NULL;
-	CPlayer* m_pPlayer = NULL;
-	CCamera* m_pCamera = NULL;
+	CPostProcessingShader             * m_pPostProcessingShader = NULL;
+	CLightTarget                      * m_pLightProcessingShader = NULL; 
+	Shader_ShadowMRT                  * m_pShadowShader = NULL; 
+
+	CGameScene                        * m_pScene = NULL;
+	CPlayer                           * m_pPlayer = NULL;
+	CCamera                           * m_pCamera = NULL;
+
+	CCamera                           * m_pSunCamera = NULL;
 	//=============================================================
 };
 

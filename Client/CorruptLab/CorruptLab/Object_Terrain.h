@@ -13,15 +13,14 @@ class CHeightMapTerrain : public CGameObject
 {
 private:
 	D3D12_GPU_DESCRIPTOR_HANDLE	    	m_d3dCbvGPUDescriptorHandle;
-	CHeightMapImage                   * m_pHeightMapImage;
-	bool						    	m_bPipelineStateIndex = 0;
-								    
+	CHeightMapImage* m_pHeightMapImage;
+
 	XMFLOAT3					    	m_xmf3Scale;
 
 	int							    	m_nWidth;
 	int							    	m_nLength;
-								    
-	CMesh                            ** m_ppMeshes;
+
+	CMesh** m_ppMeshes;
 	int							    	m_nMeshes;
 
 public:
@@ -46,11 +45,9 @@ public:
 	float GetWidth() { return(m_nWidth * m_xmf3Scale.x); }
 	float GetLength() { return(m_nLength * m_xmf3Scale.z); }
 
-	void ChangePipeLine();
-	void SetPipelinemode();
 	void SetMesh(int nIndex, CMesh* pMesh);
 
-	virtual void ReleaseUploadBuffers() ; 
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
+	virtual void ReleaseUploadBuffers();
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 };
 

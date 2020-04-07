@@ -2,8 +2,8 @@
 #include "Object_Terrain.h"
 #include "Shader_Terrain.h"
 // Terrain ==================================================================================
-CHeightMapTerrain::CHeightMapTerrain (ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,ID3D12RootSignature* pd3dGraphicsRootSignature, 
-	                                  LPCTSTR pFileName, int nWidth, int nLength, int nBlockWidth, int nBlockLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color)
+CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature,
+	LPCTSTR pFileName, int nWidth, int nLength, int nBlockWidth, int nBlockLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color)
 {
 
 	m_nWidth = nWidth; // 512
@@ -21,7 +21,7 @@ CHeightMapTerrain::CHeightMapTerrain (ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 
 	m_nMeshes = cxBlocks * czBlocks; // 32*32 = 1024
 	m_ppMeshes = new CMesh * [m_nMeshes]; // 1024? 
-	for (int i = 0; i < m_nMeshes; i++)	
+	for (int i = 0; i < m_nMeshes; i++)
 		m_ppMeshes[i] = NULL;
 
 	CHeightMapGridMesh* pHeightMapGridMesh = NULL;
@@ -105,25 +105,16 @@ void CHeightMapTerrain::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Gr
 
 void CHeightMapTerrain::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	
+
 }
 
 
-void CHeightMapTerrain::ChangePipeLine()
-{
-	m_bPipelineStateIndex = (!m_bPipelineStateIndex);
-}
 
-void CHeightMapTerrain::SetPipelinemode()
-{
-	m_bPipelineStateIndex = (!m_bPipelineStateIndex);
-}
-
-void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	OnPrepareRender();
 
-	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera, m_bPipelineStateIndex);
+	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera, nPipelineState);
 	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 	UpdateShaderVariables(pd3dCommandList);
