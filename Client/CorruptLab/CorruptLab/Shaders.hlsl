@@ -213,7 +213,7 @@ VS_STANDARD_SHADOWOUTPUT VSStandardShadow(VS_TEXTURED_LIGHTING_INPUT input)
 {
 	VS_STANDARD_SHADOWOUTPUT output;
 	output.positionW = (float3)mul(float4(input.position, 1.0f), gmtxGameObject);
-	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
+	output.position = mul(mul(float4(output.positionW, 1.0f), shadowgmtxView), shadowgmtxProjection);
 
 	return output;
 }
@@ -230,7 +230,7 @@ VS_STANDARD_SHADOWOUTPUT VSSkinnedShadow(VS_SKINNED_STANDARD_INPUT input)
 		output.positionW += input.weights[i] * mul(float4(input.position, 1.0f), mtxVertexToBoneWorld).xyz;
 	}
 
-	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
+	output.position = mul(mul(float4(output.positionW, 1.0f), shadowgmtxView), shadowgmtxProjection);
 
 	return(output);
 }
@@ -239,7 +239,7 @@ PS_SHADOW_OUTPUT PSStandardShadow(VS_STANDARD_SHADOWOUTPUT input)
 {
 	PS_SHADOW_OUTPUT output; 
 	
-	output.ShadowTex = float4(1.0f, 1.0f, 0.0f, 1.0f);
+	output.ShadowTex = float4(input.position.z / 10.f , input.position.z / input.position.w, 0.0f, 1.0f);
 
 	return output;
 }

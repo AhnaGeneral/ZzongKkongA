@@ -322,12 +322,26 @@ void CThirdPersonCamera::SetLookAt(XMFLOAT3& xmf3LookAt)
 
 CSunCamera::CSunCamera()
 {
-	XMFLOAT3 xmf3Look = Vector3::Normalize(XMFLOAT3(1.f, -1.f, 1.f));
+	XMFLOAT3 xmf3Look = Vector3::Normalize(XMFLOAT3(-1.f, -1.f, 1.f));
 	XMFLOAT3 xmf3Right = Vector3::CrossProduct(XMFLOAT3(0.f,1.f,0.f), xmf3Look, true);
 	XMFLOAT3 xmf3Up = Vector3::CrossProduct(xmf3Look, xmf3Right, true);
 
+	SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
+	GenerateViewMatrix(XMFLOAT3(450.f,200.f,130.f), xmf3Look, xmf3Up);
+	GenerateProjectionMatrix(1.f,300.0f, ASPECT_RATIO, 60.0f);
+	SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 
-	GenerateViewMatrix(XMFLOAT3(0.f,300.f,0.f), xmf3Look, xmf3Up);
-	GenerateProjectionMatrix(1.01f, 500.0f, ASPECT_RATIO, 60.0f);
+}
 
+void CSunCamera::Update(CCamera* PlayerCamera)
+{
+	m_xmf3Look = PlayerCamera->GetLookVector();
+	m_xmf3Right = PlayerCamera->GetRightVector();
+	m_xmf3Up = PlayerCamera->GetUpVector();
+
+	XMFLOAT3 pos = PlayerCamera->GetPosition();
+	m_xmf3Position = XMFLOAT3(pos.x, pos.y + 20, pos.z);
+
+	RegenerateViewMatrix();
+	
 }

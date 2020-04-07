@@ -227,7 +227,7 @@ void CGameObject::OnPrepareRender() {}
 void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 
-	if (m_pBoundingBoxes)
+	if (m_pBoundingBoxes && nPipelineState == 0)
 	{
 		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
 		for (int i = 0; i < m_nBoundingBoxes; i++)

@@ -66,7 +66,7 @@ public:
 	float GetPitch() const { return(m_fPitch); }
 	float GetRoll() const { return(m_fRoll); }
 
-	CCamera* GetCamera() { return(m_pCamera); }
+	CCamera* GetCamera() { if (m_pCamera) return(m_pCamera); else return NULL; }
 	void SetCamera(CPlayerCamera* pCamera) { m_pCamera = pCamera; }
 	void Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity = false);
 	void Move(const XMFLOAT3& xmf3Shift, bool bVelocity = false);

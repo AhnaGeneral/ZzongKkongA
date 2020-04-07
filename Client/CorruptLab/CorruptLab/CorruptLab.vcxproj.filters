@@ -354,6 +354,9 @@
     <FxCompile Include="HLSL_ShadowTarget.hlsl">
       <Filter>04.Shader\01.Shader_MRT</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL_TerrainShadow.hlsl">
+      <Filter>04.Shader\02.Shader_Terrain</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="소스.txt" />

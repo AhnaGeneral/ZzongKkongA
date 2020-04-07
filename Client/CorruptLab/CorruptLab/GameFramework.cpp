@@ -372,19 +372,19 @@ void CGameFramework::CreateShadowRenderTargetViews()
 {
 	CTexture* pShadowMap = new CTexture(m_nOffScreenShadowBuffers, RESOURCE_TEXTURE2D, 0);
 
-	D3D12_CLEAR_VALUE d3dClearValue = { DXGI_FORMAT_R8G8B8A8_UNORM, { 0.0f, 0.0f, 0.0f, 1.0f } };
+	D3D12_CLEAR_VALUE d3dClearValue = { DXGI_FORMAT_R32G32B32A32_FLOAT, { 0.0f, 0.0f, 0.0f, 1.0f } };
 
 	for (UINT i = 0; i < m_nOffScreenShadowBuffers; i++)
 	{
 		m_ppd3dShadowRenderTargetBuffers[i] = pShadowMap->CreateTexture(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth, m_nWndClientHeight,
-			DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
+			DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
 		m_ppd3dShadowRenderTargetBuffers[i]->AddRef();
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE d3dRtvCPUDescriptorHandle = m_pd3dShadowDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
 	D3D12_RENDER_TARGET_VIEW_DESC d3dRenderTargetViewDesc;
-	d3dRenderTargetViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	d3dRenderTargetViewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	d3dRenderTargetViewDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 	d3dRenderTargetViewDesc.Texture2D.MipSlice = 0;
 	d3dRenderTargetViewDesc.Texture2D.PlaneSlice = 0;
@@ -611,10 +611,6 @@ void CGameFramework::BuildObjects()
 	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
 	m_pCamera = m_pPlayer->GetCamera();
 
-	m_pSunCamera = new CSunCamera();
-	m_pSunCamera->CreateShaderVariables(m_pd3dDevice, m_pd3dCommandList);
-
-
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandList->Close();
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
@@ -723,7 +719,7 @@ void CGameFramework::FrameAdvance()
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenShadowBuffers, m_pd3dOffScreenShadowBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
-	m_pScene->DepthRender(m_pd3dCommandList, m_pSunCamera);
+	m_pScene->DepthRender(m_pd3dCommandList, m_pCamera);
 
 	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],

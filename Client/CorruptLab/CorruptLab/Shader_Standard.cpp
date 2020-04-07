@@ -108,11 +108,11 @@ void CStandardShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature
 	for (UINT i = 0; i < nRenderTargets; i++)
 		m_d3dPipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
 
-	m_d3dPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	m_d3dPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 	m_d3dPipelineStateDesc.VS = CreateShadowVertexShader(&pd3dVertexShaderBlob);
 	m_d3dPipelineStateDesc.PS = CreateShadowPixelShader(&pd3dPixelShaderBlob);
-
+	m_d3dPipelineStateDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
 
 	hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[1]);
 

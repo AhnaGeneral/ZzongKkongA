@@ -92,6 +92,7 @@ public:
 	virtual void Move(const XMFLOAT3& xmf3Shift) {}
 	virtual void Rotate(float fPitch = 0.0f, float fYaw = 0.0f, float fRoll = 0.0f) { }
 	virtual void Update(XMFLOAT3& xmf3LookAt, float fTimeElapsed) { }
+	virtual void Update(CCamera* Player) {}
 	virtual void SetLookAt(XMFLOAT3& xmf3LookAt) { }
 
 	virtual void SetViewportsAndScissorRects(ID3D12GraphicsCommandList* pd3dCommandList);
@@ -171,5 +172,8 @@ class CSunCamera : public CCamera
 {
 public:
 	CSunCamera();
-	~CSunCamera() {}
+	virtual ~CSunCamera() {}
+
+public:
+	virtual void Update(CCamera* Player);
 };

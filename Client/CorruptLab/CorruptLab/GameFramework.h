@@ -114,7 +114,6 @@ private:
 	CPlayer                           * m_pPlayer = NULL;
 	CCamera                           * m_pCamera = NULL;
 
-	CCamera                           * m_pSunCamera = NULL;
 	//=============================================================
 };
 

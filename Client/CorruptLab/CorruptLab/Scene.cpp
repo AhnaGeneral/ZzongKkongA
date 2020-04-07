@@ -22,14 +22,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	XMFLOAT3 xmf3Scale(2.0f, 0.6f, 2.0f);
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
 
-	m_pShadowCamera = new CCamera();
-	XMFLOAT3 xmf3Look = Vector3::Normalize(XMFLOAT3(1.f, -1.f, 1.f));
-	XMFLOAT3 xmf3Right = Vector3::CrossProduct(XMFLOAT3(0.f, 1.f, 0.f), xmf3Look, true);
-	XMFLOAT3 xmf3Up = XMFLOAT3(0.f, 1.f, 0.f);
-	//m_pShadowCamera->SetPosition()
-	m_pShadowCamera->GenerateViewMatrix(XMFLOAT3(0.0f, 500.f, 0.f), xmf3Look, xmf3Up);
-	m_pShadowCamera->GenerateProjectionMatrix(1.01f, 500.0f, ASPECT_RATIO, 60.0f);
-
+	m_pShadowCamera = new CSunCamera();
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,
@@ -329,6 +322,7 @@ void CGameScene::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 
 void CGameScene::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
 	m_pShadowCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_SHADOWCAMERA);
 }
 
@@ -464,10 +458,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
-	pCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_SHADOWCAMERA);
-
-	//if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, 2 );
-
+	m_pTerrain->Render(pd3dCommandList, pCamera, 2);
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
 		for (int i = 0; i < m_nObjectTypeNum; i++)
