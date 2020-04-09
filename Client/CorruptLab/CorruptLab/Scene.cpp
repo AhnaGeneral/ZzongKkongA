@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Object_Terrain.h"
 #include "Mgr_Collision.h"
+#include "Monster_Yangmal.h"
 
 CGameScene::CGameScene()
 {
@@ -74,8 +75,22 @@ void CGameScene::ReleaseObjects()
 			m_pStaticObjLists[i]->clear();
 		}
 	}
+
 	delete[] m_pStaticObjLists;
 
+	if (m_pMonsterLists) // 오브젝트 Release
+	{
+		for (int i = 0; i < m_nMonsterTypeNum; i++)
+		{
+			for (auto Obj : *m_pMonsterLists[i])
+			{
+				Obj->Release();
+			}
+			m_pMonsterLists[i]->clear();
+		}
+	}
+
+	//delete m_pMonsterLists;
 }
 
 void CGameScene::ReleaseUploadBuffers()
@@ -439,6 +454,20 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 			}
 		}
 	}
+
+	if (m_pMonsterLists) // 몬스터 Render
+	{
+		for (int i = 0; i < m_nMonsterTypeNum; i++)
+		{
+			for (auto Obj : *m_pMonsterLists[i])
+			{
+				Obj->Update(m_fElapsedTime, NULL);
+				Obj->UpdateTransform(NULL);
+				Obj->Render(pd3dCommandList, pCamera, 0);
+			}
+		}
+	}
+
 
 	CheckCollisions();
 

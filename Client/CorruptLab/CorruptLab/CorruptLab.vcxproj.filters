@@ -29,9 +29,6 @@
     <Filter Include="05.Component">
       <UniqueIdentifier>{c8a9b285-7c5e-46bc-b5ac-0da6bfc99d91}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05.Component\Material">
-      <UniqueIdentifier>{9d2e9600-f99c-4a3e-b012-f25da7b542e3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04.Shader\02.Shader_Terrain">
       <UniqueIdentifier>{24ec661f-f3b0-45db-96e6-53ac762211f8}</UniqueIdentifier>
     </Filter>
@@ -91,6 +88,15 @@
     </Filter>
     <Filter Include="05.Component\GameObject\00.Object\00.StaticObject">
       <UniqueIdentifier>{6ba15521-172a-4b67-bb7d-f30e680d3e9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\08.Monster">
+      <UniqueIdentifier>{4a438c11-53c2-4091-9e07-319474379f26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\08.Monster\00.Yangmal">
+      <UniqueIdentifier>{2ad92508-825c-4d41-ba39-19695ea9f558}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\Material">
+      <UniqueIdentifier>{9d2e9600-f99c-4a3e-b012-f25da7b542e3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -205,6 +211,12 @@
     <ClInclude Include="CShader_ShadowMRT.h">
       <Filter>04.Shader\01.Shader_MRT</Filter>
     </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>05.Component\GameObject\08.Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster_Yangmal.h">
+      <Filter>05.Component\GameObject\08.Monster\00.Yangmal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -302,6 +314,12 @@
     </ClCompile>
     <ClCompile Include="CShader_ShadowMRT.cpp">
       <Filter>04.Shader\01.Shader_MRT</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>05.Component\GameObject\08.Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Yangmal.cpp">
+      <Filter>05.Component\GameObject\08.Monster\00.Yangmal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -37,6 +37,7 @@ public:
 	void SetPlayer(CPlayer* player) { m_pPlayer = player;  }
 
 	bool StaticCollisionCheck();
+	void MonsterAttackCheck(int iDamaege, CCollisionBox box);
 
 
 public:

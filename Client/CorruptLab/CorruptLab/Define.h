@@ -52,6 +52,14 @@
 
 //---------------------------------------------------
 
+#define MONSTER_TYPE_YANGMAL			0
+
+
+#define MONSTER_STATE_IDLE				0
+#define MONSTER_STATE_WALK				1
+#define MONSTER_STATE_ATTACK			2
+
+//---------------------------------------------------
 
 #define JOHNSON_ANIAMATION_IDLE			0
 #define JOHNSON_ANIAMATION_WALK			1

@@ -1,8 +1,8 @@
 #pragma once
-#include "Material.h"
 #include "Mesh.h"
 #include "Mesh_Skinned.h"
 #include "Object_Camera.h"
+#include "Material.h"
 //#include "Shader_CollisionBox.h"
 
 class CShader;
