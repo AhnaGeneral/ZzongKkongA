@@ -83,18 +83,20 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 		fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), 10.f);
 	}
 
-	return((gLights[nIndex].m_cDiffuse * fDiffuseFactor) *float4(0.4f,0.4f,0.4f,1.f) + fSpecularFactor * gLights[nIndex].m_cSpecular * float4(0.4f,0.4f,0.4f, 1.f));
+	return((gLights[nIndex].m_cDiffuse * fDiffuseFactor) *float4(0.4f,0.4f,0.4f,1.f) +
+		fSpecularFactor * gLights[nIndex].m_cSpecular * float4(0.4f,0.4f,0.4f, 1.f));
 }
 
 float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera)
 {
 	float3 vToLight = gLights[nIndex].m_vPosition - vPosition;
 	float fDistance = length(vToLight);
-	if (fDistance <= gLights[nIndex].m_fRange)
+	if (fDistance <= gLights[nIndex].m_fRange+20.0f)
 	{
 		float fSpecularFactor = 0.0f;
 		vToLight /= fDistance;
 		float fDiffuseFactor = dot(vToLight, vNormal);
+
 		if (fDiffuseFactor > 0.0f)
 		{
 				float3 vHalf = normalize(vToCamera + vToLight);
@@ -102,7 +104,8 @@ float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera
 		}
 		float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
 
-		return((gLights[nIndex].m_cDiffuse * fDiffuseFactor ) + (gLights[nIndex].m_cSpecular * fSpecularFactor) * fAttenuationFactor);
+		return((gLights[nIndex].m_cDiffuse * fDiffuseFactor ) + 
+			(gLights[nIndex].m_cSpecular * fSpecularFactor) * fAttenuationFactor) + float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	}
 	return(float4(0.0f, 0.0f, 0.0f, 0.0f));
 }

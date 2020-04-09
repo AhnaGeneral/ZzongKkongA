@@ -395,7 +395,7 @@ CPlayerCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapse
 		m_pCamera = dynamic_cast<CPlayerCamera*>(OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode));
 		m_pCamera->SetTimeLag(0.25f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 0.5f, -7.5f));
-		m_pCamera->GenerateProjectionMatrix(1.01f, 150.0f, ASPECT_RATIO, 60.0f);
+		m_pCamera->GenerateProjectionMatrix(1.01f, 300.0f, ASPECT_RATIO, 60.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 		//m_pCamera->GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.f);

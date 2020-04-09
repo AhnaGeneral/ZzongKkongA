@@ -86,6 +86,8 @@ struct DS_TERRAIN_TESSELLATION_OUTPUT
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
 	float4 posj : TEXCOORD2;
+	float4 LightViewPosition : TEXCOORD3;
+
 };
 
 void BernsteinCoeffcient5x5(float t, out float fBernstein[5])
@@ -204,6 +206,9 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	
 	output.positionW = mul(float4(position, 1.0f), gmtxGameObject);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
+	//shadow
+	output.LightViewPosition = mul(mul(float4(output.positionW, 1.0f), shadowgmtxView), shadowgmtxProjection);
+
 	
 	output.posj = output.position ;
 
@@ -304,11 +309,33 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	output.normal = float4(vNormal, 1.0f);
 
-	output.depth = float4(input.posj.z/input.posj.w, input.posj.w/ 150.0f, 0, 1);
+	output.depth = float4(input.posj.z/input.posj.w, input.posj.w/300.0f, 0, 1);
 
 	output.color = cColor;
 
 	output.ShadowCamera = input.posj;
+
+	float2 projectTexCoord;
+	float lightDepthValue;
+	float depthValue;
+	float bias = 0.001f;
+
+	projectTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
+	projectTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
+
+	if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
+	{
+		float DepthWValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
+		depthValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).r * DepthWValue;
+
+		// 빛의 깊이를 계산합니다.
+		lightDepthValue = input.LightViewPosition.z / input.LightViewPosition.w;
+
+		// lightDepthValue에서 바이어스를 뺍니다.
+		lightDepthValue = lightDepthValue - bias;
+
+		output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	}
 
 	return output;
 }
