@@ -48,6 +48,7 @@ Texture2D gtxtScene : register(t1);  // 0
 Texture2D gtxtNormal : register(t2); // 1
 Texture2D gtxtDepth : register(t3);  // 2 
 Texture2D gtxtShadowCameraViewDepth : register(t4); // 3
+
 Texture2D gtxtNonLightNoise : register(t5); // 4 
 
 

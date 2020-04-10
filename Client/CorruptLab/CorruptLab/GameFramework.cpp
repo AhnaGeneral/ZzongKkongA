@@ -54,6 +54,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	m_hInstance = hInstance;
 	m_hWnd = hMainWnd;
 
+
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
 	CreateRtvAndDsvDescriptorHeaps();
@@ -396,12 +397,14 @@ void CGameFramework::CreateShadowRenderTargetViews()
 		d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 	}
 
+
 	m_pShadowShader = new Shader_ShadowMRT();
 	m_pShadowShader->CreateGraphicsRootSignature(m_pd3dDevice);
 	//m_pShadowShader->CreateShader(m_pd3dDevice, m_pShadowShader->GetGraphicsRootSignature());
 
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL, NULL, pShadowMap);
 
+	m_pShadowMap = pShadowMap;
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
@@ -598,6 +601,8 @@ void CGameFramework::BuildObjects()
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	m_pScene = new CGameScene();
+	m_pScene->m_pShadowMap = m_pShadowMap;
+
 	m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 	CMaterial::PrepareShaders(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
@@ -608,6 +613,7 @@ void CGameFramework::BuildObjects()
 	pAirplanePlayer->SetPosition(XMFLOAT3(450.0f, 100.0f, 130.0f)); 
 	//pAirplanePlayer->SetPosition(XMFLOAT3(0.0f, 100.0f, 0.0f));
 	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
+
 	m_pCamera = m_pPlayer->GetCamera();
 
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };

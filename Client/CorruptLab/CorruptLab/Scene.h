@@ -43,6 +43,7 @@ public:
 	virtual void ReleaseUploadBuffers() = 0;
 
 	CCamera* m_pShadowCamera = NULL;
+	CTexture* m_pShadowMap = NULL; 
 
 protected:
 	float m_fElapsedTime;

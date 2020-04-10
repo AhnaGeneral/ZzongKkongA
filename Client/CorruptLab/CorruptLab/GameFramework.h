@@ -114,6 +114,8 @@ private:
 	CPlayer                           * m_pPlayer = NULL;
 	CCamera                           * m_pCamera = NULL;
 
+	CTexture                          * m_pShadowMap = NULL;
+
 	//=============================================================
 };
 

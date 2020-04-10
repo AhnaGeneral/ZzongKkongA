@@ -59,7 +59,7 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 
 	pd3dDescriptorRanges[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[2].NumDescriptors = 1;
-	pd3dDescriptorRanges[2].BaseShaderRegister = 21; //LightTexture
+	pd3dDescriptorRanges[2].BaseShaderRegister = 21; //ShadowMap
 	pd3dDescriptorRanges[2].RegisterSpace = 0;
 	pd3dDescriptorRanges[2].OffsetInDescriptorsFromTableStart = 0;
 
@@ -245,7 +245,7 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 
 	if (m_pTexture) m_pTexture->UpdateShaderVariables(pd3dCommandList);
 	if (m_pLightTexture) m_pLightTexture->UpdateShaderVariables(pd3dCommandList);
-	if (m_pShadowTexture) m_pShadowTexture->UpdateShaderVariables(pd3dCommandList);
+	//if (m_pShadowTexture) m_pShadowTexture->UpdateShaderVariables(pd3dCommandList);
 
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);

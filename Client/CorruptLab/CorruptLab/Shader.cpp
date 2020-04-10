@@ -311,6 +311,26 @@ void CShader::CreateShaderResourceViews(ID3D12Device* pd3dDevice, ID3D12Graphics
 	pTexture->SetRootArgument(0, (true) ? (nRootParameterStartIndex) : nRootParameterStartIndex, d3dSrvGPUDescriptorHandle);
 }
 
+void CShader::CreateShaderResourceViews(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, CTexture* pTexture, UINT nRootParameterStartIndex, int index, bool bAutoIncreament)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE d3dSrvCPUDescriptorHandle = m_d3dSrvCPUDescriptorStartHandle;
+	D3D12_GPU_DESCRIPTOR_HANDLE d3dSrvGPUDescriptorHandle = m_d3dSrvGPUDescriptorStartHandle;
+
+	d3dSrvCPUDescriptorHandle.ptr += ::gnCbvSrvDescriptorIncrementSize * (m_nCurreuntOffest);
+	d3dSrvGPUDescriptorHandle.ptr += ::gnCbvSrvDescriptorIncrementSize * (m_nCurreuntOffest);
+	m_nCurreuntOffest++;
+
+	int nTextures = pTexture->GetTextures();
+	int nTextureType = pTexture->GetTextureType();
+
+	ID3D12Resource* pShaderResource = pTexture->GetTexture(0);
+	D3D12_RESOURCE_DESC d3dResourceDesc = pShaderResource->GetDesc();
+	D3D12_SHADER_RESOURCE_VIEW_DESC d3dShaderResourceViewDesc = GetShaderResourceViewDesc(d3dResourceDesc, nTextureType);
+	pd3dDevice->CreateShaderResourceView(pShaderResource, &d3dShaderResourceViewDesc, d3dSrvCPUDescriptorHandle);
+
+	pTexture->SetRootArgument(index, (true) ? (nRootParameterStartIndex) : nRootParameterStartIndex, d3dSrvGPUDescriptorHandle);
+}
+
 void CShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 }

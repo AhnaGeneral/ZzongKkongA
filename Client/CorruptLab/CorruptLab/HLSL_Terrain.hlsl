@@ -325,16 +325,15 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
 	{
-		float DepthWValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
-		depthValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).r * DepthWValue;
+		//float DepthWValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
+		depthValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord);
 
 		// 빛의 깊이를 계산합니다.
 		lightDepthValue = input.LightViewPosition.z / input.LightViewPosition.w;
 
 		// lightDepthValue에서 바이어스를 뺍니다.
 		lightDepthValue = lightDepthValue - bias;
-
-		output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+		output.color = depthValue;
 	}
 
 	return output;
