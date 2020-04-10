@@ -96,7 +96,6 @@ float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera
 		float fSpecularFactor = 0.0f;
 		vToLight /= fDistance;
 		float fDiffuseFactor = dot(vToLight, vNormal);
-
 		if (fDiffuseFactor > 0.0f)
 		{
 				float3 vHalf = normalize(vToCamera + vToLight);

@@ -318,22 +318,35 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	float2 projectTexCoord;
 	float lightDepthValue;
 	float depthValue;
-	float bias = 0.001f;
+	float bias = 0.02f;
 
 	projectTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
 	projectTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
-
 	if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
 	{
-		//float DepthWValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
-		depthValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord);
+		output.color.r = input.LightViewPosition.w/ 500;
+		//float DepthWValue = gtxtShadowCameraTexture.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
+		depthValue = gtxtShadowCameraTexture.Sample(gSamplerClamp, projectTexCoord).r;
 
 		// 빛의 깊이를 계산합니다.
 		lightDepthValue = input.LightViewPosition.z / input.LightViewPosition.w;
 
 		// lightDepthValue에서 바이어스를 뺍니다.
 		lightDepthValue = lightDepthValue - bias;
-		output.color = depthValue;
+
+		if (lightDepthValue < depthValue) 
+		{
+			input.color = float4(1,1,1,1);
+		}
+	}
+
+	if (input.positionW.y < 20.f)
+	{
+		float fAlpha = (20.f - input.positionW.y) / 10.f;
+		output.color.w -= fAlpha;
+		output.depth.w == fAlpha;
+		output.normal.w -= fAlpha;
+		//discard;
 	}
 
 	return output;
