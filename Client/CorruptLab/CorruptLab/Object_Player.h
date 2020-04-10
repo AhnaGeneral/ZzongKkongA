@@ -39,20 +39,7 @@ protected:
 	CGameObject          * m_pRightHand = NULL;
 	int					   m_nRightHandIndex = 25;
 
-//GameContents
-
-	int				m_iMaxHP = 100;
-	int				m_iCurrentHP = 100;
-	int				m_iAtt = 20;
-
-///
 public:
-
-//GameContents
-	void GetDamaage(int iDamage); 
-	void GetFullHP() { m_iCurrentHP = m_iMaxHP;}
-///
-
 
 	CCollisionBox* m_pHandCollision;
 	CCollisionBox* m_pBodyCollision;
@@ -71,7 +58,7 @@ public:
 	void SetMaxVelocityY(float fMaxVelocity) { m_fMaxVelocityY = fMaxVelocity; }
 	void SetVelocity(const XMFLOAT3& xmf3Velocity) { m_xmf3Velocity = xmf3Velocity; }
 	void SetPosition(const XMFLOAT3& xmf3Position) { Move(XMFLOAT3(xmf3Position.x - m_xmf3Position.x, xmf3Position.y - m_xmf3Position.y, xmf3Position.z - m_xmf3Position.z), false); }
-
+	
 	virtual void UpdateCollisionBoxes(XMFLOAT4X4* world = NULL);
 
 	const XMFLOAT3& GetVelocity() const { return(m_xmf3Velocity); }

@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "Object.h"
 #include "Shader.h"
-#include "Material.h"
 #include "Animation.h"
 #include "Shader_CollisionBox.h"
 //#include ""
