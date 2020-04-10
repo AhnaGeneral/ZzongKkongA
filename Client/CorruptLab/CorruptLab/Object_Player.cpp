@@ -409,3 +409,9 @@ CPlayerCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapse
 
 	return(m_pCamera);
 }
+
+void CPlayer::GetDamaage(int iDamage)
+{
+	m_iCurrentHP -= iDamage;
+	if (m_iCurrentHP <= 0) m_iCurrentHP = 0;
+}

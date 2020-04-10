@@ -20,3 +20,12 @@ bool CCollisionMgr::StaticCollisionCheck()
 	}
 	return false;
 }
+
+void CCollisionMgr::MonsterAttackCheck(int iDamaege, CCollisionBox box)
+{
+	CCollisionBox* playerBodybox = m_pPlayer->m_pBodyCollision;
+	if (box.boundingBox.Intersects(playerBodybox->boundingBox))
+		m_pPlayer->GetDamaage(iDamaege);
+
+}
+
