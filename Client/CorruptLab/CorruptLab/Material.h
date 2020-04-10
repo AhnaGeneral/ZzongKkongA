@@ -1,5 +1,4 @@
-#ifndef  __MATERIAL_H__
-#define  __MATERIAL_H__
+#pragma once
 
 #define RESOURCE_TEXTURE2D			0x01
 #define RESOURCE_TEXTURE2D_ARRAY	0x02
@@ -171,5 +170,3 @@ public:
 
 	virtual void ReleaseUploadBuffers();
 };
-
-#endif // ! __MATERIAL_H__
