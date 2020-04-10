@@ -36,12 +36,12 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<
 
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
-	output.fTessEdges[0] = 3.0f;
-	output.fTessEdges[1] = 3.0f;
-	output.fTessEdges[2] = 3.0f;
-	output.fTessEdges[3] = 3.0f;
-	output.fTessInsides[0] = 3.0f;
-	output.fTessInsides[1] = 3.0f;
+	output.fTessEdges[0]   = 10.0f;
+	output.fTessEdges[1]   = 10.0f;
+	output.fTessEdges[2]   = 10.0f;
+	output.fTessEdges[3]   = 10.0f;
+	output.fTessInsides[0] = 10.0f;
+	output.fTessInsides[1] = 10.0f;
 
 	return(output);
 }

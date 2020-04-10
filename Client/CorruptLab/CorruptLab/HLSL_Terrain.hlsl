@@ -86,7 +86,9 @@ struct DS_TERRAIN_TESSELLATION_OUTPUT
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
 	float4 posj : TEXCOORD2;
+
 	float4 LightViewPosition : TEXCOORD3;
+	//float4 shadowProject : TEXCOORD4; 
 
 };
 
@@ -158,15 +160,21 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 
 	// 일정한 격자로 보고 싶을 때 
 
-	output.fTessEdges[0] = 3.0f;
-	output.fTessEdges[1] = 3.0f;
-	output.fTessEdges[2] = 3.0f;
-	output.fTessEdges[3] = 3.0f;
-	output.fTessInsides[0] = 3.0f;
-	output.fTessInsides[1] = 3.0f;
+	output.fTessEdges[0] = 10.0f;
+	output.fTessEdges[1] = 10.0f;
+	output.fTessEdges[2] = 10.0f;
+	output.fTessEdges[3] = 10.0f;
+	output.fTessInsides[0] = 10.0f;
+	output.fTessInsides[1] = 10.0f;
 
 	return(output);
 }
+
+static matrix gmtxProjectToTexture =
+{ 0.5f, 0.0f, 0.0f, 0.0f,
+  0.0f,-0.5f, 0.0f, 0.0f,
+  0.0f, 0.0f, 1.0f, 0.0f,
+  0.5f, 0.5f, 0.0f, 1.0f };
 
 [domain("quad")]
 [earlydepthstencil]
@@ -207,8 +215,9 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	output.positionW = mul(float4(position, 1.0f), gmtxGameObject);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
 	//shadow
-	output.LightViewPosition = mul(mul(float4(output.positionW, 1.0f), shadowgmtxView), shadowgmtxProjection);
 
+	matrix shadowProject = mul(mul(shadowgmtxView, shadowgmtxProjection), gmtxProjectToTexture);
+	output.LightViewPosition = mul(float4(output.positionW, 1.0f), shadowProject);
 	
 	output.posj = output.position ;
 
@@ -309,7 +318,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	output.normal = float4(vNormal, 1.0f);
 
-	output.depth = float4(input.posj.z/input.posj.w, input.posj.w/300.0f, 0, 1);
+	output.depth = float4(input.posj.z/input.posj.w, input.posj.w/ 300.0f, 0, 1);
 
 	output.color = cColor;
 
@@ -318,27 +327,37 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	float2 projectTexCoord;
 	float lightDepthValue;
 	float depthValue;
-	float bias = 0.02f;
+	float bias = 0.00001f;
 
-	projectTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
-	projectTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
-	if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
+	input.LightViewPosition.xyz /= input.LightViewPosition.w; 
+	
+	//projectTexCoord.x = input.LightViewPosition.x; 
+	//projectTexCoord.y = -input.LightViewPosition.y;
+	depthValue = gtxtShadowCameraTexture.Sample(gSamplerClamp, input.LightViewPosition.xy).r;
+
+	if (input.LightViewPosition.z > (depthValue + bias))
 	{
-		output.color.r = input.LightViewPosition.w/ 500;
-		//float DepthWValue = gtxtShadowCameraTexture.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
-		depthValue = gtxtShadowCameraTexture.Sample(gSamplerClamp, projectTexCoord).r;
-
-		// 빛의 깊이를 계산합니다.
-		lightDepthValue = input.LightViewPosition.z / input.LightViewPosition.w;
-
-		// lightDepthValue에서 바이어스를 뺍니다.
-		lightDepthValue = lightDepthValue - bias;
-
-		if (lightDepthValue < depthValue) 
-		{
-			input.color = float4(1,1,1,1);
-		}
+		output.color = float4(1, 1, 1, 1);
 	}
+	//projectTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
+	//projectTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
+	//if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
+	//{
+	//	output.color.r = input.LightViewPosition.w/ 500;
+	//	//float DepthWValue = gtxtShadowCameraTexture.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
+	//	depthValue = gtxtShadowCameraTexture.Sample(gSamplerClamp, projectTexCoord).r;
+
+	//	// 빛의 깊이를 계산합니다.
+	//	lightDepthValue = input.LightViewPosition.z / input.LightViewPosition.w;
+
+	//	// lightDepthValue에서 바이어스를 뺍니다.
+	//	lightDepthValue = lightDepthValue - bias;
+
+	//	if (lightDepthValue < depthValue) 
+	//	{
+	//		input.color = float4(1,1,1,1);
+	//	}
+	//}
 
 	if (input.positionW.y < 20.f)
 	{

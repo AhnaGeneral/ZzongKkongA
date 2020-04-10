@@ -610,7 +610,7 @@ void CGameFramework::BuildObjects()
 	m_pScene->PlaceObjectsFromFile(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), m_pd3dCommandList);
 
 	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
-	pAirplanePlayer->SetPosition(XMFLOAT3(450.0f, 100.0f, 130.0f)); 
+	pAirplanePlayer->SetPosition(XMFLOAT3(464.0f, 15.0f, 354.0f)); 
 	//pAirplanePlayer->SetPosition(XMFLOAT3(0.0f, 100.0f, 0.0f));
 	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
 
