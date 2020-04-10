@@ -32,22 +32,22 @@ D3D12_INPUT_LAYOUT_DESC CStandardShader::CreateInputLayout()
 
 D3D12_SHADER_BYTECODE CStandardShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSLighting", "vs_5_1", ppd3dShaderBlob));
+	return(CShader::CompileShaderFromFile(L"HLSL_Standard.hlsl", "VSLighting", "vs_5_1", ppd3dShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CStandardShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSTexturedLightingToMultipleRTs", "ps_5_1", ppd3dShaderBlob));
+	return(CShader::CompileShaderFromFile(L"HLSL_Standard.hlsl", "PSTexturedLightingToMultipleRTs", "ps_5_1", ppd3dShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CStandardShader::CreateShadowVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSStandardShadow", "vs_5_1", ppd3dShaderBlob));
+	return(CShader::CompileShaderFromFile(L"HLSL_ShadowStandard.hlsl", "VSStandardShadow", "vs_5_1", ppd3dShaderBlob));
 }
 
 D3D12_SHADER_BYTECODE CStandardShader::CreateShadowPixelShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "PSStandardShadow", "ps_5_1", ppd3dShaderBlob));
+	return(CShader::CompileShaderFromFile(L"HLSL_ShadowStandard.hlsl", "PSStandardShadow", "ps_5_1", ppd3dShaderBlob));
 }
 D3D12_BLEND_DESC CStandardShader::CreateBlendState()
 {
@@ -168,12 +168,12 @@ D3D12_INPUT_LAYOUT_DESC CSkinnedAnimationShader::CreateInputLayout()
 
 D3D12_SHADER_BYTECODE CSkinnedAnimationShader::CreateShadowVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSSkinnedShadow", "vs_5_1", ppd3dShaderBlob));
+	return(CShader::CompileShaderFromFile(L"HLSL_ShadowStandard.hlsl", "VSSkinnedShadow", "vs_5_1", ppd3dShaderBlob));
 
 }
 
 D3D12_SHADER_BYTECODE CSkinnedAnimationShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"Shaders.hlsl", "VSSkinnedAnimationStandard", "vs_5_1", ppd3dShaderBlob));
+	return(CShader::CompileShaderFromFile(L"HLSL_Standard.hlsl", "VSSkinnedAnimationStandard", "vs_5_1", ppd3dShaderBlob));
 }
 

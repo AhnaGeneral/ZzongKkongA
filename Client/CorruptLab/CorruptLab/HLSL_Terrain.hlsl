@@ -1,6 +1,5 @@
 #include "Shaders.hlsl"
 
-
 struct VS_TERRAIN_INPUT
 {
 	float3 position : POSITION;
@@ -18,9 +17,6 @@ struct VS_TERRAIN_OUTPUT
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
 	float4 posj : TEXCOORD2;
-	//float4 TextureNormal : TEXCOORD3;
-	//float4 TextureTangent : TEXCOORD4;
-	//float4 TextureBiTangent : TEXCOORD5;
 };
 
 VS_TERRAIN_OUTPUT VSTerrain(VS_TERRAIN_INPUT input)
@@ -29,23 +25,6 @@ VS_TERRAIN_OUTPUT VSTerrain(VS_TERRAIN_INPUT input)
 
 	output.color = input.color;
 	output.position = input.position;
-
-	//output.TextureNormal    = float3(0.0f, 1.0f, 0.0f);
-	//output.TextureTangent   = float3 (1.0f, 0.0f, 0.0f);
-	//output.TextureBiTangent = float3 (0.0f, 1.0f, -1.0f);
-
-	//worldnormal = mul(input.normal, (float3x3)gmtxGameObject);
-	//output.normal = normalize(worldnormal);
-
-	//float3 tmptanget = cross(input.normal, float3(0.0f, 1.0f, 0.0f)); 
-	//worldtanget = mul(tmptanget, (float3x3)gmtxGameObject);
-	//output.tangent = normalize(worldtanget);
-
-	//float3 tmpbitanget = cross(input.normal, tmptanget);
-	//worldbitanget = mul(tmpbitanget, (float3x3)gmtxGameObject);
-
-	//output.bitanget = normalize(worldbitanget);
-	
 	output.normal = input.normal; 
 
 	output.uv0 = input.uv0;
@@ -78,18 +57,14 @@ struct DS_TERRAIN_TESSELLATION_OUTPUT
 	float4 position : SV_POSITION;
 	float3 positionW : POSITION;
 	float4 color : COLOR;
-	
 	float3 normal : NORMAL;
 	float3 tangent : TANGET;
 	float3 bitanget : BITANGENT;
-
 	float2 uv0 : TEXCOORD0;
 	float2 uv1 : TEXCOORD1;
 	float4 posj : TEXCOORD2;
-
 	float4 LightViewPosition : TEXCOORD3;
-	//float4 shadowProject : TEXCOORD4; 
-
+	float4 LightPosition : TEXCOORD4; 
 };
 
 void BernsteinCoeffcient5x5(float t, out float fBernstein[5])
@@ -128,10 +103,6 @@ HS_TERRAIN_TESSELLATION_OUTPUT HSTerrainTessellation(InputPatch<VS_TERRAIN_OUTPU
 	output.uv0 = input[i].uv0;
 	output.uv1 = input[i].uv1;
 	output.normal = input[i].normal; 
-
-	//output.tangent = input[i].tangent;
-	//output.bitanget = input[i].bitanget;
-
 	output.posj = input[i].posj;
 
 	return(output);
@@ -159,7 +130,6 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 	//output.fTessInsides[1] = fTessFactor;
 
 	// 일정한 격자로 보고 싶을 때 
-
 	output.fTessEdges[0] = 10.0f;
 	output.fTessEdges[1] = 10.0f;
 	output.fTessEdges[2] = 10.0f;
@@ -210,15 +180,17 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, gmtxView), gmtxProjection);
 	matrix mtxShadowViewProjection = mul(mul(gmtxGameObject, shadowgmtxView), shadowgmtxProjection);
-	//matrix
 	
 	output.positionW = mul(float4(position, 1.0f), gmtxGameObject);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
-	//shadow
 
+	//shadow
 	matrix shadowProject = mul(mul(shadowgmtxView, shadowgmtxProjection), gmtxProjectToTexture);
+	matrix shadowLightPosition = mul(shadowgmtxView, shadowgmtxProjection);
+
 	output.LightViewPosition = mul(float4(output.positionW, 1.0f), shadowProject);
-	
+	output.LightPosition = mul(float4(output.positionW, 1.0f), shadowLightPosition); 
+
 	output.posj = output.position ;
 
 	return(output);
@@ -330,43 +302,23 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	float bias = 0.00001f;
 
 	input.LightViewPosition.xyz /= input.LightViewPosition.w; 
-	
-	//projectTexCoord.x = input.LightViewPosition.x; 
-	//projectTexCoord.y = -input.LightViewPosition.y;
+
 	depthValue = gtxtShadowCameraTexture.Sample(gSamplerClamp, input.LightViewPosition.xy).r;
 
 	if (input.LightViewPosition.z > (depthValue + bias))
 	{
 		output.color = float4(1, 1, 1, 1);
 	}
-	//projectTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
-	//projectTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
-	//if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
-	//{
-	//	output.color.r = input.LightViewPosition.w/ 500;
-	//	//float DepthWValue = gtxtShadowCameraTexture.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
-	//	depthValue = gtxtShadowCameraTexture.Sample(gSamplerClamp, projectTexCoord).r;
-
-	//	// 빛의 깊이를 계산합니다.
-	//	lightDepthValue = input.LightViewPosition.z / input.LightViewPosition.w;
-
-	//	// lightDepthValue에서 바이어스를 뺍니다.
-	//	lightDepthValue = lightDepthValue - bias;
-
-	//	if (lightDepthValue < depthValue) 
-	//	{
-	//		input.color = float4(1,1,1,1);
-	//	}
-	//}
-
 	if (input.positionW.y < 20.f)
 	{
 		float fAlpha = (20.f - input.positionW.y) / 10.f;
 		output.color.w -= fAlpha;
 		output.depth.w == fAlpha;
 		output.normal.w -= fAlpha;
-		//discard;
 	}
+
+	input.LightPosition.xyz /= input.LightPosition.w;
+	output.ShadowCamera = input.LightPosition;
 
 	return output;
 }

@@ -22,31 +22,26 @@ public:
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) = 0;
 	virtual void ReleaseObjects() = 0;
 
-	ID3D12RootSignature* m_pd3dGraphicsRootSignature = NULL;
-
 	virtual ID3D12RootSignature* CreateGraphicsRootSignature(ID3D12Device* pd3dDevice) = 0;
 	ID3D12RootSignature* GetGraphicsRootSignature() { return(m_pd3dGraphicsRootSignature); }
-	void SetGraphicsRootSignature(ID3D12GraphicsCommandList* pd3dCommandList) { pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature); }
+	void SetGraphicsRootSignature(ID3D12GraphicsCommandList* pd3dCommandList) 
+	{ pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature); }
 
 	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) = 0;
 	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) = 0;
+	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd) = 0;
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) = 0;
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList) = 0;
 	virtual void ReleaseShaderVariables() = 0;
+	virtual void ReleaseUploadBuffers() = 0;
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL) = 0;
 	virtual void Update(float fTimeElapsed) = 0;
 
-	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd) = 0;
-
-	virtual void ReleaseUploadBuffers() = 0;
-
-	CCamera* m_pShadowCamera = NULL;
-	CTexture* m_pShadowMap = NULL; 
-
 protected:
-	float m_fElapsedTime;
+	ID3D12RootSignature       * m_pd3dGraphicsRootSignature = NULL;
+	float                       m_fElapsedTime;
 };
 
 class CMonster;
@@ -54,15 +49,16 @@ class CMonster;
 class CGameScene : public CScene
 {
 public:
-	CPlayer              * m_pPlayer = NULL;
+	CPlayer                   * m_pPlayer = NULL;
+						      
+	CHeightMapTerrain         * m_pTerrain = NULL;
+	CSkyBox                   * m_pSkyBox = NULL;
+	CCloudGSShader            * m_pCloudGSShader = NULL;
+	CUI                       * m_pUIObj = NULL;
 
-	CHeightMapTerrain    * m_pTerrain = NULL;
-	CSkyBox              * m_pSkyBox = NULL;
-	CCloudGSShader       * m_pCloudGSShader = NULL;
-	CUI                  * m_pUIObj = NULL;
-	CObjectNosie         * m_pNoiseObject = NULL;
-	CObjectFog           * m_pCObjectFog = NULL;
-	CObjectWater         * m_pCObjectWater = NULL; 
+	CObjectNosie              * m_pNoiseObject = NULL;
+	CObjectFog                * m_pCObjectFog = NULL;
+	CObjectWater              * m_pCObjectWater = NULL; 
 
 
 public:
@@ -109,5 +105,9 @@ private: // 배치되는 오브젝트들
 	int						m_nMonsterTypeNum; // 몬스터 종류 개수
 	list<CGameObject*>**	m_pStaticObjLists; // list<CGameObject*>*의 배열
 	list<CMonster*>**		m_pMonsterLists;
+
+public:
+	CCamera               * m_pShadowCamera = NULL;
+	CTexture              * m_pShadowMap = NULL;
 
 };

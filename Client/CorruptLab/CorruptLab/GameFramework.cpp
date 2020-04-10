@@ -17,7 +17,6 @@ CGameFramework::CGameFramework()
 	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
 		m_ppd3dLightMapRenderTargetBuffers[i] = NULL;
 
-
 	for (int i = 0; i < m_nSwapChainBuffers; i++)
 		m_ppd3dSwapChainBackBuffers[i] = NULL;
 
@@ -53,7 +52,6 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 {
 	m_hInstance = hInstance;
 	m_hWnd = hMainWnd;
-
 
 	CreateDirect3DDevice();
 	CreateCommandQueueAndList();
@@ -180,7 +178,9 @@ void CGameFramework::CreateDirect3DDevice()
 	d3dMsaaQualityLevels.SampleCount = 4;
 	d3dMsaaQualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
 	d3dMsaaQualityLevels.NumQualityLevels = 0;
-	hResult = m_pd3dDevice->CheckFeatureSupport(D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS, &d3dMsaaQualityLevels, sizeof(D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS));
+	hResult = m_pd3dDevice->CheckFeatureSupport(D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS,
+		&d3dMsaaQualityLevels, sizeof(D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS));
+
 	m_nMsaa4xQualityLevels = d3dMsaaQualityLevels.NumQualityLevels;
 	m_bMsaa4xEnable = (m_nMsaa4xQualityLevels > 1) ? true : false;
 
@@ -293,27 +293,32 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	m_pd3dOffScreenRenderTargetBufferCPUHandles[0] = d3dRtvCPUDescriptorHandle;
-	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(0), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[0]);
+	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(0), &d3dRenderTargetViewDesc,
+		m_pd3dOffScreenRenderTargetBufferCPUHandles[0]);
 	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 
 
 	m_pd3dOffScreenRenderTargetBufferCPUHandles[1] = d3dRtvCPUDescriptorHandle;
-	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(1), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[1]);
+	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(1), &d3dRenderTargetViewDesc,
+		m_pd3dOffScreenRenderTargetBufferCPUHandles[1]);
 	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 	d3dRenderTargetViewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
 	m_pd3dOffScreenRenderTargetBufferCPUHandles[2] = d3dRtvCPUDescriptorHandle;
-	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(2), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[2]);
+	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(2), &d3dRenderTargetViewDesc,
+		m_pd3dOffScreenRenderTargetBufferCPUHandles[2]);
 	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 
 	d3dRenderTargetViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 	m_pd3dOffScreenRenderTargetBufferCPUHandles[3] = d3dRtvCPUDescriptorHandle;
-	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(3), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[3]);
+	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(3), &d3dRenderTargetViewDesc,
+		m_pd3dOffScreenRenderTargetBufferCPUHandles[3]);
 	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 
 	m_pd3dOffScreenRenderTargetBufferCPUHandles[4] = d3dRtvCPUDescriptorHandle;
-	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(4), &d3dRenderTargetViewDesc, m_pd3dOffScreenRenderTargetBufferCPUHandles[4]);
+	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(4), &d3dRenderTargetViewDesc,
+		m_pd3dOffScreenRenderTargetBufferCPUHandles[4]);
 	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 
 	m_pPostProcessingShader = new CPostProcessingByLaplacianShader();
@@ -324,7 +329,7 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
-	m_TestTexture = pTextureForPostProcessing;
+	m_pFinalTexture = pTextureForPostProcessing;
 }
 
 void CGameFramework::CreateLightRenderTargetViews()
@@ -359,7 +364,7 @@ void CGameFramework::CreateLightRenderTargetViews()
 	m_pLightProcessingShader = new CLightTarget();
 	m_pLightProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
 	m_pLightProcessingShader->CreateShader(m_pd3dDevice, m_pLightProcessingShader->GetGraphicsRootSignature());
-	m_pLightProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_TestTexture);
+	m_pLightProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pFinalTexture);
 
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL, pLightMap, NULL);
 

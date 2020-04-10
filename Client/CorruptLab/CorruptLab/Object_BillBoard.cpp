@@ -22,8 +22,6 @@ CSkyBox::CSkyBox(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComman
 
 	SetShader(pSkyBoxShader);
 	m_ppMaterials[0]->SetTexture(pSkyBoxTexture);
-
-	//SetCbvGPUDescriptorHandle(pSkyBoxShader->GetGPUCbvDescriptorStartHandle());
 }
 
 CSkyBox::~CSkyBox()

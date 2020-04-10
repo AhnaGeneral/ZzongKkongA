@@ -329,10 +329,10 @@ CSunCamera::CSunCamera()
 	XMFLOAT3 xmf3Look = Vector3::Normalize(XMFLOAT3(-0.1f, -0.07f, 0.2f));
 	XMFLOAT3 xmf3Right = Vector3::Normalize(XMFLOAT3(0.2f, -9.0f, 0.2f));
 	XMFLOAT3 xmf3Up = Vector3::Normalize(XMFLOAT3(-0.06f, 1.0f, 0.02f));
-	m_xmf3Position = XMFLOAT3(500.0f, 95.0f,130.0f);
+	//m_xmf3Position = XMFLOAT3(500.0f, 95.0f,130.0f);
 
 	SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
-	GenerateViewMatrix(XMFLOAT3(450.f,50.f,130.f), xmf3Look, xmf3Up);
+	GenerateViewMatrix(XMFLOAT3(450.f,70.f,130.f), xmf3Look, xmf3Up);
 	GenerateProjectionMatrix(1.f,600.0f, ASPECT_RATIO, 60.0f);
 	SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 

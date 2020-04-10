@@ -32,9 +32,6 @@
     <Filter Include="04.Shader\02.Shader_Terrain">
       <UniqueIdentifier>{24ec661f-f3b0-45db-96e6-53ac762211f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04.Shader\01.Shader_MRT">
-      <UniqueIdentifier>{52df1ef2-5e2f-4118-946c-59a321440c69}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04.Shader\00.Shader_Basic">
       <UniqueIdentifier>{402721e2-cb61-46e3-a725-9bbfacfb845a}</UniqueIdentifier>
     </Filter>
@@ -97,6 +94,18 @@
     </Filter>
     <Filter Include="05.Component\Material">
       <UniqueIdentifier>{9d2e9600-f99c-4a3e-b012-f25da7b542e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Shader\01.Shader_MultiRender">
+      <UniqueIdentifier>{52df1ef2-5e2f-4118-946c-59a321440c69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Shader\01.Shader_MultiRender\00.FinalMRT">
+      <UniqueIdentifier>{7dc0f709-33d6-4c1e-bd36-4783bafff0fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Shader\01.Shader_MultiRender\01.LightMRT">
+      <UniqueIdentifier>{e5a62020-3f78-4847-9432-d6db25c4279c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Shader\01.Shader_MultiRender\02.ShadowMRT">
+      <UniqueIdentifier>{dd52bcb4-1cfd-4bc8-9fb2-6d58d30990b8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -169,9 +178,6 @@
     <ClInclude Include="Shader.h">
       <Filter>04.Shader\00.Shader_Basic</Filter>
     </ClInclude>
-    <ClInclude Include="Shader_MRT.h">
-      <Filter>04.Shader\01.Shader_MRT</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh_Skinned.h">
       <Filter>05.Component\GameObject\01.Mesh</Filter>
     </ClInclude>
@@ -190,9 +196,6 @@
     <ClInclude Include="Object_UI.h">
       <Filter>05.Component\GameObject\05.UI</Filter>
     </ClInclude>
-    <ClInclude Include="Shader_LightMRT.h">
-      <Filter>04.Shader\01.Shader_MRT</Filter>
-    </ClInclude>
     <ClInclude Include="Shader_CollisionBox.h">
       <Filter>04.Shader\06.Shader_Collision</Filter>
     </ClInclude>
@@ -208,14 +211,20 @@
     <ClInclude Include="Object_StaticObj.h">
       <Filter>05.Component\GameObject\00.Object\00.StaticObject</Filter>
     </ClInclude>
-    <ClInclude Include="CShader_ShadowMRT.h">
-      <Filter>04.Shader\01.Shader_MRT</Filter>
-    </ClInclude>
     <ClInclude Include="Monster.h">
       <Filter>05.Component\GameObject\08.Monster</Filter>
     </ClInclude>
     <ClInclude Include="Monster_Yangmal.h">
       <Filter>05.Component\GameObject\08.Monster\00.Yangmal</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader_LightMRT.h">
+      <Filter>04.Shader\01.Shader_MultiRender\01.LightMRT</Filter>
+    </ClInclude>
+    <ClInclude Include="CShader_ShadowMRT.h">
+      <Filter>04.Shader\01.Shader_MultiRender\02.ShadowMRT</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader_MRT.h">
+      <Filter>04.Shader\01.Shader_MultiRender\00.FinalMRT</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -273,9 +282,6 @@
     <ClCompile Include="Shader.cpp">
       <Filter>04.Shader\00.Shader_Basic</Filter>
     </ClCompile>
-    <ClCompile Include="Shader_MRT.cpp">
-      <Filter>04.Shader\01.Shader_MRT</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh_Skinned.cpp">
       <Filter>05.Component\GameObject\01.Mesh</Filter>
     </ClCompile>
@@ -294,9 +300,6 @@
     <ClCompile Include="Object_UI.cpp">
       <Filter>05.Component\GameObject\05.UI</Filter>
     </ClCompile>
-    <ClCompile Include="Shader_LightMRT.cpp">
-      <Filter>04.Shader\01.Shader_MRT</Filter>
-    </ClCompile>
     <ClCompile Include="Shader_CollisionBox.cpp">
       <Filter>04.Shader\06.Shader_Collision</Filter>
     </ClCompile>
@@ -312,14 +315,20 @@
     <ClCompile Include="Object_StaticObj.cpp">
       <Filter>05.Component\GameObject\00.Object\00.StaticObject</Filter>
     </ClCompile>
-    <ClCompile Include="CShader_ShadowMRT.cpp">
-      <Filter>04.Shader\01.Shader_MRT</Filter>
-    </ClCompile>
     <ClCompile Include="Monster.cpp">
       <Filter>05.Component\GameObject\08.Monster</Filter>
     </ClCompile>
     <ClCompile Include="Monster_Yangmal.cpp">
       <Filter>05.Component\GameObject\08.Monster\00.Yangmal</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_LightMRT.cpp">
+      <Filter>04.Shader\01.Shader_MultiRender\01.LightMRT</Filter>
+    </ClCompile>
+    <ClCompile Include="CShader_ShadowMRT.cpp">
+      <Filter>04.Shader\01.Shader_MultiRender\02.ShadowMRT</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_MRT.cpp">
+      <Filter>04.Shader\01.Shader_MultiRender\00.FinalMRT</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -339,9 +348,6 @@
     <FxCompile Include="Shaders.hlsl">
       <Filter>04.Shader\00.Shader_Basic</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL_MRT.hlsl">
-      <Filter>04.Shader\01.Shader_MRT</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL_Terrain.hlsl">
       <Filter>04.Shader\02.Shader_Terrain</Filter>
     </FxCompile>
@@ -350,9 +356,6 @@
     </FxCompile>
     <FxCompile Include="HLSL_SkyBox.hlsl">
       <Filter>04.Shader\04.Shader_SkyBox</Filter>
-    </FxCompile>
-    <FxCompile Include="HLSL_LightTarget.hlsl">
-      <Filter>04.Shader\01.Shader_MRT</Filter>
     </FxCompile>
     <FxCompile Include="HLSL_Collision.hlsl">
       <Filter>04.Shader\06.Shader_Collision</Filter>
@@ -369,11 +372,20 @@
     <FxCompile Include="HLSL_waters.hlsl">
       <Filter>04.Shader\07.Shader_Water</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL_ShadowTarget.hlsl">
-      <Filter>04.Shader\01.Shader_MRT</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL_TerrainShadow.hlsl">
       <Filter>04.Shader\02.Shader_Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_LightTarget.hlsl">
+      <Filter>04.Shader\01.Shader_MultiRender\01.LightMRT</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_MRT.hlsl">
+      <Filter>04.Shader\01.Shader_MultiRender\00.FinalMRT</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_Standard.hlsl">
+      <Filter>04.Shader\05.Shader_Standard</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_ShadowStandard.hlsl">
+      <Filter>04.Shader\05.Shader_Standard</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -48,7 +48,6 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pCObjectWater->Rotate(90.0f, 0.0f, 0.0f);
 	m_pCObjectWater->GenerateShaderDistortionBuffer();
 
-
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -62,7 +61,6 @@ void CGameScene::ReleaseObjects()
 	if (m_pSkyBox)        delete m_pSkyBox;
 	if (m_pTerrain)       delete m_pTerrain;
 	if (m_pCloudGSShader) delete m_pCloudGSShader;
-
 
 	if (m_pStaticObjLists) // 오브젝트 Release
 	{
@@ -89,8 +87,6 @@ void CGameScene::ReleaseObjects()
 			m_pMonsterLists[i]->clear();
 		}
 	}
-
-	//delete m_pMonsterLists;
 }
 
 void CGameScene::ReleaseUploadBuffers()
@@ -288,10 +284,10 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dRootParameters[ROOT_PARAMETER_SHADOWCAMERA].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[ROOT_PARAMETER_SHADOWCAMERA].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-	pd3dRootParameters[18].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	pd3dRootParameters[18].DescriptorTable.NumDescriptorRanges = 1;
-	pd3dRootParameters[18].DescriptorTable.pDescriptorRanges = &pd3dShadowMapTex;
-	pd3dRootParameters[18].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	pd3dRootParameters[ROOT_PARAMETER_SHADOWMAP].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_SHADOWMAP].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_SHADOWMAP].DescriptorTable.pDescriptorRanges = &pd3dShadowMapTex;
+	pd3dRootParameters[ROOT_PARAMETER_SHADOWMAP].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));

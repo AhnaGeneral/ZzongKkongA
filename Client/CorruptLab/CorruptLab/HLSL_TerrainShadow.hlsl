@@ -107,3 +107,4 @@ PS_SHADOW_OUTPUT PSTerrainShadow(DS_TERRAIN_TESSELLATION_SHADOW_OUTPUT input)
 	//output.ShadowTex = float4(input.position.z  , 0, 0.0f, 1.0f);
 	return output;
 }
+

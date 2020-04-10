@@ -37,7 +37,6 @@ public:
 	void ReleaseObjects();
 
 	void ProcessInput();
-	void AnimateObjects();
 	void FrameAdvance();
 
 	void WaitForGpuComplete();
@@ -102,9 +101,11 @@ private:
      POINT							    m_ptOldCursorPos;
 
 	_TCHAR							    m_pszFrameRate[50];
+
 public:
-	CTexture                          * m_TestTexture = NULL;
-	//=============================================================
+	CTexture                          * m_pFinalTexture = NULL;
+	CTexture                          * m_pShadowMap = NULL;
+
 private:
 	CPostProcessingShader             * m_pPostProcessingShader = NULL;
 	CLightTarget                      * m_pLightProcessingShader = NULL; 
@@ -113,9 +114,5 @@ private:
 	CGameScene                        * m_pScene = NULL;
 	CPlayer                           * m_pPlayer = NULL;
 	CCamera                           * m_pCamera = NULL;
-
-	CTexture                          * m_pShadowMap = NULL;
-
-	//=============================================================
 };
 
