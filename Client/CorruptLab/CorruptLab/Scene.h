@@ -56,8 +56,10 @@ public:
 	CCloudGSShader            * m_pCloudGSShader = NULL;
 	CUI                       * m_pUIObj = NULL;
 
-	CObjectNosie              * m_pNoiseObject = NULL;
-	CObjectFog                * m_pCObjectFog = NULL;
+
+
+	//CObjectNosie              * m_pNoiseObject = NULL;
+	//CObjectFog                * m_pCObjectFog = NULL;
 	CObjectWater              * m_pCObjectWater = NULL; 
 
 
@@ -105,6 +107,7 @@ private: // 배치되는 오브젝트들
 	int						m_nMonsterTypeNum; // 몬스터 종류 개수
 	list<CGameObject*>**	m_pStaticObjLists; // list<CGameObject*>*의 배열
 	list<CMonster*>**		m_pMonsterLists;
+	CSoftParticleShader		* m_pSoftParticleShader = NULL;
 
 public:
 	CCamera               * m_pShadowCamera = NULL;

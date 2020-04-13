@@ -64,14 +64,23 @@ public:
 	CSoftParticleShader() {}
 	~CSoftParticleShader() {}
 
-	CObjectNosie** m_pObjects = NULL;
-	int			                     m_nInstances = 0;
+	CTexture* m_pSceneDepthTextures = NULL;
 
+	CObjectNosie					** m_pFireObjects = NULL;
+	int			                     m_nFire = 0;
+
+	CObjectNosie**					m_pFogObjects = NULL;
+	int			                     m_nFog = 0;
 
 	virtual D3D12_BLEND_DESC         CreateBlendState();
 	virtual D3D12_INPUT_LAYOUT_DESC  CreateInputLayout();
 	virtual D3D12_SHADER_BYTECODE    CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
 	virtual D3D12_SHADER_BYTECODE    CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+
+
+	D3D12_SHADER_BYTECODE    CreateFogVertexShader(ID3DBlob** ppd3dShaderBlob);
+	D3D12_SHADER_BYTECODE    CreateFogPixelShader(ID3DBlob** ppd3dShaderBlob);
+
 	virtual D3D12_RASTERIZER_DESC    CreateRasterizerState();
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets = 1);
 

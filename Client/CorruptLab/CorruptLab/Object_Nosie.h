@@ -26,8 +26,11 @@ protected:
 	CB_NOISEBUFFERTYPE      m_cbvNoisebuffer;
 
 public:
+
+	CObjectNosie() {}
+
 	CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
-		ID3D12RootSignature* pd3dGraphicsRootSignature, void* SceneDepthTexture =NULL);
+		ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader =NULL);
 	virtual ~CObjectNosie();
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
@@ -42,7 +45,8 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 
 	virtual void NoiseSetTexture(ID3D12Device* pd3dDevice,
-		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
+		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader);
+
 public:
 	ID3D12Resource* m_pd3dcbNoiseBuffer = NULL;
 	CB_NOISEBUFFERTYPE* m_pcbMappedNoiseBuffers = NULL;
@@ -58,11 +62,11 @@ class CObjectFog : public CObjectNosie
 {
 public:
 	CObjectFog(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
-		ID3D12RootSignature* pd3dGraphicsRootSignature, void* SceneDepthTexture = NULL);
+		ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader = NULL);
 	virtual ~CObjectFog();
 
 	virtual void NoiseSetTexture(ID3D12Device* pd3dDevice, 
-		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
+		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader);
 	virtual void GenerateShaderDistortionBuffer();
 
 };

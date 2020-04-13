@@ -33,13 +33,9 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
 	m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 
-	m_pNoiseObject = new CObjectNosie(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex);  //object
-	m_pNoiseObject->SetPosition(XMFLOAT3(450.0f, 55.0f, 198.0f));
-	m_pNoiseObject->GenerateShaderDistortionBuffer();
 
-	m_pCObjectFog = new CObjectFog(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex);  //object
-	m_pCObjectFog->SetPosition(XMFLOAT3(322, 60.0f, 137.0f));
-	m_pCObjectFog->GenerateShaderDistortionBuffer();
+	m_pSoftParticleShader = new CSoftParticleShader();
+	m_pSoftParticleShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex);
 
 
 	m_pCObjectWater = new CObjectWater(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature); //object
@@ -87,6 +83,8 @@ void CGameScene::ReleaseObjects()
 			m_pMonsterLists[i]->clear();
 		}
 	}
+
+	if (m_pSoftParticleShader) m_pSoftParticleShader->Release();
 }
 
 void CGameScene::ReleaseUploadBuffers()
@@ -360,7 +358,6 @@ void CGameScene::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandLis
 {
 	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
 	m_pShadowCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_SHADOWCAMERA);
-	m_pCObjectFog->UpdateShaderVariables(pd3dCommandList); 
 }
 
 void CGameScene::ReleaseShaderVariables()
@@ -500,9 +497,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	if (m_pSkyBox)       m_pSkyBox->Render(pd3dCommandList, pCamera);
 
-	if (m_pNoiseObject)  m_pNoiseObject->Render(pd3dCommandList, pCamera);
-
-	if (m_pCObjectFog)   m_pCObjectFog->Render(pd3dCommandList, pCamera);
+	if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
 
 }
 

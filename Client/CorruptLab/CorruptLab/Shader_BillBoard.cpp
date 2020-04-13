@@ -314,50 +314,125 @@ D3D12_BLEND_DESC CSoftParticleShader::CreateBlendState()
 	return(d3dBlendDesc);
 }
 
+D3D12_SHADER_BYTECODE CSoftParticleShader::CreateFogVertexShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Fog.hlsl", "FogVertexShader", "vs_5_1", ppd3dShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CSoftParticleShader::CreateFogPixelShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Fog.hlsl", "FogPixelShader", "ps_5_1", ppd3dShaderBlob));
+}
+
 
 void CSoftParticleShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets)
 {
 
-	m_nPipelineStates = 1;
-	m_ppd3dPipelineStates = new ID3D12PipelineState * [0];
+	m_nPipelineStates = 2;
+	m_ppd3dPipelineStates = new ID3D12PipelineState * [m_nPipelineStates];
+	//FogPipeline
 
-	CShader::CreateShader(pd3dDevice, pd3dGraphicsRootSignature, nRenderTargets);
+	ID3DBlob* pd3dVertexShaderBlob = NULL, * pd3dPixelShaderBlob = NULL, * pd3dGeometryShaderBlob = NULL;
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC d3dPipelineStateDesc;
+	::ZeroMemory(&d3dPipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	d3dPipelineStateDesc.pRootSignature = pd3dGraphicsRootSignature;
+	d3dPipelineStateDesc.VS = CreateVertexShader(&pd3dVertexShaderBlob);
+	d3dPipelineStateDesc.PS = CreatePixelShader(&pd3dPixelShaderBlob);
+	d3dPipelineStateDesc.GS = CreateGeometryShader(&pd3dGeometryShaderBlob);
+	d3dPipelineStateDesc.RasterizerState = CreateRasterizerState();
+	d3dPipelineStateDesc.BlendState = CreateBlendState();
+	d3dPipelineStateDesc.DepthStencilState = CreateDepthStencilState();
+	d3dPipelineStateDesc.InputLayout = CreateInputLayout();
+	d3dPipelineStateDesc.SampleMask = UINT_MAX;
+	d3dPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	d3dPipelineStateDesc.NumRenderTargets = nRenderTargets;
+
+	for (UINT i = 0; i < nRenderTargets; i++)
+		d3dPipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	d3dPipelineStateDesc.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+	d3dPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	d3dPipelineStateDesc.SampleDesc.Count = 1;
+	d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+
+	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[0]);
+	
+	//-------------------------------------------------------------------------------
+
+	d3dPipelineStateDesc.VS = CreateFogVertexShader(&pd3dVertexShaderBlob);
+	d3dPipelineStateDesc.PS = CreateFogPixelShader(&pd3dPixelShaderBlob);
+
+	hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[1]);
+
+	if (pd3dVertexShaderBlob) pd3dVertexShaderBlob->Release();
+	if (pd3dPixelShaderBlob) pd3dPixelShaderBlob->Release();
+	if (pd3dGeometryShaderBlob) pd3dGeometryShaderBlob->Release();
+
+	if (d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] d3dPipelineStateDesc.InputLayout.pInputElementDescs;
+
+
+
 }
 
 void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext)
 {
-	CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 2);
-	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 4);
+	CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
+	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 8);
 
-	m_nInstances = 1;
-	m_pObjects = new CObjectNosie * [m_nInstances];
+	m_pSceneDepthTextures = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	m_pSceneDepthTextures->SetTexture(0, pContext);
+	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pSceneDepthTextures, ROOT_PARAMETER_SCENEDEPTHTEX, 0);
+	
+	m_nFog = 1;
+	m_pFogObjects = new CObjectNosie * [m_nFog];
 
-	CObjectNosie* pNoise = new CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, this);  //object
+	CObjectNosie* pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, this);  //object
+	pNoise->SetPosition(XMFLOAT3(400.0f, 55.0f, 198.0f));
+	pNoise->GenerateShaderDistortionBuffer();
+	m_pFogObjects[0] = pNoise;
+
+
+	m_nFire = 1;
+	m_pFireObjects = new CObjectNosie * [m_nFire];
+
+	pNoise = new CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, this);  //object
 	pNoise->SetPosition(XMFLOAT3(450.0f, 55.0f, 198.0f));
 	pNoise->GenerateShaderDistortionBuffer();
-	m_pObjects[0] = pNoise;
-
-	//pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);  //object
-	//pNoise->SetPosition(XMFLOAT3(400.0f, 55.0f, 198.0f));
-	//pNoise->GenerateShaderDistortionBuffer();
-	//m_pObjects[1] = pNoise;
+	m_pFireObjects[0] = pNoise;
 
 }
 
 void CSoftParticleShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
+	m_pSceneDepthTextures->UpdateShaderVariables(pd3dCommandList);
+
+	OnPrepareRender(pd3dCommandList, 1);
+
+	for (int i = 0; i < m_nFog; i++)
+		m_pFogObjects[i]->Render(pd3dCommandList, pCamera);
+
+
 	OnPrepareRender(pd3dCommandList);
-	for (int i = 0; i < m_nInstances; i++)
-	{
-		m_pObjects[i]->Render(pd3dCommandList, pCamera);
-	}
+
+	for (int i = 0; i < m_nFire; i++)
+		m_pFireObjects[i]->Render(pd3dCommandList, pCamera);
+
 }
 
 void CSoftParticleShader::ReleaseObjects()
 {
-	for (int i = 0; i < m_nInstances; i++)
+	for (int i = 0; i < m_nFire; i++)
 	{
-		m_pObjects[i]->Release();
+		m_pFireObjects[i]->Release();
 	}
-	delete[] m_pObjects;
+	delete[] m_pFireObjects;
+
+
+	for (int i = 0; i < m_nFog; i++)
+	{
+		m_pFogObjects[i]->Release();
+	}
+	delete[] m_pFogObjects;
 }

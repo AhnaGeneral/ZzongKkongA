@@ -3,18 +3,18 @@
 #include "Shader_Noise.h"
 #include "Mesh.h"
 
-CObjectNosie::CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* SceneDepthTexture)
+CObjectNosie::CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader)
 {
 	CTriangleRect* pNoise = new CTriangleRect(pd3dDevice, pd3dCommandList, 50.0f, 50.0f, 1.0f, 1.0f);
 	SetMesh(pNoise);
 
-	m_pSceneDepthTextures = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	//m_pSceneDepthTextures
-	m_pSceneDepthTextures->SetTexture(0, SceneDepthTexture);
+	//m_pSceneDepthTextures = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	////m_pSceneDepthTextures
+	//m_pSceneDepthTextures->SetTexture(0, SceneDepthTexture);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	NoiseSetTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	NoiseSetTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pShader);
 }
 
 CObjectNosie::~CObjectNosie()
@@ -159,7 +159,6 @@ void CObjectNosie::UpdateShaderNoiseBuffer(float Time, XMFLOAT3 scrollspeed, XMF
 
 void CObjectNosie::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
-	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera, 0);
 	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
 	// 2020 03 23 텍스처 여러개 불렀을 때 해결 방법
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
@@ -168,60 +167,45 @@ void CObjectNosie::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 		m_pMesh->Render(pd3dCommandList, 0);
 }
 
-void CObjectNosie::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+void CObjectNosie::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader)
 {
 	CTexture* pNoiseTexture = new CTexture(3, RESOURCE_TEXTURE2D, 0);
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/fire01.dds", 0);
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/alpha01.dds", 1);
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/noise01.dds", 2);
 
-	Shader_Noise* pNosieShader = new Shader_Noise();
-	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
-	pNosieShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	pNosieShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); // 힙이 달라서... OnPrepareRender
-	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARAMETER_NOISE_TEX, true);
-	SetShader(pNosieShader);
+	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARAMETER_NOISE_TEX, true);
+	m_ppMaterials = new CMaterial * [1];
+	m_ppMaterials[0] = new CMaterial(1);
 	m_ppMaterials[0]->SetTexture(pNoiseTexture);
 
 }
 
-
-CObjectFog::CObjectFog(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* SceneDepthTexture )
-	: CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature)
+CObjectFog::CObjectFog(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader)
+	//: CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature)
 {
-	D3D12_CLEAR_VALUE d3dClearValue = { DXGI_FORMAT_R8G8B8A8_UNORM, { 0.0f, 0.0f, 0.0f, 1.0f } };
 	CTriangleRect* pNoise = new CTriangleRect(pd3dDevice, pd3dCommandList, 50.0f, 50.0f, 1.0f, 1.0f);
-	m_pSceneDepthTextures = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	//m_pSceneDepthTextures
-	m_pSceneDepthTextures->SetTexture(0, SceneDepthTexture);
-	//m_pSceneDepthTextures = (CTexture*)SceneDepthTexture;
 	SetMesh(pNoise);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	NoiseSetTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	NoiseSetTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,pShader);
 }
 
 CObjectFog::~CObjectFog()
 {
 }
 
-void CObjectFog::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+void CObjectFog::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader)
 {
 	CTexture* pNoiseTexture = new CTexture(3, RESOURCE_TEXTURE2D, 0);
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Fog/Blur.dds", 0);
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Fog/Fog.dds", 1);
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Fog/Fog2.dds", 2);
 
-	Shader_FogNoise* pNosieShader = new Shader_FogNoise();
-	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
-	pNosieShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	pNosieShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 4); // 힙이 달라서... OnPrepareRender
-	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARAMETER_FOG_TEX, true);
-	//if (m_pSceneDepthTextures != NULL) 
-	//{
-	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pSceneDepthTextures, ROOT_PARAMETER_SCENEDEPTHTEX, 0);
-	//}
-	SetShader(pNosieShader);
+	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARAMETER_FOG_TEX, true);
+	m_ppMaterials = new CMaterial * [1];
+	m_ppMaterials[0] = new CMaterial(1);
 	m_ppMaterials[0]->SetTexture(pNoiseTexture);
+
 }
 
 void CObjectFog::GenerateShaderDistortionBuffer()
@@ -239,7 +223,7 @@ void CObjectFog::GenerateShaderDistortionBuffer()
 
 
 CObjectWater::CObjectWater(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
-	: CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature)
+	//: CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature)
 {
 	CTriangleRect* pNoise = new CTriangleRect(pd3dDevice, pd3dCommandList, 5.0f, 5.0f, 1.0f, 1.0f);
 	SetMesh(pNoise);
