@@ -65,6 +65,8 @@ public:
 	~CSoftParticleShader() {}
 
 	CTexture* m_pSceneDepthTextures = NULL;
+	CTexture* m_pFireNoiseTextures = NULL;
+	CTexture* m_pFogNoiseTextures = NULL;
 
 	CObjectNosie					** m_pFireObjects = NULL;
 	int			                     m_nFire = 0;
@@ -81,6 +83,7 @@ public:
 	D3D12_SHADER_BYTECODE    CreateFogVertexShader(ID3DBlob** ppd3dShaderBlob);
 	D3D12_SHADER_BYTECODE    CreateFogPixelShader(ID3DBlob** ppd3dShaderBlob);
 
+	void CreateNoiseTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
 	virtual D3D12_RASTERIZER_DESC    CreateRasterizerState();
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets = 1);
 

@@ -44,9 +44,6 @@ public:
 	virtual void GenerateShaderDistortionBuffer();
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 
-	virtual void NoiseSetTexture(ID3D12Device* pd3dDevice,
-		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader);
-
 public:
 	ID3D12Resource* m_pd3dcbNoiseBuffer = NULL;
 	CB_NOISEBUFFERTYPE* m_pcbMappedNoiseBuffers = NULL;
@@ -64,9 +61,6 @@ public:
 	CObjectFog(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
 		ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader = NULL);
 	virtual ~CObjectFog();
-
-	virtual void NoiseSetTexture(ID3D12Device* pd3dDevice, 
-		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader);
 	virtual void GenerateShaderDistortionBuffer();
 
 };

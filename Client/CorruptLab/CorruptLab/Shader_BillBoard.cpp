@@ -264,6 +264,25 @@ D3D12_INPUT_LAYOUT_DESC CSoftParticleShader::CreateInputLayout()
 	return(d3dInputLayoutDesc);
 }
 
+void CSoftParticleShader::CreateNoiseTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+{
+	m_pFireNoiseTextures = new CTexture(3, RESOURCE_TEXTURE2D, 0);
+	m_pFireNoiseTextures->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/fire01.dds", 0);
+	m_pFireNoiseTextures->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/alpha01.dds", 1);
+	m_pFireNoiseTextures->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/noise01.dds", 2);
+
+	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pFireNoiseTextures, ROOT_PARAMETER_NOISE_TEX, true);
+
+
+	m_pFogNoiseTextures = new CTexture(3, RESOURCE_TEXTURE2D, 0);
+	m_pFogNoiseTextures->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Fog/Blur.dds", 0);
+	m_pFogNoiseTextures->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Fog/Fog.dds", 1);
+	m_pFogNoiseTextures->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Fog/Fog2.dds", 2);
+
+	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pFogNoiseTextures, ROOT_PARAMETER_FOG_TEX, true);
+
+}
+
 D3D12_RASTERIZER_DESC CSoftParticleShader::CreateRasterizerState()
 {
 	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
@@ -393,7 +412,6 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	pNoise->GenerateShaderDistortionBuffer();
 	m_pFogObjects[0] = pNoise;
 
-
 	m_nFire = 1;
 	m_pFireObjects = new CObjectNosie * [m_nFire];
 
@@ -402,23 +420,28 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	pNoise->GenerateShaderDistortionBuffer();
 	m_pFireObjects[0] = pNoise;
 
+	CreateNoiseTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+
 }
 
 void CSoftParticleShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	m_pSceneDepthTextures->UpdateShaderVariables(pd3dCommandList);
 
-	OnPrepareRender(pd3dCommandList, 1);
 
-	for (int i = 0; i < m_nFog; i++)
-		m_pFogObjects[i]->Render(pd3dCommandList, pCamera);
-
+	m_pFireNoiseTextures->UpdateShaderVariable(pd3dCommandList, 0);
 
 	OnPrepareRender(pd3dCommandList);
 
 	for (int i = 0; i < m_nFire; i++)
 		m_pFireObjects[i]->Render(pd3dCommandList, pCamera);
 
+	OnPrepareRender(pd3dCommandList, 1);
+
+	m_pFogNoiseTextures->UpdateShaderVariable(pd3dCommandList, 0);
+
+	for (int i = 0; i < m_nFog; i++)
+		m_pFogObjects[i]->Render(pd3dCommandList, pCamera);
 }
 
 void CSoftParticleShader::ReleaseObjects()
