@@ -124,19 +124,19 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	projectTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
 	projectTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
 
-	if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
-	{
-		float DepthWValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
-		depthValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).r * DepthWValue;
+	//if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
+	//{
+	//	//float DepthWValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
+	//	//depthValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).r * DepthWValue;
 
-		// 빛의 깊이를 계산합니다.
-		lightDepthValue = input.LightViewPosition.z / input.LightViewPosition.w;
+	//	// 빛의 깊이를 계산합니다.
+	//	lightDepthValue = input.LightViewPosition.z / input.LightViewPosition.w;
 
-		// lightDepthValue에서 바이어스를 뺍니다.
-		lightDepthValue = lightDepthValue - bias;
+	//	// lightDepthValue에서 바이어스를 뺍니다.
+	//	lightDepthValue = lightDepthValue - bias;
 
-		output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
-	}
+	//	output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	//}
 
 	return output;
 }

@@ -45,7 +45,7 @@ SamplerState gSamplerClamp : register(s1);
 Texture2D gtxtScene : register(t1);  // 0  
 Texture2D gtxtNormal : register(t2); // 1
 Texture2D gtxtDepth : register(t3);  // 2 
-Texture2D gtxtShadowCameraViewDepth : register(t4); // 3
+//T4번이 빈다.
 
 Texture2D gtxtNonLightNoise : register(t5); // 4 
 
@@ -71,6 +71,8 @@ Texture2D gtxtAlpha01 : register(t17);
 Texture2D gtxtAlpha02 : register(t18);
 
 Texture2D gtxtWaterNormal : register(t19);
+Texture2D gtxtCopySunTex : register(t23); // 썬카메라를 새롭게 리소스 만들었어요
+
 
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {

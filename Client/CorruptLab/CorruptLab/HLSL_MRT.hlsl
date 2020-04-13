@@ -89,7 +89,7 @@ float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 	if (gnObjectID == 1)  cColor = gtxtScene.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 2)  cColor = gtxtDepth.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 3)  cColor = gtxtNonLightNoise.Sample(gSamplerState, input.uv);
-	if (gnObjectID == 4)  cColor = gtxtShadowCameraViewDepth.Sample(gSamplerState, input.uv);
+	if (gnObjectID == 4)  cColor = gtxtCopySunTex.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 5)  cColor = gtxtLight.Sample(gSamplerState, input.uv);
 	//if (gnObjectID == 6)  cColor = gtxtShadowCameraTexture.Sample(gSamplerState, input.uv);
 

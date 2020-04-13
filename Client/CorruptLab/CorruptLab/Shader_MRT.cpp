@@ -59,7 +59,7 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 
 	pd3dDescriptorRanges[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[2].NumDescriptors = 1;
-	pd3dDescriptorRanges[2].BaseShaderRegister = 21; //ShadowMap
+	pd3dDescriptorRanges[2].BaseShaderRegister = 23; //ShadowMap
 	pd3dDescriptorRanges[2].RegisterSpace = 0;
 	pd3dDescriptorRanges[2].OffsetInDescriptorsFromTableStart = 0;
 
@@ -205,7 +205,9 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	if (pShadowContext != NULL)
 	{
-		m_pShadowTexture = (CTexture*)pShadowContext;
+		m_pShadowTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+		m_pShadowTexture->SetTexture(0, ((CTexture*)pShadowContext)->GetTexture(0));
+		//D3D12_RESOURCE_DESC DD = m_pShadowTexture->GetTexture(0)->GetDesc();
 		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pShadowTexture, ROOT_PARAMETER_SHADOW_MRT, 0);
 	}
 
@@ -216,16 +218,16 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	
 	//---------------------------------------------------------------------------------
 	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH /11.f  , FRAME_BUFFER_HEIGHT/11.f, 0.0f, 1.0f);
-	m_nUI = 7;                                                           
+	m_nUI = 6;                                                           
 	UIObject = new CGameObject*[m_nUI]; 
 
 	for (int i = 0; i < m_nUI;)
 	{
-		int remainder = i % 5;
+		int reminder = i % 5;
 		int tmp = i / 5;
 		m_pCUIobj = new CUI(pd3dDevice, pd3dCommandList);
 		m_pCUIobj->SetMesh(mesh);
-		m_pCUIobj->Set2DPosition(-155.0f+(remainder *(70.0f)), 120.0f + (-tmp * 60));
+		m_pCUIobj->Set2DPosition(-155.0f+(reminder *(70.0f)), 120.0f + (-tmp * 60));
 		m_pCUIobj->SetObjectID(i); 
 		UIObject[i++] = m_pCUIobj; 
 	}
@@ -245,7 +247,7 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 
 	if (m_pTexture) m_pTexture->UpdateShaderVariables(pd3dCommandList);
 	if (m_pLightTexture) m_pLightTexture->UpdateShaderVariables(pd3dCommandList);
-	//if (m_pShadowTexture) m_pShadowTexture->UpdateShaderVariables(pd3dCommandList);
+	if (m_pShadowTexture) m_pShadowTexture->UpdateShaderVariables(pd3dCommandList);
 
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
