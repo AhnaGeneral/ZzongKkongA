@@ -27,7 +27,7 @@ protected:
 
 public:
 	CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
-		ID3D12RootSignature* pd3dGraphicsRootSignature);
+		ID3D12RootSignature* pd3dGraphicsRootSignature, void* SceneDepthTexture =NULL);
 	virtual ~CObjectNosie();
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
@@ -49,6 +49,8 @@ public:
 
 	ID3D12Resource* m_pd3dcbDistortionBuffer = NULL;
 	CB_DISTORTIONBUFFERTYPE* m_pcbMappdeDistortBuffers = NULL;
+
+	CTexture* m_pSceneDepthTextures = NULL; 
 };
 
 //CObjectFog ===========================================================================================================
@@ -56,7 +58,7 @@ class CObjectFog : public CObjectNosie
 {
 public:
 	CObjectFog(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
-		ID3D12RootSignature* pd3dGraphicsRootSignature);
+		ID3D12RootSignature* pd3dGraphicsRootSignature, void* SceneDepthTexture = NULL);
 	virtual ~CObjectFog();
 
 	virtual void NoiseSetTexture(ID3D12Device* pd3dDevice, 

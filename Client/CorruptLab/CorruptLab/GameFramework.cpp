@@ -326,6 +326,9 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pPostProcessingShader->GetGraphicsRootSignature(), 5);
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pTextureForPostProcessing, NULL, NULL);
 
+
+	m_pDepthTextue = (CTexture*)pTextureForPostProcessing->GetTexture(2);
+
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
@@ -607,6 +610,7 @@ void CGameFramework::BuildObjects()
 
 	m_pScene = new CGameScene();
 	m_pScene->m_pShadowMap = m_pShadowMap;
+	m_pScene->m_pDepthTex = m_pDepthTextue; 
 
 	m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 

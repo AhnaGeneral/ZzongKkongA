@@ -109,5 +109,6 @@ private: // 배치되는 오브젝트들
 public:
 	CCamera               * m_pShadowCamera = NULL;
 	CTexture              * m_pShadowMap = NULL;
+	CTexture              * m_pDepthTex = NULL;
 
 };

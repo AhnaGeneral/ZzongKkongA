@@ -105,6 +105,7 @@ private:
 public:
 	CTexture                          * m_pFinalTexture = NULL;
 	CTexture                          * m_pShadowMap = NULL;
+	CTexture                          * m_pDepthTextue = NULL; 
 
 private:
 	CPostProcessingShader             * m_pPostProcessingShader = NULL;

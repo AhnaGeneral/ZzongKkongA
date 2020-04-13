@@ -43,7 +43,10 @@ public:
 
 	void SetRootArgument(int nIndex, UINT nRootParameterIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dsrvGpuDescriptorHandle);
 	void SetSampler(int nIndex, D3D12_GPU_DESCRIPTOR_HANDLE d3dSamplerGpuDescriptorHandle);
-
+	void SetTexture(int nIndex, void* t_texture)
+	{
+		m_ppd3dTextures[nIndex] = (ID3D12Resource * )t_texture;
+	}
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, int nIndex);
 	void ReleaseShaderVariables();

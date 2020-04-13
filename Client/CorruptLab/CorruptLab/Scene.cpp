@@ -33,11 +33,11 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
 	m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 
-	m_pNoiseObject = new CObjectNosie(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);  //object
+	m_pNoiseObject = new CObjectNosie(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex);  //object
 	m_pNoiseObject->SetPosition(XMFLOAT3(450.0f, 55.0f, 198.0f));
 	m_pNoiseObject->GenerateShaderDistortionBuffer();
 
-	m_pCObjectFog = new CObjectFog(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);  //object
+	m_pCObjectFog = new CObjectFog(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex);  //object
 	m_pCObjectFog->SetPosition(XMFLOAT3(400.0f, 55.0f, 198.0f));
 	m_pCObjectFog->GenerateShaderDistortionBuffer();
 
@@ -190,8 +190,15 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dShadowMapTex.RegisterSpace = 0;
 	pd3dShadowMapTex.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+	D3D12_DESCRIPTOR_RANGE pd3dSceneDepthTex; // ( 50 ~ 62 ) onsstageterrain
+	pd3dSceneDepthTex.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dSceneDepthTex.NumDescriptors = 1;
+	pd3dSceneDepthTex.BaseShaderRegister = 22;
+	pd3dSceneDepthTex.RegisterSpace = 0;
+	pd3dSceneDepthTex.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[19];
+
+	D3D12_ROOT_PARAMETER pd3dRootParameters[20];
 
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].Descriptor.ShaderRegister = 1; //b1 : Camera
@@ -289,6 +296,11 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dRootParameters[ROOT_PARAMETER_SHADOWMAP].DescriptorTable.pDescriptorRanges = &pd3dShadowMapTex;
 	pd3dRootParameters[ROOT_PARAMETER_SHADOWMAP].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+	pd3dRootParameters[ROOT_PARAMETER_SCENEDEPTHTEX].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_SCENEDEPTHTEX].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_SCENEDEPTHTEX].DescriptorTable.pDescriptorRanges = &pd3dSceneDepthTex;
+	pd3dRootParameters[ROOT_PARAMETER_SCENEDEPTHTEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
 	d3dSamplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
@@ -348,6 +360,7 @@ void CGameScene::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandLis
 {
 	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
 	m_pShadowCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_SHADOWCAMERA);
+	m_pCObjectFog->UpdateShaderVariables(pd3dCommandList); 
 }
 
 void CGameScene::ReleaseShaderVariables()
