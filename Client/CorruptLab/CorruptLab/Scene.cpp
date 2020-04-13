@@ -38,7 +38,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pNoiseObject->GenerateShaderDistortionBuffer();
 
 	m_pCObjectFog = new CObjectFog(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex);  //object
-	m_pCObjectFog->SetPosition(XMFLOAT3(400.0f, 55.0f, 198.0f));
+	m_pCObjectFog->SetPosition(XMFLOAT3(322, 60.0f, 137.0f));
 	m_pCObjectFog->GenerateShaderDistortionBuffer();
 
 

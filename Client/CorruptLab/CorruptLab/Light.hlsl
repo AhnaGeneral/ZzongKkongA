@@ -167,11 +167,11 @@ float4 Lighting(float3 vPosition, float3 vNormal)
 				//cColor += BlinnPhong(gLights[i].m_cDiffuse, gLights[i].m_vDirection, vNormal, vToCamera);
 				cColor += DirectionalLight(i, vNormal, vToCamera);
 			}
-			else if (gLights[i].m_nType == POINT_LIGHT)
+		/*
+			else if (gLights[i].m_nType == SPOT_LIGHT)	else if (gLights[i].m_nType == POINT_LIGHT)
 			{
 				cColor += PointLight(i, vPosition, vNormal, vToCamera);
-			}
-			else if (gLights[i].m_nType == SPOT_LIGHT)
+			}*/
 			{
 				cColor += SpotLight(i, vPosition, vNormal, vToCamera);
 			}

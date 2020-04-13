@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Shader_BillBoard.h"
-
+#include "Object_Nosie.h"
 
 CSkyBoxShader::CSkyBoxShader()
 {
@@ -245,3 +245,119 @@ void CCloudGSShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature*
 	if (m_d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] m_d3dPipelineStateDesc.InputLayout.pInputElementDescs;
 }
 
+
+//=================================================
+
+
+D3D12_INPUT_LAYOUT_DESC CSoftParticleShader::CreateInputLayout()
+{
+	UINT nInputElementDescs = 2;
+	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
+
+	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+	pd3dInputElementDescs[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
+
+	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
+	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
+	d3dInputLayoutDesc.NumElements = nInputElementDescs;
+
+	return(d3dInputLayoutDesc);
+}
+
+D3D12_RASTERIZER_DESC CSoftParticleShader::CreateRasterizerState()
+{
+	D3D12_RASTERIZER_DESC d3dRasterizerDesc;
+	::ZeroMemory(&d3dRasterizerDesc, sizeof(D3D12_RASTERIZER_DESC));
+	d3dRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	d3dRasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	d3dRasterizerDesc.FrontCounterClockwise = FALSE;
+	d3dRasterizerDesc.DepthBias = 0;
+	d3dRasterizerDesc.DepthBiasClamp = 0.0f;
+	d3dRasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	d3dRasterizerDesc.DepthClipEnable = TRUE;
+	d3dRasterizerDesc.MultisampleEnable = FALSE;
+	d3dRasterizerDesc.AntialiasedLineEnable = FALSE;
+	d3dRasterizerDesc.ForcedSampleCount = 0;
+	d3dRasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+
+	return(d3dRasterizerDesc);
+}
+
+D3D12_SHADER_BYTECODE CSoftParticleShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Noise.hlsl", "NoiseVertexShader", "vs_5_1", ppd3dShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CSoftParticleShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Noise.hlsl", "NoisePixelShader", "ps_5_1", ppd3dShaderBlob));
+}
+
+
+D3D12_BLEND_DESC CSoftParticleShader::CreateBlendState()
+{
+	D3D12_BLEND_DESC d3dBlendDesc;
+	::ZeroMemory(&d3dBlendDesc, sizeof(D3D12_BLEND_DESC));
+	d3dBlendDesc.AlphaToCoverageEnable = FALSE;
+	d3dBlendDesc.IndependentBlendEnable = FALSE;
+	d3dBlendDesc.RenderTarget[0].BlendEnable = TRUE;
+	d3dBlendDesc.RenderTarget[0].LogicOpEnable = FALSE;
+	d3dBlendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	d3dBlendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	d3dBlendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	d3dBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	d3dBlendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	d3dBlendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	d3dBlendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
+	d3dBlendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+	return(d3dBlendDesc);
+}
+
+
+void CSoftParticleShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets)
+{
+
+	m_nPipelineStates = 1;
+	m_ppd3dPipelineStates = new ID3D12PipelineState * [0];
+
+	CShader::CreateShader(pd3dDevice, pd3dGraphicsRootSignature, nRenderTargets);
+}
+
+void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext)
+{
+	CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 2);
+	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 4);
+
+	m_nInstances = 1;
+	m_pObjects = new CObjectNosie * [m_nInstances];
+
+	CObjectNosie* pNoise = new CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, this);  //object
+	pNoise->SetPosition(XMFLOAT3(450.0f, 55.0f, 198.0f));
+	pNoise->GenerateShaderDistortionBuffer();
+	m_pObjects[0] = pNoise;
+
+	//pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);  //object
+	//pNoise->SetPosition(XMFLOAT3(400.0f, 55.0f, 198.0f));
+	//pNoise->GenerateShaderDistortionBuffer();
+	//m_pObjects[1] = pNoise;
+
+}
+
+void CSoftParticleShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	OnPrepareRender(pd3dCommandList);
+	for (int i = 0; i < m_nInstances; i++)
+	{
+		m_pObjects[i]->Render(pd3dCommandList, pCamera);
+	}
+}
+
+void CSoftParticleShader::ReleaseObjects()
+{
+	for (int i = 0; i < m_nInstances; i++)
+	{
+		m_pObjects[i]->Release();
+	}
+	delete[] m_pObjects;
+}
