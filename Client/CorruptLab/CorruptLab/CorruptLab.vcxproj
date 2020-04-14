@@ -178,6 +178,7 @@
     <ClInclude Include="Object_UI.h" />
     <ClInclude Include="Shader_CollisionBox.h" />
     <ClInclude Include="Shader_LightMRT.h" />
+    <ClInclude Include="Shader_Minimap.h" />
     <ClInclude Include="Shader_Noise.h" />
     <ClInclude Include="Shader_Standard.h" />
     <ClInclude Include="Shader_Terrain.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="Shader_BillBoard.cpp" />
     <ClCompile Include="Shader_CollisionBox.cpp" />
     <ClCompile Include="Shader_LightMRT.cpp" />
+    <ClCompile Include="Shader_Minimap.cpp" />
     <ClCompile Include="Shader_MRT.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Object_Player.cpp" />
@@ -275,6 +277,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="HLSL_TerrainShadow.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="HLSL_UI.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

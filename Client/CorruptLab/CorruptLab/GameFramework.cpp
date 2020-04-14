@@ -324,7 +324,7 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	m_pPostProcessingShader = new CPostProcessingByLaplacianShader();
 	m_pPostProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
 	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pPostProcessingShader->GetGraphicsRootSignature(), 5);
-	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, pTextureForPostProcessing, NULL, NULL);
+	m_pPostProcessingShader->SetRenderTargets(m_pd3dDevice, m_pd3dCommandList, pTextureForPostProcessing, NULL, NULL);
 
 
 	m_pDepthTextue = (CTexture*)pTextureForPostProcessing->GetTexture(2);
@@ -369,7 +369,7 @@ void CGameFramework::CreateLightRenderTargetViews()
 	m_pLightProcessingShader->CreateShader(m_pd3dDevice, m_pLightProcessingShader->GetGraphicsRootSignature());
 	m_pLightProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, m_pFinalTexture);
 
-	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL, pLightMap, NULL);
+	m_pPostProcessingShader->SetRenderTargets(m_pd3dDevice, m_pd3dCommandList, NULL, pLightMap, NULL);
 
 	m_pd3dCommandList->Close();
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
@@ -410,7 +410,7 @@ void CGameFramework::CreateShadowRenderTargetViews()
 	m_pShadowShader->CreateGraphicsRootSignature(m_pd3dDevice);
 	//m_pShadowShader->CreateShader(m_pd3dDevice, m_pShadowShader->GetGraphicsRootSignature());
 
-	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList, NULL, NULL, pShadowMap);
+	m_pPostProcessingShader->SetRenderTargets(m_pd3dDevice, m_pd3dCommandList, NULL, NULL, pShadowMap);
 
 	m_pShadowMap = pShadowMap;
 	m_pd3dCommandList->Close();
@@ -618,10 +618,16 @@ void CGameFramework::BuildObjects()
 
 	m_pScene->PlaceObjectsFromFile(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), m_pd3dCommandList);
 
+	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
+
 	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
 	pAirplanePlayer->SetPosition(XMFLOAT3(464.0f, 15.0f, 354.0f)); 
 	//pAirplanePlayer->SetPosition(XMFLOAT3(0.0f, 100.0f, 0.0f));
 	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
+
+	m_pPostProcessingShader->GetMinimap()->SetPlayerPosition(m_pPlayer->GetPositionPointer());
+	m_pPostProcessingShader->GetMinimap()->CreateShaderVariables(m_pd3dDevice, m_pd3dCommandList);
 
 	m_pCamera = m_pPlayer->GetCamera();
 

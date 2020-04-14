@@ -63,7 +63,7 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dDescriptorRanges[2].RegisterSpace = 0;
 	pd3dDescriptorRanges[2].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[5];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[6];
 
 	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].DescriptorTable.NumDescriptorRanges = 1;
@@ -90,7 +90,12 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dRootParameters[ROOT_PARAMETER_SHADOW_MRT].DescriptorTable.NumDescriptorRanges = 1;
 	pd3dRootParameters[ROOT_PARAMETER_SHADOW_MRT].DescriptorTable.pDescriptorRanges = &pd3dDescriptorRanges[2]; //LightTexture
 	pd3dRootParameters[ROOT_PARAMETER_SHADOW_MRT].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	
+
+	pd3dRootParameters[ROOT_PARAMETER_PLAYER_POS].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[ROOT_PARAMETER_PLAYER_POS].Descriptor.ShaderRegister = 6; //playerPosition
+	pd3dRootParameters[ROOT_PARAMETER_PLAYER_POS].Descriptor.RegisterSpace = 0;
+	pd3dRootParameters[ROOT_PARAMETER_PLAYER_POS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc;
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
 	d3dSamplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
@@ -187,7 +192,7 @@ void CPostProcessingShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSig
 	if (d3dPipelineStateDesc.InputLayout.pInputElementDescs) delete[] d3dPipelineStateDesc.InputLayout.pInputElementDescs;
 }
 
-void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext, void* pLightContext ,void* pShadowContext)
+void CPostProcessingShader::SetRenderTargets(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext, void* pLightContext ,void* pShadowContext)
 {
 	if (pContext != NULL)
 	{
@@ -207,36 +212,49 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	{
 		m_pShadowTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 		m_pShadowTexture->SetTexture(0, ((CTexture*)pShadowContext)->GetTexture(0));
-		//D3D12_RESOURCE_DESC DD = m_pShadowTexture->GetTexture(0)->GetDesc();
 		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pShadowTexture, ROOT_PARAMETER_SHADOW_MRT, 0);
 	}
 
-	m_xmf4x4OrthoView =
-		Matrix4x4::LookAtLH(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)); 
-	// position이 왜 0 이여야 하지 ? // 모두 수직이여야 하는거 아닌가 ? 
-	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH / 2.0f, FRAME_BUFFER_HEIGHT / 2.0f , 0.0f, 1.0f);                                   
-	
-	//---------------------------------------------------------------------------------
-	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH /11.f  , FRAME_BUFFER_HEIGHT/11.f, 0.0f, 1.0f);
-	m_nUI = 6;                                                           
-	UIObject = new CGameObject*[m_nUI]; 
 
-	for (int i = 0; i < m_nUI;)
+}
+
+void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{	
+
+	m_xmf4x4OrthoView =
+		Matrix4x4::LookAtLH(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+	// position이 왜 0 이여야 하지 ? // 모두 수직이여야 하는거 아닌가 ? 
+	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
+
+	//---------------------------------------------------------------------------------
+	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 5.5f, FRAME_BUFFER_HEIGHT / 5.5f, 0.0f, 1.0f);
+	m_nRenderTargetUI = 7;
+	m_pRenderTargetUIs = new CGameObject * [m_nRenderTargetUI];
+
+	for (int i = 0; i < m_nRenderTargetUI;)
 	{
-		int reminder = i % 5;
+		int remainder = i % 5;
 		int tmp = i / 5;
-		m_pCUIobj = new CUI(pd3dDevice, pd3dCommandList);
-		m_pCUIobj->SetMesh(mesh);
-		m_pCUIobj->Set2DPosition(-155.0f+(reminder *(70.0f)), 120.0f + (-tmp * 60));
-		m_pCUIobj->SetObjectID(i); 
-		UIObject[i++] = m_pCUIobj; 
+		pRenderTargetUI = new CUI(pd3dDevice, pd3dCommandList);
+		pRenderTargetUI->SetMesh(mesh);
+		pRenderTargetUI->Set2DPosition(-310.0f + (remainder * 140.0f), 240.0f + (-tmp * 120));
+		pRenderTargetUI->SetObjectID(i);
+		m_pRenderTargetUIs[i++] = pRenderTargetUI;
 	}
+
+	m_pMinimap = new CMinimap(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 150, 150, 0.0f, 1.0f);
+	m_pMinimap->SetMesh(mesh);
+	m_pMinimap->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 75, (-FRAME_BUFFER_HEIGHT / 2) + 75);
+
+	//----------------------------------------------------------------------------------
 }
 
 void CPostProcessingShader::ReleaseObjects()
 {
 	if (m_pTexture) m_pTexture->Release();
 	if (m_pLightTexture) m_pLightTexture->Release();
+	if (m_pMinimap) m_pMinimap->Release();
 }
 
 void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
@@ -256,14 +274,15 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 	
 	if (UIcontrol)
 	{
-		for (int i = 0; i < m_nUI; i++)
+		for (int i = 0; i < m_nRenderTargetUI; i++)
 		{
-			if (UIObject[i])
+			if (m_pRenderTargetUIs[i])
 			{
-				UIObject[i]->Render(pd3dCommandList, 0);
+				m_pRenderTargetUIs[i]->Render(pd3dCommandList, 0);
 			}
 		}
 	}
+	if (m_pMinimap) m_pMinimap->Render(pd3dCommandList, pCamera);
 }
 
 void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)

@@ -39,6 +39,8 @@
 #define ROOT_PARAMETER_LIGHT_MRT			3
 #define ROOT_PARAMETER_SHADOW_MRT           4
 
+//ForMinimap
+#define ROOT_PARAMETER_PLAYER_POS			5
 
 //[ LightMRT ]=====================================
 // 0.   ROOT_PARAMETER_CDN_MRT              0

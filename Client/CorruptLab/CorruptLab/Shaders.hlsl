@@ -37,6 +37,12 @@ cbuffer cbShadowCameraInfo : register(b5) // 그림자 카메라
 	float3		    shadowgvCameraPosition : packoffset(c16);
 };
 
+
+cbuffer cbPlayerPosition : register(b6) // 플레이어 위치
+{
+	float3			gf3PlayerPos :packoffset(c0);
+}
+
 #include "Light.hlsl"
 
 SamplerState gSamplerState : register(s0);

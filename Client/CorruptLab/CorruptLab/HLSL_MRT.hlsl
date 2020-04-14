@@ -95,6 +95,5 @@ float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 
 	//gtxtShadowCameraTexture
 
-
 	return cColor;
 }

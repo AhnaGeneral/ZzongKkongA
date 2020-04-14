@@ -226,3 +226,14 @@ void CObjectWater::GenerateShaderDistortionBuffer()
 	m_cbvNoisebuffer.padding = 0.0;
 	m_cbvNoisebuffer.scales = XMFLOAT3(1.0f, 20.0f, 25.0f);
 }
+
+void CObjectWater::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera, 0);
+	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
+
+	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
+
+	if (m_pMesh)
+		m_pMesh->Render(pd3dCommandList, 0);
+}

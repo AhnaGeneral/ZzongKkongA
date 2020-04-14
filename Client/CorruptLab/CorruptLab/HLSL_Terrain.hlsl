@@ -309,9 +309,10 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	{
 		output.color = float4(1, 1, 1, 1);
 	}
-	if (input.positionW.y < 20.f)
+
+	if (input.positionW.y < 30.f)
 	{
-		float fAlpha = (20.f - input.positionW.y) / 10.f;
+		float fAlpha = (30.f - input.positionW.y) / 15.f;
 		output.color.w -= fAlpha;
 		output.depth.w == fAlpha;
 		output.normal.w -= fAlpha;
