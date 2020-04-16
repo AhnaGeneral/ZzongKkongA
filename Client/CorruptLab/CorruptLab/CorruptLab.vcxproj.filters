@@ -113,6 +113,9 @@
     <Filter Include="04.Shader\09.Shader_UI\00.Shader_Minimap">
       <UniqueIdentifier>{444de70d-49ac-4632-853e-4decf7127c66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Shader\10.Shader_Lobby">
+      <UniqueIdentifier>{b7190c54-b327-4ade-9ea6-0a5c63f36ca2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -235,6 +238,12 @@
     <ClInclude Include="Shader_Minimap.h">
       <Filter>04.Shader\09.Shader_UI\00.Shader_Minimap</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_Lobby.h">
+      <Filter>04.Shader\10.Shader_Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyScene.h">
+      <Filter>02.Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -342,6 +351,12 @@
     <ClCompile Include="Shader_Minimap.cpp">
       <Filter>04.Shader\09.Shader_UI\00.Shader_Minimap</Filter>
     </ClCompile>
+    <ClCompile Include="Shader_Lobby.cpp">
+      <Filter>04.Shader\10.Shader_Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>02.Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">
@@ -401,6 +416,9 @@
     </FxCompile>
     <FxCompile Include="HLSL_UI.hlsl">
       <Filter>04.Shader\09.Shader_UI</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_Lobby.hlsl">
+      <Filter>04.Shader\10.Shader_Lobby</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

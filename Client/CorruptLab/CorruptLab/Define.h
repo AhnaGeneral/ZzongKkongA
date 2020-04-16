@@ -48,6 +48,8 @@
 #define ROOT_PARAMETER_CAMERA2				2 
 
 
+//[LobbyScene]=====================================
+#define ROOT_PARAMETER_LOBBYTEX             0
 
 
 //[ Object Type ]====================================

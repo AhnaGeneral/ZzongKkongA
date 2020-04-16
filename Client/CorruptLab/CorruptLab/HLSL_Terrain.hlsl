@@ -1,3 +1,4 @@
+
 #include "Shaders.hlsl"
 
 struct VS_TERRAIN_INPUT
@@ -243,50 +244,30 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	float3 vNormal = normalize(t_gtxtStage1TerrainNM.rgb * 2.0f - 1.0f); 
-	float3 vNormalDryGround_NM = normalize(t_gtxtDryGround_NM.rgb * 2.0f - 1.0f);
-	float3 vNormalDryStone_NM = normalize(t_gtxtDryStone_NM.rgb * 2.0f - 1.0f);
-	float3 vNormalStone1_NM = normalize(t_gtxtStone1_NM.rgb * 2.0f - 1.0f);
 
+
+	float3 vNormalDryGround_NM = normalize(t_gtxtDryGround_NM.rgb * 2.0f - 1.0f);
+	float3 vNormalDryStone_NM  = normalize(t_gtxtDryStone_NM.rgb * 2.0f - 1.0f);
+	float3 vNormalStone1_NM    = normalize(t_gtxtStone1_NM.rgb * 2.0f - 1.0f);
+
+
+	vNormalDryGround_NM = normalize(mul(vNormalDryGround_NM, TBN));
+	vNormalDryStone_NM = normalize(mul(vNormalDryStone_NM, TBN));
+	vNormalStone1_NM = normalize(mul(vNormalStone1_NM, TBN));
 
 	vNormal = normalize(mul(vNormal, TBN));
 
-	//cColor = (t_gtxtStage1SplatAlpha1.r * t_gtxtDryGround_BC) +
-	//	     (t_gtxtStage1SplatAlpha1.g * t_gtxtDryStone_BC) +
-	//	(t_gtxtStage1SplatAlpha1.b * t_gtxtGrass2_BC) +
-	//	(t_gtxtStage1SplatAlpha1.a * t_gtxtGrass1_BC) +
-	//	(t_gtxtStage1SplatAlpha2.r * t_gtxtStone1_BC) +
-	//	(t_gtxtStage1SplatAlpha2.g * t_gtxtSand1) +
-	//	(t_gtxtStage1SplatAlpha2.b * t_gtxtSand1);
+	//float3 SplatNormal = t_gtxtStage1SplatAlpha1.r
+	float4 Splat01 = (t_gtxtStage1SplatAlpha1.r * t_gtxtDryGround_BC) +
+					 (t_gtxtStage1SplatAlpha1.g * t_gtxtDryStone_BC) +
+		             (t_gtxtStage1SplatAlpha1.b * t_gtxtGrass2_BC);
+		             (t_gtxtStage1SplatAlpha1.a * t_gtxtGrass1_BC);
 
-	//if (t_gtxtStage1SplatAlpha1.r)
-	//{
-	//	cColor = t_gtxtDryGround_BC;
-	//}v
-	//if (t_gtxtStage1SplatAlpha1.g)
-	//{
-		cColor = t_gtxtGrass2_BC;
-	//}
-	//if (t_gtxtStage1SplatAlpha1.b)
-	//{
-	//	cColor = t_gtxtGrass2_BC;
-	//}
-	//if (t_gtxtStage1SplatAlpha1.a)
-	//{
-	//	cColor = t_gtxtGrass1_BC;
-	//}
+	float4 Splat02 = (t_gtxtStage1SplatAlpha2.r * t_gtxtStone1_BC) +
+		             (t_gtxtStage1SplatAlpha2.g * t_gtxtSand1) +
+		             (t_gtxtStage1SplatAlpha2.b * t_gtxtGrass2_BC);
 
-	//if (t_gtxtStage1SplatAlpha2.r)
-	//{
-	//	cColor = t_gtxtStone1_BC;
-	//}
-	//if (t_gtxtStage1SplatAlpha2.g)
-	//{
-	//	cColor = t_gtxtSand1;
-	//}
-	//if (t_gtxtStage1SplatAlpha2.b)
-	//{
-	//	cColor = t_gtxtSand1;
-	//}
+	cColor = Splat01+ Splat02;
 
 	output.normal = float4(vNormal, 1.0f);
 
@@ -307,7 +288,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	if (input.LightViewPosition.z > (depthValue + bias))
 	{
-		output.color = float4(1, 1, 1, 1);
+		output.color = float4 (output.color.rgb * 0.5, 1.0f) ;
 	}
 
 	if (input.positionW.y < 30.f)

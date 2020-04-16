@@ -4,6 +4,7 @@
 #include "Shader_MRT.h"
 #include "Object_Player.h"
 #include "Scene.h"
+#include "LobbyScene.h"
 #include "Shader_LightMRT.h"
 #include "CShader_ShadowMRT.h"
 
@@ -112,7 +113,9 @@ private:
 	CLightTarget                      * m_pLightProcessingShader = NULL; 
 	Shader_ShadowMRT                  * m_pShadowShader = NULL; 
 
-	CGameScene                        * m_pScene = NULL;
+	CScene                            * m_pScene[2];
+
+
 	CPlayer                           * m_pPlayer = NULL;
 	CCamera                           * m_pCamera = NULL;
 };

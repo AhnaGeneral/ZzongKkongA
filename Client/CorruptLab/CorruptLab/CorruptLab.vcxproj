@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="Monster_Yangmal.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -178,6 +179,7 @@
     <ClInclude Include="Object_UI.h" />
     <ClInclude Include="Shader_CollisionBox.h" />
     <ClInclude Include="Shader_LightMRT.h" />
+    <ClInclude Include="Shader_Lobby.h" />
     <ClInclude Include="Shader_Minimap.h" />
     <ClInclude Include="Shader_Noise.h" />
     <ClInclude Include="Shader_Standard.h" />
@@ -197,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="Monster_Yangmal.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -226,6 +229,7 @@
     <ClCompile Include="Shader_BillBoard.cpp" />
     <ClCompile Include="Shader_CollisionBox.cpp" />
     <ClCompile Include="Shader_LightMRT.cpp" />
+    <ClCompile Include="Shader_Lobby.cpp" />
     <ClCompile Include="Shader_Minimap.cpp" />
     <ClCompile Include="Shader_MRT.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -256,6 +260,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="HLSL_LightTarget.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="HLSL_Lobby.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="HLSL_MRT.hlsl">

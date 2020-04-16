@@ -38,7 +38,7 @@ CGameFramework::CGameFramework()
 	m_nWndClientWidth = FRAME_BUFFER_WIDTH;
 	m_nWndClientHeight = FRAME_BUFFER_HEIGHT;
 
-	m_pScene = NULL;
+	m_pScene[0] = m_pScene[1]= NULL;
 	m_pPlayer = NULL;
 
 	_tcscpy_s(m_pszFrameRate, _T("LabProject ("));
@@ -489,13 +489,13 @@ void CGameFramework::ChangeSwapChainState()
 
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+	if (m_pScene[1]) m_pScene[1]->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 	
 }
 
 void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	if (m_pScene[1]) m_pScene[1]->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
 	case WM_KEYUP:
@@ -608,23 +608,26 @@ void CGameFramework::BuildObjects()
 {
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-	m_pScene = new CGameScene();
-	m_pScene->m_pShadowMap = m_pShadowMap;
-	m_pScene->m_pDepthTex = m_pDepthTextue; 
+	m_pScene[0] = new CLobbyScene();
+	if (m_pScene[0]) m_pScene[0]->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-	m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+	m_pScene[1] = new CGameScene();
+	dynamic_cast<CGameScene*>(m_pScene[1])->m_pShadowMap = m_pShadowMap;
+	dynamic_cast<CGameScene*>(m_pScene[1])->m_pDepthTex = m_pDepthTextue;
 
-	CMaterial::PrepareShaders(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
+	m_pScene[1]->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
-	m_pScene->PlaceObjectsFromFile(m_pd3dDevice, m_pScene->GetGraphicsRootSignature(), m_pd3dCommandList);
+	CMaterial::PrepareShaders(m_pd3dDevice, m_pd3dCommandList, m_pScene[1]->GetGraphicsRootSignature());
+
+	dynamic_cast<CGameScene*>(m_pScene[1])->PlaceObjectsFromFile(m_pd3dDevice, m_pScene[1]->GetGraphicsRootSignature(), m_pd3dCommandList);
 
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 
-	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature(), m_pScene->m_pTerrain);
+	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene[1]->GetGraphicsRootSignature(), dynamic_cast<CGameScene*>(m_pScene[1])->m_pTerrain);
 	pAirplanePlayer->SetPosition(XMFLOAT3(464.0f, 15.0f, 354.0f)); 
 	//pAirplanePlayer->SetPosition(XMFLOAT3(0.0f, 100.0f, 0.0f));
-	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
+	dynamic_cast<CGameScene*>(m_pScene[1])->m_pPlayer = m_pPlayer = pAirplanePlayer;
 
 	m_pPostProcessingShader->GetMinimap()->SetPlayerPosition(m_pPlayer->GetPositionPointer());
 	m_pPostProcessingShader->GetMinimap()->CreateShaderVariables(m_pd3dDevice, m_pd3dCommandList);
@@ -636,7 +639,7 @@ void CGameFramework::BuildObjects()
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 	WaitForGpuComplete();
 
-	if (m_pScene) m_pScene->ReleaseUploadBuffers();
+	if (m_pScene) m_pScene[1]->ReleaseUploadBuffers();
 	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
 
 	m_GameTimer.Reset();
@@ -646,8 +649,8 @@ void CGameFramework::ReleaseObjects()
 {
 	if (m_pPlayer) m_pPlayer->Release();
 
-	if (m_pScene) m_pScene->ReleaseObjects();
-	if (m_pScene) delete m_pScene;
+	if (m_pScene[1]) m_pScene[1]->ReleaseObjects();
+	if (m_pScene[1]) delete m_pScene[1];
 
 	if (m_pPostProcessingShader)
 		m_pPostProcessingShader->Release();
@@ -663,7 +666,7 @@ void CGameFramework::ProcessInput()
 {
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
-	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer, m_hWnd);
+	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene[1]->ProcessInput(pKeysBuffer, m_hWnd);
 	
 }
 
@@ -702,7 +705,7 @@ void CGameFramework::FrameAdvance()
 
 	ProcessInput();
 
-	m_pScene->Update(m_GameTimer.GetTimeElapsed());
+	m_pScene[1]->Update(m_GameTimer.GetTimeElapsed());
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -720,7 +723,7 @@ void CGameFramework::FrameAdvance()
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenRenderTargetBuffers, m_pd3dOffScreenRenderTargetBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
-	m_pScene->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2s에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
+	m_pScene[1]->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2s에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
 													// write 용으로 사용하고 있었음
 
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 되? 
@@ -739,7 +742,7 @@ void CGameFramework::FrameAdvance()
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenShadowBuffers, m_pd3dOffScreenShadowBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
-	m_pScene->DepthRender(m_pd3dCommandList, m_pCamera);
+	dynamic_cast<CGameScene*>(m_pScene[1])->DepthRender(m_pd3dCommandList, m_pCamera);
 
 	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
@@ -768,6 +771,7 @@ void CGameFramework::FrameAdvance()
 	m_pd3dCommandList->ClearRenderTargetView(m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
 	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
+	//m_pScene[0]->Render(m_pd3dCommandList, m_pCamera);
 	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera); // 화면 좌표계에 해당하는 투영좌표계의 좌표로 인해 사각형을하나 그려서 그림을 복사 해서 그림을 그려라.
 																   // 스크린 좌표계 !! 
 
