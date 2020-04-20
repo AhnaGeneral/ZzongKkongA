@@ -251,11 +251,10 @@ void CCloudGSShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature*
 
 D3D12_INPUT_LAYOUT_DESC CSoftParticleShader::CreateInputLayout()
 {
-	UINT nInputElementDescs = 2;
+	UINT nInputElementDescs = 1;
 	D3D12_INPUT_ELEMENT_DESC* pd3dInputElementDescs = new D3D12_INPUT_ELEMENT_DESC[nInputElementDescs];
 
 	pd3dInputElementDescs[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
-	pd3dInputElementDescs[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 };
 
 	D3D12_INPUT_LAYOUT_DESC d3dInputLayoutDesc;
 	d3dInputLayoutDesc.pInputElementDescs = pd3dInputElementDescs;
@@ -313,6 +312,33 @@ D3D12_SHADER_BYTECODE CSoftParticleShader::CreatePixelShader(ID3DBlob** ppd3dSha
 }
 
 
+D3D12_SHADER_BYTECODE CSoftParticleShader::CreateGeometryShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Noise.hlsl", "GS", "gs_5_1", ppd3dShaderBlob));
+}
+
+D3D12_DEPTH_STENCIL_DESC CSoftParticleShader::CreateDepthStencilState()
+{
+	D3D12_DEPTH_STENCIL_DESC d3dDepthStencilDesc;
+	::ZeroMemory(&d3dDepthStencilDesc, sizeof(D3D12_DEPTH_STENCIL_DESC));
+	d3dDepthStencilDesc.DepthEnable = TRUE;
+	d3dDepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+	d3dDepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	d3dDepthStencilDesc.StencilEnable = FALSE;
+	d3dDepthStencilDesc.StencilReadMask = 0x00;
+	d3dDepthStencilDesc.StencilWriteMask = 0x00;
+	d3dDepthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	d3dDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	d3dDepthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+	d3dDepthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
+	d3dDepthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	d3dDepthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	d3dDepthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+	d3dDepthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
+
+	return(d3dDepthStencilDesc);
+}
+
 D3D12_BLEND_DESC CSoftParticleShader::CreateBlendState()
 {
 	D3D12_BLEND_DESC d3dBlendDesc;
@@ -343,6 +369,11 @@ D3D12_SHADER_BYTECODE CSoftParticleShader::CreateFogPixelShader(ID3DBlob** ppd3d
 	return(CShader::CompileShaderFromFile(L"HLSL_Fog.hlsl", "FogPixelShader", "ps_5_1", ppd3dShaderBlob));
 }
 
+D3D12_SHADER_BYTECODE CSoftParticleShader::CreateFogGeometryShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Fog.hlsl", "GS", "gs_5_1", ppd3dShaderBlob));
+}
+
 
 void CSoftParticleShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets)
 {
@@ -364,7 +395,7 @@ void CSoftParticleShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSigna
 	d3dPipelineStateDesc.DepthStencilState = CreateDepthStencilState();
 	d3dPipelineStateDesc.InputLayout = CreateInputLayout();
 	d3dPipelineStateDesc.SampleMask = UINT_MAX;
-	d3dPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	d3dPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
 	d3dPipelineStateDesc.NumRenderTargets = nRenderTargets;
 
 	for (UINT i = 0; i < nRenderTargets; i++)
@@ -382,6 +413,7 @@ void CSoftParticleShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSigna
 
 	d3dPipelineStateDesc.VS = CreateFogVertexShader(&pd3dVertexShaderBlob);
 	d3dPipelineStateDesc.PS = CreateFogPixelShader(&pd3dPixelShaderBlob);
+	d3dPipelineStateDesc.GS = CreateFogGeometryShader(&pd3dPixelShaderBlob);
 
 	hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[1]);
 
@@ -407,16 +439,14 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	m_nFog = 1;
 	m_pFogObjects = new CObjectNosie * [m_nFog];
 
-	CObjectNosie* pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, this);  //object
-	pNoise->SetPosition(XMFLOAT3(400.0f, 55.0f, 198.0f));
+	CObjectNosie* pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, XMFLOAT3(400.0f, 55.0f, 198.0f), this);  //object
 	pNoise->GenerateShaderDistortionBuffer();
 	m_pFogObjects[0] = pNoise;
 
 	m_nFire = 1;
 	m_pFireObjects = new CObjectNosie * [m_nFire];
 
-	pNoise = new CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, this);  //object
-	pNoise->SetPosition(XMFLOAT3(450.0f, 55.0f, 198.0f));
+	pNoise = new CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, XMFLOAT3(450.0f, 55.0f, 198.0f), this);  //object
 	pNoise->GenerateShaderDistortionBuffer();
 	m_pFireObjects[0] = pNoise;
 

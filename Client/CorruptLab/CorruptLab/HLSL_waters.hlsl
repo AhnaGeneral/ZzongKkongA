@@ -1,5 +1,13 @@
 #include "HLSL_Noise.hlsl"
 
+
+struct VS_WATER_INPUT
+{
+	float3 position : POSITION;
+	float2 tex : TEXCOORD;
+};
+
+
 struct PS_WATER_INPUT
 {
 	float4 position : SV_POSITION;
@@ -13,7 +21,7 @@ struct PS_WATER_INPUT
 	float3 bitangent : BITANGENT;
 };
 
-PS_WATER_INPUT WaterVertexShader(VS_NOISE_INPUT input)
+PS_WATER_INPUT WaterVertexShader(VS_WATER_INPUT input)
 {
 	PS_WATER_INPUT output;
 

@@ -20,44 +20,126 @@ cbuffer cbNoiseBuffer : register(b9)
 struct VS_NOISE_INPUT
 {
 	float3 position : POSITION;
-	float2 tex : TEXCOORD;
 };
 
-struct PS_NOISE_INPUT
+struct GS_BILLBOARD_OUTPUT
 {
-	float4 position : SV_POSITION;
+	float4 posH :SV_POSITION;
+	float3 posW :POSITION;
 	float2 tex : TEXCOORD0;
 	float2 tex1 : TEXCOORD1;
 	float2 tex2 : TEXCOORD2;
 	float2 tex3 : TEXCOORD3;
 };
 
-
-PS_NOISE_INPUT NoiseVertexShader(VS_NOISE_INPUT input)
+struct GS_NOISE_INPUT
 {
-	PS_NOISE_INPUT output;
+	float3 positionW : POSITION;
+};
 
-	output.position = mul(mul(mul(float4(input.position, 1.0f),
-		              gmtxGameObject), gmtxView), gmtxProjection);
 
-	output.tex = input.tex;
+GS_NOISE_INPUT NoiseVertexShader(VS_NOISE_INPUT input)
+{
+	GS_NOISE_INPUT output;
 
-	output.tex1 = (input.tex * scales.x);
-	output.tex1.y = output.tex1.y + (frameTime * scrollSpeeds.x);
-
-	output.tex2 = (input.tex * scales.y);
-	output.tex2.y = output.tex2.y + (frameTime * scrollSpeeds.y);
-
-	output.tex3 = (input.tex * scales.z);
-	output.tex3.y = output.tex3.y + (frameTime * scrollSpeeds.z);
+	output.positionW = input.position;
 
 	return output;
 }
 
-PS_NONLIGHT_MRT_OUTPUT NoisePixelShader(PS_NOISE_INPUT input) 
+
+[maxvertexcount(4)]
+void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<GS_BILLBOARD_OUTPUT> outStream)
+{
+	float3 vUP = float3(0.0f, 1.0f, 0.0f);
+	float3 vLook = gvCameraPosition.xyz - input[0].positionW;
+	vLook = normalize(vLook);
+	float3 vRight = cross(vUP, vLook);
+
+	float fHalfW = 50 * 0.5f;
+	float fHalfH = 50 * 0.5f;
+
+	float4 pVertices[4];
+	pVertices[0] = float4(input[0].positionW + fHalfW * vRight - fHalfH * vUP, 1.0f);
+	pVertices[1] = float4(input[0].positionW + fHalfW * vRight + fHalfH * vUP, 1.0f);
+	pVertices[2] = float4(input[0].positionW - fHalfW * vRight - fHalfH * vUP, 1.0f);
+	pVertices[3] = float4(input[0].positionW - fHalfW * vRight + fHalfH * vUP, 1.0f);
+
+	float2 pUVs[4] = { float2 (0.0f, 1.0f), float2(0.0f, 0.0f), float2(1.0f, 1.0f), float2(1.0f, 0.0f) };
+
+	GS_BILLBOARD_OUTPUT output;
+
+	output.posW = pVertices[0].xyz;
+	output.posH = mul(mul(pVertices[0], gmtxView), gmtxProjection);
+	output.tex = pUVs[0];
+
+	output.tex1 = output.tex2 = output.tex3 = output.tex;
+	output.tex1 = (output.tex * scales.x);
+	output.tex1.y = output.tex1.y + (frameTime * scrollSpeeds.x);
+
+	output.tex2 = (output.tex * scales.y);
+	output.tex2.y = output.tex2.y + (frameTime * scrollSpeeds.y);
+
+	output.tex3 = (output.tex * scales.z);
+	output.tex3.y = output.tex3.y + (frameTime * scrollSpeeds.z); 
+
+	outStream.Append(output);
+
+	output.posW = pVertices[1].xyz;
+	output.posH = mul(mul(pVertices[1], gmtxView), gmtxProjection);
+	output.tex = pUVs[1];
+
+	output.tex1 = output.tex2 = output.tex3 = output.tex;
+	output.tex1 = (output.tex * scales.x);
+	output.tex1.y = output.tex1.y + (frameTime * scrollSpeeds.x);
+
+	output.tex2 = (output.tex * scales.y);
+	output.tex2.y = output.tex2.y + (frameTime * scrollSpeeds.y);
+
+	output.tex3 = (output.tex * scales.z);
+	output.tex3.y = output.tex3.y + (frameTime * scrollSpeeds.z); 
+
+	outStream.Append(output);
+
+	output.posW = pVertices[2].xyz;
+	output.posH = mul(mul(pVertices[2], gmtxView), gmtxProjection);
+	output.tex = pUVs[2];
+
+	output.tex1 = output.tex2 = output.tex3 = output.tex;
+	output.tex1 = (output.tex * scales.x);
+	output.tex1.y = output.tex1.y + (frameTime * scrollSpeeds.x);
+
+	output.tex2 = (output.tex * scales.y);
+	output.tex2.y = output.tex2.y + (frameTime * scrollSpeeds.y);
+
+	output.tex3 = (output.tex * scales.z);
+	output.tex3.y = output.tex3.y + (frameTime * scrollSpeeds.z); 
+
+	outStream.Append(output);
+
+	output.posW = pVertices[3].xyz;
+	output.posH = mul(mul(pVertices[3], gmtxView), gmtxProjection);
+	output.tex = pUVs[3];
+
+	output.tex1 = output.tex2 = output.tex3 = output.tex;
+	output.tex1 = (output.tex * scales.x);
+	output.tex1.y = output.tex1.y + (frameTime * scrollSpeeds.x);
+
+	output.tex2 = (output.tex * scales.y);
+	output.tex2.y = output.tex2.y + (frameTime * scrollSpeeds.y);
+
+	output.tex3 = (output.tex * scales.z);
+	output.tex3.y = output.tex3.y + (frameTime * scrollSpeeds.z); 
+
+	outStream.Append(output);
+
+
+}
+
+PS_NONLIGHT_MRT_OUTPUT NoisePixelShader(GS_BILLBOARD_OUTPUT input)
 {
 
-	PS_NONLIGHT_MRT_OUTPUT output; 
+	PS_NONLIGHT_MRT_OUTPUT output;
 
 	float4 noise1 = gtxtNoiseTex.Sample(gSamplerState, input.tex1);
 	float4 noise2 = gtxtNoiseTex.Sample(gSamplerState, input.tex2);

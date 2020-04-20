@@ -30,7 +30,7 @@ public:
 	CObjectNosie() {}
 
 	CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
-		ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader =NULL);
+		ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader =NULL);
 	virtual ~CObjectNosie();
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
@@ -45,6 +45,11 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 
 public:
+
+	ID3D12Resource* m_pd3dPositionBuffer = NULL;
+	ID3D12Resource* m_pd3dPositionUploadBuffer = NULL;
+	D3D12_VERTEX_BUFFER_VIEW		m_d3dPositionBufferView;
+
 	ID3D12Resource* m_pd3dcbNoiseBuffer = NULL;
 	CB_NOISEBUFFERTYPE* m_pcbMappedNoiseBuffers = NULL;
 
@@ -59,7 +64,7 @@ class CObjectFog : public CObjectNosie
 {
 public:
 	CObjectFog(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
-		ID3D12RootSignature* pd3dGraphicsRootSignature, CShader* pShader = NULL);
+		ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader = NULL);
 	virtual ~CObjectFog();
 	virtual void GenerateShaderDistortionBuffer();
 

@@ -6,7 +6,6 @@
 struct VS_FOG_INPUT
 {
 	float3 position : POSITION;
-	float2 tex : TEXCOORD;
 };
 
 struct PS_FOG_INPUT
@@ -20,23 +19,90 @@ struct PS_FOG_INPUT
 
 Texture2D gtxtSceneDepthTexture : register(t22);
 
-PS_FOG_INPUT FogVertexShader(VS_FOG_INPUT input)
+GS_NOISE_INPUT FogVertexShader(VS_FOG_INPUT input)
 {
+	GS_NOISE_INPUT output;
+
+	output.positionW = input.position;
+
+	return output;
+}
+
+
+[maxvertexcount(4)]
+void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<PS_FOG_INPUT> outStream)
+{
+	float3 vUP = float3(0.0f, 1.0f, 0.0f);
+	float3 vLook = gvCameraPosition.xyz - input[0].positionW;
+	vLook = normalize(vLook);
+	float3 vRight = cross(vUP, vLook);
+
+	float fHalfW = 50 * 0.5f;
+	float fHalfH = 50 * 0.5f;
+
+	float4 pVertices[4];
+	pVertices[0] = float4(input[0].positionW + fHalfW * vRight - fHalfH * vUP, 1.0f);
+	pVertices[1] = float4(input[0].positionW + fHalfW * vRight + fHalfH * vUP, 1.0f);
+	pVertices[2] = float4(input[0].positionW - fHalfW * vRight - fHalfH * vUP, 1.0f);
+	pVertices[3] = float4(input[0].positionW - fHalfW * vRight + fHalfH * vUP, 1.0f);
+
+	float2 pUVs[4] = { float2 (0.0f, 1.0f), float2(0.0f, 0.0f), float2(1.0f, 1.0f), float2(1.0f, 0.0f) };
+
 	PS_FOG_INPUT output;
 
-	output.position = mul(mul(mul(float4(input.position, 1.0f),
-		gmtxGameObject), gmtxView), gmtxProjection);
+	output.position = mul(mul(pVertices[0], gmtxView), gmtxProjection);
+	output.vPorjPos = output.position;
+	output.tex = pUVs[0];
 
-	output.tex = input.tex;
-
-	output.tex1 = (input.tex * scales.x);
+	output.tex1 = (output.tex * scales.x);
 	output.tex1.x = output.tex1.x + (frameTime * scrollSpeeds.x);
 
-	output.tex2 = (input.tex * scales.x);
+	output.tex2 = (output.tex * scales.x);
+	output.tex2.x = output.tex2.x + (frameTime * scrollSpeeds.x);
+	output.tex2.y = output.tex2.y + (frameTime * scrollSpeeds.y);
+
+	outStream.Append(output);
+
+	output.position = mul(mul(pVertices[1], gmtxView), gmtxProjection);
+	output.vPorjPos = output.position;
+	output.tex = pUVs[1];
+
+	output.tex1 = (output.tex * scales.x);
+	output.tex1.x = output.tex1.x + (frameTime * scrollSpeeds.x);
+
+	output.tex2 = (output.tex * scales.x);
+	output.tex2.x = output.tex2.x + (frameTime * scrollSpeeds.x);
+	output.tex2.y = output.tex2.y + (frameTime * scrollSpeeds.y);
+
+	outStream.Append(output);
+
+	output.position = mul(mul(pVertices[2], gmtxView), gmtxProjection);
+	output.tex = pUVs[2];
+
+	output.tex1 = (output.tex * scales.x);
+	output.tex1.x = output.tex1.x + (frameTime * scrollSpeeds.x);
+
+	output.tex2 = (output.tex * scales.x);
 	output.tex2.x = output.tex2.x + (frameTime * scrollSpeeds.x);
 	output.tex2.y = output.tex2.y + (frameTime * scrollSpeeds.y);
 	output.vPorjPos = output.position;
-	return output;
+
+	outStream.Append(output);
+
+	output.position = mul(mul(pVertices[3], gmtxView), gmtxProjection);
+	output.vPorjPos = output.position;
+	output.tex = pUVs[3];
+
+	output.tex1 = (output.tex * scales.x);
+	output.tex1.x = output.tex1.x + (frameTime * scrollSpeeds.x);
+
+	output.tex2 = (output.tex * scales.x);
+	output.tex2.x = output.tex2.x + (frameTime * scrollSpeeds.x);
+	output.tex2.y = output.tex2.y + (frameTime * scrollSpeeds.y);
+
+	outStream.Append(output);
+
+
 }
 
 PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
@@ -65,7 +131,6 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 		//fDepthDistance/= 
 		output.NonLight.a -= fDepthDistance;
 	}
-	//output.NonLight = fSceneDepth;
 	return output;
 
 }
