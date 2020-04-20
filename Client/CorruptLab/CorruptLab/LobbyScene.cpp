@@ -9,13 +9,9 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 {
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	CTexture* pUITexture = new CTexture(1, RESOURCE_TEXTURE2D, 0); 
-	pUITexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Lobby/lobby.dds", 0);
-
     pUIShader = new Shader_Lobby();
 	pUIShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
-	pUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 1); 
-	pUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pUITexture, ROOT_PARAMETER_LOBBYTEX, true);
+	pUIShader->BuildObjects(pd3dDevice, pd3dCommandList);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
@@ -127,8 +123,8 @@ void CLobbyScene::ReleaseUploadBuffers()
 void CLobbyScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature); 
-	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
-	pCamera->UpdateShaderVariables(pd3dCommandList);
+	//pCamera->SetViewportsAndScissorRects(pd3dCommandList);
+	//pCamera->UpdateShaderVariables(pd3dCommandList);
 
 	pUIShader->Render(pd3dCommandList, pCamera);
 	

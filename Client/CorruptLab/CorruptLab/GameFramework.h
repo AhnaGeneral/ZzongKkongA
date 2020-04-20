@@ -8,6 +8,12 @@
 #include "Shader_LightMRT.h"
 #include "CShader_ShadowMRT.h"
 
+//Scene State ________________________________ 
+#define SCENE_LOBBY           0  
+#define SCENE_STAGE_OUTDOOR   1 
+#define SCENE_STAGE_INDOOR    2 
+#define SCENE_CLEAR           3
+//____________________________________________
 class CGameFramework
 {
 public:
@@ -38,10 +44,15 @@ public:
 	void ReleaseObjects();
 
 	void ProcessInput();
-	void FrameAdvance();
+
+	void FrameAdvanceStageOutdoor();
+	void FrameAdvanceLobby();
+	UINT GetSceneState() { return m_nSceneState; }
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
+
+
 
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
@@ -87,6 +98,8 @@ private:
 
 	CGameTimer						    m_GameTimer;
 
+	UINT                                m_nSceneState = 0;
+
 	static const UINT				    m_nOffScreenRenderTargetBuffers = 5;
 	ID3D12Resource                    * m_ppd3dOffScreenRenderTargetBuffers[m_nOffScreenRenderTargetBuffers];
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nOffScreenRenderTargetBuffers];
@@ -114,7 +127,6 @@ private:
 	Shader_ShadowMRT                  * m_pShadowShader = NULL; 
 
 	CScene                            * m_pScene[2];
-
 
 	CPlayer                           * m_pPlayer = NULL;
 	CCamera                           * m_pCamera = NULL;

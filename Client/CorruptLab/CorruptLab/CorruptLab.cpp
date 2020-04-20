@@ -45,7 +45,21 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			gGameFramework.FrameAdvance();
+			switch (gGameFramework.GetSceneState())
+			{
+			case SCENE_LOBBY:
+				gGameFramework.FrameAdvanceLobby();
+				break;
+			case SCENE_STAGE_OUTDOOR:
+				gGameFramework.FrameAdvanceStageOutdoor();
+				break;
+			case SCENE_STAGE_INDOOR:
+				break;
+			case SCENE_CLEAR:
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	gGameFramework.OnDestroy();

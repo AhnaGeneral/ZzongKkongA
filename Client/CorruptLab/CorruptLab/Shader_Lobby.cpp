@@ -76,8 +76,21 @@ void Shader_Lobby::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 {
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	CShader::Render(pd3dCommandList, pCamera);
-
+	m_pLobbyMaterial->m_ppTextures[0]->UpdateShaderVariables(pd3dCommandList);
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
 
+}
+
+void Shader_Lobby::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
+{
+	CTexture* pUITexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pUITexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Lobby/lobby.dds", 0);
+
+	m_pLobbyMaterial = new CMaterial(1);
+	m_pLobbyMaterial->SetTexture(pUITexture);
+
+	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 1); 
+	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pUITexture, ROOT_PARAMETER_LOBBYTEX, false);
+	
 }
