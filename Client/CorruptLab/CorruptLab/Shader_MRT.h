@@ -9,7 +9,7 @@ struct VS_CB_EYE_CAMERA_ORTHO
 	XMFLOAT4X4						m_xmf4x4OrthoView;
 };
 
-class CMinimap;
+class CUI_MiniMap;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class CPostProcessingShader : public CShader
@@ -43,9 +43,9 @@ public:
 	virtual void ReleaseShaderVariables();
 	
 	void GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance);
-	int GetUIControl() { return UIcontrol; }
-	void SetUIControl(int iunder) { UIcontrol = iunder; }
-	CMinimap* GetMinimap() { return m_pMinimap; }
+	int GetMRTSwitch() { return m_nMRTSwitch; }
+	void SetMRTSwitch(int iunder) { m_nMRTSwitch = iunder; }
+	CUI_MiniMap* GetMinimap() { return m_pMinimap; }
 
 protected:
 	CTexture* m_pTexture = NULL;
@@ -54,10 +54,19 @@ protected:
 
 	CGameObject ** m_pRenderTargetUIs = NULL; 
 	int m_nRenderTargetUI; 
-	CUI* pRenderTargetUI = NULL;
-	int  UIcontrol = 1; 
+	CMRTUI* pRenderTargetUI = NULL;
+	int  m_nMRTSwitch = 1; 
 
-	CMinimap* m_pMinimap = NULL;
+	CUI_MiniMap* m_pMinimap = NULL;
+
+	CUI_Root* m_pHP = NULL; 
+
+	CUI_Root* m_Radiation = NULL;
+	CUI_Root* m_HPBAR = NULL; 
+
+	CGameObject** InVentoryBoxs = NULL;
+	CUI_Root* InventoryBox = NULL;
+
 
 	ID3D12Resource* m_pd3dcbvOrthoCamera = NULL;
 	VS_CB_EYE_CAMERA_ORTHO* m_pcbMappedOrthoCamera = NULL;

@@ -63,7 +63,15 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dDescriptorRanges[2].RegisterSpace = 0;
 	pd3dDescriptorRanges[2].OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[6];
+	D3D12_DESCRIPTOR_RANGE pd3dHPTextureRanges;
+	pd3dHPTextureRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dHPTextureRanges.NumDescriptors = 1;
+	pd3dHPTextureRanges.BaseShaderRegister = 25; 
+	pd3dHPTextureRanges.RegisterSpace = 0;
+	pd3dHPTextureRanges.OffsetInDescriptorsFromTableStart = 0;
+
+
+	D3D12_ROOT_PARAMETER pd3dRootParameters[7];
 
 	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].DescriptorTable.NumDescriptorRanges = 1;
@@ -96,28 +104,48 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dRootParameters[ROOT_PARAMETER_PLAYER_POS].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[ROOT_PARAMETER_PLAYER_POS].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
-	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc;
+	pd3dRootParameters[ROOT_PARAMETER_HP_TEX].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_HP_TEX].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_HP_TEX].DescriptorTable.pDescriptorRanges = &pd3dHPTextureRanges; 
+	pd3dRootParameters[ROOT_PARAMETER_HP_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+
+
+	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
-	d3dSamplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
-	d3dSamplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	d3dSamplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	d3dSamplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	d3dSamplerDesc.MipLODBias = 0;
-	d3dSamplerDesc.MaxAnisotropy = 1;
-	d3dSamplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-	d3dSamplerDesc.MinLOD = 0;
-	d3dSamplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
-	d3dSamplerDesc.ShaderRegister = 0;
-	d3dSamplerDesc.RegisterSpace = 0;
-	d3dSamplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	d3dSamplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+	d3dSamplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	d3dSamplerDesc[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	d3dSamplerDesc[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	d3dSamplerDesc[0].MipLODBias = 0;
+	d3dSamplerDesc[0].MaxAnisotropy = 1;
+	d3dSamplerDesc[0].ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	d3dSamplerDesc[0].MinLOD = 0;
+	d3dSamplerDesc[0].MaxLOD = D3D12_FLOAT32_MAX;
+	d3dSamplerDesc[0].ShaderRegister = 0;
+	d3dSamplerDesc[0].RegisterSpace = 0;
+	d3dSamplerDesc[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	d3dSamplerDesc[1].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;  	// skybox sempler 
+	d3dSamplerDesc[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	d3dSamplerDesc[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	d3dSamplerDesc[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	d3dSamplerDesc[1].MipLODBias = 0;
+	d3dSamplerDesc[1].MaxAnisotropy = 1;
+	d3dSamplerDesc[1].ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	d3dSamplerDesc[1].MinLOD = 0;
+	d3dSamplerDesc[1].MaxLOD = D3D12_FLOAT32_MAX;
+	d3dSamplerDesc[1].ShaderRegister = 1;
+	d3dSamplerDesc[1].RegisterSpace = 0;
+	d3dSamplerDesc[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 	D3D12_ROOT_SIGNATURE_DESC d3dRootSignatureDesc;
 	::ZeroMemory(&d3dRootSignatureDesc, sizeof(D3D12_ROOT_SIGNATURE_DESC));
 	d3dRootSignatureDesc.NumParameters = _countof(pd3dRootParameters);
 	d3dRootSignatureDesc.pParameters = pd3dRootParameters;
-	d3dRootSignatureDesc.NumStaticSamplers = 1;
-	d3dRootSignatureDesc.pStaticSamplers = &d3dSamplerDesc;
+	d3dRootSignatureDesc.NumStaticSamplers = _countof(d3dSamplerDesc);
+	d3dRootSignatureDesc.pStaticSamplers = d3dSamplerDesc;
 	d3dRootSignatureDesc.Flags = d3dRootSignatureFlags;
 
 	ID3DBlob* pd3dSignatureBlob = NULL;
@@ -228,26 +256,60 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	//---------------------------------------------------------------------------------
 	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 5.5f, FRAME_BUFFER_HEIGHT / 5.5f, 0.0f, 1.0f);
-	m_nRenderTargetUI = 7;
+	m_nRenderTargetUI = 6;
 	m_pRenderTargetUIs = new CGameObject * [m_nRenderTargetUI];
 
 	for (int i = 0; i < m_nRenderTargetUI;)
 	{
 		int remainder = i % 5;
 		int tmp = i / 5;
-		pRenderTargetUI = new CUI(pd3dDevice, pd3dCommandList);
+		pRenderTargetUI = new CMRTUI(pd3dDevice, pd3dCommandList);
 		pRenderTargetUI->SetMesh(mesh);
 		pRenderTargetUI->Set2DPosition(-310.0f + (remainder * 140.0f), 240.0f + (-tmp * 120));
 		pRenderTargetUI->SetObjectID(i);
 		m_pRenderTargetUIs[i++] = pRenderTargetUI;
 	}
 
-	m_pMinimap = new CMinimap(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 150, 150, 0.0f, 1.0f);
+	m_pMinimap = new CUI_MiniMap(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	m_pMinimap->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
 	m_pMinimap->SetMesh(mesh);
-	m_pMinimap->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 75, (-FRAME_BUFFER_HEIGHT / 2) + 75);
+	m_pMinimap->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
 
-	//----------------------------------------------------------------------------------
+
+
+	//=====================================================================================================
+	CTexture* pHPTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pHPTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"HP/HP_3.dds", 0);
+
+	m_HPBAR = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	m_HPBAR->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pHPTex);
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 250, 200, 0.0f, 1.0f);
+	m_HPBAR->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
+	m_HPBAR->SetMesh(mesh);
+
+	pHPTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"HP/HP_1.dds", 0);
+	m_Radiation = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	m_Radiation->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pHPTex);
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 250, 200, 0.0f, 1.0f);
+	m_Radiation->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
+	m_Radiation->SetMesh(mesh);
+	//=====================================================================================================
+
+	InVentoryBoxs = new CGameObject*[3];
+
+	pHPTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/Inventory.dds", 0);
+	
+	for (int i = 0; i < 3;)
+	{
+	    InventoryBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	    InventoryBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pHPTex);
+	    mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 60, 60, 0.0f, 1.0f);
+	    InventoryBox->SetMesh(mesh);
+		InventoryBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i*60) , (-FRAME_BUFFER_HEIGHT / 2) + 30);
+		InVentoryBoxs[i++] = InventoryBox;
+	}
+
 }
 
 void CPostProcessingShader::ReleaseObjects()
@@ -272,7 +334,7 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 
 	OnPrepareRender(pd3dCommandList, 1);
 	
-	if (UIcontrol)
+	if (m_nMRTSwitch)
 	{
 		for (int i = 0; i < m_nRenderTargetUI; i++)
 		{
@@ -283,6 +345,13 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 		}
 	}
 	if (m_pMinimap) m_pMinimap->Render(pd3dCommandList, pCamera);
+	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
+	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
+	for (int i = 0; i < 3; ++i)
+	{
+		InVentoryBoxs[i]->Render(pd3dCommandList, 0);
+	}
+
 }
 
 void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)

@@ -116,6 +116,9 @@
     <Filter Include="04.Shader\10.Shader_Lobby">
       <UniqueIdentifier>{b7190c54-b327-4ade-9ea6-0a5c63f36ca2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Shader\09.Shader_UI\01. Shader_HPBar">
+      <UniqueIdentifier>{2800c211-95e2-4cf8-b953-6ee0d5831b5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -244,6 +247,9 @@
     <ClInclude Include="LobbyScene.h">
       <Filter>02.Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_HP.h">
+      <Filter>04.Shader\09.Shader_UI\01. Shader_HPBar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -356,6 +362,9 @@
     </ClCompile>
     <ClCompile Include="LobbyScene.cpp">
       <Filter>02.Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_HP.cpp">
+      <Filter>04.Shader\09.Shader_UI\01. Shader_HPBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

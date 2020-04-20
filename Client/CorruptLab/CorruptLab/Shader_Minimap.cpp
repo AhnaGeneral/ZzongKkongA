@@ -19,8 +19,6 @@ void CMinimapShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature*
 
 }
 
-
-
 D3D12_INPUT_LAYOUT_DESC CMinimapShader::CreateInputLayout()
 {
 	UINT nInputElementDescs = 2;
