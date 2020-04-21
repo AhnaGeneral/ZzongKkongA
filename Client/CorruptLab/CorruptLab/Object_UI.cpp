@@ -3,10 +3,12 @@
 #include "Shader.h"
 #include "Shader_Minimap.h"
 #include "Shader_HP.h"
+#include "Shader_Item.h"
+
 
 CMRTUI::CMRTUI(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_nobjectID = 0; 
+	m_nobjectID = 0;
 }
 
 CMRTUI::~CMRTUI()
@@ -18,6 +20,7 @@ void CMRTUI::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XM
 	XMFLOAT4X4 xmf4x4World;
 	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
+
 	UINT getobjectID = m_nobjectID;
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
 
@@ -33,7 +36,7 @@ void CMRTUI::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 
 void CMRTUI::SetObjectID(UINT objectID)
 {
-	m_nobjectID = objectID; 
+	m_nobjectID = objectID;
 }
 
 void CMRTUI::Set2DPosition(float x, float y)
@@ -54,7 +57,7 @@ CUI_MiniMap::CUI_MiniMap(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 }
 
 void CUI_MiniMap::InterLinkShaderTexture(ID3D12Device* pd3dDevice,
-	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture )
+	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture)
 {
 	CMinimapShader* pShader = new CMinimapShader();
 	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 3, 1);
@@ -71,8 +74,8 @@ void CUI_MiniMap::InterLinkShaderTexture(ID3D12Device* pd3dDevice,
 void CUI_MiniMap::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	UINT ncbElementBytes = ((sizeof(XMFLOAT3) + 255) & ~255); //256의 배수  
-	m_pd3dcbPlayerPosition = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, 
-		                                     D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	m_pd3dcbPlayerPosition = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes,
+		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 	m_pd3dcbPlayerPosition->Map(0, NULL, (void**)&m_pcbPlayerPosition);
 }
 
@@ -97,7 +100,7 @@ void CUI_MiniMap::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLis
 	memcpy(m_pcbPlayerPosition, m_PlayerPosition, sizeof(XMFLOAT3));
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbPlayerPosition->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_PLAYER_POS, d3dGpuVirtualAddress);
-	
+
 }
 
 
@@ -110,7 +113,7 @@ CUI_Root::CUI_Root(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComm
 {
 }
 
-void CUI_Root::InterLinkShaderTexture(ID3D12Device* pd3dDevice, 
+void CUI_Root::InterLinkShaderTexture(ID3D12Device* pd3dDevice,
 	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture)
 {
 	CShader_BaseUI* pShader = new CShader_BaseUI();
@@ -149,23 +152,60 @@ void CUI_Root::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, 
 
 
 // [ CUI_Inventory ] ======================================================================================================
-CUI_Inventory::CUI_Inventory()
+CUI_ITem::CUI_ITem()
 {
-	
+
 }
 
-CUI_Inventory::CUI_Inventory(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
-{
-}
-
-void CUI_Inventory::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+CUI_ITem::CUI_ITem(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
 }
 
-void CUI_Inventory::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+void CUI_ITem::InterLinkShaderTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture)
 {
+	CShader_Item* pShader = new CShader_Item();
+	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 3);
+	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
+
+	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)Texture, ROOT_PARAMETER_ITEM_TEX, true);
+	SetShader(pShader);
+	m_ppMaterials[0]->SetTexture((CTexture*)Texture);
 }
 
-void CUI_Inventory::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
+void CUI_ITem::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	UINT ncbElementBytes = ((sizeof(UINT) + 255) & ~255); //256의 배수  
+	m_pd3dcbItemReact = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes,
+		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	m_pd3dcbItemReact->Map(0, NULL, (void**)&m_pcbItemReact);
+
+}
+
+void CUI_ITem::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+{
+	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera);
+	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
+
+	OnPrepareRender();
+	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
+
+	if (m_pMesh)
+		m_pMesh->Render(pd3dCommandList, 0);
+}
+
+void CUI_ITem::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
+{
+	XMFLOAT4X4 xmf4x4World;
+	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
+	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
+
+	UINT getobjectID = m_nobjectID;
+	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
+
+	memcpy(m_pcbItemReact, m_ItemReact, sizeof(UINT));
+	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbItemReact->GetGPUVirtualAddress();
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_ITEM_REACT, d3dGpuVirtualAddress);
+
 }

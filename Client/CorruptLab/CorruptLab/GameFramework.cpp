@@ -710,6 +710,7 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 	ProcessInput();
 
 	m_pScene[SCENE_STAGE_OUTDOOR]->Update(m_GameTimer.GetTimeElapsed());
+	m_SceneItemReact = dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->n_ReactItem;
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -776,7 +777,7 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
 	//m_pScene[SCENE_LOBBY]->Render(m_pd3dCommandList, m_pCamera);
-	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera); // 화면 좌표계에 해당하는 투영좌표계의 좌표로 인해 사각형을하나 그려서 그림을 복사 해서 그림을 그려라.
+	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, m_SceneItemReact); // 화면 좌표계에 해당하는 투영좌표계의 좌표로 인해 사각형을하나 그려서 그림을 복사 해서 그림을 그려라.
 																   // 스크린 좌표계 !! 
 
 #ifdef _WITH_PLAYER_TOP

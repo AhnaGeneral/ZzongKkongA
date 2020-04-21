@@ -3,9 +3,9 @@
 
 class CMRTUI : public CGameObject
 {
-private : 
-	UINT m_nobjectID; 
-public :
+private:
+	UINT m_nobjectID;
+public:
 	CMRTUI() {}
 	CMRTUI(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual ~CMRTUI();
@@ -13,10 +13,10 @@ public :
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 	virtual void InterLinkShaderTexture(ID3D12Device* pd3dDevice,
-		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture = NULL ) {}
+		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture = NULL) {}
 	void SetObjectID(UINT objectID);
 	virtual UINT GetObjectID() { return m_nobjectID; }
-	void Set2DPosition(float x, float y); 
+	void Set2DPosition(float x, float y);
 };
 
 
@@ -50,7 +50,7 @@ public:
 	CUI_Root(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
 	~CUI_Root() {}
 
-	virtual void InterLinkShaderTexture(ID3D12Device* pd3dDevice, 
+	virtual void InterLinkShaderTexture(ID3D12Device* pd3dDevice,
 		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture = NULL);
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
@@ -59,17 +59,28 @@ public:
 };
 
 
-class CUI_Inventory : public CMRTUI
+class CUI_ITem : public CMRTUI
 {
+private:
+	UINT   m_nobjectID;
+	UINT* m_ItemReact = NULL;
+
 public:
-	CUI_Inventory();
-	CUI_Inventory(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
-	~CUI_Inventory(){}
+	CUI_ITem();
+	CUI_ITem(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
+	~CUI_ITem() {}
 
 	virtual void InterLinkShaderTexture(ID3D12Device* pd3dDevice,
-		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture = NULL) {}
+		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture = NULL);
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
+	void SetObjectID(UINT objectID) { m_nobjectID = objectID; }
+	virtual UINT GetObjectID() { return m_nobjectID; }
+	void SetItemReact(UINT* React) { m_ItemReact = React; }
+
+private:
+	ID3D12Resource* m_pd3dcbItemReact = NULL;
+	UINT* m_pcbItemReact = NULL;
 };

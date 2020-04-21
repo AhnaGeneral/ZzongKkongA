@@ -36,7 +36,7 @@ public:
 
 	virtual void ReleaseObjects();
 
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, UINT ItemReact = 0);
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
@@ -62,10 +62,16 @@ protected:
 	CUI_Root* m_pHP = NULL; 
 
 	CUI_Root* m_Radiation = NULL;
-	CUI_Root* m_HPBAR = NULL; 
+	CUI_Root* m_HPBAR = NULL;
 
 	CGameObject** InVentoryBoxs = NULL;
 	CUI_Root* InventoryBox = NULL;
+
+	CGameObject** m_pItems = NULL;
+	CUI_ITem* m_pItem = NULL;
+
+	UINT                             nIventoryCount = 3;
+
 
 
 	ID3D12Resource* m_pd3dcbvOrthoCamera = NULL;

@@ -70,8 +70,14 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dHPTextureRanges.RegisterSpace = 0;
 	pd3dHPTextureRanges.OffsetInDescriptorsFromTableStart = 0;
 
+	D3D12_DESCRIPTOR_RANGE pd3dItemTextureRanges;
+	pd3dItemTextureRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dItemTextureRanges.NumDescriptors = 3;
+	pd3dItemTextureRanges.BaseShaderRegister = 26;
+	pd3dItemTextureRanges.RegisterSpace = 0;
+	pd3dItemTextureRanges.OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[7];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[9];
 
 	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].DescriptorTable.NumDescriptorRanges = 1;
@@ -109,6 +115,15 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dRootParameters[ROOT_PARAMETER_HP_TEX].DescriptorTable.pDescriptorRanges = &pd3dHPTextureRanges; 
 	pd3dRootParameters[ROOT_PARAMETER_HP_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+	pd3dRootParameters[ROOT_PARAMETER_ITEM_TEX].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_ITEM_TEX].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_ITEM_TEX].DescriptorTable.pDescriptorRanges = &pd3dItemTextureRanges;
+	pd3dRootParameters[ROOT_PARAMETER_ITEM_TEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pd3dRootParameters[ROOT_PARAMETER_ITEM_REACT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[ROOT_PARAMETER_ITEM_REACT].Descriptor.ShaderRegister = 7; //playerPosition
+	pd3dRootParameters[ROOT_PARAMETER_ITEM_REACT].Descriptor.RegisterSpace = 0;
+	pd3dRootParameters[ROOT_PARAMETER_ITEM_REACT].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
@@ -270,15 +285,14 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		m_pRenderTargetUIs[i++] = pRenderTargetUI;
 	}
 
+	//=====================================================================================================
+
 	m_pMinimap = new CUI_MiniMap(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 	m_pMinimap->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
 	m_pMinimap->SetMesh(mesh);
 	m_pMinimap->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
 
-
-
-	//=====================================================================================================
 	CTexture* pHPTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 	pHPTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"HP/HP_3.dds", 0);
 
@@ -294,22 +308,45 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 250, 200, 0.0f, 1.0f);
 	m_Radiation->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
 	m_Radiation->SetMesh(mesh);
+
 	//=====================================================================================================
 
-	InVentoryBoxs = new CGameObject*[3];
-
+	InVentoryBoxs = new CGameObject * [nIventoryCount];
 	pHPTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/Inventory.dds", 0);
-	
-	for (int i = 0; i < 3;)
+
+	float ItemBoxSize = FRAME_BUFFER_HEIGHT / 10.0f;
+	for (int i = 0; i < nIventoryCount;)
 	{
-	    InventoryBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	    InventoryBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pHPTex);
-	    mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 60, 60, 0.0f, 1.0f);
-	    InventoryBox->SetMesh(mesh);
-		InventoryBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i*60) , (-FRAME_BUFFER_HEIGHT / 2) + 30);
+		InventoryBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+		InventoryBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pHPTex);
+		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, ItemBoxSize, ItemBoxSize, 0.0f, 1.0f);
+		InventoryBox->SetMesh(mesh);
+		InventoryBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
 		InVentoryBoxs[i++] = InventoryBox;
 	}
 
+	//======================================================================================================
+
+	m_pItems = new CGameObject * [nIventoryCount];
+	CTexture* pItemTex = new CTexture(3, RESOURCE_TEXTURE2D, 0);
+	pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/HandLight.dds", 0);
+	pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/HP_Kit.dds", 1);
+	pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/Pill.dds", 2);
+
+	for (int i = 0; i < nIventoryCount;)
+	{
+		m_pItem = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+		m_pItem->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pItemTex);
+		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, ItemBoxSize, ItemBoxSize, 0.0f, 1.0f); //60, 60
+		m_pItem->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		m_pItem->SetMesh(mesh);
+		m_pItem->SetObjectID(i);
+		UINT unber = 1;
+		m_pItem->SetItemReact(&unber);
+		m_pItem->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
+		m_pItems[i++] = m_pItem;
+	}
+	//=======================================================================================================
 }
 
 void CPostProcessingShader::ReleaseObjects()
@@ -319,7 +356,7 @@ void CPostProcessingShader::ReleaseObjects()
 	if (m_pMinimap) m_pMinimap->Release();
 }
 
-void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, UINT ItemReact)
 {
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
@@ -333,7 +370,7 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
 
 	OnPrepareRender(pd3dCommandList, 1);
-	
+
 	if (m_nMRTSwitch)
 	{
 		for (int i = 0; i < m_nRenderTargetUI; i++)
@@ -347,10 +384,19 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 	if (m_pMinimap) m_pMinimap->Render(pd3dCommandList, pCamera);
 	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
 	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < nIventoryCount; ++i)
 	{
 		InVentoryBoxs[i]->Render(pd3dCommandList, 0);
 	}
+
+
+	for (int i = 0; i < nIventoryCount; ++i)
+	{
+		dynamic_cast<CUI_ITem*>(m_pItems[i])->SetItemReact(&ItemReact);
+		m_pItems[i]->Render(pd3dCommandList, 0);
+	}
+
+	//std::cout << ItemReact << std::endl; 
 
 }
 

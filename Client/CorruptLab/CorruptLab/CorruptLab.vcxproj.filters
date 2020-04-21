@@ -134,6 +134,9 @@
     <Filter Include="09.GameManager\01.Mgr_Item">
       <UniqueIdentifier>{02af749a-6350-415e-b248-db5b2ec1c438}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Shader\09.Shader_UI\02. Shader_Item">
+      <UniqueIdentifier>{6487eaa4-9b7e-47a7-a5db-4c81d29166df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -277,6 +280,9 @@
     <ClInclude Include="Object_RotatingItem.h">
       <Filter>05.Component\GameObject\09.RotatingItem</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_Item.h">
+      <Filter>04.Shader\09.Shader_UI\02. Shader_Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -404,6 +410,9 @@
     </ClCompile>
     <ClCompile Include="Object_RotatingItem.cpp">
       <Filter>05.Component\GameObject\09.RotatingItem</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_Item.cpp">
+      <Filter>04.Shader\09.Shader_UI\02. Shader_Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

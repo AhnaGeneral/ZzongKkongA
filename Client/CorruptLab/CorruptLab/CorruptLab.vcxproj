@@ -183,6 +183,7 @@
     <ClInclude Include="Object_UI.h" />
     <ClInclude Include="Shader_CollisionBox.h" />
     <ClInclude Include="Shader_HP.h" />
+    <ClInclude Include="Shader_Item.h" />
     <ClInclude Include="Shader_LightMRT.h" />
     <ClInclude Include="Shader_Lobby.h" />
     <ClInclude Include="Shader_Minimap.h" />
@@ -238,6 +239,7 @@
     <ClCompile Include="Shader_BillBoard.cpp" />
     <ClCompile Include="Shader_CollisionBox.cpp" />
     <ClCompile Include="Shader_HP.cpp" />
+    <ClCompile Include="Shader_Item.cpp" />
     <ClCompile Include="Shader_LightMRT.cpp" />
     <ClCompile Include="Shader_Lobby.cpp" />
     <ClCompile Include="Shader_Minimap.cpp" />

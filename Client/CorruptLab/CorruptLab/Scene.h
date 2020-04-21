@@ -60,6 +60,11 @@ public:
 
 
 
+	POINT                       WindowCursorPos;
+
+	int                         n_ReactItem = 3; // 0, 1, 2 아이템이 아니면 3 
+	float                       itemRange;
+
 	//CObjectNosie              * m_pNoiseObject = NULL;
 	//CObjectFog                * m_pCObjectFog = NULL;
 	CObjectWater              * m_pCObjectWater = NULL; 

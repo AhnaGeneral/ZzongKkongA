@@ -123,6 +123,7 @@ private:
 	Shader_ShadowMRT                  * m_pShadowShader = NULL; 
 
 	CScene                            * m_pScene[2];
+	UINT                               m_SceneItemReact = 0;
 
 	CPlayer                           * m_pPlayer = NULL;
 	CCamera                           * m_pCamera = NULL;

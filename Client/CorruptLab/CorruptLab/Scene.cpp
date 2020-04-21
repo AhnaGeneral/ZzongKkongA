@@ -388,6 +388,30 @@ bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 	case WM_RBUTTONDOWN:
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
+		WindowCursorPos = m_ptOldCursorPos;
+
+		//ScreenToClient함수 전체화면 기준인 커서의를 해당 클라이언트 윈도우 기준으로 좌표를 변환해주는 함수 이다. 
+		//std::cout << "전체화면 기준 cursor:" << m_ptOldCursorPos.x << "," << m_ptOldCursorPos.y << "  " << std::endl;
+		ScreenToClient(hWnd, &WindowCursorPos);
+		//std::cout << "윈도우 기준  cursor:" << WindowCursorPos.x << "," << WindowCursorPos.y << "  " << std::endl;
+
+		//n_ReactItem
+		itemRange = FRAME_BUFFER_HEIGHT / 10.0f; //60
+
+		if (WindowCursorPos.y <= FRAME_BUFFER_HEIGHT && WindowCursorPos.y >= (FRAME_BUFFER_HEIGHT - itemRange))
+		{
+			if ((WindowCursorPos.x >= 0.0f) && (WindowCursorPos.x <= itemRange)) n_ReactItem = 0;
+
+			if ((WindowCursorPos.x >= itemRange) && (WindowCursorPos.x <= (itemRange * 2)))	n_ReactItem = 1;
+
+			if ((WindowCursorPos.x >= itemRange * 2) && (WindowCursorPos.x <= (itemRange * 3)))	n_ReactItem = 2;
+		}
+		else
+		{
+			n_ReactItem = 3;
+		}
+		//std::cout << " ReactItem  " << n_ReactItem << std::endl;
+
 		break;
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
