@@ -5,6 +5,8 @@
 #include "Scene.h"
 #include "Object_Terrain.h"
 #include "Mgr_Collision.h"
+#include "Object_ItemBox.h"
+#include "Object_DynamicObj.h"
 #include "Monster_Yangmal.h"
 
 CGameScene::CGameScene()
@@ -36,7 +38,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 
 	m_pSoftParticleShader = new CSoftParticleShader();
-	m_pSoftParticleShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex);
+	m_pSoftParticleShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex, m_pTerrain);
 
 
 	m_pCObjectWater = new CObjectWater(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature); //object
@@ -61,13 +63,26 @@ void CGameScene::ReleaseObjects()
 
 	if (m_pStaticObjLists) // 오브젝트 Release
 	{
-		for (int i = 0; i < m_nObjectTypeNum; i++)
+		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
 		{
 			for (auto Obj : *m_pStaticObjLists[i])
 			{
 				Obj->Release();
 			}
 			m_pStaticObjLists[i]->clear();
+		}
+	}
+
+
+	if (m_pDynamicObjLists) // 오브젝트 Release
+	{
+		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pDynamicObjLists[i])
+			{
+				Obj->Release();
+			}
+			m_pDynamicObjLists[i]->clear();
 		}
 	}
 
@@ -397,6 +412,10 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 		case VK_F1:
 			ChangeTerrainPipeline();
 			break;
+		case 'Q':
+		case 'q':
+			ItemBoxCheck();
+			break;
 		default:
 			break;
 		}
@@ -465,7 +484,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
-		for (int i = 0; i < m_nObjectTypeNum; i++)
+		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
 		{
 			for (auto Obj : *m_pStaticObjLists[i])
 			{
@@ -474,6 +493,20 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 			}
 		}
 	}
+
+	if (m_pDynamicObjLists) // 오브젝트 Render
+	{
+		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pDynamicObjLists[i])
+			{
+				Obj->Update(m_fElapsedTime);
+				Obj->UpdateTransform(NULL);
+				Obj->Render(pd3dCommandList, pCamera, 0);
+			}
+		}
+	}
+
 
 	if (m_pMonsterLists) // 몬스터 Render
 	{
@@ -508,7 +541,7 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 	m_pTerrain->Render(pd3dCommandList, pCamera, 2);
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
-		for (int i = 0; i < m_nObjectTypeNum; i++)
+		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
 		{
 			for (auto Obj : *m_pStaticObjLists[i])
 			{
@@ -528,5 +561,18 @@ void CGameScene::Update(float fTimeElapsed)
 	AnimateObjects(fTimeElapsed);
 
 	m_pPlayer->Animate(fTimeElapsed, NULL);
+}
+
+void CGameScene::ItemBoxCheck()
+{
+	for (auto pObj : *m_pDynamicObjLists[OBJECT_TYPE_ITEMBOX])
+	{
+		XMFLOAT3 ObjPos = pObj->GetPosition();
+		XMFLOAT3 PlayerPos = m_pPlayer->GetPosition();
+
+		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
+		if (Distance < 10)
+			dynamic_cast<CItemBox*>(pObj)->Open();
+	}
 }
 

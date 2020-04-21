@@ -24,6 +24,7 @@ class CObjectNosie : public CGameObject
 protected:
 	CB_DISTORTIONBUFFERTYPE m_cbvdistortion;
 	CB_NOISEBUFFERTYPE      m_cbvNoisebuffer;
+	float					m_fFrameTime = 0.0f;
 
 public:
 

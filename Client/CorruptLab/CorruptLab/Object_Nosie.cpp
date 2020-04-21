@@ -79,13 +79,12 @@ void CObjectNosie::ReleaseShaderVariables()
 
 void CObjectNosie::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
 {
-	static float frameTime = 0.0f;
 
 	// 프레임 시간 카운터를 증가시킵니다.
-	frameTime += 0.01f;
-	if (frameTime > 1000.0f)
+	m_fFrameTime += 0.01f;
+	if (m_fFrameTime > 1000.0f)
 	{
-		frameTime = 0.0f;
+		m_fFrameTime = 0.0f;
 	}
 
 	// GameObject[게임 오브젝트 콘스탄트버퍼] -------------------------------------------------------------
@@ -97,7 +96,7 @@ void CObjectNosie::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLi
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
 
 	// noisebuffer [노이즈의 콘스탄트버퍼] ----------------------------------------------------------------
-	::memcpy(&m_pcbMappedNoiseBuffers->frameTime, &frameTime, sizeof(float));
+	::memcpy(&m_pcbMappedNoiseBuffers->frameTime, &m_fFrameTime, sizeof(float));
 	::memcpy(&m_pcbMappedNoiseBuffers->scrollSpeeds, &m_cbvNoisebuffer.scrollSpeeds, sizeof(XMFLOAT3));
 	::memcpy(&m_pcbMappedNoiseBuffers->scales, &m_cbvNoisebuffer.scales, sizeof(XMFLOAT3));
 	::memcpy(&m_pcbMappedNoiseBuffers->padding, &m_cbvNoisebuffer.padding, sizeof(float));

@@ -37,8 +37,8 @@ void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<PS_FOG_INPUT> outStr
 	vLook = normalize(vLook);
 	float3 vRight = cross(vUP, vLook);
 
-	float fHalfW = 50 * 0.5f;
-	float fHalfH = 50 * 0.5f;
+	float fHalfW = 150 * 0.5f;
+	float fHalfH = 80 * 0.5f;
 
 	float4 pVertices[4];
 	pVertices[0] = float4(input[0].positionW + fHalfW * vRight - fHalfH * vUP, 1.0f);
@@ -131,6 +131,7 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 		//fDepthDistance/= 
 		output.NonLight.a -= fDepthDistance;
 	}
+	output.NonLight.a /= 5.f;
 	return output;
 
 }

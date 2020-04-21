@@ -3,6 +3,7 @@
 class CStaticObject :
 	public CGameObject
 {
+public:
 	virtual void OnInitialize();
 };
 

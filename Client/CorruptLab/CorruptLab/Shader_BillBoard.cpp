@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Shader_BillBoard.h"
 #include "Object_Nosie.h"
+#include "Object_Terrain.h"
 
 CSkyBoxShader::CSkyBoxShader()
 {
@@ -427,7 +428,7 @@ void CSoftParticleShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSigna
 
 }
 
-void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext)
+void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext, CHeightMapTerrain* pTerrain)
 {
 	CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
 	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 8);
@@ -436,12 +437,20 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	m_pSceneDepthTextures->SetTexture(0, pContext);
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pSceneDepthTextures, ROOT_PARAMETER_SCENEDEPTHTEX, 0);
 	
-	m_nFog = 1;
+	m_nFog = 25;
+	int w = 0;
 	m_pFogObjects = new CObjectNosie * [m_nFog];
-
-	CObjectNosie* pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, XMFLOAT3(400.0f, 55.0f, 198.0f), this);  //object
-	pNoise->GenerateShaderDistortionBuffer();
-	m_pFogObjects[0] = pNoise;
+	CObjectNosie* pNoise;
+	for (int i = 50; i < 400; i+= 80)
+	{
+		for (int j = 50; j < 400; j+=80)
+		{
+			float fHeight = pTerrain->GetHeight(i, j) + 40;
+			pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, XMFLOAT3(i, fHeight, j), this);  //object
+			pNoise->GenerateShaderDistortionBuffer();
+			m_pFogObjects[w] = pNoise; w++;
+		}
+	}
 
 	m_nFire = 1;
 	m_pFireObjects = new CObjectNosie * [m_nFire];
@@ -457,7 +466,6 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 void CSoftParticleShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	m_pSceneDepthTextures->UpdateShaderVariables(pd3dCommandList);
-
 
 	m_pFireNoiseTextures->UpdateShaderVariable(pd3dCommandList, 0);
 

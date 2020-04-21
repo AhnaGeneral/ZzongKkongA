@@ -3,22 +3,27 @@
 #include "Scene.h"
 #include "Object_StaticObj.h"
 #include "Monster_Yangmal.h"
+#include "Object_ItemBox.h"
 #include "Mgr_Collision.h"
 //#include "Monster_Yangmal.h"
 
 void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_nObjectTypeNum = 3;
-	m_pStaticObjLists = new list<CGameObject*> * [m_nObjectTypeNum];
+	m_nStaticObjectTypeNum = 3;
+	m_pStaticObjLists = new list<CGameObject*> * [m_nStaticObjectTypeNum];
 
-	for (int i = 0; i < m_nObjectTypeNum; i++) // 초기화
+	for (int i = 0; i < m_nStaticObjectTypeNum; i++) // 초기화
 		m_pStaticObjLists[i] = new list<CGameObject*>();
 
+	m_nDynamicObjectTypeNum = 1;
+	m_pDynamicObjLists = new list<CDynamicObject*> * [m_nDynamicObjectTypeNum];
+	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+		m_pDynamicObjLists[i] = new list<CDynamicObject*> ();
 
 	m_nMonsterTypeNum = 1;
 	m_pMonsterLists = new list<CMonster*> * [m_nMonsterTypeNum];
 
-	for (int i = 0; i < m_nObjectTypeNum; i++) // 초기화
+	for (int i = 0; i < m_nStaticObjectTypeNum; i++) // 초기화
 		m_pMonsterLists[i] = new list<CMonster*>();
 	
 	
@@ -40,12 +45,21 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	PlaceStaticObjectsFromFile(pTowerModel, "ObjectsData/Towers.bin", OBJECT_TYPE_TRMTOWER);
 
 
+	/*Dynamic*/
+	//ItemBox--------------------------------------------
+	CGameObject* pItemBox = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Box_Opening.bin", NULL, true);
+
+	PlaceDynamicFromFile(pItemBox, "ObjectsData/ItemBoxes.bin", OBJECT_TYPE_ITEMBOX);
+
+
+
 	/*Monster*/
 	//Yangmal-------------------------------------------------
 	
 	CGameObject* pYangmalModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Yangmal.bin", NULL, true);
 	PlaceMonsterFromFile(pYangmalModel, "ObjectsData/Yangmals.bin", MONSTER_TYPE_YANGMAL);
-	
+
+
 }
 
 void CGameScene::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, int index)
@@ -81,6 +95,46 @@ void CGameScene::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName,
 		pGameObject->UpdateTransform(NULL);
 		pGameObject->OnInitialize();
 		m_pStaticObjLists[index]->push_back(pGameObject);
+	}
+}
+
+void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index)
+{
+
+	FILE* pInFile = NULL;
+	::fopen_s(&pInFile, FileName, "rb");
+	::rewind(pInFile);
+
+	int nObjects = 0;
+	(UINT)::fread(&nObjects, sizeof(int), 1, pInFile);
+
+	XMFLOAT3 xmf3Position, xmf3Rotation, xmf3Scale;
+	XMFLOAT4 xmf4Rotation;
+
+	CDynamicObject* pGameObject = NULL;
+	for (int i = 0; i < nObjects; i++)
+	{
+		(UINT)::fread(&xmf3Position, sizeof(float), 3, pInFile);
+		(UINT)::fread(&xmf3Rotation, sizeof(float), 3, pInFile); //Euler Angle
+		(UINT)::fread(&xmf3Scale, sizeof(float), 3, pInFile);
+		(UINT)::fread(&xmf4Rotation, sizeof(float), 4, pInFile); //Quaternion
+
+		XMFLOAT4X4 xmmtxWorld;
+		(UINT)::fread(&xmmtxWorld, sizeof(XMFLOAT4X4), 1, pInFile);
+
+		if (index == OBJECT_TYPE_ITEMBOX)
+			pGameObject = new CItemBox();
+
+		pGameObject->SetChild(pModel, true);
+
+		pGameObject->m_xmf4Rotation = xmf4Rotation;
+		pGameObject->m_xmf3Scale = Vector3::ScalarProduct(xmf3Scale, 0.5f, false);
+		pGameObject->m_xmf4x4Transform = xmmtxWorld;
+
+	
+		pGameObject->UpdateTransform(NULL);
+		pGameObject->OnInitialize();
+		m_pDynamicObjLists[index]->push_back(pGameObject);
 	}
 }
 

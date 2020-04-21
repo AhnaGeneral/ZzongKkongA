@@ -55,9 +55,14 @@
 
 
 //[ Object Type ]====================================
+//Static
 #define OBJECT_TYPE_ROCK				0
 #define OBJECT_TYPE_FENCE				1
 #define OBJECT_TYPE_TRMTOWER			2
+
+// Dynamic
+#define OBJECT_TYPE_ITEMBOX				0
+
 //---------------------------------------------------
 #define MONSTER_TYPE_YANGMAL			0
 

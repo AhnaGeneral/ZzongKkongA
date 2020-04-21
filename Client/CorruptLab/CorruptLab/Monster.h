@@ -1,6 +1,7 @@
 #pragma once
 #include "Object_StaticObj.h"
 
+
 class CMonster : public CGameObject
 {
 public:

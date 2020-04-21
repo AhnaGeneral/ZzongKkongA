@@ -45,7 +45,10 @@ float CAnimationSet::GetPosition(float fPosition)
 		break;
 	}
 	case ANIMATION_TYPE_ONCE:
+	{
+		fGetPosition = fPosition - int(fPosition / m_pfKeyFrameTransformTimes[m_nKeyFrameTransforms - 1]) * m_pfKeyFrameTransformTimes[m_nKeyFrameTransforms - 1];		
 		break;
+	}
 	case ANIMATION_TYPE_PINGPONG:
 		break;
 	}
@@ -180,6 +183,9 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHan
 				}
 
 				float fPositon = pAnimationSet->GetPosition(pAnimationSet->m_fPosition);
+
+				if (pAnimationSet->m_nType == ANIMATION_TYPE_ONCE && pAnimationSet->m_fPosition >= 0.83f)
+					return;
 				for (int i = 0; i < m_nAnimationBoneFrames; i++)
 				{
 					m_ppAnimationBoneFrameCaches[i]->m_xmf4x4Transform = pAnimationSet->GetSRT(i, fPositon);

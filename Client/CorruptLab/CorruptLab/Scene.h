@@ -12,6 +12,7 @@ using namespace std;
 
 class CHeightMapTerrain;
 class CSkyBox;
+class CItemBox;
 
 class CScene
 {
@@ -45,6 +46,7 @@ protected:
 };
 
 class CMonster;
+class CDynamicObject;
 
 class CGameScene : public CScene
 {
@@ -83,6 +85,8 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Update(float fTimeElapsed);
 
+	void ItemBoxCheck();
+
 	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd);
 
 	void AnimateObjects(float fTimeElapsed);
@@ -94,6 +98,7 @@ public:
 
 	void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList);
 	void PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, int index);
+	void PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index);
 	void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index);
 
 	void ChangeTerrainPipeline();
@@ -103,9 +108,11 @@ private: // 배치되는 오브젝트들
 	bool					m_bPipelineStateIndex = 0;
 	POINT					m_ptOldCursorPos;
 	
-	int						m_nObjectTypeNum; // 오브젝트 종류 개수
+	int						m_nDynamicObjectTypeNum;
+	int						m_nStaticObjectTypeNum; // 오브젝트 종류 개수
 	int						m_nMonsterTypeNum; // 몬스터 종류 개수
 	list<CGameObject*>**	m_pStaticObjLists; // list<CGameObject*>*의 배열
+	list<CDynamicObject*>** m_pDynamicObjLists; 
 	list<CMonster*>**		m_pMonsterLists;
 	CSoftParticleShader		* m_pSoftParticleShader = NULL;
 

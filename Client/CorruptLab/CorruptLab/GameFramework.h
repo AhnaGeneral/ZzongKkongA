@@ -31,14 +31,12 @@ public:
 
 	void CreateSwapChainRenderTargetViews();
 	void CreateDepthStencilView();
-	
 
 	void ChangeSwapChainState();
 
 	void CreateOffScreenRenderTargetViews();
 	void CreateLightRenderTargetViews();
 	void CreateShadowRenderTargetViews();
-
 
 	void BuildObjects();
 	void ReleaseObjects();
@@ -51,8 +49,6 @@ public:
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
-
-
 
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);

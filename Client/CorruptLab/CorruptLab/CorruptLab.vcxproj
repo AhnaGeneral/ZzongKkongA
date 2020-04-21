@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Mgr_Item.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="Monster_Yangmal.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -166,7 +167,10 @@
     <ClInclude Include="Mesh_Skinned.h" />
     <ClInclude Include="Mesh_SkyBox.h" />
     <ClInclude Include="Mesh_Terrain.h" />
+    <ClInclude Include="Object_DynamicObj.h" />
+    <ClInclude Include="Object_ItemBox.h" />
     <ClInclude Include="Object_Nosie.h" />
+    <ClInclude Include="Object_RotatingItem.h" />
     <ClInclude Include="Object_StaticObj.h" />
     <ClInclude Include="Object_Terrain.h" />
     <ClInclude Include="Material.h" />
@@ -200,6 +204,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Mgr_Item.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="Monster_Yangmal.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -216,7 +221,10 @@
     <ClCompile Include="Mesh_Skinned.cpp" />
     <ClCompile Include="Mesh_SkyBox.cpp" />
     <ClCompile Include="Mesh_Terrain.cpp" />
+    <ClCompile Include="Object_DynamicObj.cpp" />
+    <ClCompile Include="Object_ItemBox.cpp" />
     <ClCompile Include="Object_Nosie.cpp" />
+    <ClCompile Include="Object_RotatingItem.cpp" />
     <ClCompile Include="Object_StaticObj.cpp" />
     <ClCompile Include="Object_Terrain.cpp" />
     <ClCompile Include="MapObjectLoader.cpp" />
