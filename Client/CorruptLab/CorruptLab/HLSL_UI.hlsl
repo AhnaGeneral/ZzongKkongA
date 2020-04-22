@@ -80,3 +80,27 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 
 	return float4(cColor);
 }
+
+
+
+VS_TEXTURED_OUTPUT BillboardUI_VS(VS_TEXTURED_INPUT input)
+{
+	VS_TEXTURED_OUTPUT output;
+
+	float3 positionW = (float3)mul(float4(input.position, 1.0f), gmtxGameObject);
+	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
+	output.uv = input.uv;
+	return output;
+}
+
+
+PS_NONLIGHT_MRT_OUTPUT BillboardUI_PS(VS_TEXTURED_OUTPUT input)
+{
+
+	PS_NONLIGHT_MRT_OUTPUT output;
+
+	output.NonLight = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
+	//Albedo 레지스터를 빌보드 UI 텍스쳐로 재활용 했어요
+	return output;
+}
+

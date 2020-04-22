@@ -137,6 +137,9 @@
     <Filter Include="04.Shader\09.Shader_UI\02. Shader_Item">
       <UniqueIdentifier>{6487eaa4-9b7e-47a7-a5db-4c81d29166df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Shader\09.Shader_UI\03. Shader_BillboadUI">
+      <UniqueIdentifier>{23401611-d984-400a-bb4f-f9d1e6cde478}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -283,6 +286,9 @@
     <ClInclude Include="Shader_Item.h">
       <Filter>04.Shader\09.Shader_UI\02. Shader_Item</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_BillboardUI.h">
+      <Filter>04.Shader\09.Shader_UI\03. Shader_BillboadUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -413,6 +419,9 @@
     </ClCompile>
     <ClCompile Include="Shader_Item.cpp">
       <Filter>04.Shader\09.Shader_UI\02. Shader_Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_BillboardUI.cpp">
+      <Filter>04.Shader\09.Shader_UI\03. Shader_BillboadUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

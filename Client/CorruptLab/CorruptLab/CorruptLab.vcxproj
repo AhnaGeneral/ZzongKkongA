@@ -181,6 +181,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Object_BillBoard.h" />
     <ClInclude Include="Object_UI.h" />
+    <ClInclude Include="Shader_BillboardUI.h" />
     <ClInclude Include="Shader_CollisionBox.h" />
     <ClInclude Include="Shader_HP.h" />
     <ClInclude Include="Shader_Item.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="Object_UI.cpp" />
     <ClCompile Include="Shader-Terrain.cpp" />
     <ClCompile Include="Shader_BillBoard.cpp" />
+    <ClCompile Include="Shader_BillboardUI.cpp" />
     <ClCompile Include="Shader_CollisionBox.cpp" />
     <ClCompile Include="Shader_HP.cpp" />
     <ClCompile Include="Shader_Item.cpp" />
