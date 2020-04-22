@@ -117,12 +117,12 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 
-	float2 projectTexCoord;
-	float lightDepthValue;
-	float depthValue;
-	float bias = 0.001f;
-	projectTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
-	projectTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
+	//float2 projectTexCoord;
+	//float lightDepthValue;
+	//float depthValue;
+	//float bias = 0.001f;
+	//projectTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
+	//projectTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
 
 	//if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
 	//{

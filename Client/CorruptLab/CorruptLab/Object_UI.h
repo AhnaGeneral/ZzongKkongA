@@ -103,12 +103,12 @@ public:
 	void SetPlayerHP(int* playerHPRemaining) { m_PlayerHP = playerHPRemaining; }
 	void SetObjectID(UINT objectID) { m_nobjectID = objectID; }
 	virtual UINT GetObjectID() { return m_nobjectID; }
-
+	 
 private:
 	UINT   m_nobjectID;
 
 	ID3D12Resource* m_pd3dcbPlayerHP = NULL;
-	int * m_PlayerHP = NULL;
+	int* m_PlayerHP = NULL;
 	int* m_pcbPlayerHP = NULL;
 
 };

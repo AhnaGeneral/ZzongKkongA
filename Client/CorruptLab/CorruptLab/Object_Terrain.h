@@ -20,7 +20,7 @@ private:
 	int							    	m_nWidth;
 	int							    	m_nLength;
 
-	CMesh** m_ppMeshes;
+	CHeightMapGridMesh** m_ppMeshes;
 	int							    	m_nMeshes;
 	CTexture* m_pShadowMap;
 
@@ -46,7 +46,7 @@ public:
 	float GetWidth() { return(m_nWidth * m_xmf3Scale.x); }
 	float GetLength() { return(m_nLength * m_xmf3Scale.z); }
 
-	void SetMesh(int nIndex, CMesh* pMesh);
+	void SetMesh(int nIndex, CHeightMapGridMesh* pMesh);
 
 	virtual void ReleaseUploadBuffers();
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);

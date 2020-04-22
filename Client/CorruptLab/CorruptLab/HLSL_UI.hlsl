@@ -26,7 +26,6 @@ float4 PSHP(VS_TEXTURED_OUTPUT input ): SV_TARGET
 
 	return float4(cColor);
 }
-
 cbuffer cbItemReaction : register(b7) // 플레이어 위치
 {
 	uint	   gf3ItemReaction :packoffset(c0);
@@ -34,7 +33,7 @@ cbuffer cbItemReaction : register(b7) // 플레이어 위치
 
 cbuffer cbPlayerHPRemaining : register(b8) // 플레이어
 {
-    uint          gfremainingHP :packoffset(c0);
+	uint          gfremainingHP :packoffset(c0);
 }
 
 Texture2D gtxtHandLighTexture : register(t26);
@@ -95,7 +94,7 @@ float4 PSPlayerHP(VS_TEXTURED_OUTPUT input) : SV_TARGET
 	if (cColor.a > 0.6f)
 		cColor.a = 1.0f;
 
-	float HP =  gfremainingHP / 100.0f;
+	float HP = gfremainingHP / 100.0f;
 	//cColor.r = cColor.r * HP; 
 
 	return float4(cColor);
@@ -119,7 +118,7 @@ PS_NONLIGHT_MRT_OUTPUT BillboardUI_PS(VS_TEXTURED_OUTPUT input)
 	PS_NONLIGHT_MRT_OUTPUT output;
 
 	output.NonLight = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
-	//Albedo 레지스터를 빌보드 UI 텍스쳐로 재활용 했어요
+	//output.NonLight = float4(1, 1, 1, 1);
 	return output;
 }
 

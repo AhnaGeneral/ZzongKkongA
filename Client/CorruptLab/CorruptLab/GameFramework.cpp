@@ -637,8 +637,7 @@ void CGameFramework::BuildObjects()
 	m_pPostProcessingShader->GetMinimap()->CreateShaderVariables(m_pd3dDevice, m_pd3dCommandList);
 
 	m_pPostProcessingShader->GetPlayerHP()->SetPlayerHP(m_pPlayer->GetPlayerHPPointer());
-	//m_pPostProcessingShader->GetPlayerHP()->CreateShaderVariables(m_pd3dDevice, m_pd3dCommandList);
-
+	
 	m_pCamera = m_pPlayer->GetCamera();
 
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };

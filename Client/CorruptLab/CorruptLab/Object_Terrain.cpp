@@ -21,7 +21,7 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	long czBlocks = (m_nLength - 1) / czQuadsPerBlock;
 
 	m_nMeshes = cxBlocks * czBlocks; // 32*32 = 1024
-	m_ppMeshes = new CMesh * [m_nMeshes]; // 1024? 
+	m_ppMeshes = new CHeightMapGridMesh * [m_nMeshes]; // 1024? 
 	for (int i = 0; i < m_nMeshes; i++)
 		m_ppMeshes[i] = NULL;
 
@@ -91,7 +91,7 @@ CHeightMapTerrain::~CHeightMapTerrain(void)
 	}
 }
 
-void CHeightMapTerrain::SetMesh(int nIndex, CMesh* pMesh)
+void CHeightMapTerrain::SetMesh(int nIndex, CHeightMapGridMesh* pMesh)
 {
 	if (m_ppMeshes)
 	{
@@ -118,15 +118,36 @@ void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCame
 	OnPrepareRender();
 
 	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera, nPipelineState);
-	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
-	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
-	UpdateShaderVariables(pd3dCommandList);
+	if (nPipelineState == 0)
+	{		
+		m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
+		UpdateShaderVariables(pd3dCommandList);
 
+	}
+	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
+
+	XMFLOAT3 CameraPos = pCamera->GetPosition();
+	bool bRender = true;
 	if (m_ppMeshes)
 	{
 		for (int i = 0; i < m_nMeshes; i++)
 		{
-			if (m_ppMeshes[i]) m_ppMeshes[i]->Render(pd3dCommandList, i);
+			if (m_ppMeshes[i])
+			{
+				bRender = true;
+				for (int j = 0; j < 25; j++)
+				{
+					XMFLOAT3 pos = dynamic_cast<CHeightMapGridMesh*>(m_ppMeshes[i])->GetVertex(j).m_xmf3Position;
+					float Distance = Vector3::Length(Vector3::Subtract(CameraPos, pos));
+					if ( Distance > 250)
+					{
+						bRender = false;
+						break;
+					}
+				}
+				if (bRender)
+					m_ppMeshes[i]->Render(pd3dCommandList, i);
+			}
 		}
 	}
 }

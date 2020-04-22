@@ -42,7 +42,7 @@ protected:
 	int						m_nLength;
 	XMFLOAT3				m_xmf3Scale;
 	HeightMapVertex			*m_pVertices;
-
+	XMFLOAT3				*m_xmf3Positions;
 
 public:
 	CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int xStart, int zStart, int nWidth,
@@ -52,6 +52,7 @@ public:
 	XMFLOAT3 GetScale() { return(m_xmf3Scale); }
 	int GetWidth() { return(m_nWidth); }
 	int GetLength() { return(m_nLength); }
+	HeightMapVertex GetVertex(int i) { return m_pVertices[i]; }
 
 	virtual float OnGetHeight(int x, int z, void* pContext);
 	virtual XMFLOAT4 OnGetColor(int x, int z, void* pContext);

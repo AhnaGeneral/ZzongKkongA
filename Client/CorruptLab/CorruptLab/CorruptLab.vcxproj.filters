@@ -137,11 +137,11 @@
     <Filter Include="04.Shader\09.Shader_UI\03. Shader_BillboadUI">
       <UniqueIdentifier>{23401611-d984-400a-bb4f-f9d1e6cde478}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Shader\09.Shader_UI\04. Shader_ObjHP">
+      <UniqueIdentifier>{d5bdec2d-42f4-4ae9-b754-02e8929bdade}</UniqueIdentifier>
+    </Filter>
     <Filter Include="04.Shader\09.Shader_UI\01. Shader_BaseUI">
       <UniqueIdentifier>{2800c211-95e2-4cf8-b953-6ee0d5831b5e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04.Shader\09.Shader_UI\04.Shader_ObjHP">
-      <UniqueIdentifier>{f7abd82a-5448-4cd9-a840-d67e3b118bb2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -289,11 +289,11 @@
     <ClInclude Include="Shader_BillboardUI.h">
       <Filter>04.Shader\09.Shader_UI\03. Shader_BillboadUI</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_ObjHP.h">
+      <Filter>04.Shader\09.Shader_UI\04. Shader_ObjHP</Filter>
+    </ClInclude>
     <ClInclude Include="Shader_BaseUI.h">
       <Filter>04.Shader\09.Shader_UI\01. Shader_BaseUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader_ObjHP.h">
-      <Filter>04.Shader\09.Shader_UI\04.Shader_ObjHP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -426,11 +426,11 @@
     <ClCompile Include="Shader_BillboardUI.cpp">
       <Filter>04.Shader\09.Shader_UI\03. Shader_BillboadUI</Filter>
     </ClCompile>
+    <ClCompile Include="Shader_ObjHP.cpp">
+      <Filter>04.Shader\09.Shader_UI\04. Shader_ObjHP</Filter>
+    </ClCompile>
     <ClCompile Include="Shader_BaseUI.cpp">
       <Filter>04.Shader\09.Shader_UI\01. Shader_BaseUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader_ObjHP.cpp">
-      <Filter>04.Shader\09.Shader_UI\04.Shader_ObjHP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

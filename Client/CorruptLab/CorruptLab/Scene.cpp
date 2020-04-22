@@ -8,6 +8,7 @@
 #include "Object_ItemBox.h"
 #include "Object_DynamicObj.h"
 #include "Monster_Yangmal.h"
+#include "Mgr_Item.h"
 
 CGameScene::CGameScene()
 {
@@ -46,6 +47,8 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pCObjectWater->SetPosition(XMFLOAT3(256.0f, 25.0f, 256.0f));
 	m_pCObjectWater->Rotate(90.0f, 0.0f, 0.0f);
 	m_pCObjectWater->GenerateShaderDistortionBuffer();
+
+	CItemMgr::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
@@ -317,7 +320,7 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
-	d3dSamplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+	d3dSamplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_LINEAR_MIP_POINT;
 	d3dSamplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	d3dSamplerDesc[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 	d3dSamplerDesc[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
@@ -400,11 +403,22 @@ bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 
 		if (WindowCursorPos.y <= FRAME_BUFFER_HEIGHT && WindowCursorPos.y >= (FRAME_BUFFER_HEIGHT - itemRange))
 		{
-			if ((WindowCursorPos.x >= 0.0f) && (WindowCursorPos.x <= itemRange)) n_ReactItem = 0;
-
-			if ((WindowCursorPos.x >= itemRange) && (WindowCursorPos.x <= (itemRange * 2)))	n_ReactItem = 1;
-
-			if ((WindowCursorPos.x >= itemRange * 2) && (WindowCursorPos.x <= (itemRange * 3)))	n_ReactItem = 2;
+			if ((WindowCursorPos.x >= 0.0f) && (WindowCursorPos.x <= itemRange))
+			{
+				n_ReactItem = ITEM_TYPE_HANDLIGHT;
+				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HANDLIGHT);
+			}
+			if ((WindowCursorPos.x >= itemRange) && (WindowCursorPos.x <= (itemRange * 2)))
+			{
+				n_ReactItem = ITEM_TYPE_HPKIT;
+				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HPKIT);
+			}
+		
+			if ((WindowCursorPos.x >= itemRange * 2) && (WindowCursorPos.x <= (itemRange * 3)))
+			{
+				n_ReactItem = ITEM_TYPE_PILL;
+				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_PILL);
+			}
 		}
 		else
 		{
@@ -555,7 +569,10 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	if (m_pSkyBox)       m_pSkyBox->Render(pd3dCommandList, pCamera);
 
+	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
+
 	if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
+
 
 }
 
@@ -585,6 +602,7 @@ void CGameScene::Update(float fTimeElapsed)
 	AnimateObjects(fTimeElapsed);
 
 	m_pPlayer->Animate(fTimeElapsed, NULL);
+	CItemMgr::GetInstance()->Update(fTimeElapsed);
 }
 
 void CGameScene::ItemBoxCheck()

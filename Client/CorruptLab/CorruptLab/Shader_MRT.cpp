@@ -363,7 +363,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	m_PlayerHP->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
 	m_PlayerHP->SetObjectID(4);
 	m_PlayerHP->SetMesh(mesh);
-	
+
 
 }
 

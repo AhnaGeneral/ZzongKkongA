@@ -184,8 +184,9 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHan
 
 				float fPositon = pAnimationSet->GetPosition(pAnimationSet->m_fPosition);
 
-				if (pAnimationSet->m_nType == ANIMATION_TYPE_ONCE && pAnimationSet->m_fPosition >= 0.83f)
+				if (pAnimationSet->m_nType == ANIMATION_TYPE_ONCE && pAnimationSet->m_fPosition >= 0.4f)
 					return;
+
 				for (int i = 0; i < m_nAnimationBoneFrames; i++)
 				{
 					m_ppAnimationBoneFrameCaches[i]->m_xmf4x4Transform = pAnimationSet->GetSRT(i, fPositon);

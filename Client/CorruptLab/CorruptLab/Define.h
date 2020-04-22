@@ -42,7 +42,7 @@
 #define ROOT_PARAMETER_PLAYER_POS			5
 #define ROOT_PARAMETER_HP_TEX               6 
 #define ROOT_PARAMETER_ITEM_TEX             7  
-#define ROOT_PARAMETER_ITEM_REACT           8  
+#define ROOT_PARAMETER_ITEM_REACT           8 
 #define ROOT_PARAMETER_PLAYER_HP            9  
 
 
@@ -66,16 +66,24 @@
 // Dynamic
 #define OBJECT_TYPE_ITEMBOX				0
 
+/*Monster*/
 //---------------------------------------------------
 #define MONSTER_TYPE_YANGMAL			0
 
 #define MONSTER_STATE_IDLE				0
 #define MONSTER_STATE_WALK				1
 #define MONSTER_STATE_ATTACK			2
+
+/*JohnsonAnimation*/
 //---------------------------------------------------
 #define JOHNSON_ANIAMATION_IDLE			0
 #define JOHNSON_ANIAMATION_WALK			1
 #define JOHNSON_ANIAMATION_RUN			2
 
+/*ItemType*/
+//------------------------------------------------
+#define ITEM_TYPE_HANDLIGHT				0
+#define ITEM_TYPE_HPKIT					1
+#define ITEM_TYPE_PILL					2
 
 #define EPSILON						1.0e-10f

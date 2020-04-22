@@ -41,7 +41,7 @@ public:
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
-	
+
 	void GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance);
 	int GetMRTSwitch() { return m_nMRTSwitch; }
 	void SetMRTSwitch(int iunder) { m_nMRTSwitch = iunder; }
@@ -54,14 +54,14 @@ protected:
 	CTexture* m_pLightTexture = NULL;
 	CTexture* m_pShadowTexture = NULL;
 
-	CGameObject ** m_pRenderTargetUIs = NULL; 
-	int m_nRenderTargetUI; 
+	CGameObject** m_pRenderTargetUIs = NULL;
+	int m_nRenderTargetUI;
 	CMRTUI* pRenderTargetUI = NULL;
-	int  m_nMRTSwitch = 1; 
+	int  m_nMRTSwitch = 1;
 
 	CUI_MiniMap* m_pMinimap = NULL;
 
-	CUI_Root* m_pHP = NULL; 
+	CUI_Root* m_pHP = NULL;
 
 	CUI_Root* m_Radiation = NULL;
 	CUI_Root* m_HPBAR = NULL;

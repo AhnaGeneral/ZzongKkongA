@@ -47,6 +47,7 @@ D3D12_SHADER_BYTECODE CTerrainShader::CreateDomainShader(ID3DBlob** ppd3dShaderB
 	return(CShader::CompileShaderFromFile(L"HLSL_Terrain.hlsl", "DSTerrainTessellation", "ds_5_1", ppd3dShaderBlob));
 }
 
+
 D3D12_SHADER_BYTECODE CTerrainShader::CreateShadowVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(L"HLSL_TerrainShadow.hlsl", "VSTerrainShadow", "vs_5_1", ppd3dShaderBlob));

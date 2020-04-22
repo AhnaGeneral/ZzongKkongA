@@ -103,6 +103,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	m_xmf3Scale = xmf3Scale;
 
 	m_pVertices = new HeightMapVertex[m_nVertices];
+	m_xmf3Positions = new XMFLOAT3[m_nVertices];
 
 	CHeightMapImage* pHeightMapImage = (CHeightMapImage*)pContext;
 	int cxHeightMap = pHeightMapImage->GetHeightMapWidth();
@@ -115,7 +116,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 		{
 			fHeight = OnGetHeight(x, z, pContext);
 
-			m_pVertices[i].m_xmf3Position = XMFLOAT3((x * m_xmf3Scale.x), fHeight, (z * m_xmf3Scale.z));
+			m_xmf3Positions[i] =  m_pVertices[i].m_xmf3Position = XMFLOAT3((x * m_xmf3Scale.x), fHeight, (z * m_xmf3Scale.z));
 			m_pVertices[i].m_xmf4Color = Vector4::Add(OnGetColor(x, z, pContext), xmf4Color);
 			m_pVertices[i].m_xmf3Normal = pHeightMapImage->GetHeightMapNormal(x,z);
 			m_pVertices[i].m_xmf2TexCoord0 = XMFLOAT2(float(x) / float(cxHeightMap - 1), float(czHeightMap - 1 - z) / float(czHeightMap - 1));
@@ -171,21 +172,13 @@ XMFLOAT4 CHeightMapGridMesh::OnGetColor(int x, int z, void* pContext)
 void CHeightMapGridMesh::ReleaseUploadBuffers()
 {
 	CMesh::ReleaseUploadBuffers();
+
 }
 
 void CHeightMapGridMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet)
 {
 	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
-
-	pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_MeshInfo.m_d3dPositionBufferView);
-
-	if ((m_MeshInfo.m_nSubMeshes > 0) && (nSubSet < m_MeshInfo.m_nSubMeshes))
-	{
-		pd3dCommandList->IASetIndexBuffer(&(m_MeshInfo.m_pd3dSubSetIndexBufferViews[nSubSet]));
-		pd3dCommandList->DrawIndexedInstanced(m_MeshInfo.m_pnSubSetIndices[nSubSet], 1, 0, 0, 0);
-	}
-	else
-	{
+	
+		pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_MeshInfo.m_d3dPositionBufferView);
 		pd3dCommandList->DrawInstanced(m_nVertices, 1, m_nOffset, 0);
-	}
 }

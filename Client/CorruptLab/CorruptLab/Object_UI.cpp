@@ -211,7 +211,7 @@ void CUI_ITem::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, 
 
 }
 
-void CUI_HP::InterLinkShaderTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, 
+void CUI_HP::InterLinkShaderTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
 	ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture)
 {
 	CShader_ObjHP* pShader = new CShader_ObjHP();
@@ -231,7 +231,7 @@ void CUI_HP::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_pd3dcbPlayerHP = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes,
 		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 	m_pd3dcbPlayerHP->Map(0, NULL, (void**)&m_pcbPlayerHP);
-	
+
 }
 
 void CUI_HP::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
