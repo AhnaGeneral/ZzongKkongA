@@ -50,7 +50,8 @@ public:
 
 //GameContents
 	void GetDamaage(int iDamage); 
-	void GetFullHP() { m_iCurrentHP = m_iMaxHP;}
+	void GetFullHP() { m_iCurrentHP = m_iMaxHP; }
+	int* GetPlayerHPPointer() { return &m_iCurrentHP; }
 ///
 
 

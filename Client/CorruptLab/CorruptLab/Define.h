@@ -43,6 +43,7 @@
 #define ROOT_PARAMETER_HP_TEX               6 
 #define ROOT_PARAMETER_ITEM_TEX             7  
 #define ROOT_PARAMETER_ITEM_REACT           8  
+#define ROOT_PARAMETER_PLAYER_HP            9  
 
 
 

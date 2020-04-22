@@ -46,6 +46,8 @@ public:
 	int GetMRTSwitch() { return m_nMRTSwitch; }
 	void SetMRTSwitch(int iunder) { m_nMRTSwitch = iunder; }
 	CUI_MiniMap* GetMinimap() { return m_pMinimap; }
+	CUI_HP* GetPlayerHP() { return m_PlayerHP; }
+
 
 protected:
 	CTexture* m_pTexture = NULL;
@@ -69,6 +71,7 @@ protected:
 
 	CGameObject** m_pItems = NULL;
 	CUI_ITem* m_pItem = NULL;
+	CUI_HP* m_PlayerHP = NULL;
 
 	UINT                             nIventoryCount = 3;
 

@@ -84,3 +84,31 @@ private:
 	ID3D12Resource* m_pd3dcbItemReact = NULL;
 	UINT* m_pcbItemReact = NULL;
 };
+
+
+class CUI_HP : public CMRTUI
+{
+public:
+	CUI_HP() {}
+	CUI_HP(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature) {}
+
+	~CUI_HP() {}
+
+	virtual void InterLinkShaderTexture(ID3D12Device* pd3dDevice,
+		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture = NULL);
+
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
+	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
+	void SetPlayerHP(int* playerHPRemaining) { m_PlayerHP = playerHPRemaining; }
+	void SetObjectID(UINT objectID) { m_nobjectID = objectID; }
+	virtual UINT GetObjectID() { return m_nobjectID; }
+
+private:
+	UINT   m_nobjectID;
+
+	ID3D12Resource* m_pd3dcbPlayerHP = NULL;
+	int * m_PlayerHP = NULL;
+	int* m_pcbPlayerHP = NULL;
+
+};

@@ -32,6 +32,11 @@ cbuffer cbItemReaction : register(b7) // 플레이어 위치
 	uint	   gf3ItemReaction :packoffset(c0);
 }
 
+cbuffer cbPlayerHPRemaining : register(b8) // 플레이어
+{
+    uint          gfremainingHP :packoffset(c0);
+}
+
 Texture2D gtxtHandLighTexture : register(t26);
 Texture2D gtxtHPKitdTexture : register(t27);
 Texture2D gtxtPillddsTexture : register(t28);
@@ -83,12 +88,26 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 
 
 
+float4 PSPlayerHP(VS_TEXTURED_OUTPUT input) : SV_TARGET
+{
+	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, input.uv);
+
+	if (cColor.a > 0.6f)
+		cColor.a = 1.0f;
+
+	float HP =  gfremainingHP / 100.0f;
+	//cColor.r = cColor.r * HP; 
+
+	return float4(cColor);
+}
+
+
 VS_TEXTURED_OUTPUT BillboardUI_VS(VS_TEXTURED_INPUT input)
 {
 	VS_TEXTURED_OUTPUT output;
 
 	float3 positionW = (float3)mul(float4(input.position, 1.0f), gmtxGameObject);
-	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
+	output.position = mul(mul(float4(positionW, 1.0f), gmtxView), gmtxProjection);
 	output.uv = input.uv;
 	return output;
 }

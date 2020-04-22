@@ -2,8 +2,9 @@
 #include "Object_UI.h"
 #include "Shader.h"
 #include "Shader_Minimap.h"
-#include "Shader_HP.h"
+#include "Shader_BaseUI.h"
 #include "Shader_Item.h"
+#include "shader_ObjHP.h"
 
 
 CMRTUI::CMRTUI(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -208,4 +209,51 @@ void CUI_ITem::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbItemReact->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_ITEM_REACT, d3dGpuVirtualAddress);
 
+}
+
+void CUI_HP::InterLinkShaderTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, 
+	ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture)
+{
+	CShader_ObjHP* pShader = new CShader_ObjHP();
+	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 1);
+	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
+
+	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)Texture, ROOT_PARAMETER_HP_TEX, true);
+	SetShader(pShader);
+	m_ppMaterials[0]->SetTexture((CTexture*)Texture);
+}
+
+void CUI_HP::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	UINT ncbElementBytes = ((sizeof(int) + 255) & ~255); //256ÀÇ ¹è¼ö  
+	m_pd3dcbPlayerHP = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes,
+		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	m_pd3dcbPlayerHP->Map(0, NULL, (void**)&m_pcbPlayerHP);
+	
+}
+
+void CUI_HP::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+{
+	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera);
+	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
+
+	OnPrepareRender();
+	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
+
+	if (m_pMesh)
+		m_pMesh->Render(pd3dCommandList, 0);
+}
+
+void CUI_HP::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
+{
+	XMFLOAT4X4 xmf4x4World;
+	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
+	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
+	std::cout << *m_PlayerHP << std::endl;
+
+	memcpy(m_pcbPlayerHP, m_PlayerHP, sizeof(int));
+	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbPlayerHP->GetGPUVirtualAddress();
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_PLAYER_HP, d3dGpuVirtualAddress);
 }
