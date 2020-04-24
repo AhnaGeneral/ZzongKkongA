@@ -33,22 +33,29 @@ PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 	vPosition.z = gtxtDepth[int2(position.xy)].x * vPorjPosZ;
 	vPosition.w = 1 * vPorjPosZ;
 
-
-	//float4 vDepth = gtxtDepth[int2(position.xy)];
-	//float valueW = vDepth.g * 150.0f; 
-	//float valueZ = vDepth.r * valueW; 
-	///*position.x = position.x * 2 - 1;
-	//position.y = position.y * 2 - 1;*/
-
-	//float4 vposition =  float4 (position.x /720 , position.y/600, valueZ, valueW);
 	vPosition = mul(mul(vPosition, gmtxInverseProjection), gmtxInverseView);
 
 	float4 vNormal = gtxtNormal[int2(position.xy)];
-//	float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
-
-	//float3 vToCamera = normalize(vCameraPosition - vPosition);
 	output.Light = Lighting(vPosition.xyz, vNormal.xyz);
-		//float4(position.x / 760, position.y / 600, 0, 1);
+
+	float weight = 0;
+	//±Û·Î¿ì¸Ê
+	
+	for (int i = 0; i < 4; i++)
+	{
+		weight = ((4 - i) * (4 - i) / 3);
+		for (int j = 0; j < 9; j++)
+		{
+			float cNonLight = gtxtNonLightNoise[int2(position.xy) + (gnOffsets[j] * i)].r;
+
+			if (cNonLight == 1)
+				output.Light += float4(0.1f, 0, 0, 0.1f) * weight;
+		}
+	}
+
+
+
+
 	return output;
 
 }

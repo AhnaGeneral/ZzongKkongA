@@ -134,19 +134,10 @@ void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCame
 		{
 			if (m_ppMeshes[i])
 			{
-				bRender = true;
-				for (int j = 0; j < 25; j++)
+				if (pCamera->m_boundingFrustum.Intersects(m_ppMeshes[i]->m_boundingbox))
 				{
-					XMFLOAT3 pos = dynamic_cast<CHeightMapGridMesh*>(m_ppMeshes[i])->GetVertex(j).m_xmf3Position;
-					float Distance = Vector3::Length(Vector3::Subtract(CameraPos, pos));
-					if ( Distance > 250)
-					{
-						bRender = false;
-						break;
-					}
-				}
-				if (bRender)
 					m_ppMeshes[i]->Render(pd3dCommandList, i);
+				}
 			}
 		}
 	}

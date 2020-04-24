@@ -28,10 +28,12 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
 
 	m_pShadowCamera = new CSunCamera();
+	//m_pShadowCamera->Rotate(60.0f, 180.0f, 180.0f);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,
 		_T("Geometry/OneStageTerrain.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color, m_pShadowMap);
+	
 
 	m_pCloudGSShader = new CCloudGSShader;
 	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
@@ -43,7 +45,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 
 	m_pCObjectWater = new CObjectWater(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature); //object
-	m_pCObjectWater->SetScale(400.0f, 1.0f, 400.0f);
+
 	m_pCObjectWater->SetPosition(XMFLOAT3(256.0f, 25.0f, 256.0f));
 	m_pCObjectWater->Rotate(90.0f, 0.0f, 0.0f);
 	m_pCObjectWater->GenerateShaderDistortionBuffer();
@@ -442,6 +444,8 @@ bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 
 bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
+	float* m_fShadowPosition = m_pShadowCamera->GetShadowCameraPosition();
+
 	switch (nMessageID)
 	{
 	case WM_KEYUP:
@@ -453,6 +457,24 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 		case 'Q':
 		case 'q':
 			ItemBoxCheck();
+			break;
+		case 'A':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
+			break;
+		case 'S':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] -= 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
+			break;
+		case 'D':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] += 10.0f, m_fShadowPosition[2]);
+			break;
+		case 'F':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] -= 10.0f, m_fShadowPosition[2]);
+			break;
+		case 'G':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]+=10.0f);
+			break;
+		case 'H':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]-=10.0f);
 			break;
 		default:
 			break;
@@ -492,9 +514,16 @@ bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 		if (cxDelta || cyDelta)
 		{
 			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+			{
 				m_pPlayer->Rotate(cyDelta, 0.0f, -cxDelta);
+				m_pShadowCamera->Rotate(cyDelta, 0.0f, -cxDelta);
+
+			}
 			else
+			{
 				m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
+				//m_pShadowCamera->Rotate(cyDelta, cxDelta, 0.0f);
+			}
 		}
 		if (dwDirection)
 			m_pPlayer->Move(dwDirection, 0.5f, true);

@@ -78,7 +78,6 @@ VS_TEXTURED_LIGHTING_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT
 VS_TEXTURED_LIGHTING_OUTPUT VSLighting(VS_TEXTURED_LIGHTING_INPUT input)
 {
 	VS_TEXTURED_LIGHTING_OUTPUT output;
-
 	output.normalW = mul(input.normal, (float3x3)gmtxGameObject);
 	output.positionW = (float3)mul(float4(input.position, 1.0f), gmtxGameObject);
 	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
@@ -100,7 +99,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 
 	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
 	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
-
+	
 	cColorAlbedo.rgb = cColorAlbedo.rgb;
 
 	float3 normalW;
@@ -116,7 +115,14 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	output.depth = float4(input.vPorjPos.z/ input.vPorjPos.w, input.vPorjPos.w /300.0f,0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
+	output.NonLight = float4(0, 0, 0, 0);
 
+	if (gnTextureMask & MATERIAL_EMISSION_MAP)
+	{
+		float4 cColorEmission = gtxtEmissionTexture.Sample(gSamplerState, input.uv);
+		output.NonLight = cColorEmission;
+	}
+		
 	//float2 projectTexCoord;
 	//float lightDepthValue;
 	//float depthValue;

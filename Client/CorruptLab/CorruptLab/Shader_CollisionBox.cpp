@@ -100,6 +100,10 @@ void Shader_CollisionBox::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSigna
 
 void Shader_CollisionBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
+
+	UINT getobjectID = 1;
+	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
+
 	CShader::Render(pd3dCommandList, pCamera);
 
 }

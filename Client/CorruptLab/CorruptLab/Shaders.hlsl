@@ -18,8 +18,9 @@ cbuffer cbCameraInfo : register(b1)
 
 cbuffer cbGameObjectInfo : register(b2)
 {
-	matrix		    gmtxGameObject : packoffset(c0);
+	matrix		    gmtxGameObject : packoffset(c0); // 16
 	uint            gnObjectID : packoffset (c4); 
+	uint			gnTextureMask : packoffset(c5);
 };
 
 cbuffer cbOrthoInfo : register(b4)
@@ -86,6 +87,7 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 	float4 normal       : SV_TARGET1;
 	float4 depth        : SV_TARGET2;
 	float4 ShadowCamera : SV_TARGET3;
+	float4 NonLight		: SV_TARGET4;
 };
 struct PS_NONLIGHT_MRT_OUTPUT
 {
@@ -96,3 +98,13 @@ struct PS_SHADOW_OUTPUT
 {
 	float4 ShadowTex : SV_TARGET0;
 };
+
+static int2 gnOffsets[9] = { { -1,-1 },{ 0,-1 },{ 1,-1 },{ -1,0 },{ 0,0 },{ 1,0 },{ -1,1 },{ 0,1 },{ 1,1 } };
+
+#define MATERIAL_ALBEDO_MAP			0x01
+#define MATERIAL_SPECULAR_MAP		0x02
+#define MATERIAL_NORMAL_MAP			0x04
+#define MATERIAL_METALLIC_MAP		0x08
+#define MATERIAL_EMISSION_MAP		0x10
+#define MATERIAL_DETAIL_ALBEDO_MAP	0x20
+#define MATERIAL_DETAIL_NORMAL_MAP	0x40

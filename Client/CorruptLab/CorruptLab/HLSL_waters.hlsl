@@ -10,8 +10,8 @@ struct VS_WATER_INPUT
 
 struct PS_WATER_INPUT
 {
+	float3 positionW : TEXCOORD4;
 	float4 position : SV_POSITION;
-	float3 positionW : POSITION;
 	float2 tex : TEXCOORD0;
 	float2 tex1 : TEXCOORD1;
 	float2 tex2 : TEXCOORD2;
@@ -25,8 +25,9 @@ PS_WATER_INPUT WaterVertexShader(VS_WATER_INPUT input)
 {
 	PS_WATER_INPUT output;
 
-	output.position = mul(mul(mul(float4(input.position, 1.0f),
-		gmtxGameObject), gmtxView), gmtxProjection);
+	float4 pos = mul(float4(input.position, 1.0f), gmtxGameObject);
+	output.positionW = pos.xyz;
+	output.position = mul(mul(pos, gmtxView), gmtxProjection);
 
 	output.tex = input.tex;
 
@@ -41,7 +42,6 @@ PS_WATER_INPUT WaterVertexShader(VS_WATER_INPUT input)
 	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.tangent = float3 (1.0f, 0.0f, 0.0f);
 	output.bitangent = float3 (0.0f, 1.0f, -1.0f);
-	output.positionW = input.position;
 
 	return output;
 }
@@ -67,9 +67,9 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT WaterPixelShader(PS_WATER_INPUT input) : SV_TA
 	//float3 finalNormal = normalW2 + normalW3 ;
 
 	float3 toCamera = normalize(gvCameraPosition - input.positionW);
-	float3 cColor = lerp(float4(0.4, 0.6, 1.2, 1.f), BlinnPhong(float3(0.5f, 0.5f, 0.5f), float3(1, -1, 1), finalNormal, toCamera),0.2f);
-	output.color = float4( cColor, 0.7f) ;
-
+	float3 cColor = lerp(float4(0.3f, 0.5f, 1.0f, 1.f), BlinnPhong(float3(0.5f, 0.5f, 0.5f), float3(1, -1, 1), finalNormal, toCamera),0.2f);
+	//output.color = float4(input.positionW / 800, 1.f)  ;
+	output.color = float4(cColor, 1);
 	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	return output;
 }

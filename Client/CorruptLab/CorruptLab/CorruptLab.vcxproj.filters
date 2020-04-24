@@ -496,7 +496,4 @@
       <Filter>04.Shader\10.Shader_Lobby</Filter>
     </FxCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="소스.txt" />
-  </ItemGroup>
 </Project>

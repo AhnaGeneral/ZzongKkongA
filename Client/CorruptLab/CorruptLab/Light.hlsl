@@ -54,21 +54,13 @@ float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 t
 	float fSpecularFactor = 0.0f;
 	if (fDiffuseFactor > 0.0f)
 	{
-		//#ifdef _WITH_REFLECT
-		//			float3 vReflect = reflect(-vToLight, vNormal);
-		//			fSpecularFactor = pow(max(dot(vReflect, vToCamera), 0.0f), 50);
-		//#else
-		//#ifdef _WITH_LOCAL_VIEWER_HIGHLIGHTING
-		float3 vHalf = normalize(float3(toEye + vToLight));
-		//#else
-		//			float3 vHalf = float3(0.0f, 1.0f, 0.0f);
-		//#endif
-		fSpecularFactor = pow(max(dot(vHalf, normal), 0.0f), 2);
-		//#endif
+
+		float3 r = reflect(-lightVec, normal);
+		fSpecularFactor = pow(max(dot(r, toEye), 0.0f), 0.5f);
 
 	}
 
-	return((lightStrength * fDiffuseFactor) * float3(0.4f, 0.4f, 0.4f) + fSpecularFactor * float3(0.4f,0.4f,0.4f) * float3(0.4f, 0.4f, 0.4f));
+	return((lightStrength * fDiffuseFactor) * float3(0.4f, 0.4f, 0.4f) + fSpecularFactor * float3(0.2f,0.2f,0.2f) );
 }
 
 

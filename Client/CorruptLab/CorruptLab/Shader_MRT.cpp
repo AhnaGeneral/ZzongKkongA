@@ -399,6 +399,7 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 			}
 		}
 	}
+	
 	if (m_pMinimap) m_pMinimap->Render(pd3dCommandList, pCamera);
 	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
 	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);

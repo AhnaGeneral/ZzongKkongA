@@ -495,7 +495,8 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 
 void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pScene[SCENE_STAGE_OUTDOOR]) m_pScene[SCENE_STAGE_OUTDOOR]->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	if (m_pScene[SCENE_STAGE_OUTDOOR])
+		m_pScene[SCENE_STAGE_OUTDOOR]->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
 	case WM_KEYUP:
@@ -630,6 +631,7 @@ void CGameFramework::BuildObjects()
 	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList,
 		        m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pTerrain);
 	pAirplanePlayer->SetPosition(XMFLOAT3(464.0f, 15.0f, 354.0f)); 
+
 	//pAirplanePlayer->SetPosition(XMFLOAT3(0.0f, 100.0f, 0.0f));
 	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pPlayer = m_pPlayer = pAirplanePlayer;
 
