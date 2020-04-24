@@ -54,6 +54,8 @@ protected:
 	ID3D12Resource                * m_pd3dcbvProjectionCamera = NULL;
 	VS_CB_EYE_CAMERA_PROJECTION   * m_pcbMappedProjectionCamera = NULL;
 
+	float m_fSunCameraPosition[3]; 
+	
 public:
 
 	BoundingFrustum					m_boundingFrustum;
@@ -94,6 +96,15 @@ public:
 	virtual void Update(XMFLOAT3& xmf3LookAt, float fTimeElapsed) { }
 	virtual void Update(CCamera* Player) {}
 	virtual void SetLookAt(XMFLOAT3& xmf3LookAt) { }
+
+	void SetShadowCameraPosition(float ShadowPosition_x, float ShadowPosition_y, float ShadowPosition_z) 
+	{
+		m_fSunCameraPosition[0] = ShadowPosition_x;
+		m_fSunCameraPosition[1] = ShadowPosition_y; 
+		m_fSunCameraPosition[2] = ShadowPosition_z;
+	}
+	
+	float* GetShadowCameraPosition() { return m_fSunCameraPosition; }
 
 	virtual void SetViewportsAndScissorRects(ID3D12GraphicsCommandList* pd3dCommandList);
 
@@ -137,7 +148,12 @@ public:
 	void SetTimeLag(float fTimeLag) { m_fTimeLag = fTimeLag; }
 	float GetTimeLag() { return(m_fTimeLag); }
 
-	virtual void Move(const XMFLOAT3& xmf3Shift)	{ m_xmf3Position.x += xmf3Shift.x; m_xmf3Position.y += xmf3Shift.y; m_xmf3Position.z += xmf3Shift.z; }
+	virtual void Move(const XMFLOAT3& xmf3Shift)
+	{
+		m_xmf3Position.x += xmf3Shift.x; 
+		m_xmf3Position.y += xmf3Shift.y;
+		m_xmf3Position.z += xmf3Shift.z;
+	}
 
 };
 
@@ -166,6 +182,7 @@ public:
 
 	virtual void Update(XMFLOAT3& xmf3LookAt, float fTimeElapsed);
 	virtual void SetLookAt(XMFLOAT3& vLookAt);
+	//virtual void Rotate(float fPitch = 0.0f, float fYaw = 0.0f, float fRoll = 0.0f);
 };
 
 class CSunCamera : public CCamera
@@ -176,4 +193,6 @@ public:
 
 public:
 	virtual void Update(CCamera* Player);
+	virtual void Rotate(float fPitch = 0.0f, float fYaw = 0.0f, float fRoll = 0.0f);
+
 };
