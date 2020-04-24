@@ -78,7 +78,7 @@ void CCamera::GenerateProjectionMatrix(float fNearPlaneDistance, float fFarPlane
 
 	m_xmf4x4InverseProjection = Matrix4x4::Inverse(m_xmf4x4Projection);
 	m_boundingFrustum.CreateFromMatrix(m_boundingFrustum, XMLoadFloat4x4(&m_xmf4x4Projection));
-	m_boundingFrustum.Far = 400;
+	m_boundingFrustum.Far = CAMERA_CULL_RANGE;
 
 }
 

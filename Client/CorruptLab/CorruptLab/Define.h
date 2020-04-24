@@ -86,4 +86,7 @@
 #define ITEM_TYPE_HPKIT					1
 #define ITEM_TYPE_PILL					2
 
+/*CameraCullRange*/
+#define CAMERA_CULL_RANGE				300	
+
 #define EPSILON						1.0e-10f

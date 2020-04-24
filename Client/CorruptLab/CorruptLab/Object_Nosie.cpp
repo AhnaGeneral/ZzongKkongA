@@ -200,7 +200,7 @@ void CObjectFog::GenerateShaderDistortionBuffer()
 CObjectWater::CObjectWater(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 	//: CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature)
 {
-	CTriangleRect* pNoise = new CTriangleRect(pd3dDevice, pd3dCommandList, 5.0f, 5.0f, 1.0f, 1.0f);
+	CTriangleRect* pNoise = new CTriangleRect(pd3dDevice, pd3dCommandList, 1000.0f, 1000.0f, 1.0f, 1.0f);
 	SetMesh(pNoise);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	NoiseSetTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
@@ -232,9 +232,9 @@ void CObjectWater::GenerateShaderDistortionBuffer()
 	m_cbvdistortion.distortionScale = 0.8f;
 	m_cbvdistortion.distortionBias = 0.5f;
 
-	m_cbvNoisebuffer.scrollSpeeds = XMFLOAT3(0.3f, 2.1f, 0.02f);
+	m_cbvNoisebuffer.scrollSpeeds = XMFLOAT3(1.f, 5.1f, 0.2f);
 	m_cbvNoisebuffer.padding = 0.0;
-	m_cbvNoisebuffer.scales = XMFLOAT3(1.0f, 20.0f, 25.0f);
+	m_cbvNoisebuffer.scales = XMFLOAT3(1.0f, 10.0f, 15.0f);
 }
 
 void CObjectWater::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)

@@ -43,7 +43,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 
 	m_pCObjectWater = new CObjectWater(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature); //object
-	m_pCObjectWater->SetScale(400.0f, 1.0f, 400.0f);
+
 	m_pCObjectWater->SetPosition(XMFLOAT3(256.0f, 25.0f, 256.0f));
 	m_pCObjectWater->Rotate(90.0f, 0.0f, 0.0f);
 	m_pCObjectWater->GenerateShaderDistortionBuffer();

@@ -8,6 +8,7 @@ CHeightMapImage::CHeightMapImage(LPCTSTR pFileName, int nWidth, int nLength, XMF
 	m_nLength = nLength;
 	m_xmf3Scale = xmf3Scale;
 
+	
 	BYTE* pHeightMapPixels = new BYTE[m_nWidth * m_nLength];
 
 	HANDLE hFile = ::CreateFile(pFileName, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_ATTRIBUTE_READONLY, NULL);
@@ -97,7 +98,7 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 {
 	m_nVertices = 25;
 	m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_25_CONTROL_POINT_PATCHLIST;
-
+	
 	m_nWidth = nWidth;
 	m_nLength = nLength;
 	m_xmf3Scale = xmf3Scale;
@@ -109,6 +110,8 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	int cxHeightMap = pHeightMapImage->GetHeightMapWidth();
 	int czHeightMap = pHeightMapImage->GetHeightMapLength();
 
+	float fMinWidth = +FLT_MAX, fMaxWidth = -FLT_MAX;
+	float fMinLength = +FLT_MAX, fMaxLength = -FLT_MAX;
 	float fHeight = 0.0f, fMinHeight = +FLT_MAX, fMaxHeight = -FLT_MAX;
 	for (int i = 0, z = (zStart + nLength - 1); z >= zStart; z -= 2)
 	{
@@ -124,8 +127,21 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 
 			if (fHeight < fMinHeight) fMinHeight = fHeight;
 			if (fHeight > fMaxHeight) fMaxHeight = fHeight;
+
+			if (m_xmf3Positions[i].x < fMinWidth) fMinWidth = m_xmf3Positions[i].x;
+			if (m_xmf3Positions[i].x > fMaxWidth) fMaxWidth = m_xmf3Positions[i].x;
+
+			if (m_xmf3Positions[i].z < fMinLength) fMinLength = m_xmf3Positions[i].z;
+			if (m_xmf3Positions[i].z > fMaxLength) fMaxLength = m_xmf3Positions[i].z;
 		}
 	}
+
+	m_boundingbox.Extents.x = 16;
+	m_boundingbox.Extents.z = 16;
+	m_boundingbox.Extents.y = fMaxHeight - fMinHeight;
+	m_boundingbox.Center.y = (fMaxHeight + fMinHeight) / 2.f;
+	m_boundingbox.Center.x = (fMinWidth + fMaxWidth) / 2.f ;
+	m_boundingbox.Center.z = (fMaxLength + fMinLength) / 2.f;
 
 	m_MeshInfo.m_pd3dPositionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pVertices, sizeof(HeightMapVertex) * m_nVertices,
 		D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_MeshInfo.m_pd3dPositionUploadBuffer);
@@ -177,6 +193,7 @@ void CHeightMapGridMesh::ReleaseUploadBuffers()
 
 void CHeightMapGridMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet)
 {
+
 	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
 	
 		pd3dCommandList->IASetVertexBuffers(m_nSlot, 1, &m_MeshInfo.m_d3dPositionBufferView);
