@@ -1,9 +1,4 @@
-첫번째 알파맵
-R=DryGround
-G=DryStone
-B=Grass2
-A=Grass1
-
-두번째 알파맵
-R=Stone1
-G=Sand1
+R=DryStone
+G=Sand
+B=Grass
+A=Sand2
