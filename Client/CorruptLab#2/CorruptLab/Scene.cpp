@@ -197,7 +197,7 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 
 	D3D12_DESCRIPTOR_RANGE pd3dTerrainTexRanges; // ( 50 ~ 62 ) onsstageterrain
 	pd3dTerrainTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dTerrainTexRanges.NumDescriptors = 12;
+	pd3dTerrainTexRanges.NumDescriptors = 8;
 	pd3dTerrainTexRanges.BaseShaderRegister = 50;
 	pd3dTerrainTexRanges.RegisterSpace = 0;
 	pd3dTerrainTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
@@ -608,7 +608,9 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
+	m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	m_pTerrain->Render(pd3dCommandList, pCamera, 2);
+
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)

@@ -40,26 +40,18 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	}
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	CTexture* pTerrainTexture = new CTexture(12, RESOURCE_TEXTURE2D, 0);
-	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Stage1SplatAlpha1.dds", 0);
+	CTexture* pTerrainTexture = new CTexture(8, RESOURCE_TEXTURE2D, 0);
+	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/SplatAlpha.dds", 0);
 	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Stage1SplatAlpha2.dds", 1);
 	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Stage1TerrainNM.dds", 2);
 
-	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/DryGround_BC.dds", 3);
-	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/DryGround_NM.dds", 4);
+	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/DryStone_BC.dds", 3);
+	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/DryStone_NM.dds", 4);
 
+	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Grass2_BC.dds", 5);
+	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Sand1.dds", 6);
+	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Sand2.dds", 7);
 
-	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/DryStone_BC.dds", 5);
-	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/DryStone_NM.dds", 6);
-
-	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Grass1_BC.dds", 7);
-
-	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Grass2_BC.dds", 8);
-
-	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Sand1.dds", 9);
-
-	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Stone1_BC.dds", 10);
-	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Stone1_NM.dds", 11);
 
 	m_pShadowMap = (CTexture*)ShadowMap;
 
@@ -67,7 +59,7 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	CTerrainShader* pTerrainShader = new CTerrainShader();
 	pTerrainShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
 	pTerrainShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	pTerrainShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 13);
+	pTerrainShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 9);
 	pTerrainShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTerrainTexture, ROOT_PARAMETER_TERRAIN_TEX, true);
 	pTerrainShader->CreateConstantBufferViews(pd3dDevice, pd3dCommandList, 1, m_pd3dcbGameObjects, ncbElementBytes);
 	pTerrainShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pShadowMap, ROOT_PARAMETER_SHADOWMAP, 0);
@@ -128,6 +120,7 @@ void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCame
 
 	XMFLOAT3 CameraPos = pCamera->GetPosition();
 	bool bRender = true;
+
 	if (m_ppMeshes)
 	{
 		for (int i = 0; i < m_nMeshes; i++)

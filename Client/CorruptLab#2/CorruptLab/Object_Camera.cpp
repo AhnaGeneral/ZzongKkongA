@@ -335,10 +335,10 @@ CSunCamera::CSunCamera()
 	m_fSunCameraPosition[1] = 150.0f; 
 	m_fSunCameraPosition[2] = 130.0f;
 
-	SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
+	SetViewport(0, 0, FRAME_BUFFER_WIDTH/2, FRAME_BUFFER_HEIGHT/2, 0.0f, 1.0f);
 	GenerateViewMatrix(XMFLOAT3(m_fSunCameraPosition[0], m_fSunCameraPosition[2],m_fSunCameraPosition[1]), m_xmf3Look, m_xmf3Up);
 	GenerateProjectionMatrix(1.f,600.0f, ASPECT_RATIO, 60.0f);
-	SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
+	SetScissorRect(0, 0, FRAME_BUFFER_WIDTH/2, FRAME_BUFFER_HEIGHT/2);
 	RegenerateViewMatrix();
 }
 

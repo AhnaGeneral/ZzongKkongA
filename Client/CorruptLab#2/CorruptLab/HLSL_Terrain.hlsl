@@ -131,12 +131,12 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 	//output.fTessInsides[1] = fTessFactor;
 
 	// 일정한 격자로 보고 싶을 때 
-	output.fTessEdges[0] = 10.0f;
-	output.fTessEdges[1] = 10.0f;
-	output.fTessEdges[2] = 10.0f;
-	output.fTessEdges[3] = 10.0f;
-	output.fTessInsides[0] = 10.0f;
-	output.fTessInsides[1] = 10.0f;
+	output.fTessEdges[0] = 3.0f;
+	output.fTessEdges[1] = 3.0f;
+	output.fTessEdges[2] = 3.0f;
+	output.fTessEdges[3] = 3.0f;
+	output.fTessInsides[0] = 1.0f;
+	output.fTessInsides[1] = 1.0f;
 
 	return(output);
 }
@@ -197,24 +197,14 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	return(output);
 }
 
-Texture2D gtxtStage1SplatAlpha1 : register(t50);
-Texture2D gtxtStage1SplatAlpha2 : register(t51);
-Texture2D gtxtStage1TerrainNM   : register(t52);
-
-Texture2D gtxtDryGround_BC      : register(t53);
-Texture2D gtxtDryGround_NM      : register(t54);
-
-Texture2D gtxtDryStone_BC       : register(t55);
-Texture2D gtxtDryStone_NM       : register(t56);
-
-Texture2D gtxtGrass1_BC         : register(t57);
-
-Texture2D gtxtGrass2_BC         : register(t58);
-
-Texture2D gtxtSand1             : register(t59);
-
-Texture2D gtxtStone1_BC         : register(t60);
-Texture2D gtxtStone1_NM         : register(t61);
+Texture2D gtxtStage1SplatAlpha   : register(t50);
+Texture2D gtxtStage2SplatAlpha   : register(t51);
+Texture2D gtxtStage1TerrainNM    : register(t52);
+Texture2D gtxtDryStone_BC        : register(t53);
+Texture2D gtxtDryStone_NM        : register(t54);
+Texture2D gtxtGrass2_BC          : register(t55);
+Texture2D gtxtSand1              : register(t56);
+Texture2D gtxtSand2              : register(t57);
 
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input) : SV_TARGET
@@ -222,52 +212,40 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output; 
 
 	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);
+	//float4 t_gtxtStage1SplatAlpha2 = gtxtStage1SplatAlpha2.Sample(gSamplerState, input.uv0);
 
-	float4 t_gtxtStage1SplatAlpha1 = gtxtStage1SplatAlpha1.Sample(gSamplerState, input.uv0);
-	float4 t_gtxtStage1SplatAlpha2 = gtxtStage1SplatAlpha2.Sample(gSamplerState, input.uv0);
-	float4 t_gtxtStage1TerrainNM   = gtxtStage1TerrainNM.Sample(gSamplerState, input.uv0);
-
-	float4 t_gtxtDryGround_BC      = gtxtDryGround_BC.Sample(gSamplerState, input.uv1);
-	float4 t_gtxtDryGround_NM      = gtxtDryGround_NM.Sample(gSamplerState, input.uv1);
-
-	float4 t_gtxtDryStone_BC       = gtxtDryStone_BC.Sample(gSamplerState, input.uv1);
-	float4 t_gtxtDryStone_NM       = gtxtDryStone_NM.Sample(gSamplerState, input.uv1);
-
-	float4 t_gtxtGrass1_BC         = gtxtGrass1_BC.Sample(gSamplerState, input.uv1);
-	float4 t_gtxtGrass2_BC         = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
-
-	float4 t_gtxtSand1             = gtxtStone1_BC.Sample(gSamplerState, input.uv1);
-
-	float4 t_gtxtStone1_BC         = gtxtStone1_BC.Sample(gSamplerState, input.uv1);
-	float4 t_gtxtStone1_NM         = gtxtStone1_NM.Sample(gSamplerState, input.uv1);
+	float4 f_Stage1SplatAlpha = gtxtStage1SplatAlpha.Sample(gSamplerState, input.uv0);
+	float4 f_Stage1TerrainNM  = gtxtStage1TerrainNM.Sample(gSamplerState, input.uv0);
+		   
+	float4 f_DryStone_BC      = gtxtDryStone_BC.Sample(gSamplerState, input.uv1);
+	float4 f_DryStone_NM      = gtxtDryStone_NM.Sample(gSamplerState, input.uv1);
+		   
+	float4 f_Grass2_BC        = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
+	float4 f_Sand1            = gtxtSand1.Sample(gSamplerState, input.uv1);
+	float4 f_Sand2            = gtxtSand2.Sample(gSamplerState, input.uv1);
 
 	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	float3 vNormal = normalize(t_gtxtStage1TerrainNM.rgb * 2.0f - 1.0f); 
+	float3 vNormal = normalize(f_Stage1TerrainNM.rgb * 2.0f - 1.0f);
 
 
-	float3 vNormalDryGround_NM = normalize(t_gtxtDryGround_NM.rgb * 2.0f - 1.0f);
-	float3 vNormalDryStone_NM  = normalize(t_gtxtDryStone_NM.rgb * 2.0f - 1.0f);
-	float3 vNormalStone1_NM    = normalize(t_gtxtStone1_NM.rgb * 2.0f - 1.0f);
+	//float3 vNormalDryGround_NM = normalize(t_gtxtDryGround_NM.rgb * 2.0f - 1.0f);
+	//float3 vNormalDryStone_NM  = normalize(t_gtxtDryStone_NM.rgb * 2.0f - 1.0f);
+	//float3 vNormalStone1_NM    = normalize(t_gtxtStone1_NM.rgb * 2.0f - 1.0f);
 
 
-	vNormalDryGround_NM = normalize(mul(vNormalDryGround_NM, TBN));
-	vNormalDryStone_NM = normalize(mul(vNormalDryStone_NM, TBN));
-	vNormalStone1_NM = normalize(mul(vNormalStone1_NM, TBN));
+	//vNormalDryGround_NM = normalize(mul(vNormalDryGround_NM, TBN));
+	//vNormalDryStone_NM = normalize(mul(vNormalDryStone_NM, TBN));
+	//vNormalStone1_NM = normalize(mul(vNormalStone1_NM, TBN));
 
 	vNormal = normalize(mul(vNormal, TBN));
 
-	//float3 SplatNormal = t_gtxtStage1SplatAlpha1.r
-	float4 Splat01 = (t_gtxtStage1SplatAlpha1.r * t_gtxtDryGround_BC) +
-					 (t_gtxtStage1SplatAlpha1.g * t_gtxtDryStone_BC) +
-		             (t_gtxtStage1SplatAlpha1.b * t_gtxtGrass2_BC);
-		             (t_gtxtStage1SplatAlpha1.a * t_gtxtGrass1_BC);
+	float4 Splat01 = (f_Stage1SplatAlpha.r * f_DryStone_BC) +
+					 (f_Stage1SplatAlpha.g * f_Sand1) +
+		             (f_Stage1SplatAlpha.b * f_Grass2_BC);
+		             (f_Stage1SplatAlpha.a * f_Sand2);
 
-	float4 Splat02 = (t_gtxtStage1SplatAlpha2.r * t_gtxtStone1_BC) +
-		             (t_gtxtStage1SplatAlpha2.g * t_gtxtSand1) +
-		             (t_gtxtStage1SplatAlpha2.b * t_gtxtGrass2_BC);
-
-	cColor = Splat01+ Splat02;
+	cColor = Splat01;
 
 	output.normal = float4(vNormal, 1.0f);
 

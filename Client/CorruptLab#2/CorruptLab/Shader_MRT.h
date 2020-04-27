@@ -73,7 +73,7 @@ protected:
 	CUI_ITem* m_pItem = NULL;
 	CUI_HP* m_PlayerHP = NULL;
 
-	UINT                             nIventoryCount = 3;
+	int                             nIventoryCount = 3;
 
 
 

@@ -10,10 +10,10 @@
 void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	m_nStaticObjectTypeNum = 9;
-	m_pStaticObjLists = new list<CGameObject*> * [m_nStaticObjectTypeNum];
+	m_pStaticObjLists = new list<CGameObject*>*[m_nStaticObjectTypeNum];
 
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++) // ÃÊ±âÈ­
-		m_pStaticObjLists[i] = new list<CGameObject*>();
+		m_pStaticObjLists[i]=new list<CGameObject*>();
 
 	m_nDynamicObjectTypeNum = 1;
 	m_pDynamicObjLists = new list<CDynamicObject*> * [m_nDynamicObjectTypeNum];

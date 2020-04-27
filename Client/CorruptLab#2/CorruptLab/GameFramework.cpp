@@ -343,8 +343,11 @@ void CGameFramework::CreateLightRenderTargetViews()
 
 	for (UINT i = 0; i < m_nOffScreenLightBuffers; i++)
 	{
-		m_ppd3dLightMapRenderTargetBuffers[i] = pLightMap->CreateTexture(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth, m_nWndClientHeight,
-			DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
+		m_ppd3dLightMapRenderTargetBuffers[i] = pLightMap->CreateTexture(m_pd3dDevice,
+			m_pd3dCommandList, m_nWndClientWidth, m_nWndClientHeight,
+			DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
+			D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
+
 		m_ppd3dLightMapRenderTargetBuffers[i]->AddRef();
 	}
 
@@ -384,8 +387,10 @@ void CGameFramework::CreateShadowRenderTargetViews()
 
 	for (UINT i = 0; i < m_nOffScreenShadowBuffers; i++)
 	{
-		m_ppd3dShadowRenderTargetBuffers[i] = pShadowMap->CreateTexture(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth, m_nWndClientHeight,
-			DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
+		m_ppd3dShadowRenderTargetBuffers[i] = pShadowMap->CreateTexture
+		(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth/2, m_nWndClientHeight/2,
+			DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
+			D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
 		m_ppd3dShadowRenderTargetBuffers[i]->AddRef();
 	}
 
