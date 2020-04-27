@@ -235,7 +235,7 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 		{
 			m_pBoundingBoxes[i].Update(&m_xmf4x4World);
 			//m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
-			if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox))
+			if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox) && nPipelineState == 0)
 				return;
 		}
 	}

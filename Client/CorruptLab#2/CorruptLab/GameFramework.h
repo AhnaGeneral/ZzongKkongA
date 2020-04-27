@@ -42,6 +42,7 @@ public:
 	void ReleaseObjects();
 
 	void ProcessInput();
+	void ShadowMapRender();
 
 	void FrameAdvanceStageOutdoor();
 	void FrameAdvanceLobby();
@@ -55,6 +56,7 @@ public:
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 private:
+	float								m_fSunTime = 0.f;
 	HINSTANCE						    m_hInstance;
 	HWND							    m_hWnd;
 

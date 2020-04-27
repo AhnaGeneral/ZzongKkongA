@@ -127,10 +127,15 @@ void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCame
 		{
 			if (m_ppMeshes[i])
 			{
-				if (pCamera->m_boundingFrustum.Intersects(m_ppMeshes[i]->m_boundingbox))
-				{
-					m_ppMeshes[i]->Render(pd3dCommandList, i);
+				if (nPipelineState == 0) {
+					if (pCamera->m_boundingFrustum.Intersects(m_ppMeshes[i]->m_boundingbox))
+					{
+						m_ppMeshes[i]->Render(pd3dCommandList, i);
+					}
 				}
+				else
+					m_ppMeshes[i]->Render(pd3dCommandList, i);
+
 			}
 		}
 	}

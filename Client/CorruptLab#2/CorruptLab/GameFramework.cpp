@@ -712,6 +712,37 @@ void CGameFramework::MoveToNextFrame()
 
 //#define _WITH_PLAYER_TOP
 
+
+void CGameFramework::ShadowMapRender()
+{
+	m_fSunTime -= m_GameTimer.GetTimeElapsed();
+
+	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
+	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
+			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+
+	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenShadowBuffers, m_pd3dOffScreenShadowBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
+
+	if (m_fSunTime <= 0)
+	{
+		for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
+			m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenShadowBufferCPUHandles[i], pfClearColor, 0, NULL);
+		dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, false);
+		m_fSunTime = 1.f;
+	}
+
+	//	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, true);
+
+	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
+			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+
+}
+
 void CGameFramework::FrameAdvanceStageOutdoor()
 {
 	m_GameTimer.Tick(0.0f);
@@ -745,23 +776,7 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 			                         D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	//---------------------------------------------------------------------------------------------------------------------
-	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
-			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
-		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenShadowBufferCPUHandles[i], pfClearColor, 0, NULL);
-
-	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
-
-	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenShadowBuffers, m_pd3dOffScreenShadowBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
-
-	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera);
-
-	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
-			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
-
+	ShadowMapRender();
 	//---------------------------------------------------------------------------------------------------------------------
 	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],
