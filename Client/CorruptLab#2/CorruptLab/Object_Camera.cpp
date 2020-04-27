@@ -326,6 +326,7 @@ CSunCamera::CSunCamera()
 	//XMFLOAT3 xmf3Right = Vector3::Normalize(XMFLOAT3(0.7f, 0.01f, -0.7f));
 	//XMFLOAT3 xmf3Up    = Vector3::Normalize(XMFLOAT3(0.0f, 0.4f, 0.63f));
 
+	m_xmf3Offset = XMFLOAT3(0, 0, -256.f);
 	m_xmf3Look = XMFLOAT3(-0.92f, -0.37f, 0.2f);
 	m_xmf3Right = XMFLOAT3(0.12f, 0.02f, 1.0f);
 	m_xmf3Up = XMFLOAT3(-0.38f, 0.94f, 0.01f);
@@ -335,17 +336,31 @@ CSunCamera::CSunCamera()
 	m_fSunCameraPosition[1] = 150.0f; 
 	m_fSunCameraPosition[2] = 130.0f;
 
-	SetViewport(0, 0, FRAME_BUFFER_WIDTH/2, FRAME_BUFFER_HEIGHT/2, 0.0f, 1.0f);
+	SetViewport(0, 0, FRAME_BUFFER_WIDTH/1.5, FRAME_BUFFER_HEIGHT/1.5, 0.0f, 1.0f);
 	GenerateViewMatrix(XMFLOAT3(m_fSunCameraPosition[0], m_fSunCameraPosition[2],m_fSunCameraPosition[1]), m_xmf3Look, m_xmf3Up);
-	GenerateProjectionMatrix(1.f,600.0f, ASPECT_RATIO, 60.0f);
-	SetScissorRect(0, 0, FRAME_BUFFER_WIDTH/2, FRAME_BUFFER_HEIGHT/2);
+	GenerateProjectionMatrix(1.f,600.0f, ASPECT_RATIO, 70.0f);
+	SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 	RegenerateViewMatrix();
+}
+
+
+void CSunCamera::SetLookAt(XMFLOAT3& xmf3LookAt)
+{
+	XMFLOAT4X4 mtxLookAt = Matrix4x4::LookAtLH(m_xmf3Position, xmf3LookAt, XMFLOAT3(0,1,0) );
+	m_xmf3Right = XMFLOAT3(mtxLookAt._11, mtxLookAt._21, mtxLookAt._31);
+	m_xmf3Up = XMFLOAT3(mtxLookAt._12, mtxLookAt._22, mtxLookAt._32);
+	m_xmf3Look = XMFLOAT3(mtxLookAt._13, mtxLookAt._23, mtxLookAt._33);
 }
 
 void CSunCamera::Update(CCamera* PlayerCamera)
 {
-	XMFLOAT3 pos = PlayerCamera->GetPosition();
-	m_xmf3Position = XMFLOAT3(m_fSunCameraPosition[0], m_fSunCameraPosition[2], m_fSunCameraPosition[1]);
+	m_fAngle += 10.f;
+	XMMATRIX mtxRotate = XMMatrixRotationRollPitchYaw(XMConvertToRadians(m_fAngle), XMConvertToRadians(0), XMConvertToRadians(0));
+
+	XMFLOAT3 xmf3Offset = Vector3::TransformCoord(m_xmf3Offset, mtxRotate);
+	m_xmf3Position = Vector3::Add(m_xmf3CenterPos, xmf3Offset);
+
+	SetLookAt(m_xmf3CenterPos);
 
 	RegenerateViewMatrix();
 }

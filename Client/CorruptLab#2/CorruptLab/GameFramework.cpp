@@ -271,13 +271,13 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 	for (UINT i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 	{
 		m_ppd3dOffScreenRenderTargetBuffers[i] = pTextureForPostProcessing->CreateTexture(m_pd3dDevice, m_pd3dCommandList,
-			m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
+			m_nWndClientWidth , m_nWndClientHeight , DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
 			D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
 		m_ppd3dOffScreenRenderTargetBuffers[i]->AddRef();
 	}
 	d3dClearValue = { DXGI_FORMAT_R32G32B32A32_FLOAT, { 0.0f, 0.0f, 0.0f, 1.0f } };
 	m_ppd3dOffScreenRenderTargetBuffers[2] = pTextureForPostProcessing->CreateTexture(m_pd3dDevice, m_pd3dCommandList,
-		m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
+		m_nWndClientWidth  , m_nWndClientHeight , DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, 2);
 	m_ppd3dOffScreenRenderTargetBuffers[2]->AddRef();
 
@@ -343,11 +343,8 @@ void CGameFramework::CreateLightRenderTargetViews()
 
 	for (UINT i = 0; i < m_nOffScreenLightBuffers; i++)
 	{
-		m_ppd3dLightMapRenderTargetBuffers[i] = pLightMap->CreateTexture(m_pd3dDevice,
-			m_pd3dCommandList, m_nWndClientWidth, m_nWndClientHeight,
-			DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
-			D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
-
+		m_ppd3dLightMapRenderTargetBuffers[i] = pLightMap->CreateTexture(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth , m_nWndClientHeight,
+			DXGI_FORMAT_R8G8B8A8_UNORM, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
 		m_ppd3dLightMapRenderTargetBuffers[i]->AddRef();
 	}
 
@@ -387,10 +384,8 @@ void CGameFramework::CreateShadowRenderTargetViews()
 
 	for (UINT i = 0; i < m_nOffScreenShadowBuffers; i++)
 	{
-		m_ppd3dShadowRenderTargetBuffers[i] = pShadowMap->CreateTexture
-		(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth/2, m_nWndClientHeight/2,
-			DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET,
-			D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
+		m_ppd3dShadowRenderTargetBuffers[i] = pShadowMap->CreateTexture(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth /1.5f, m_nWndClientHeight /1.5f,
+			DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
 		m_ppd3dShadowRenderTargetBuffers[i]->AddRef();
 	}
 
@@ -428,8 +423,8 @@ void CGameFramework::CreateDepthStencilView()
 	D3D12_RESOURCE_DESC d3dResourceDesc;
 	d3dResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	d3dResourceDesc.Alignment = 0;
-	d3dResourceDesc.Width = m_nWndClientWidth;
-	d3dResourceDesc.Height = m_nWndClientHeight;
+	d3dResourceDesc.Width = m_nWndClientWidth ;
+	d3dResourceDesc.Height = m_nWndClientHeight ;
 	d3dResourceDesc.DepthOrArraySize = 1;
 	d3dResourceDesc.MipLevels = 1;
 	d3dResourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -683,6 +678,31 @@ void CGameFramework::ProcessInput()
 	
 }
 
+void CGameFramework::ShadowMapRender()
+{
+	m_fSunTime -= m_GameTimer.GetTimeElapsed();
+
+	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
+	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
+	D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);		m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenShadowBuffers, m_pd3dOffScreenShadowBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
+	if (m_fSunTime <= 0)
+	{
+		for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
+			m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenShadowBufferCPUHandles[i], pfClearColor, 0, NULL);
+		dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, false);
+		m_fSunTime = 1.f;
+	}
+
+	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, true);
+	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
+				D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+	
+}
+
 //GPU가 끝날 때까지 기다려주는 단계 
 void CGameFramework::WaitForGpuComplete()
 {
@@ -711,37 +731,6 @@ void CGameFramework::MoveToNextFrame()
 }
 
 //#define _WITH_PLAYER_TOP
-
-
-void CGameFramework::ShadowMapRender()
-{
-	m_fSunTime -= m_GameTimer.GetTimeElapsed();
-
-	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
-	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
-			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
-
-	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenShadowBuffers, m_pd3dOffScreenShadowBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
-
-	if (m_fSunTime <= 0)
-	{
-		for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
-			m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenShadowBufferCPUHandles[i], pfClearColor, 0, NULL);
-		dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, false);
-		m_fSunTime = 1.f;
-	}
-
-	//	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, true);
-
-	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
-			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
-
-
-}
 
 void CGameFramework::FrameAdvanceStageOutdoor()
 {

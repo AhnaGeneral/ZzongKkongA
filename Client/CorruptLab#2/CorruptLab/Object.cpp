@@ -230,7 +230,7 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 
 	if (m_pBoundingBoxes/* && nPipelineState == 0*/)
 	{
-		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
+		//m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
 		for (int i = 0; i < m_nBoundingBoxes; i++)
 		{
 			m_pBoundingBoxes[i].Update(&m_xmf4x4World);

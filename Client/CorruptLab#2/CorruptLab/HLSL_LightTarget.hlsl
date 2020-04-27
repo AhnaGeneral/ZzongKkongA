@@ -43,13 +43,15 @@ PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 	int LightDomain = 4;
 	for (int i = 0; i < LightDomain; i++)
 	{
+		float4 cPix = gtxtNonLightNoise[int2(position.xy)];
+		if (cPix.r < 23.0f / 255.f && cPix.b > 130.0f / 255.f)
+			break;
 		weight = ((LightDomain - i) * (LightDomain - i) / 3);
 		for (int j = 0; j < 9; j++)
 		{
 			float4 cNonLight = gtxtNonLightNoise[int2(position.xy) + (gnOffsets[j] * i)];
 
-			if (cNonLight.g == 138.0f / 255.0f && cNonLight.r == 22.0f / 255.0f
-				&& cNonLight.b == 139.0f / 255.0f)
+			if (cNonLight.r < 23.0f / 255.0f && cNonLight.b > 130.0f / 255.0f )
 			{
 				cNonLight.a = 0.3;
 				output.Light += cNonLight * weight;

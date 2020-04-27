@@ -190,8 +190,13 @@ class CSunCamera : public CCamera
 public:
 	CSunCamera();
 	virtual ~CSunCamera() {}
+	XMFLOAT3	m_xmf3CenterPos = XMFLOAT3(256,0,256);
+	float							m_fAngle = 20;
+	XMFLOAT3		            	m_xmf3Offset;
 
 public:
+
+	void SetLookAt(XMFLOAT3& xmf3LookAt);
 	virtual void Update(CCamera* Player);
 	virtual void Rotate(float fPitch = 0.0f, float fYaw = 0.0f, float fRoll = 0.0f);
 

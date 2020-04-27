@@ -377,7 +377,6 @@ void CGameScene::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 
 void CGameScene::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
 	m_pShadowCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_SHADOWCAMERA);
 }
 
@@ -611,6 +610,7 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 	m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	if (!bPlayer)
 	{
+		if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
 		m_pTerrain->Render(pd3dCommandList, pCamera, 2);
 		if (m_pStaticObjLists) // 오브젝트 Render
 		{
