@@ -7,7 +7,6 @@ CStandardShader::CStandardShader()
 
 CStandardShader::~CStandardShader()
 {
-	ReleaseShaderVariables();
 	ReleaseObjects();
 }
 

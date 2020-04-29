@@ -606,25 +606,28 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 }
 
 
-void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool bPlayer)
 {
-	m_pTerrain->Render(pd3dCommandList, pCamera, 2);
-	if (m_pStaticObjLists) // 오브젝트 Render
+	m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
+	if (!bPlayer)
 	{
-		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+		if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
+		m_pTerrain->Render(pd3dCommandList, pCamera, 2);
+		if (m_pStaticObjLists) // 오브젝트 Render
 		{
-			for (auto Obj : *m_pStaticObjLists[i])
+			for (int i = 0; i < m_nStaticObjectTypeNum; i++)
 			{
-				Obj->UpdateTransform(NULL);
-				Obj->Render(pd3dCommandList, pCamera, 1);
+				for (auto Obj : *m_pStaticObjLists[i])
+				{
+					Obj->UpdateTransform(NULL);
+					Obj->Render(pd3dCommandList, pCamera, 1);
+				}
 			}
 		}
 	}
-
-	m_pPlayer->Render(pd3dCommandList, pCamera, 1);
+	else
+		m_pPlayer->Render(pd3dCommandList, pCamera, 1);
 }
-
-
 void CGameScene::Update(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;

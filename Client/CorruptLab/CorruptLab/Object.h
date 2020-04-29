@@ -36,14 +36,14 @@ public:
 public:
 
 	int								m_nBoundingBoxes;
-	CCollisionBox* m_pBoundingBoxes = NULL;
+	CCollisionBox                 * m_pBoundingBoxes = NULL;
 
 	char							m_pstrFrameName[64];
 
-	CMesh* m_pMesh = NULL;
+	CMesh                         * m_pMesh = NULL;
 
 	int								m_nMaterials = 0;
-	CMaterial** m_ppMaterials = NULL;
+	CMaterial                    ** m_ppMaterials = NULL;
 
 	XMFLOAT4X4						m_xmf4x4Transform; // animation ¿¡¼­´Â m_xmf4x4ToParent
 	XMFLOAT4X4						m_xmf4x4World;
@@ -68,6 +68,7 @@ public:
 	CCollisionBox* GetCollisionBoxes();
 	void SetMesh(CMesh* pMesh);
 	void SetShader(CShader* pShader);
+	void CreateMaterial();
 	void SetShader(int nMaterial, CShader* pShader);
 	void SetMaterial(int nMaterial, CMaterial* pMaterial);
 
@@ -139,13 +140,15 @@ public:
 };
 
 
-class CCollisionBox {
-
+class CCollisionBox 
+{
 public:
+
 	void Update(XMFLOAT4X4* Parentworld,  XMFLOAT4* ParentOrientation = NULL, XMFLOAT3* ParentScale = NULL);
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* ParentWorld = NULL);
 	void BuildBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, XMFLOAT4X4* ParentWorld = NULL);
+	void Release(); 
 
 	BoundingOrientedBox boundingBox;
 	XMFLOAT3 m_Center;

@@ -1,12 +1,11 @@
 #pragma once
 #include "Shader.h"
-class CMinimapShader :
-	public CShader
+class CMinimapShader : public CShader
 {
 public:
 
 	CMinimapShader() {}
-	~CMinimapShader() {}
+	virtual ~CMinimapShader() {}
 
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();

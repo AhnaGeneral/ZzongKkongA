@@ -35,6 +35,22 @@ void CMRTUI::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera
 		m_pMesh->Render(pd3dCommandList, 0);
 }
 
+void CMRTUI::ReleaseShaderVariables()
+{
+	if (m_pd3dcbGameObjects)
+	{
+		m_pd3dcbGameObjects->Unmap(0, NULL);
+		m_pd3dcbGameObjects->Release();
+	}
+	m_pd3dcbGameObjects = NULL;
+
+	//if (m_pcbMappedGameObjects) delete m_pcbMappedGameObjects;
+}
+
+//void CMRTUI::ReleaseUploadBuffers()
+//{
+//}
+
 void CMRTUI::SetObjectID(UINT objectID)
 {
 	m_nobjectID = objectID;
@@ -104,6 +120,23 @@ void CUI_MiniMap::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLis
 
 }
 
+void CUI_MiniMap::ReleaseShaderVariables()
+{
+	CMRTUI::ReleaseShaderVariables(); 
+
+	if (m_pd3dcbPlayerPosition)
+	{
+		m_pd3dcbPlayerPosition->Unmap(0, NULL);
+		m_pd3dcbPlayerPosition->Release();
+	}
+	m_pd3dcbPlayerPosition = NULL;
+
+}
+
+//void CUI_MiniMap::ReleaseUploadBuffers()
+//{
+//}
+
 
 // [ CUI_HP ] ==========================================================================================================
 CUI_Root::CUI_Root()
@@ -115,15 +148,14 @@ CUI_Root::CUI_Root(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComm
 }
 
 void CUI_Root::InterLinkShaderTexture(ID3D12Device* pd3dDevice,
-	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture)
+	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pShader, void* pTexture)
 {
-	CShader_BaseUI* pShader = new CShader_BaseUI();
-	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 1);
-	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
+	CreateMaterial();
 
-	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)Texture, ROOT_PARAMETER_HP_TEX, true);
-	SetShader(pShader);
-	m_ppMaterials[0]->SetTexture((CTexture*)Texture);
+	if (pTexture)
+	{
+		m_ppMaterials[0]->SetTexture((CTexture*)pTexture);
+	}
 }
 
 
@@ -134,8 +166,7 @@ void CUI_Root::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 
 void CUI_Root::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
-	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera);
-	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
+	if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList); 
 
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
@@ -151,6 +182,11 @@ void CUI_Root::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, 
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
 }
 
+void CUI_Root::ReleaseShaderVariables()
+{
+	CMRTUI::ReleaseShaderVariables();
+}
+
 
 // [ CUI_Inventory ] ======================================================================================================
 CUI_ITem::CUI_ITem()
@@ -164,13 +200,8 @@ CUI_ITem::CUI_ITem(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComm
 
 void CUI_ITem::InterLinkShaderTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture)
 {
-	CShader_Item* pShader = new CShader_Item();
-	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 3);
-	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
-
-	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)Texture, ROOT_PARAMETER_ITEM_TEX, true);
-	SetShader(pShader);
-	m_ppMaterials[0]->SetTexture((CTexture*)Texture);
+	//SetShader((CShader*)Texture);
+	//m_ppMaterials[0]->SetTexture((CTexture*)Texture);
 }
 
 void CUI_ITem::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -186,8 +217,8 @@ void CUI_ITem::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 
 void CUI_ITem::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
-	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera);
-	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
+	//m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera);
+	//m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
 
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
@@ -211,9 +242,23 @@ void CUI_ITem::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, 
 
 }
 
+void CUI_ITem::ReleaseShaderVariables()
+{
+	CMRTUI::ReleaseShaderVariables();
+
+	if (m_pd3dcbItemReact)
+	{
+		m_pd3dcbItemReact->Unmap(0, NULL);
+		m_pd3dcbItemReact->Release();
+	}
+	m_pd3dcbItemReact = NULL;
+
+}
+
 void CUI_HP::InterLinkShaderTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
 	ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture)
 {
+
 	CShader_ObjHP* pShader = new CShader_ObjHP();
 	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 1);
 	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
@@ -256,4 +301,17 @@ void CUI_HP::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XM
 	memcpy(m_pcbPlayerHP, m_PlayerHP, sizeof(int));
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbPlayerHP->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_PLAYER_HP, d3dGpuVirtualAddress);
+}
+
+void CUI_HP::ReleaseShaderVariables()
+{
+	CMRTUI::ReleaseShaderVariables();
+
+	if (m_pd3dcbPlayerHP)
+	{
+		m_pd3dcbPlayerHP->Unmap(0, NULL);
+		m_pd3dcbPlayerHP->Release();
+	}
+	m_pd3dcbPlayerHP = NULL;
+
 }

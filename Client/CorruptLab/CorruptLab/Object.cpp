@@ -50,7 +50,13 @@ CGameObject::~CGameObject()
 	{
 		for (int i = 0; i < m_nMaterials; i++)
 		{
-			if (m_ppMaterials[i]) m_ppMaterials[i]->Release();
+
+			if (m_ppMaterials[i])
+			{
+				m_ppMaterials[i]->ReleaseUploadBuffers();
+				m_ppMaterials[i]->Release();
+
+			}
 		}
 	}
 	if (m_ppMaterials) delete[] m_ppMaterials;
@@ -68,6 +74,12 @@ void CGameObject::Release()
 {
 	if (m_pChild) m_pChild->Release();
 	if (m_pSibling) m_pSibling->Release();
+
+	//for(int i =0 ; i<m_nBoundingBoxes; ++i)
+	//	m_pBoundingBoxes[i]-
+	//if (m_pCollisionBoxShader)m_pCollisionBoxShader->ReleaseUploadBuffers();
+	//if (m_pCollisionBoxShader)
+	//	m_pCollisionBoxShader->Release(); 
 
 	if (m_pBoundingBoxes)
 		delete[] m_pBoundingBoxes;
@@ -99,6 +111,13 @@ void CGameObject::SetShader(CShader* pShader)
 	m_ppMaterials = new CMaterial * [m_nMaterials];
 	m_ppMaterials[0] = new CMaterial(1);
 	m_ppMaterials[0]->SetShader(pShader);
+}
+
+void CGameObject::CreateMaterial()
+{
+	m_nMaterials = 1;
+	m_ppMaterials = new CMaterial * [m_nMaterials];
+	m_ppMaterials[0] = new CMaterial(1);
 }
 
 void CGameObject::SetShader(int nMaterial, CShader* pShader)
@@ -228,7 +247,7 @@ void CGameObject::OnPrepareRender() {}
 void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 
-	if (m_pBoundingBoxes && nPipelineState == 0)
+	if (m_pBoundingBoxes)
 	{
 		//m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
 		for (int i = 0; i < m_nBoundingBoxes; i++)
@@ -315,6 +334,8 @@ void CGameObject::ReleaseShaderVariables()
 		m_pd3dcbGameObjects->Unmap(0, NULL);
 		m_pd3dcbGameObjects->Release();
 	}
+	m_pd3dcbGameObjects = NULL;
+
 	if (m_pcbMappedGameObjects) delete m_pcbMappedGameObjects;
 }
 
@@ -349,6 +370,12 @@ void CGameObject::UpdateCollisionBoxes(XMFLOAT4X4* world)
 void CGameObject::ReleaseUploadBuffers()
 {
 	if (m_pMesh) m_pMesh->ReleaseUploadBuffers();
+
+	for (int i = 0; i < m_nMaterials; i++)
+	{
+		if (m_ppMaterials[i]) m_ppMaterials[i]->ReleaseUploadBuffers();
+	}
+
 
 	if (m_pSibling) m_pSibling->ReleaseUploadBuffers();
 	if (m_pChild) m_pChild->ReleaseUploadBuffers();
@@ -840,4 +867,10 @@ void CCollisionBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* 
 	pd3dCommandList->IASetVertexBuffers(0, _countof(pVertexBufferViews), pVertexBufferViews);
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	pd3dCommandList->DrawInstanced(1, 1, 0, 0);
+}
+
+void CCollisionBox::Release()
+{
+	if (m_pd3dCollisionUploadBuffer)m_pd3dCollisionUploadBuffer->Release();
+	if (m_pd3dCollisionBuffer)m_pd3dCollisionBuffer->Release();
 }

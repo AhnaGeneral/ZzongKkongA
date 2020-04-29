@@ -29,10 +29,10 @@ private:
 
 	CMaterial                      * m_pBillboardMaterial;
 	int			                     m_nInstances = 0;
+
 	ID3D12Resource                 * m_pd3dInstancesBuffer = NULL;
 	ID3D12Resource                 * m_pd3dInstanceUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		 m_d3dInstancingBufferView;
-	CBillboard                     * pBillboard = NULL;
 
 public:
 
@@ -62,7 +62,7 @@ class CSoftParticleShader :public CShader
 {
 public:
 	CSoftParticleShader() {}
-	~CSoftParticleShader() {}
+	virtual ~CSoftParticleShader();
 
 	CTexture* m_pSceneDepthTextures = NULL;
 	CTexture* m_pFireNoiseTextures = NULL;
@@ -92,4 +92,6 @@ public:
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext = NULL, CHeightMapTerrain* pTerrain = NULL);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 	virtual void ReleaseObjects();
+	virtual void ReleaseUploadBuffers();
+
 };

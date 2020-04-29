@@ -42,7 +42,7 @@ class CLightTarget : public CShader
 {
 public:
 	CLightTarget() {}
-	~CLightTarget() {}
+	virtual ~CLightTarget();
 
 	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
 
@@ -58,6 +58,7 @@ public:
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+	virtual void ReleaseObjects();
 
 	void BuildLightsAndMaterials();
 

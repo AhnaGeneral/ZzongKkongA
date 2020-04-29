@@ -154,7 +154,7 @@ public:
 	_TCHAR                        (*m_ppstrTextureNames)[64] = NULL;
 	CTexture                     ** m_ppTextures = NULL; //0:Albedo, 1:Specular, 2:Metallic, 3:Normal, 4:Emission, 5:DetailAlbedo, 6:DetailNormal
 
-	CTexture                      * m_pTexture = NULL; 
+	//CTexture                      * m_pTexture = NULL; 
 
 	static CShader                * m_pStandardShader;
 	static CShader                * m_pSkinnedAnimationShader;

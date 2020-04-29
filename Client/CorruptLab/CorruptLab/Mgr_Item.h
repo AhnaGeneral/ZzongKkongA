@@ -30,14 +30,7 @@ public:
 			m_pInstance = new CItemMgr();
 		return m_pInstance;
 	}
-	void Destroy()
-	{
-		if (m_pInstance)
-		{
-			delete m_pInstance;
-			m_pInstance = NULL;
-		}
-	}
-
+	void Destroy();
+	
 };
 

@@ -26,6 +26,9 @@ CSkyBox::CSkyBox(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComman
 
 CSkyBox::~CSkyBox()
 {
+	//m_ppMaterials[0]->ReleaseUploadBuffers(); 
+//	m_ppMaterials[0]->Release();
+
 }
 
 void CSkyBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)

@@ -35,6 +35,7 @@ public:
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 
 	virtual void ReleaseObjects();
+	virtual void ReleaseUploadBuffers();
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, UINT ItemReact = 0);
 
@@ -49,10 +50,14 @@ public:
 	CUI_HP* GetPlayerHP() { return m_PlayerHP; }
 
 
+
 protected:
 	CTexture* m_pTexture = NULL;
 	CTexture* m_pLightTexture = NULL;
 	CTexture* m_pShadowTexture = NULL;
+	CTexture* m_pItemTex = NULL;
+	CShader*  m_pBaseUIShader = NULL; 
+	CShader*  m_pItemShader = NULL;
 
 	CGameObject** m_pRenderTargetUIs = NULL;
 	int m_nRenderTargetUI;

@@ -6,7 +6,7 @@ class CShader_Item :public CShader
 {
 public:
 	CShader_Item() {}
-	~CShader_Item() {}
+	virtual ~CShader_Item() {}
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();

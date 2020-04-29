@@ -1,6 +1,12 @@
 #include "stdafx.h"
 #include "Shader_Lobby.h"
 
+Shader_Lobby::~Shader_Lobby()
+{
+	ReleaseUploadBuffers();
+	ReleaseObjects();
+}
+
 D3D12_SHADER_BYTECODE Shader_Lobby::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(L"HLSL_Lobby.hlsl", "VSLobbyScene", "vs_5_1", ppd3dShaderBlob));
@@ -93,4 +99,13 @@ void Shader_Lobby::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandL
 	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 1); 
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pUITexture, ROOT_PARAMETER_LOBBYTEX, false);
 	
+}
+
+void Shader_Lobby::ReleaseObjects()
+{
+	m_pLobbyMaterial->Release();
+}
+
+void Shader_Lobby::ReleaseUploadBuffers()
+{
 }

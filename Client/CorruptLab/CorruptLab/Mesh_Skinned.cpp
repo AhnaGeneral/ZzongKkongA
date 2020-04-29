@@ -8,15 +8,19 @@ CSkinnedMesh::CSkinnedMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 CSkinnedMesh::~CSkinnedMesh()
 {
 	if (m_pd3dBoneIndexBuffer) m_pd3dBoneIndexBuffer->Release();
-	if (m_pxmu4BoneIndices) delete m_pxmu4BoneIndices;
+	if (m_pxmu4BoneIndices) delete[] m_pxmu4BoneIndices;
 
 	if (m_pd3dBoneWeightBuffer) m_pd3dBoneWeightBuffer->Release();
-	if (m_pxmf4BoneWeights) delete m_pxmf4BoneWeights;
+	if (m_pxmf4BoneWeights) delete[] m_pxmf4BoneWeights;
 
 	if (m_ppSkinningBoneFrameCaches) delete[] m_ppSkinningBoneFrameCaches;
 	if (m_ppstrSkinningBoneNames) delete[] m_ppstrSkinningBoneNames;
 
 	if (m_pxmf4x4BindPoseBoneOffsets) delete[] m_pxmf4x4BindPoseBoneOffsets;
+
+	//if (m_pcbxmf4x4BoneOffsets) delete m_pcbxmf4x4BoneOffsets; 
+	//if (m_pcbxmf4x4BoneTransforms) delete m_pcbxmf4x4BoneTransforms;
+
 
 	ReleaseShaderVariables();
 }
@@ -134,18 +138,30 @@ void CSkinnedMesh::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandL
 
 void CSkinnedMesh::ReleaseShaderVariables()
 {
-	if (m_pd3dcbBoneOffsets) m_pd3dcbBoneOffsets->Release();
-	if (m_pd3dcbBoneTransforms) m_pd3dcbBoneTransforms->Release();
+	if (m_pd3dcbBoneOffsets)
+	{
+		m_pd3dcbBoneOffsets->Unmap(0, NULL);
+		m_pd3dcbBoneOffsets->Release();
+	}
+	if (m_pd3dcbBoneTransforms)
+	{
+		m_pd3dcbBoneTransforms->Unmap(0, NULL);
+		m_pd3dcbBoneTransforms->Release();
+	}
 }
 
 void CSkinnedMesh::ReleaseUploadBuffers()
 {
 	CStandardMesh::ReleaseUploadBuffers();
 
-	if (m_pd3dBoneIndexUploadBuffer) m_pd3dBoneIndexUploadBuffer->Release();
+	if (m_pd3dBoneIndexUploadBuffer)
+		m_pd3dBoneIndexUploadBuffer->Release();
+
 	m_pd3dBoneIndexUploadBuffer = NULL;
 
-	if (m_pd3dBoneWeightUploadBuffer) m_pd3dBoneWeightUploadBuffer->Release();
+	if (m_pd3dBoneWeightUploadBuffer) 
+		m_pd3dBoneWeightUploadBuffer->Release();
+
 	m_pd3dBoneWeightUploadBuffer = NULL;
 }
 

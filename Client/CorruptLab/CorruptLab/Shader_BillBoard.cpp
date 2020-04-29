@@ -67,7 +67,10 @@ D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlo
 // CCloudGSShader =============================================================================================
 CCloudGSShader::CCloudGSShader() {}
 
-CCloudGSShader::~CCloudGSShader() {}
+CCloudGSShader::~CCloudGSShader() 
+{
+	ReleaseObjects();
+}
 
 void CCloudGSShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
@@ -340,6 +343,11 @@ D3D12_DEPTH_STENCIL_DESC CSoftParticleShader::CreateDepthStencilState()
 	return(d3dDepthStencilDesc);
 }
 
+CSoftParticleShader::~CSoftParticleShader()
+{
+	ReleaseObjects();
+}
+
 D3D12_BLEND_DESC CSoftParticleShader::CreateBlendState()
 {
 	D3D12_BLEND_DESC d3dBlendDesc;
@@ -445,8 +453,8 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	{
 		for (int j = 50; j < 400; j+=80)
 		{
-			float fHeight = pTerrain->GetHeight(i, j) + 30;
-			pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, XMFLOAT3(i, fHeight, j), this);  //object
+			float fHeight = pTerrain->GetHeight((float)i, (float)j) + 30;
+			pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, XMFLOAT3((float)i, fHeight, (float)j), this);  //object
 			pNoise->GenerateShaderDistortionBuffer();
 			m_pFogObjects[w] = pNoise; w++;
 		}
@@ -460,16 +468,17 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	m_pFireObjects[0] = pNoise;
 
 	CreateNoiseTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	ReleaseUploadBuffers();
 
 }
 
 void CSoftParticleShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
+	OnPrepareRender(pd3dCommandList);
 	m_pSceneDepthTextures->UpdateShaderVariables(pd3dCommandList);
 
 	m_pFireNoiseTextures->UpdateShaderVariable(pd3dCommandList, 0);
 
-	OnPrepareRender(pd3dCommandList);
 
 	for (int i = 0; i < m_nFire; i++)
 		m_pFireObjects[i]->Render(pd3dCommandList, pCamera);
@@ -496,4 +505,25 @@ void CSoftParticleShader::ReleaseObjects()
 		m_pFogObjects[i]->Release();
 	}
 	delete[] m_pFogObjects;
+
+	if (m_pSceneDepthTextures)m_pSceneDepthTextures->ReleaseUploadBuffers();
+	if (m_pFireNoiseTextures)m_pFireNoiseTextures->ReleaseUploadBuffers();
+	if (m_pFogNoiseTextures)m_pFogNoiseTextures->ReleaseUploadBuffers();
+
+	if (m_pSceneDepthTextures)m_pSceneDepthTextures->Release();
+	if (m_pFireNoiseTextures)m_pFireNoiseTextures->Release();
+	if (m_pFogNoiseTextures)m_pFogNoiseTextures->Release();
+}
+
+void CSoftParticleShader::ReleaseUploadBuffers()
+{
+	for (int i = 0; i < m_nFire; i++)
+	{
+		m_pFireObjects[i]->ReleaseUploadBuffers();
+	}
+
+	for (int i = 0; i < m_nFog; i++)
+	{
+		m_pFogObjects[i]->ReleaseUploadBuffers();
+	}
 }

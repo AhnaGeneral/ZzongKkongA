@@ -118,6 +118,7 @@ void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCame
 	OnPrepareRender();
 
 	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera, nPipelineState);
+
 	if (nPipelineState == 0)
 	{		
 		m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
@@ -148,5 +149,7 @@ void CHeightMapTerrain::ReleaseUploadBuffers()
 	if (m_nMeshes)
 		for (int i = 0; i < m_nMeshes; ++i)
 			m_ppMeshes[i]->ReleaseUploadBuffers();
+
+	m_ppMaterials[0]->ReleaseUploadBuffers();
 }
 

@@ -84,6 +84,17 @@ CStandardMesh::~CStandardMesh()
 void CStandardMesh::ReleaseUploadBuffers()
 {
 	CMesh::ReleaseUploadBuffers();
+	
+	if (m_pd3dTangentUploadBuffer) m_pd3dTangentUploadBuffer->Release();
+	m_pd3dTangentUploadBuffer = NULL;
+
+	if (m_pd3dBiTangentUploadBuffer) m_pd3dBiTangentUploadBuffer->Release();
+	m_pd3dBiTangentUploadBuffer = NULL;
+
+	if (m_pd3dNormalUploadBuffer) m_pd3dNormalUploadBuffer->Release();
+	m_pd3dNormalUploadBuffer = NULL;
+
+
 }
 
 void CStandardMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile)
@@ -339,6 +350,7 @@ void CTriangleRect::ReleaseUploadBuffers()
 {
 	if (m_pd3dVertexBuffer) m_pd3dVertexBuffer->Release();
 	if (m_pd3dVertexUploadBuffer) m_pd3dVertexUploadBuffer->Release();
+
 	CMesh::ReleaseUploadBuffers();
 }
 

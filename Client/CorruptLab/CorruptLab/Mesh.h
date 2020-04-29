@@ -44,7 +44,7 @@ typedef struct MESHINFO
 	ID3D12Resource* m_pd3dTextureCoord1UploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dTextureCoord1BufferView;
 
-	int                             m_nSubMeshes = 0;
+	int  m_nSubMeshes = 0;
 	int* m_pnSubSetIndices = NULL;
 	UINT** m_ppnSubSetIndices = NULL;
 	ID3D12Resource** m_ppd3dSubSetIndexBuffers = NULL;

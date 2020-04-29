@@ -1,5 +1,11 @@
 #include "Shader_LightMRT.h"
 
+CLightTarget::~CLightTarget()
+{
+	ReleaseShaderVariables();
+	ReleaseObjects();
+}
+
 D3D12_DEPTH_STENCIL_DESC CLightTarget::CreateDepthStencilState()
 {
 	D3D12_DEPTH_STENCIL_DESC d3dDepthStencilDesc;
@@ -176,6 +182,15 @@ void CLightTarget::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
+}
+
+void CLightTarget::ReleaseObjects()
+{
+	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
+
+	if (m_pMaterials)  delete m_pMaterials;
+
+	if (m_pLights)  delete m_pLights;
 }
 
 void CLightTarget::BuildLightsAndMaterials()

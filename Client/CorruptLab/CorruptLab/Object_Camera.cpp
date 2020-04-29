@@ -319,7 +319,6 @@ void CThirdPersonCamera::SetLookAt(XMFLOAT3& xmf3LookAt)
 	m_xmf3Look = XMFLOAT3(mtxLookAt._13, mtxLookAt._23, mtxLookAt._33);
 }
 
-
 CSunCamera::CSunCamera()
 {
 	//XMFLOAT3 xmf3Look  = Vector3::Normalize(XMFLOAT3(0.25f, -1.0f, 0.2f));
@@ -337,7 +336,7 @@ CSunCamera::CSunCamera()
 
 	SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 	GenerateViewMatrix(XMFLOAT3(m_fSunCameraPosition[0], m_fSunCameraPosition[2],m_fSunCameraPosition[1]), m_xmf3Look, m_xmf3Up);
-	GenerateProjectionMatrix(1.f,600.0f, ASPECT_RATIO, 60.0f);
+	GenerateProjectionMatrix(1.f,400.0f, ASPECT_RATIO, 60.0f);
 	SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 	RegenerateViewMatrix();
 }

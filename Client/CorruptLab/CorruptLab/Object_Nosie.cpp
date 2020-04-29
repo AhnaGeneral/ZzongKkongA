@@ -6,7 +6,9 @@
 CObjectNosie::CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader)
 {
 
-	m_pd3dPositionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, &position, sizeof(XMFLOAT3) , D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dPositionUploadBuffer);
+	m_pd3dPositionBuffer =
+		::CreateBufferResource(pd3dDevice, pd3dCommandList, &position, sizeof(XMFLOAT3), 
+		D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dPositionUploadBuffer);
 
 	m_d3dPositionBufferView.BufferLocation = m_pd3dPositionBuffer->GetGPUVirtualAddress();
 	m_d3dPositionBufferView.StrideInBytes = sizeof(XMFLOAT3);
@@ -52,11 +54,11 @@ void CObjectNosie::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandL
 void CObjectNosie::ReleaseShaderVariables()
 {
 	// GameObject[게임 오브젝트 콘스탄트버퍼] -------------------------------------------------------------
-	//if (m_pd3dcbGameObjects)
-	//{
-	//	m_pd3dcbGameObjects->Unmap(0, NULL);
-	//	m_pd3dcbGameObjects->Release();
-	//}
+	if (m_pd3dcbGameObjects)
+	{
+		m_pd3dcbGameObjects->Unmap(0, NULL);
+		m_pd3dcbGameObjects->Release();
+	}
 	//if (m_pcbMappedGameObjects) delete m_pcbMappedGameObjects;
 
 	// noisebuffer [노이즈의 콘스탄트버퍼] ----------------------------------------------------------------
@@ -73,7 +75,14 @@ void CObjectNosie::ReleaseShaderVariables()
 		m_pd3dcbDistortionBuffer->Unmap(0, NULL);
 		m_pd3dcbDistortionBuffer->Release();
 	}
+
+	if (m_pd3dPositionBuffer)
+	{
+		m_pd3dPositionBuffer->Release();
+	}
 	//if (m_pcbMappdeDistortBuffers) delete m_pcbMappdeDistortBuffers;
+
+	
 }
 
 
@@ -168,7 +177,8 @@ void CObjectNosie::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 CObjectFog::CObjectFog(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader)
 	//: CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature)
 {
-	m_pd3dPositionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, &position, sizeof(XMFLOAT3), D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dPositionUploadBuffer);
+	m_pd3dPositionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, &position, sizeof(XMFLOAT3),
+		D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dPositionUploadBuffer);
 
 	m_d3dPositionBufferView.BufferLocation = m_pd3dPositionBuffer->GetGPUVirtualAddress();
 	m_d3dPositionBufferView.StrideInBytes = sizeof(XMFLOAT3);
@@ -181,6 +191,7 @@ CObjectFog::CObjectFog(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3d
 
 CObjectFog::~CObjectFog()
 {
+	//ReleaseShaderVariables();
 }
 
 void CObjectFog::GenerateShaderDistortionBuffer()
@@ -208,6 +219,7 @@ CObjectWater::CObjectWater(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* 
 
 CObjectWater::~CObjectWater()
 {
+	//ReleaseShaderVariables();
 }
 
 void CObjectWater::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
@@ -247,3 +259,4 @@ void CObjectWater::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 	if (m_pMesh)
 		m_pMesh->Render(pd3dCommandList, 0);
 }
+

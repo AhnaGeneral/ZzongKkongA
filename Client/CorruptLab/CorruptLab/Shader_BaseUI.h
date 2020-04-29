@@ -5,7 +5,7 @@ class CShader_BaseUI :public CShader
 {
 public:
 	CShader_BaseUI() {}
-	~CShader_BaseUI() {}
+	virtual ~CShader_BaseUI() {}
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();

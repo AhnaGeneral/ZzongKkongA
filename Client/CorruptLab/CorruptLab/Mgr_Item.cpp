@@ -26,3 +26,16 @@ void CItemMgr::GetItem(int iType, XMFLOAT3 Pos)
 	m_pRotatingItem->SetPosition(Pos);
 	m_pRotatingItem->m_bAnimate = true;
 }
+
+void CItemMgr::Destroy()
+{
+	if (m_pRotatingItem) m_pRotatingItem->ReleaseUploadBuffers();
+	if (m_pRotatingItem) m_pRotatingItem->Release();
+
+	if (m_pInstance)
+	{
+		delete m_pInstance;
+		m_pInstance = NULL;
+	}
+
+}

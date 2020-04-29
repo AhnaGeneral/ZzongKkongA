@@ -38,6 +38,21 @@ void CRotatingItem::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* 
 		m_pMesh->Render(pd3dCommandList, 0);
 }
 
+CRotatingItem::~CRotatingItem()
+{
+	//if (m_pItemTextures)
+	//{
+	//	for (int i = 0; i < m_nItemType; ++i)
+	//	{
+	//		m_pItemTextures[i]->ReleaseUploadBuffers();
+	//		m_pItemTextures[i]->Release();
+	//	}
+	//}
+	//m_ppMaterials[0]->m_pShader->ReleaseUploadBuffers();
+	//m_ppMaterials[0]->m_pShader->Release(); 
+
+}
+
 void CRotatingItem::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
 {
 	if (!m_bAnimate) return;

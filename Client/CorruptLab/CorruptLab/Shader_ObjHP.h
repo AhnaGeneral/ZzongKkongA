@@ -5,7 +5,7 @@ class CShader_ObjHP :public CShader
 {
 public:
 	CShader_ObjHP() {}
-	~CShader_ObjHP() {}
+	virtual ~CShader_ObjHP() {}
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
 	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
