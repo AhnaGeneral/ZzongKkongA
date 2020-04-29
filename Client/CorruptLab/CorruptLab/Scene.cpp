@@ -40,7 +40,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
 	m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 
-
+	CRadationMgr::GetInstance()->Initialize();
 	m_pSoftParticleShader = new CSoftParticleShader();
 	m_pSoftParticleShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex, m_pTerrain);
 

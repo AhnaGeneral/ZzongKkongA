@@ -43,8 +43,8 @@ void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<PS_FOG_INPUT> outStr
 	vLook = normalize(vLook);
 	float3 vRight = cross(vUP, vLook);
 
-	float fHalfW = 150 * 0.5f;
-	float fHalfH = 80 * 0.5f;
+	float fHalfW = 100 * 0.5f;
+	float fHalfH = 70 * 0.5f;
 
 	float4 pVertices[4];
 	pVertices[0] = float4(input[0].positionW + fHalfW * vRight - fHalfH * vUP, 1.0f);
@@ -132,17 +132,18 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 	float fDepthDistance = fSceenZ - myDepth;
 	if (/*(fDepthDistance < 80.f) &&*/ (fDepthDistance > 0))
 	{
-		fDepthDistance = saturate(1 - (fDepthDistance / 70.f)); // 0.7 //0.8 //0.9 
+		fDepthDistance = saturate(1 - (fDepthDistance / 150.f)); // 0.7 //0.8 //0.9 
 		//fDepthDistance *= 100; //0.3  //0.2 // 0.1 ..
 		//fDepthDistance/= 
 		output.NonLight.a -= fDepthDistance;
 	}
-	output.NonLight.a /= 5.f;
+	output.NonLight.a /= 7.f;
 
 	if (gf3RadiationLevel > 0)
 	{
-		float Percent = float(gf3RadiationLevel) / 400.f ;
+		float Percent = 1.f - float(gf3RadiationLevel) / 100.f;
 		output.NonLight.r = output.NonLight.b = Percent;
+		output.NonLight.g = 0.7f;
 	}
 
 	return output;

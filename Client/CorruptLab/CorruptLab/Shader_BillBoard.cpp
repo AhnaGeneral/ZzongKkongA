@@ -445,15 +445,15 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	m_pSceneDepthTextures->SetTexture(0, pContext);
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pSceneDepthTextures, ROOT_PARAMETER_SCENEDEPTHTEX, 0);
 	
-	m_nFog = 25;
+	m_nFog = 64;
 	int w = 0;
 	m_pFogObjects = new CObjectNosie * [m_nFog];
 	CObjectNosie* pNoise;
-	for (int i = 50; i < 400; i+= 80)
+	for (int i = 50; i < 450; i+= 50)
 	{
-		for (int j = 50; j < 400; j+=80)
+		for (int j = 50; j < 450; j+=50)
 		{
-			float fHeight = pTerrain->GetHeight((float)i, (float)j) + 30;
+			float fHeight = pTerrain->GetHeight((float)i, (float)j) + 15;
 			pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, XMFLOAT3((float)i, fHeight, (float)j), this);  //object
 			pNoise->GenerateShaderDistortionBuffer();
 			m_pFogObjects[w] = pNoise; w++;

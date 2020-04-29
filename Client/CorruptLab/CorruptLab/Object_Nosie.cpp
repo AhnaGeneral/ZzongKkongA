@@ -2,6 +2,7 @@
 #include "Object_Nosie.h"
 #include "Shader_Noise.h"
 #include "Mesh.h"
+#include "Mgr_Radiation.h"
 
 CObjectNosie::CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader)
 {
@@ -51,9 +52,8 @@ void CObjectNosie::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	//m_iRadiationLevel = new int;
 	m_pd3dRadiationLevel->Map(0, NULL, (void**)&m_iRadiationLevel);
-	*m_iRadiationLevel = int(m_fPosition.x);
+	*m_iRadiationLevel = CRadationMgr::GetInstance()->GetStrength(m_fPosition);
 
-	
 }
 
 void CObjectNosie::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)

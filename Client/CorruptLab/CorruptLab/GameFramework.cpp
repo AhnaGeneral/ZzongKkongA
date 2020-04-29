@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "GameFramework.h"
+#include "Mgr_Radiation.h"
 
 CGameFramework::CGameFramework()
 {
@@ -634,7 +635,7 @@ void CGameFramework::BuildObjects()
 
 	//pAirplanePlayer->SetPosition(XMFLOAT3(0.0f, 100.0f, 0.0f));
 	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pPlayer = m_pPlayer = pAirplanePlayer;
-
+	CRadationMgr::GetInstance()->SetPlayer(m_pPlayer);
 	m_pPostProcessingShader->GetMinimap()->SetPlayerPosition(m_pPlayer->GetPositionPointer());
 	m_pPostProcessingShader->GetMinimap()->CreateShaderVariables(m_pd3dDevice, m_pd3dCommandList);
 

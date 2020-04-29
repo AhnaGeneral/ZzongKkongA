@@ -100,6 +100,24 @@ inline bool IsEqual(float fA, float fB, float fEpsilon) { return(::IsZero(fA - f
 inline float InverseSqrt(float fValue) { return 1.0f / sqrtf(fValue); }
 inline void Swap(float *pfS, float *pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT = fTemp; }
 
+namespace Vector2
+{
+
+	inline XMFLOAT2 Subtract(XMFLOAT2& xmf3Vector1, XMFLOAT2& xmf3Vector2)
+	{
+		XMFLOAT2 xmf3Result;
+		XMStoreFloat2(&xmf3Result, XMLoadFloat2(&xmf3Vector1) - XMLoadFloat2(&xmf3Vector2));
+		return(xmf3Result);
+	}
+
+	inline float Length(XMFLOAT2& xmf3Vector)
+	{
+		XMFLOAT2 xmf3Result;
+		XMStoreFloat2(&xmf3Result, XMVector3Length(XMLoadFloat2(&xmf3Vector)));
+		return(xmf3Result.x);
+	}
+
+}
 namespace Vector3
 {
 

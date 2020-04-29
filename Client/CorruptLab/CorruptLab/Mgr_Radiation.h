@@ -5,6 +5,20 @@ using namespace std;
 class CPlayer;
 class CGameScene;
 
+struct RadiationInfo
+{
+	XMFLOAT2 Position;
+	float	Range;
+	int		Strength;
+	RadiationInfo() {}
+	RadiationInfo(XMFLOAT2 pos, float range, int strength)
+	{
+		Position = pos;
+		Range = range;
+		Strength = strength;
+	}
+};
+
 class CRadationMgr
 {
 private:
@@ -12,14 +26,14 @@ private:
 	CPlayer* m_pPlayer;
 	int		m_iRadiation = 34;
 	float	m_fTick = 0;
+	RadiationInfo m_Radiations[5];
 
 public:
 	int GetRaditaion() { return m_iRadiation; }
-	void Initialize(ID3D12Device* pd3dDevice,
-		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignatureCPlayer);
+	void Initialize();
 	void Update(float fElapsedTime);
 	void SetPlayer(CPlayer* pPlayer) { m_pPlayer = pPlayer; }
-
+	int GetStrength(XMFLOAT3 pos);
 	static CRadationMgr* GetInstance(void)
 	{
 		if (m_pInstance == NULL)
