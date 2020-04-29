@@ -382,9 +382,9 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	m_PlayerHP = new CUI_HP(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 	m_PlayerHP->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pHPTexture);
-	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 250, 200, 0.0f, 1.0f);
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 190, 18, 0.0f, 1.0f);
 	m_PlayerHP->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	m_PlayerHP->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
+	m_PlayerHP->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 150, (-FRAME_BUFFER_HEIGHT / 2) + 90);
 	m_PlayerHP->SetObjectID(4);
 	m_PlayerHP->SetMesh(mesh);
 

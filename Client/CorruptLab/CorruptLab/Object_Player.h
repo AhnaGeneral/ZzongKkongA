@@ -42,7 +42,7 @@ protected:
 //GameContents
 
 	int				m_iMaxHP = 100;
-	int				m_iCurrentHP = 100;
+	int				m_iCurrentHP = 30;
 	int				m_iAtt = 20;
 
 ///

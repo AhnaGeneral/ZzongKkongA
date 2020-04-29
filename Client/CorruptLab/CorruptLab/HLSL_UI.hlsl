@@ -89,13 +89,11 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 
 float4 PSPlayerHP(VS_TEXTURED_OUTPUT input) : SV_TARGET
 {
-	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, input.uv);
-
-	if (cColor.a > 0.6f)
-		cColor.a = 1.0f;
-
-	float HP = gfremainingHP / 100.0f;
-	//cColor.r = cColor.r * HP; 
+	float HP = (float)gfremainingHP / 100.0f;
+    float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, input.uv);
+	
+	if (input.uv.x > HP)
+		cColor = float4(1, 1, 1, 0);
 
 	return float4(cColor);
 }
