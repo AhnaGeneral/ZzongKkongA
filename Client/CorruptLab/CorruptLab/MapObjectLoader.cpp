@@ -96,6 +96,7 @@ void CGameScene::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName,
 		pGameObject->OnInitialize();
 		m_pStaticObjLists[index]->push_back(pGameObject);
 	}
+	fclose(pInFile);
 }
 
 void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index)
@@ -136,6 +137,7 @@ void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int i
 		pGameObject->OnInitialize();
 		m_pDynamicObjLists[index]->push_back(pGameObject);
 	}
+	fclose(pInFile);
 }
 
 void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index)
@@ -173,6 +175,7 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		pGameObject->OnInitialize();
 		m_pMonsterLists[index]->push_back(pGameObject);
 	}
+	fclose(pInFile);
 }
 
 

@@ -55,7 +55,7 @@ void CPlayer::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList) 
 void CPlayer::UpdateCollisionBoxes(XMFLOAT4X4* world)
 {
 	OnPrepareRender();
-	if(m_pHandCollision) m_pHandCollision->Update(NULL);
+	//if(m_pHandCollision) m_pHandCollision->Update(NULL);
 	if(m_pBodyCollision) m_pBodyCollision->Update(&m_xmf4x4Transform);
 }
 
@@ -174,7 +174,7 @@ void CPlayer::Update(float fTimeElapsed)
 
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
 	XMFLOAT3 pos = m_xmf3Position;
-	pos.y += 4.f;
+	pos.y += 8.f;
 
 	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->Update(pos, fTimeElapsed);
 	if (m_pCameraUpdatedContext) OnCameraUpdateCallback(fTimeElapsed);
@@ -266,13 +266,13 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 
 	CGameObject* pGameObject =
 		CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
-			                  pd3dGraphicsRootSignature, "Model/Johnson/PlayerWithCol.bin", NULL, true);
+			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson.bin", NULL, true);
 	//SetPosition(0.0f, 0.0f, 0.0f);
 
-	m_pRightHand = pGameObject->FindFrame("Bip001_R_Hand");
+	//m_pRightHand = pGameObject->FindFrame("Bip001_R_Hand");
 	m_pBodyCollision = &(pGameObject->m_pBoundingBoxes[0]);
 
-	pGameObject->m_pBoundingBoxes[1].m_pParent = m_pRightHand;
+	//pGameObject->m_pBoundingBoxes[1].m_pParent = m_pRightHand;
 	m_pHandCollision = &(pGameObject->m_pBoundingBoxes[1]);
 
 	SetChild(pGameObject, true);
@@ -312,7 +312,7 @@ void CMainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 		if (m_pCamera->GetMode() == THIRD_PERSON_CAMERA)
 		{
 			CThirdPersonCamera* p3rdPersonCamera = (CThirdPersonCamera*)m_pCamera;
-			p3rdPersonCamera->SetLookAt(GetPosition());
+			p3rdPersonCamera->SetLookAt(XMFLOAT3(GetPosition().x, GetPosition().y + 5.0f, GetPosition().z));
 		}
 	}
 }
@@ -400,7 +400,7 @@ CPlayerCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapse
 		SetMaxVelocityY(400.0f);
 		m_pCamera = dynamic_cast<CPlayerCamera*>(OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode));
 		m_pCamera->SetTimeLag(0.25f);
-		m_pCamera->SetOffset(XMFLOAT3(0.0f, 0.5f, -7.5f));
+		m_pCamera->SetOffset(XMFLOAT3(0.0f, 3.0f, -10.5f));
 		m_pCamera->GenerateProjectionMatrix(1.01f, CAMERA_CULL_RANGE, ASPECT_RATIO, 60.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);

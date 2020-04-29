@@ -461,7 +461,7 @@ CGameObject* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDev
 	}
 
 	pGameObject->LoadBoundingBox(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pGameObject, pInFile);
-
+	fclose(pInFile);
 	return(pGameObject);
 }
 
