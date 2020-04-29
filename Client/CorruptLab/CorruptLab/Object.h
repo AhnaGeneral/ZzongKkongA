@@ -89,7 +89,7 @@ public:
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial);
 	virtual void UpdateCollisionBoxes(XMFLOAT4X4* world = NULL);
-
+	virtual void UpdateCollisionBoxes(XMFLOAT4X4* world , XMFLOAT4* ParentOrientation, XMFLOAT3* ParentScale);
 	virtual void ReleaseUploadBuffers();
 
 	XMFLOAT3 GetPosition() { return(XMFLOAT3(m_xmf4x4World._41, m_xmf4x4World._42, m_xmf4x4World._43)); }
