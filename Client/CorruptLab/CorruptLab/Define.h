@@ -30,6 +30,9 @@
 #define ROOT_PARAMETER_SHADOWMAP	        18
 #define ROOT_PARAMETER_SCENEDEPTHTEX	    19
 
+#define ROOT_PARAMETER_RADIATIONLEVEL      20
+
+
 
 
 //[ FinalMRT ]=====================================
@@ -44,6 +47,7 @@
 #define ROOT_PARAMETER_ITEM_TEX             7  
 #define ROOT_PARAMETER_ITEM_REACT           8 
 #define ROOT_PARAMETER_PLAYER_HP            9  
+//#define
 
 
 

@@ -9,6 +9,7 @@
 #include "Object_DynamicObj.h"
 #include "Monster_Yangmal.h"
 #include "Mgr_Item.h"
+#include "Mgr_Radiation.h"
 
 CGameScene::CGameScene()
 {
@@ -217,7 +218,7 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dSceneDepthTex.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[20];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[21];
 
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].Descriptor.ShaderRegister = 1; //b1 : Camera
@@ -319,6 +320,12 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dRootParameters[ROOT_PARAMETER_SCENEDEPTHTEX].DescriptorTable.NumDescriptorRanges = 1;
 	pd3dRootParameters[ROOT_PARAMETER_SCENEDEPTHTEX].DescriptorTable.pDescriptorRanges = &pd3dSceneDepthTex;
 	pd3dRootParameters[ROOT_PARAMETER_SCENEDEPTHTEX].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pd3dRootParameters[ROOT_PARAMETER_RADIATIONLEVEL].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[ROOT_PARAMETER_RADIATIONLEVEL].Constants.ShaderRegister = 11;
+	pd3dRootParameters[ROOT_PARAMETER_RADIATIONLEVEL].Constants.RegisterSpace = 0;
+	pd3dRootParameters[ROOT_PARAMETER_RADIATIONLEVEL].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
@@ -635,6 +642,8 @@ void CGameScene::Update(float fTimeElapsed)
 
 	m_pPlayer->Animate(fTimeElapsed, NULL);
 	CItemMgr::GetInstance()->Update(fTimeElapsed);
+	CRadationMgr::GetInstance()->Update(m_fElapsedTime);
+
 }
 
 void CGameScene::ItemBoxCheck()

@@ -1,6 +1,8 @@
 #include "Shader_MRT.h"
 #include "Shader_BaseUI.h"
 #include "Shader_Item.h"
+#include "Shader_Radiation.h"
+#include "Mgr_Radiation.h"
 CPostProcessingShader::CPostProcessingShader()
 {
 }
@@ -275,7 +277,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	// position이 왜 0 이여야 하지 ? // 모두 수직이여야 하는거 아닌가 ? 
 	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 
-	//---------------------------------------------------------------------------------
+	// [ 다중랜더타겟 텍스쳐 ] ===============================================================================
 	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 5.5f, FRAME_BUFFER_HEIGHT / 5.5f, 0.0f, 1.0f);
 	m_nRenderTargetUI = 6;
 	m_pRenderTargetUIs = new CGameObject * [m_nRenderTargetUI];
@@ -291,20 +293,16 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		m_pRenderTargetUIs[i++] = pRenderTargetUI;
 	}
 
-	//=====================================================================================================
-
+	//[ 미니맵 ] ============================================================================================
 	m_pMinimap = new CUI_MiniMap(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 	m_pMinimap->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
 	m_pMinimap->SetMesh(mesh);
 	m_pMinimap->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
 
-
-
-	//=====================================================================================================
-
+	//[ 체력 ] ==============================================================================================
 	CTexture* m_pHPTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	m_pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"HP/HP_3.dds", 0);
+	m_pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_3.dds", 0);
 
 	m_pBaseUIShader = new CShader_BaseUI();
 	m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 5);
@@ -317,9 +315,9 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	m_HPBAR->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
 	m_HPBAR->SetMesh(mesh);
 
-	//===================================================================================================
+	//[ 방사능 박스 ] ===========================================================================================
 	CTexture* pRadiationTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pRadiationTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"HP/HP_1.dds", 0);
+	pRadiationTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_1.dds", 0);
 
 	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pRadiationTex, ROOT_PARAMETER_HP_TEX, true);
 
@@ -329,14 +327,13 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	m_Radiation->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
 	m_Radiation->SetMesh(mesh);
 
-	//=====================================================================================================
-
+	//[ 인벤토리 ] ==============================================================================================
 	InVentoryBoxs = new CGameObject * [nIventoryCount];
 
 	float ItemBoxSize = FRAME_BUFFER_HEIGHT / 10.0f;
 
 	CTexture* pInventoryTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pInventoryTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/Inventory.dds", 0);
+	pInventoryTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/Inventory.dds", 0);
 
 	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pInventoryTex, ROOT_PARAMETER_HP_TEX, true);
 
@@ -350,14 +347,13 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		InVentoryBoxs[i++] = InventoryBox;
 	}
 
-	//======================================================================================================
-
+	//[ 아이템쓰 ] =============================================================================================
 	m_pItems = new CGameObject * [nIventoryCount];
 
 	m_pItemTex = new CTexture(3, RESOURCE_TEXTURE2D, 0);
-    m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/HandLight.dds", 0);
-    m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/HP_Kit.dds", 1);
-    m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/Pill.dds", 2);
+    m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HandLight.dds", 0);
+    m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HP_Kit.dds", 1);
+    m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/Pill.dds", 2);
 
 	//m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pItemTex, ROOT_PARAMETER_HP_TEX, true);
 
@@ -380,10 +376,10 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		m_pItem->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
 		m_pItems[i++] = m_pItem;
 	}
-	//=======================================================================================================
-
+	//[ 체력바 ] =================================================================================================
 	CTexture* pHPTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"HP/HP_2.dds", 0);
+	pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_2.dds", 0);
+
 	m_PlayerHP = new CUI_HP(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 	m_PlayerHP->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pHPTexture);
 	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 250, 200, 0.0f, 1.0f);
@@ -391,6 +387,31 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	m_PlayerHP->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
 	m_PlayerHP->SetObjectID(4);
 	m_PlayerHP->SetMesh(mesh);
+
+	//[ 방사능 수치 카운터 ] ======================================================================================= 
+	CTexture* pRadiationCountTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pRadiationCountTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/RadiationCount.dds", 0);
+
+	m_pRadiationShader = new CShader_Radiation();
+	m_pRadiationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 1);
+	m_pRadiationShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 5);
+	m_pRadiationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pRadiationCountTexture, ROOT_PARAMETER_HP_TEX, true);
+
+	m_RadiationLevels = new CGameObject * [2];
+	for (int i = 0; i < 2;)
+	{
+		m_RadiationCount = new CUI_RaditaionLevel(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+		m_RadiationCount->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pRadiationCountTexture);
+		m_RadiationCount->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 30, 40, 0.0f, 1.0f);
+
+		m_RadiationCount->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 25 *(i+1), (-FRAME_BUFFER_HEIGHT / 2) + 105);
+		m_RadiationCount->SetMesh(mesh);
+		m_RadiationCount->SetRadiationNumber(9);
+		m_RadiationLevels[i++] = m_RadiationCount;
+	}
+	// =============================================================================================================
 
 	ReleaseUploadBuffers();
 }
@@ -405,6 +426,8 @@ void CPostProcessingShader::ReleaseObjects()
 	if (m_pItemTex) m_pItemTex->ReleaseUploadBuffers();
 	if (m_pBaseUIShader) m_pBaseUIShader->ReleaseUploadBuffers();
 	if (m_pItemShader)m_pItemShader->ReleaseUploadBuffers();
+	if (m_pRadiationShader) m_pRadiationShader->ReleaseUploadBuffers();
+
 	if (m_pRenderTargetUIs)
 	{
 		for (int i = 0; i < m_nRenderTargetUI; ++i)
@@ -437,6 +460,7 @@ void CPostProcessingShader::ReleaseObjects()
 	if (m_pBaseUIShader) m_pBaseUIShader->Release();
 	if (m_pItemShader)m_pItemShader->Release();
 
+	if (m_pRadiationShader) m_pRadiationShader->Release();
 	if (m_pRenderTargetUIs) 
 	{
 		for (int i = 0; i < m_nRenderTargetUI; ++i)
@@ -556,6 +580,25 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 	if (m_PlayerHP) m_PlayerHP->Render(pd3dCommandList, pCamera);
 	//std::cout << ItemReact << std::endl; 
 
+	if (m_pRadiationShader) m_pRadiationShader->Render(pd3dCommandList, pCamera);
+
+	if (m_RadiationLevels)
+	{
+		int number = CRadationMgr::GetInstance()->GetRaditaion();
+		dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[0])->SetRadiationNumber(int(number / 10));
+		dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[1])->SetRadiationNumber(int(number % 10));
+
+
+
+		for (int i = 0; i < 2; ++i)
+		{
+			m_RadiationLevels[i]->Render(pd3dCommandList, pCamera);
+
+		}
+	}
+	//if (m_RadiationCount) m_RadiationCount->Render(pd3dCommandList, pCamera);
+
+
 }
 
 void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -586,6 +629,9 @@ void CPostProcessingShader::ReleaseShaderVariables()
 	}
 
 	// --------------------------------------------------------------------------------------------
+	
+	CRadationMgr::GetInstance()->Destroy();
+	
 	if (m_pTexture) m_pTexture->ReleaseShaderVariables();
 	if (m_pLightTexture) m_pLightTexture->ReleaseShaderVariables();
 	if (m_pMinimap) m_pMinimap->ReleaseShaderVariables();

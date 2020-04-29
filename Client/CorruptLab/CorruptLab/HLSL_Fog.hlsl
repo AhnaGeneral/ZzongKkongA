@@ -3,6 +3,12 @@
 
 // FogAlpha.hlsl =========================================================
 
+cbuffer cbRadiationLevel : register(b11) // 플레이어 위치
+{
+	uint	 gf3RadiationLevel :packoffset(c0);
+}
+
+
 struct VS_FOG_INPUT
 {
 	float3 position : POSITION;
@@ -107,23 +113,23 @@ void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<PS_FOG_INPUT> outStr
 
 PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 {
-	PS_NONLIGHT_MRT_OUTPUT output; 
+	PS_NONLIGHT_MRT_OUTPUT output;
 
 	float4 noise1 = gtxtAlpha01.Sample(gSamplerState, input.tex1);
 	float4 noise2 = gtxtAlpha02.Sample(gSamplerState, input.tex2);
-	float2 f2pos = float2(input.position.x /380/2 -1, input.position.y/300/ 2-1);
-	
-	float myDepth = input.vPorjPos.z; 
-	float4 fSceneDepth = gtxtSceneDepthTexture.Sample(gSamplerState,f2pos);
+	float2 f2pos = float2(input.position.x / 380 / 2 - 1, input.position.y / 300 / 2 - 1);
+
+	float myDepth = input.vPorjPos.z;
+	float4 fSceneDepth = gtxtSceneDepthTexture.Sample(gSamplerState, f2pos);
 
 	float fSceenW = fSceneDepth.g * 600.f;
 	float fSceenZ = fSceneDepth.r * fSceenW;
-		
-	
-	float4 finalNoise = lerp (noise1, noise2, 0.7);
+
+
+	float4 finalNoise = lerp(noise1, noise2, 0.7);
 	float4 alphaColor = gtxtFinalAlpha.Sample(gSamplerClamp, input.tex);
 	output.NonLight = float4(1, 1, 1, alphaColor.a * (finalNoise.a * 1.5));
-	float fDepthDistance = fSceenZ - myDepth; 
+	float fDepthDistance = fSceenZ - myDepth;
 	if (/*(fDepthDistance < 80.f) &&*/ (fDepthDistance > 0))
 	{
 		fDepthDistance = saturate(1 - (fDepthDistance / 70.f)); // 0.7 //0.8 //0.9 
@@ -132,6 +138,13 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 		output.NonLight.a -= fDepthDistance;
 	}
 	output.NonLight.a /= 5.f;
+
+	if (gf3RadiationLevel > 0)
+	{
+		float Percent = float(gf3RadiationLevel) / 400.f ;
+		output.NonLight.r = output.NonLight.b = Percent;
+	}
+
 	return output;
 
 }

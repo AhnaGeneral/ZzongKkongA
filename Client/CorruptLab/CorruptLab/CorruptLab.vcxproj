@@ -151,6 +151,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Mgr_Item.h" />
     <ClInclude Include="LobbyScene.h" />
+    <ClInclude Include="Mgr_Radiation.h" />
     <ClInclude Include="Monster_Yangmal.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -190,6 +191,7 @@
     <ClInclude Include="Shader_Minimap.h" />
     <ClInclude Include="Shader_Noise.h" />
     <ClInclude Include="Shader_ObjHP.h" />
+    <ClInclude Include="Shader_Radiation.h" />
     <ClInclude Include="Shader_Standard.h" />
     <ClInclude Include="Shader_Terrain.h" />
     <ClInclude Include="Shader_BillBoard.h" />
@@ -209,6 +211,7 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Mgr_Item.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
+    <ClCompile Include="Mgr_Radiation.cpp" />
     <ClCompile Include="Monster_Yangmal.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -253,6 +256,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Shader_Noise.cpp" />
     <ClCompile Include="Shader_ObjHP.cpp" />
+    <ClCompile Include="Shader_Radiation.cpp" />
     <ClCompile Include="Shader_Standard.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Timer.cpp" />

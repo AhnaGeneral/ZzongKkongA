@@ -5,7 +5,6 @@
 
 CObjectNosie::CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader)
 {
-
 	m_pd3dPositionBuffer =
 		::CreateBufferResource(pd3dDevice, pd3dCommandList, &position, sizeof(XMFLOAT3), 
 		D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dPositionUploadBuffer);
@@ -44,6 +43,17 @@ void CObjectNosie::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graphic
 		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 
 	m_pd3dcbDistortionBuffer->Map(0, NULL, (void**)&m_pcbMappdeDistortBuffers);
+
+
+	ncbElementBytes = ((sizeof(int) + 255) & ~255);
+	m_pd3dRadiationLevel = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
+	//m_iRadiationLevel = new int;
+	m_pd3dRadiationLevel->Map(0, NULL, (void**)&m_iRadiationLevel);
+	*m_iRadiationLevel = int(m_fPosition.x);
+
+	
 }
 
 void CObjectNosie::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
@@ -78,11 +88,16 @@ void CObjectNosie::ReleaseShaderVariables()
 
 	if (m_pd3dPositionBuffer)
 	{
+		m_pd3dPositionBuffer->Unmap(0, NULL);
 		m_pd3dPositionBuffer->Release();
 	}
 	//if (m_pcbMappdeDistortBuffers) delete m_pcbMappdeDistortBuffers;
 
-	
+	if (m_pd3dRadiationLevel)
+	{
+		m_pd3dRadiationLevel->Unmap(0, NULL);
+		m_pd3dRadiationLevel->Release();
+	}
 }
 
 
@@ -129,7 +144,11 @@ void CObjectNosie::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLi
 	d3dGpuVirtualAddress = m_pd3dcbDistortionBuffer->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_DISTORTIONBUFFER, d3dGpuVirtualAddress);
 
-	//std::cout << "distortion1 " << float(m_pcbMappdeDistortBuffers->distortion1.x) << ", " << m_pcbMappdeDistortBuffers->distortion1.y << std::endl;
+	//Radiation-----------------------------------------------------------------------------
+
+	d3dGpuVirtualAddress = m_pd3dRadiationLevel->GetGPUVirtualAddress();
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_RADIATIONLEVEL, d3dGpuVirtualAddress);
+
 	//std::cout << "distortion2 " << m_pcbMappdeDistortBuffers->distortion2.x << ", " << m_pcbMappdeDistortBuffers->distortion2.y << std::endl;
 	//std::cout << "distortion3 " << m_pcbMappdeDistortBuffers->distortion3.x << ", " << m_pcbMappdeDistortBuffers->distortion3.y << std::endl;
 }
@@ -177,6 +196,7 @@ void CObjectNosie::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 CObjectFog::CObjectFog(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader)
 	//: CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature)
 {
+	m_fPosition = position ;
 	m_pd3dPositionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, &position, sizeof(XMFLOAT3),
 		D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dPositionUploadBuffer);
 

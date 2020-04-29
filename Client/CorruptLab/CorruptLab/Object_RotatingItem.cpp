@@ -8,9 +8,9 @@ CRotatingItem::CRotatingItem(ID3D12Device* pd3dDevice,
 	for (int i = 0; i < 3; i++)
 		m_pItemTextures[i] = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 
-	m_pItemTextures[ITEM_TYPE_HANDLIGHT]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/HandLight.dds", 0);
-	m_pItemTextures[ITEM_TYPE_HPKIT]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/HP_Kit.dds", 0);
-	m_pItemTextures[ITEM_TYPE_PILL]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Inventory/Pill.dds", 0);
+	m_pItemTextures[ITEM_TYPE_HANDLIGHT]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HandLight.dds", 0);
+	m_pItemTextures[ITEM_TYPE_HPKIT]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HP_Kit.dds", 0);
+	m_pItemTextures[ITEM_TYPE_PILL]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/Pill.dds", 0);
 
 	CTriangleRect* pMesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 3, 3, 0, 1.f);
 	SetMesh(pMesh);

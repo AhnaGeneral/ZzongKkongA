@@ -143,6 +143,12 @@
     <Filter Include="04.Shader\09.Shader_UI\01. Shader_BaseUI">
       <UniqueIdentifier>{2800c211-95e2-4cf8-b953-6ee0d5831b5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Shader\09.Shader_UI\05. Shader_Radiation">
+      <UniqueIdentifier>{4208f043-c1ba-46e0-9fa3-ed9f60dd97ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="09.GameManager\02.Mgr_Radiation">
+      <UniqueIdentifier>{ca2cc818-79a3-4616-911a-bce7db6f94ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -295,6 +301,12 @@
     <ClInclude Include="Shader_BaseUI.h">
       <Filter>04.Shader\09.Shader_UI\01. Shader_BaseUI</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_Radiation.h">
+      <Filter>04.Shader\09.Shader_UI\05. Shader_Radiation</Filter>
+    </ClInclude>
+    <ClInclude Include="Mgr_Radiation.h">
+      <Filter>09.GameManager\02.Mgr_Radiation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -431,6 +443,12 @@
     </ClCompile>
     <ClCompile Include="Shader_BaseUI.cpp">
       <Filter>04.Shader\09.Shader_UI\01. Shader_BaseUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_Radiation.cpp">
+      <Filter>04.Shader\09.Shader_UI\05. Shader_Radiation</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr_Radiation.cpp">
+      <Filter>09.GameManager\02.Mgr_Radiation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

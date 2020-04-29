@@ -122,3 +122,28 @@ private:
 	int* m_pcbPlayerHP = NULL;
 
 };
+
+class CUI_RaditaionLevel : public CMRTUI
+{
+public:
+	CUI_RaditaionLevel();
+	CUI_RaditaionLevel(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
+	virtual ~CUI_RaditaionLevel() {}
+
+	virtual void InterLinkShaderTexture(ID3D12Device* pd3dDevice,
+		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pShader = NULL, void* pTexture = NULL);
+
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
+	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
+	virtual void ReleaseShaderVariables();
+	void SetRadiationNumber(int num);
+
+private:
+	//CMesh*			m_pMeshTen = NULL;
+	//CMesh*			m_pMeshOne = NULL;
+
+	ID3D12Resource* m_pd3dcbRadiationLevel = NULL;
+	int m_RadiationNumber;
+	int* m_pcbRadiationNum;
+};

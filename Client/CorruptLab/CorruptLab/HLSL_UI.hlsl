@@ -122,3 +122,16 @@ PS_NONLIGHT_MRT_OUTPUT BillboardUI_PS(VS_TEXTURED_OUTPUT input)
 	return output;
 }
 
+float4 PSRadiationLevel(VS_TEXTURED_OUTPUT input) : SV_TARGET
+{
+	float2 uv = input.uv;
+	uv.x /= 11.f;
+	uv.x += (1.f / 11.f) * (gfremainingHP);
+	
+	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, uv);
+
+	if (cColor.a > 0.6f)
+		cColor.a = 1.0f;
+
+	return float4(cColor);
+}

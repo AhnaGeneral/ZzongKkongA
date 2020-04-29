@@ -69,6 +69,13 @@ protected:
 	CUI_Root* m_pHP = NULL;
 
 	CUI_Root* m_Radiation = NULL;
+
+	CGameObject** m_RadiationLevels = NULL;
+	CUI_RaditaionLevel* m_RadiationCount = NULL;
+
+	CShader* m_pRadiationShader = NULL;
+
+
 	CUI_Root* m_HPBAR = NULL;
 
 	CGameObject** InVentoryBoxs = NULL;

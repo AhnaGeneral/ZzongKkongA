@@ -25,6 +25,7 @@ protected:
 	CB_DISTORTIONBUFFERTYPE m_cbvdistortion;
 	CB_NOISEBUFFERTYPE      m_cbvNoisebuffer;
 	float					m_fFrameTime = 0.0f;
+	XMFLOAT3				m_fPosition;
 
 public:
 
@@ -56,6 +57,9 @@ public:
 
 	ID3D12Resource* m_pd3dcbDistortionBuffer = NULL;
 	CB_DISTORTIONBUFFERTYPE* m_pcbMappdeDistortBuffers = NULL;
+
+	ID3D12Resource* m_pd3dRadiationLevel = NULL;
+	int* m_iRadiationLevel = NULL;
 
 	CTexture* m_pSceneDepthTextures = NULL; 
 };

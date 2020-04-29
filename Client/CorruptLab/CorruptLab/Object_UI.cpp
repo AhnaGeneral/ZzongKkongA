@@ -315,3 +315,77 @@ void CUI_HP::ReleaseShaderVariables()
 	m_pd3dcbPlayerHP = NULL;
 
 }
+
+// [ 방사능 수치 카운터 ] ========================================================================================
+
+CUI_RaditaionLevel::CUI_RaditaionLevel()
+{
+}
+
+CUI_RaditaionLevel::CUI_RaditaionLevel(ID3D12Device* pd3dDevice,
+	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+{
+}
+
+void CUI_RaditaionLevel::InterLinkShaderTexture(ID3D12Device* pd3dDevice,
+	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pShader, void* pTexture)
+{
+
+	//m_pMeshTen = new CTriangleRect(pd3dDevice, pd3dCommandList, 40, 50, 0.0f, 1.0f);
+	//m_pMeshOne = new CTriangleRect(pd3dDevice, pd3dCommandList, 40, 50, 0.0f, 1.0f);
+
+	
+	CreateMaterial();
+
+	if (pTexture)
+	{
+		m_ppMaterials[0]->SetTexture((CTexture*)pTexture);
+	}
+}
+
+
+void CUI_RaditaionLevel::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	m_pcbRadiationNum = new int(0);
+	UINT ncbElementBytes = ((sizeof(int) + 255) & ~255); //256의 배수  
+	m_pd3dcbRadiationLevel = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes,
+		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	m_pd3dcbRadiationLevel->Map(0, NULL, (void**)&m_pcbRadiationNum);
+}
+
+void CUI_RaditaionLevel::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+{
+	if (m_ppMaterials) m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
+
+	OnPrepareRender();
+	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
+
+	if (m_pMesh) m_pMesh->Render(pd3dCommandList, 0);
+	//if (m_pMeshTen)
+	//	m_pMeshTen->Render(pd3dCommandList, 0);
+
+	//if (m_pMeshOne)
+	//	m_pMeshOne->Render(pd3dCommandList, 0);
+}
+
+void CUI_RaditaionLevel::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
+{
+	XMFLOAT4X4 xmf4x4World;
+	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
+	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
+
+	memcpy(m_pcbRadiationNum, &m_RadiationNumber, sizeof(int));
+	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbRadiationLevel->GetGPUVirtualAddress();
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_PLAYER_HP, d3dGpuVirtualAddress);
+
+}
+
+void CUI_RaditaionLevel::ReleaseShaderVariables()
+{
+	CMRTUI::ReleaseShaderVariables();
+}
+
+void CUI_RaditaionLevel::SetRadiationNumber(int num)
+{
+	m_RadiationNumber = num;
+}
