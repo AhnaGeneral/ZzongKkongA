@@ -22,6 +22,7 @@ CPlayer::CPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComman
 	m_fMaxVelocityXZ = 0.0f;
 	m_fMaxVelocityY = 0.0f;
 	m_fFriction = 0.0f;
+	m_xmf3Scale = XMFLOAT3(20.f, 20.f, 20.f);
 
 	m_fPitch = 0.0f;
 	m_fRoll = 0.0f;
@@ -56,7 +57,7 @@ void CPlayer::UpdateCollisionBoxes(XMFLOAT4X4* world)
 {
 	OnPrepareRender();
 	//if(m_pHandCollision) m_pHandCollision->Update(NULL);
-	if(m_pBodyCollision) m_pBodyCollision->Update(&m_xmf4x4Transform);
+	if(m_pBodyCollision) m_pBodyCollision->Update(&m_xmf4x4Transform,NULL, &m_xmf3Scale);
 }
 
 void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)

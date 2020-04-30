@@ -367,6 +367,22 @@ void CGameObject::UpdateCollisionBoxes(XMFLOAT4X4* world)
 
 }
 
+
+void CGameObject::UpdateCollisionBoxes(XMFLOAT4X4* world, XMFLOAT4* ParentOrientation, XMFLOAT3* ParentScale)
+{
+	if (m_nBoundingBoxes > 0)
+	{
+		for (int i = 0; i < m_nBoundingBoxes; i++)
+		{
+			if (world)
+				m_pBoundingBoxes[i].Update(world, ParentOrientation,ParentScale);
+		}
+	}
+	if (m_pSibling) m_pSibling->UpdateCollisionBoxes(&m_xmf4x4World, ParentOrientation ,ParentScale);
+	if (m_pChild) m_pChild->UpdateCollisionBoxes(&m_xmf4x4World, ParentOrientation, ParentScale);
+
+
+}
 void CGameObject::ReleaseUploadBuffers()
 {
 	if (m_pMesh) m_pMesh->ReleaseUploadBuffers();
