@@ -3,8 +3,49 @@
 #include "Shader_Item.h"
 #include "Shader_Radiation.h"
 #include "Mgr_Radiation.h"
+
 CPostProcessingShader::CPostProcessingShader()
 {
+	m_xmf4x4Ortho = Matrix4x4::Identity();
+	m_xmf4x4OrthoView = Matrix4x4::Identity();
+
+	m_pTexture = NULL;
+	m_pLightTexture = NULL;
+	m_pShadowTexture = NULL;
+	m_pItemTex = NULL;
+	m_pBaseUIShader = NULL;
+	m_pItemShader = NULL;
+
+	m_pRenderTargetUIs = NULL;
+	m_nRenderTargetUI = 0;
+	pRenderTargetUI = NULL;
+	m_nMRTSwitch = 1;
+
+	m_pMinimap = NULL;
+
+	m_pHP = NULL;
+
+	m_Radiation = NULL;
+
+	m_RadiationLevels = NULL;
+    m_RadiationCount = NULL;
+
+	m_pRadiationShader = NULL;
+
+	m_HPBAR = NULL;
+
+	m_ppInVentoryBoxs = NULL;
+	m_pInventoryBox = NULL;
+
+	m_ppItems = NULL;
+	m_pItem = NULL;
+	m_PlayerHP = NULL;
+
+	nIventoryCount = 3;
+
+	m_pd3dcbvOrthoCamera = NULL;
+	m_pcbMappedOrthoCamera = NULL;
+
 }
 
 CPostProcessingShader::~CPostProcessingShader()
@@ -162,7 +203,11 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	d3dSamplerDesc[1].RegisterSpace = 0;
 	d3dSamplerDesc[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
-	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags =
+		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | 
+		D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
+		D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | 
+		D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
 	D3D12_ROOT_SIGNATURE_DESC d3dRootSignatureDesc;
 	::ZeroMemory(&d3dRootSignatureDesc, sizeof(D3D12_ROOT_SIGNATURE_DESC));
 	d3dRootSignatureDesc.NumParameters = _countof(pd3dRootParameters);
@@ -328,7 +373,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	m_Radiation->SetMesh(mesh);
 
 	//[ 인벤토리 ] ==============================================================================================
-	InVentoryBoxs = new CGameObject * [nIventoryCount];
+	m_ppInVentoryBoxs = new CGameObject * [nIventoryCount];
 
 	float ItemBoxSize = FRAME_BUFFER_HEIGHT / 10.0f;
 
@@ -337,18 +382,18 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pInventoryTex, ROOT_PARAMETER_HP_TEX, true);
 
-	for (int i = 0; i < nIventoryCount;)
+	for (int i = 0; i < (int)nIventoryCount;)
 	{
-		InventoryBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-		InventoryBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pInventoryTex);
+		m_pInventoryBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+		m_pInventoryBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pInventoryTex);
 		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, ItemBoxSize, ItemBoxSize, 0.0f, 1.0f);
-		InventoryBox->SetMesh(mesh);
-		InventoryBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
-		InVentoryBoxs[i++] = InventoryBox;
+		m_pInventoryBox->SetMesh(mesh);
+		m_pInventoryBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
+		m_ppInVentoryBoxs[i++] = m_pInventoryBox;
 	}
 
 	//[ 아이템쓰 ] =============================================================================================
-	m_pItems = new CGameObject * [nIventoryCount];
+	m_ppItems = new CGameObject * [nIventoryCount];
 
 	m_pItemTex = new CTexture(3, RESOURCE_TEXTURE2D, 0);
     m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HandLight.dds", 0);
@@ -362,7 +407,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	m_pItemShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 5);
     m_pItemShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTex, ROOT_PARAMETER_ITEM_TEX, true);
 
-	for (int i = 0; i < nIventoryCount;)
+	for (int i = 0; i < int(nIventoryCount);)
 	{
 		m_pItem = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 		m_pItem->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL);
@@ -374,7 +419,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		UINT unber = 1;
 		m_pItem->SetItemReact(&unber);
 		m_pItem->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
-		m_pItems[i++] = m_pItem;
+		m_ppItems[i++] = m_pItem;
 	}
 	//[ 체력바 ] =================================================================================================
 	CTexture* pHPTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
@@ -397,7 +442,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	m_pRadiationShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 5);
 	m_pRadiationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pRadiationCountTexture, ROOT_PARAMETER_HP_TEX, true);
 
-	m_RadiationLevels = new CGameObject * [2];
+	m_RadiationLevels = new CGameObject*[2];
 	for (int i = 0; i < 2;)
 	{
 		m_RadiationCount = new CUI_RaditaionLevel(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
@@ -406,7 +451,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 30, 40, 0.0f, 1.0f);
 
-		m_RadiationCount->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 25 *(i+1), (-FRAME_BUFFER_HEIGHT / 2) + 105);
+		m_RadiationCount->Set2DPosition(float((-FRAME_BUFFER_WIDTH / 2) + 25 *(i+1)), float((-FRAME_BUFFER_HEIGHT / 2) + 105));
 		m_RadiationCount->SetMesh(mesh);
 		m_RadiationCount->SetRadiationNumber(9);
 		m_RadiationLevels[i++] = m_RadiationCount;
@@ -438,16 +483,16 @@ void CPostProcessingShader::ReleaseObjects()
 	if (m_Radiation) m_Radiation->ReleaseUploadBuffers();
 	if (m_HPBAR) m_HPBAR->ReleaseUploadBuffers();
 
-	if (InVentoryBoxs)
+	if (m_ppInVentoryBoxs)
 	{
 		for (int i = 0; i < 3; ++i)
-			InVentoryBoxs[i]->ReleaseUploadBuffers();
+			m_ppInVentoryBoxs[i]->ReleaseUploadBuffers();
 	}
 
-	if (m_pItems)
+	if (m_ppItems)
 	{
 		for (int i = 0; i < 3; ++i)
-			m_pItems[i]->ReleaseUploadBuffers();
+			m_ppItems[i]->ReleaseUploadBuffers();
 	}
 	if (m_PlayerHP) m_PlayerHP->ReleaseUploadBuffers();
 
@@ -471,17 +516,17 @@ void CPostProcessingShader::ReleaseObjects()
 	if (m_Radiation) m_Radiation->Release();
 	if (m_HPBAR) m_HPBAR->Release();
 
-	if (InVentoryBoxs)
+	if (m_ppInVentoryBoxs)
 	{
 		for (int i = 0; i < 3; ++i)
-			InVentoryBoxs[i]->Release();
+			m_ppInVentoryBoxs[i]->Release();
 	}
 
 
-	if (m_pItems)
+	if (m_ppItems)
 	{
 		for (int i = 0; i < 3; ++i)
-			m_pItems[i]->Release();
+			m_ppItems[i]->Release();
 	}
 	if (m_PlayerHP) m_PlayerHP->Release();
 
@@ -561,9 +606,9 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
 	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
 
-	for (int i = 0; i < nIventoryCount; ++i)
+	for (int i = 0; i < int(nIventoryCount); ++i)
 	{
-		InVentoryBoxs[i]->Render(pd3dCommandList, 0);
+		m_ppInVentoryBoxs[i]->Render(pd3dCommandList, 0);
 	}
 
 	//OnPrepareRender(pd3dCommandList, 1);
@@ -571,10 +616,10 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 	//m_pItemShader->UpdateShaderVariable(pd3dCommandList,)
 	if (m_pItemTex) m_pItemTex->UpdateShaderVariable(pd3dCommandList, 0);
 
-	for (int i = 0; i < nIventoryCount; ++i)
+	for (int i = 0; i < int(nIventoryCount); ++i)
 	{
-		dynamic_cast<CUI_ITem*>(m_pItems[i])->SetItemReact(&ItemReact);
-		m_pItems[i]->Render(pd3dCommandList, 0 );
+		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemReact(&ItemReact);
+		m_ppItems[i]->Render(pd3dCommandList, 0 );
 	}
 
 	if (m_PlayerHP) m_PlayerHP->Render(pd3dCommandList, pCamera);
@@ -649,17 +694,17 @@ void CPostProcessingShader::ReleaseShaderVariables()
 	if (m_Radiation) m_Radiation->ReleaseShaderVariables();
 	if (m_HPBAR) m_HPBAR->ReleaseShaderVariables();
 
-	if (InVentoryBoxs)
+	if (m_ppInVentoryBoxs)
 	{
 		for (int i = 0; i < 3; ++i)
-			InVentoryBoxs[i]->ReleaseShaderVariables();
+			m_ppInVentoryBoxs[i]->ReleaseShaderVariables();
 	}
 
 
-	if (m_pItems)
+	if (m_ppItems)
 	{
 		for (int i = 0; i < 3; ++i)
-			m_pItems[i]->ReleaseShaderVariables();
+			m_ppItems[i]->ReleaseShaderVariables();
 	}
 	if (m_PlayerHP) m_PlayerHP->ReleaseShaderVariables();
 

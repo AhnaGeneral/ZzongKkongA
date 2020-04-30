@@ -249,11 +249,11 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 
 	if (m_pBoundingBoxes)
 	{
-		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
+		//m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
 		for (int i = 0; i < m_nBoundingBoxes; i++)
 		{
 			m_pBoundingBoxes[i].Update(&m_xmf4x4World);
-			m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
+			//m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
 			if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox))
 				return;
 		}
@@ -521,7 +521,10 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 
 }
 
-CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader)
+CGameObject* CGameObject::LoadFrameHierarchyFromFile
+(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, 
+	ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, 
+	FILE* pInFile, CShader* pShader)
 {
 	char pstrToken[64] = { '\0' };
 
@@ -713,7 +716,6 @@ void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 		{
 			m_ppMaterials[nMaterial]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, MATERIAL_EMISSION_MAP, ROOT_PARAMETER_EMISSION_TEX, pMaterial->m_ppstrTextureNames[4], &(pMaterial->m_ppTextures[4]), pParent, pInFile, pShader);
 		}
-	
 		else if (!strcmp(pstrToken, "</Materials>"))
 		{
 			break;
@@ -795,7 +797,8 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile)
 					nReads = (UINT)::fread(&nKeyFrame, sizeof(int), 1, pInFile); //i
 
 					nReads = (UINT)::fread(&pAnimationSet->m_pfKeyFrameTransformTimes[i], sizeof(float), 1, pInFile);
-					nReads = (UINT)::fread(pAnimationSet->m_ppxmf4x4KeyFrameTransforms[i], sizeof(float), 16 * m_pAnimationController->m_nAnimationBoneFrames, pInFile);
+					nReads = (UINT)::fread(pAnimationSet->m_ppxmf4x4KeyFrameTransforms[i], sizeof(float), 
+						16 * m_pAnimationController->m_nAnimationBoneFrames, pInFile);
 				}
 			}
 #ifdef _WITH_ANIMATION_SRT
@@ -821,6 +824,24 @@ void CGameObject::PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent)
 
 	if (pGameObject->m_pSibling) CGameObject::PrintFrameInfo(pGameObject->m_pSibling, pParent);
 	if (pGameObject->m_pChild) CGameObject::PrintFrameInfo(pGameObject->m_pChild, pGameObject);
+}
+
+CCollisionBox::CCollisionBox()
+{
+	m_Center = {0.0f, 0.0f, 0.0f};
+	m_Extents = { 0.0f, 0.0f, 0.0f };
+	m_Orientation = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_iBoneIndex = 0 ;
+
+	m_xmf4x4World = Matrix4x4::Identity();;
+	m_pParent = NULL;
+
+	m_pd3dCollisionBuffer = NULL;
+	m_pd3dCollisionUploadBuffer = NULL;
+}
+
+CCollisionBox::~CCollisionBox()
+{
 }
 
 void CCollisionBox::Update(XMFLOAT4X4* Parentworld, XMFLOAT4* ParentOrientation, XMFLOAT3* ParentScale)

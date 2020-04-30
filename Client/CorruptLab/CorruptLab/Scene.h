@@ -14,11 +14,13 @@ class CHeightMapTerrain;
 class CSkyBox;
 class CItemBox;
 
+
 class CScene
 {
 public:
-	CScene() {}
-	~CScene() {}
+
+	CScene();
+	virtual ~CScene();
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) = 0;
 	virtual void ReleaseObjects() = 0;
@@ -41,38 +43,34 @@ public:
 	virtual void Update(float fTimeElapsed) = 0;
 
 protected:
-	ID3D12RootSignature       * m_pd3dGraphicsRootSignature = NULL;
+
+	ID3D12RootSignature       * m_pd3dGraphicsRootSignature;
 	float                       m_fElapsedTime;
 };
+
 
 class CMonster;
 class CDynamicObject;
 
+
 class CGameScene : public CScene
 {
 public:
-	CPlayer                   * m_pPlayer = NULL;
-						      
-	CHeightMapTerrain         * m_pTerrain = NULL;
-	CSkyBox                   * m_pSkyBox = NULL;
-	CCloudGSShader            * m_pCloudGSShader = NULL;
-	CMRTUI                       * m_pUIObj = NULL;
-
-
-
 	POINT                       WindowCursorPos;
 
-	int                         n_ReactItem = 3; // 0, 1, 2 아이템이 아니면 3 
+	CPlayer                   * m_pPlayer;						      
+	CHeightMapTerrain         * m_pTerrain;
+	CSkyBox                   * m_pSkyBox;
+	CCloudGSShader            * m_pCloudGSShader;
+	CObjectWater              * m_pCObjectWater; 
+	CMRTUI                    * m_pUIObj;
+
+	int                         n_ReactItem; 
 	float                       itemRange;
-
-	//CObjectNosie              * m_pNoiseObject = NULL;
-	//CObjectFog                * m_pCObjectFog = NULL;
-	CObjectWater              * m_pCObjectWater = NULL; 
-
 
 public:
 	CGameScene();
-	~CGameScene();
+	virtual ~CGameScene();
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseObjects();
@@ -108,25 +106,26 @@ public:
 
 	void ChangeTerrainPipeline();
 
-private: // 배치되는 오브젝트들
+private: 
 
-	bool					m_bPipelineStateIndex = 0;
-	POINT					m_ptOldCursorPos;
-	
-	int						m_nDynamicObjectTypeNum;
-	int						m_nStaticObjectTypeNum; // 오브젝트 종류 개수
-	int						m_nMonsterTypeNum; // 몬스터 종류 개수
-	list<CGameObject*>**	m_pStaticObjLists; // list<CGameObject*>*의 배열
-	list<CDynamicObject*>** m_pDynamicObjLists; 
-	list<CMonster*>**		m_pMonsterLists;
-	CSoftParticleShader		* m_pSoftParticleShader = NULL;
+	bool					    m_bPipelineStateIndex;
+	POINT					    m_ptOldCursorPos;
+							    
+	int						    m_nDynamicObjectTypeNum;
+	int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
+	int						    m_nMonsterTypeNum; // 몬스터 종류 개수
+
+	list<CGameObject*>       ** m_pStaticObjLists; // list<CGameObject*>*의 배열
+	list<CDynamicObject*>    ** m_pDynamicObjLists;
+	list<CMonster*>          ** m_pMonsterLists;
+	CSoftParticleShader       * m_pSoftParticleShader;
 
 public:
-	CCamera               * m_pShadowCamera = NULL;
-
-	CTexture              * m_pShadowMap = NULL;
-	CTexture              * m_pDepthTex = NULL;
-
+	CCamera                   * m_pShadowCamera;
+			                  
+	CTexture                  * m_pShadowMap;
+	CTexture                  * m_pDepthTex;
+						      
 	
 
 };

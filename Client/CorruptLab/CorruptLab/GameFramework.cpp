@@ -12,35 +12,60 @@ CGameFramework::CGameFramework()
 	m_pdxgiSwapChain = NULL;
 	m_pd3dDevice = NULL;
 
-	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
-		m_ppd3dOffScreenRenderTargetBuffers[i] = NULL;
-
-	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
-		m_ppd3dLightMapRenderTargetBuffers[i] = NULL;
-
-	for (int i = 0; i < m_nSwapChainBuffers; i++)
-		m_ppd3dSwapChainBackBuffers[i] = NULL;
-
-	m_nSwapChainBufferIndex = 0;
-
 	m_pd3dCommandAllocator = NULL;
 	m_pd3dCommandQueue = NULL;
 	m_pd3dCommandList = NULL;
 
-	m_pd3dRtvDescriptorHeap = NULL;
-	m_pd3dDsvDescriptorHeap = NULL;
-
-	m_nRtvDescriptorIncrementSize = 0;
-
-	m_hFenceEvent = NULL;
-	m_pd3dFence = NULL;
-	for (int i = 0; i < m_nSwapChainBuffers; i++) m_nFenceValues[i] = 0;
-
 	m_nWndClientWidth = FRAME_BUFFER_WIDTH;
 	m_nWndClientHeight = FRAME_BUFFER_HEIGHT;
 
+	m_bMsaa4xEnable = false;
+	m_nMsaa4xQualityLevels = 0;
+
+	m_pd3dRtvDescriptorHeap = NULL;
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
+		m_ppd3dOffScreenRenderTargetBuffers[i] = NULL;
+
+	m_pd3dLightDescriptorHeap = NULL;
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+		m_ppd3dLightMapRenderTargetBuffers[i] = NULL;
+
+	m_pd3dShadowDescriptorHeap = NULL;
+	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
+		m_ppd3dShadowRenderTargetBuffers[i] = NULL;
+
+	m_nRtvDescriptorIncrementSize = 0;
+
+	m_nSwapChainBufferIndex = 0;
+	for (int i = 0; i < m_nSwapChainBuffers; i++)
+		m_ppd3dSwapChainBackBuffers[i] = NULL;
+
+	m_pd3dDepthStencilBuffer = NULL;
+	m_pd3dDsvDescriptorHeap = NULL;
+
+	m_hFenceEvent = NULL;
+	m_pd3dFence = NULL;
+	for (int i = 0; i < m_nSwapChainBuffers; i++) 
+		m_nFenceValues[i] = 0;
+
 	m_pScene[SCENE_LOBBY] = m_pScene[SCENE_STAGE_OUTDOOR]= NULL;
+
+	m_nSceneState = 0;
+
+	m_pFinalTexture = NULL;
+	m_pShadowMap = NULL;
+	m_pDepthTextue = NULL;
+
+	m_pPostProcessingShader = NULL;
+	m_pLightProcessingShader = NULL;
+	m_pShadowShader = NULL;
+
+	m_SceneItemReact = 0;
+
 	m_pPlayer = NULL;
+	m_pCamera = NULL;
+
+	m_fSunTime = 0;
 
 	_tcscpy_s(m_pszFrameRate, _T("LabProject ("));
 }
@@ -385,7 +410,7 @@ void CGameFramework::CreateShadowRenderTargetViews()
 
 	for (UINT i = 0; i < m_nOffScreenShadowBuffers; i++)
 	{
-		m_ppd3dShadowRenderTargetBuffers[i] = pShadowMap->CreateTexture(m_pd3dDevice, m_pd3dCommandList, m_nWndClientWidth, m_nWndClientHeight,
+		m_ppd3dShadowRenderTargetBuffers[i] = pShadowMap->CreateTexture(m_pd3dDevice, m_pd3dCommandList , m_nWndClientWidth, m_nWndClientHeight,
 			DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
 		m_ppd3dShadowRenderTargetBuffers[i]->AddRef();
 	}
@@ -711,22 +736,30 @@ void CGameFramework::ShadowMapRender()
 	m_fSunTime -= m_GameTimer.GetTimeElapsed();
 
 	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
+
 	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
 			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);		m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenShadowBuffers, m_pd3dOffScreenShadowBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
-	//if (m_fSunTime <= 0)
-	//{  //만약에 relaese Render 문제가 또 발생하면 이거문제가 아닙니다..
+
+	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);	
+
+	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenShadowBuffers, m_pd3dOffScreenShadowBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
+
+	if (m_fSunTime <= 0)
+	{  //만약에 relaese Render 문제가 또 발생하면 이거문제가 아닙니다..
+
 		for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
 			m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenShadowBufferCPUHandles[i], pfClearColor, 0, NULL);
-		dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, false);
-		m_fSunTime = 0.05f;
-	//}
 
-	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, true);
-	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i],
-			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+		dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, false);
+		m_fSunTime = 0.08f;
+	}
+
+	   dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, true);
+	
+
+		for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
+			::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 
 }

@@ -8,6 +8,11 @@
 
 CShader::CShader()
 {
+	m_ppd3dPipelineStates = NULL;
+	m_nPipelineStates = 0;
+	m_pd3dCbvSrvDescriptorHeap = NULL;
+	m_pd3dGraphicsRootSignature = NULL;
+
 	m_d3dSrvCPUDescriptorStartHandle.ptr = m_d3dCbvCPUDescriptorStartHandle.ptr = NULL;
 	m_d3dSrvGPUDescriptorStartHandle.ptr = m_d3dCbvGPUDescriptorStartHandle.ptr = NULL;
 }
@@ -23,7 +28,7 @@ CShader::~CShader()
 		}
 		delete[] m_ppd3dPipelineStates;
 	}
-	//ReleaseShaderVariables();
+	ReleaseShaderVariables();
 }
 
 D3D12_SHADER_BYTECODE CShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)

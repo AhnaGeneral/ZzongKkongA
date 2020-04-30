@@ -4,7 +4,8 @@
 class CMRTUI : public CGameObject
 {
 private:
-	UINT m_nobjectID;
+	UINT m_nobjectID = 0;
+
 public:
 	CMRTUI() {}
 	CMRTUI(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
@@ -67,7 +68,7 @@ public:
 class CUI_ITem : public CMRTUI
 {
 private:
-	UINT   m_nobjectID;
+	UINT   m_nobjectID = 0 ;
 	UINT* m_ItemReact = NULL;
 
 public:
@@ -96,8 +97,8 @@ private:
 class CUI_HP : public CMRTUI
 {
 public:
-	CUI_HP() {}
-	CUI_HP(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature) {}
+	CUI_HP();
+	CUI_HP(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
 
 	virtual ~CUI_HP() {}
 
@@ -115,7 +116,7 @@ public:
 	virtual UINT GetObjectID() { return m_nobjectID; }
 	 
 private:
-	UINT   m_nobjectID;
+	UINT m_nobjectID = 0 ;
 
 	ID3D12Resource* m_pd3dcbPlayerHP = NULL;
 	int* m_PlayerHP = NULL;
@@ -140,10 +141,7 @@ public:
 	void SetRadiationNumber(int num);
 
 private:
-	//CMesh*			m_pMeshTen = NULL;
-	//CMesh*			m_pMeshOne = NULL;
-
 	ID3D12Resource* m_pd3dcbRadiationLevel = NULL;
-	int m_RadiationNumber;
-	int* m_pcbRadiationNum;
+	int m_RadiationNumber = 0 ;
+	int* m_pcbRadiationNum = NULL;
 };

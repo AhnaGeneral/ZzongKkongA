@@ -9,10 +9,9 @@ class CRotatingItem;
 
 class CItemMgr
 {
-
 private:
-	static CItemMgr* m_pInstance;
-	CRotatingItem* m_pRotatingItem = NULL;
+	static CItemMgr    * m_pInstance;
+	CRotatingItem      * m_pRotatingItem = NULL;
 
 	int	m_iItemNum[3] = { 0,0,0 };
 

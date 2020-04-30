@@ -49,3 +49,7 @@ void CRadationMgr::Destroy()
 		m_pInstance = NULL;
 	}
 }
+
+RadiationInfo::RadiationInfo()
+{
+}

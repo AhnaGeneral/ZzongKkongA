@@ -65,7 +65,13 @@ D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlo
 }
 
 // CCloudGSShader =============================================================================================
-CCloudGSShader::CCloudGSShader() {}
+CCloudGSShader::CCloudGSShader()
+{
+	m_pBillboardMaterial = NULL;
+	m_nInstances = 0;
+	m_pd3dInstancesBuffer = NULL;
+	m_pd3dInstanceUploadBuffer = NULL;
+}
 
 CCloudGSShader::~CCloudGSShader() 
 {
@@ -341,6 +347,19 @@ D3D12_DEPTH_STENCIL_DESC CSoftParticleShader::CreateDepthStencilState()
 	d3dDepthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_NEVER;
 
 	return(d3dDepthStencilDesc);
+}
+
+CSoftParticleShader::CSoftParticleShader()
+{
+	m_pSceneDepthTextures = NULL;
+	m_pFireNoiseTextures = NULL;
+	m_pFogNoiseTextures = NULL;
+
+	m_pFireObjects = NULL;
+	m_nFire = 0;
+
+	m_pFogObjects = NULL;
+	m_nFog = 0;
 }
 
 CSoftParticleShader::~CSoftParticleShader()

@@ -7,8 +7,8 @@ class Shader_Lobby;
 class CLobbyScene : public CScene
 {
 public:
-	CLobbyScene() {}
-	~CLobbyScene() {}
+	CLobbyScene();
+	virtual ~CLobbyScene() {}
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseObjects();
@@ -37,6 +37,5 @@ public:
 	virtual void Update(float fTimeElapsed);
 
 private:
-	//CGameObject* UIObject = NULL; 
-	Shader_Lobby* pUIShader = NULL;
+	Shader_Lobby* pUIShader;
 };

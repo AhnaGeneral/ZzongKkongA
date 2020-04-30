@@ -54,7 +54,7 @@ protected:
 	ID3D12Resource                * m_pd3dcbvProjectionCamera = NULL;
 	VS_CB_EYE_CAMERA_PROJECTION   * m_pcbMappedProjectionCamera = NULL;
 
-	float m_fSunCameraPosition[3]; 
+	float                          m_fSunCameraPosition[3]; 
 	
 public:
 
@@ -122,7 +122,7 @@ class CPlayerCamera : public CCamera
 {
 public:
 
-	CPlayer			              * m_pPlayer;
+	CPlayer			              * m_pPlayer = NULL;
 					               
 public:
 

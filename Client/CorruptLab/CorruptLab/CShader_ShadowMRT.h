@@ -5,8 +5,8 @@
 class Shader_ShadowMRT : public CShader
 {
 public:
-	Shader_ShadowMRT() {}
-	~Shader_ShadowMRT() {}
+	Shader_ShadowMRT();
+	virtual ~Shader_ShadowMRT();
 
 	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
 
@@ -23,6 +23,6 @@ public:
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 protected:
-	CTexture* m_pTextures = NULL;
+	CTexture  * m_pTextures;
 };
 

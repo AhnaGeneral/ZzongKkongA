@@ -13,6 +13,35 @@
 
 CGameScene::CGameScene()
 {
+	m_pPlayer = NULL;
+	m_pTerrain = NULL;
+	m_pSkyBox = NULL;
+	m_pCloudGSShader = NULL;
+	m_pUIObj = NULL;
+
+	WindowCursorPos = { 0L,0L };
+
+	n_ReactItem = 3;
+	itemRange = 0.0f;
+
+	m_pCObjectWater = NULL;
+
+	m_bPipelineStateIndex = 0;
+	m_ptOldCursorPos = {0L, 0L};
+
+	m_nDynamicObjectTypeNum = 0;
+	m_nStaticObjectTypeNum = 0; 
+	m_nMonsterTypeNum = 0;
+
+	m_pStaticObjLists = NULL;
+	m_pDynamicObjLists = NULL;
+	m_pMonsterLists = NULL;
+	m_pSoftParticleShader = NULL;
+
+	m_pShadowCamera = NULL;
+
+	m_pShadowMap = NULL;
+	m_pDepthTex = NULL;
 }
 
 CGameScene::~CGameScene()
@@ -616,6 +645,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool bPlayer)
 {
 	m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
+
 	if (!bPlayer)
 	{
 		if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
@@ -632,6 +662,7 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 			}
 		}
 	}
+
 	else
 		m_pPlayer->Render(pd3dCommandList, pCamera, 1);
 }
@@ -659,3 +690,12 @@ void CGameScene::ItemBoxCheck()
 	}
 }
 
+CScene::CScene()
+{
+	m_pd3dGraphicsRootSignature = NULL;
+	m_fElapsedTime = 0.0f;
+}
+
+CScene::~CScene()
+{
+}

@@ -19,6 +19,10 @@ CCamera::CCamera()
 	m_xmf3Offset = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	m_fTimeLag = 0.0f;
 	m_xmf3LookAtWorld = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_fSunCameraPosition[0] = m_fSunCameraPosition[1] = m_fSunCameraPosition[2] = 0.0f;
+	m_nMode = 0x00; 
+	m_xmf4x4InverseView = Matrix4x4::Identity();
+	m_xmf4x4InverseProjection = Matrix4x4::Identity();
 }
 
 

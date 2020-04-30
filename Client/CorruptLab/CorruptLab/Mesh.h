@@ -24,32 +24,32 @@ class CGameObject;
 
 typedef struct MESHINFO
 {
-	XMFLOAT3* m_pxmf3Positions = NULL;
-	ID3D12Resource* m_pd3dPositionBuffer = NULL;
-	ID3D12Resource* m_pd3dPositionUploadBuffer = NULL;
+	XMFLOAT3                      * m_pxmf3Positions = NULL;
+	ID3D12Resource                * m_pd3dPositionBuffer = NULL;
+	ID3D12Resource                * m_pd3dPositionUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW        m_d3dPositionBufferView;
 
-	XMFLOAT4* m_pxmf4Colors = NULL;
-	ID3D12Resource* m_pd3dColorBuffer = NULL;
-	ID3D12Resource* m_pd3dColorUploadBuffer = NULL;
+	XMFLOAT4                      * m_pxmf4Colors = NULL;
+	ID3D12Resource                * m_pd3dColorBuffer = NULL;
+	ID3D12Resource                * m_pd3dColorUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dColorBufferView;
 
-	XMFLOAT2* m_pxmf2TextureCoords0 = NULL;
-	ID3D12Resource* m_pd3dTextureCoord0Buffer = NULL;
-	ID3D12Resource* m_pd3dTextureCoord0UploadBuffer = NULL;
+	XMFLOAT2                      * m_pxmf2TextureCoords0 = NULL;
+	ID3D12Resource                * m_pd3dTextureCoord0Buffer = NULL;
+	ID3D12Resource                * m_pd3dTextureCoord0UploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dTextureCoord0BufferView;
 
-	XMFLOAT2* m_pxmf2TextureCoords1 = NULL;
-	ID3D12Resource* m_pd3dTextureCoord1Buffer = NULL;
-	ID3D12Resource* m_pd3dTextureCoord1UploadBuffer = NULL;
+	XMFLOAT2                      * m_pxmf2TextureCoords1 = NULL;
+	ID3D12Resource                * m_pd3dTextureCoord1Buffer = NULL;
+	ID3D12Resource                * m_pd3dTextureCoord1UploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dTextureCoord1BufferView;
 
-	int  m_nSubMeshes = 0;
-	int* m_pnSubSetIndices = NULL;
-	UINT** m_ppnSubSetIndices = NULL;
-	ID3D12Resource** m_ppd3dSubSetIndexBuffers = NULL;
-	ID3D12Resource** m_ppd3dSubSetIndexUploadBuffers = NULL;
-	D3D12_INDEX_BUFFER_VIEW* m_pd3dSubSetIndexBufferViews = NULL;
+	int                             m_nSubMeshes = 0;
+	int                           * m_pnSubSetIndices = NULL;
+	UINT                         ** m_ppnSubSetIndices = NULL;
+	ID3D12Resource               ** m_ppd3dSubSetIndexBuffers = NULL;
+	ID3D12Resource               ** m_ppd3dSubSetIndexUploadBuffers = NULL;
+	D3D12_INDEX_BUFFER_VIEW       * m_pd3dSubSetIndexBufferViews = NULL;
 
 
 } MeshInfo;
@@ -95,19 +95,19 @@ class CStandardMesh : public CMesh
 protected:
 	char                            m_pstrMeshName[256] = { 0 };
 
-	XMFLOAT3* m_pxmf3Tangents = NULL;
-	ID3D12Resource* m_pd3dTangentBuffer = NULL;
-	ID3D12Resource* m_pd3dTangentUploadBuffer = NULL;
+	XMFLOAT3                      * m_pxmf3Tangents = NULL;
+	ID3D12Resource                * m_pd3dTangentBuffer = NULL;
+	ID3D12Resource                * m_pd3dTangentUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dTangentBufferView;
 
-	XMFLOAT3* m_pxmf3BiTangents = NULL;
-	ID3D12Resource* m_pd3dBiTangentBuffer = NULL;
-	ID3D12Resource* m_pd3dBiTangentUploadBuffer = NULL;
+	XMFLOAT3                      * m_pxmf3BiTangents = NULL;
+	ID3D12Resource                * m_pd3dBiTangentBuffer = NULL;
+	ID3D12Resource                * m_pd3dBiTangentUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dBiTangentBufferView;
 
-	XMFLOAT3* m_pxmf3Normals = NULL;
-	ID3D12Resource* m_pd3dNormalBuffer = NULL;
-	ID3D12Resource* m_pd3dNormalUploadBuffer = NULL;
+	XMFLOAT3                      * m_pxmf3Normals = NULL;
+	ID3D12Resource                * m_pd3dNormalBuffer = NULL;
+	ID3D12Resource                * m_pd3dNormalUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dNormalBufferView;
 
 	XMFLOAT3             	        m_xmf3AABBCenter = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -137,8 +137,8 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet);
 
 protected:
-	ID3D12Resource* m_pd3dVertexBuffer = NULL;
-	ID3D12Resource* m_pd3dVertexUploadBuffer = NULL;
+	ID3D12Resource                * m_pd3dVertexBuffer = NULL;
+	ID3D12Resource                * m_pd3dVertexUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dVertexBufferView;
 
 };

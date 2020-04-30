@@ -4,6 +4,12 @@
 #include "Mesh.h"
 #include "Mgr_Radiation.h"
 
+CObjectNosie::CObjectNosie()
+{
+	m_fFrameTime = 0.0f;
+	m_fPosition = { 0.0f, 0.0f, 0.0f };
+}
+
 CObjectNosie::CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader)
 {
 	m_pd3dPositionBuffer =
@@ -88,7 +94,7 @@ void CObjectNosie::ReleaseShaderVariables()
 
 	if (m_pd3dPositionBuffer)
 	{
-		m_pd3dPositionBuffer->Unmap(0, NULL);
+	//	m_pd3dPositionBuffer->Unmap(0, NULL);
 		m_pd3dPositionBuffer->Release();
 	}
 	//if (m_pcbMappdeDistortBuffers) delete m_pcbMappdeDistortBuffers;

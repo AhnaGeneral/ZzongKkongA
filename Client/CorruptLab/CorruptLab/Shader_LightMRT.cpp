@@ -1,5 +1,19 @@
 #include "Shader_LightMRT.h"
 
+CLightTarget::CLightTarget()
+{
+	m_pTextures = NULL;
+
+	m_pMaterials = NULL;
+	m_pLights = NULL;
+
+	m_pd3dcbLights = NULL;
+	m_pcbMappedLights = NULL;
+
+	m_pd3dcbMaterials = NULL;
+	m_pcbMappedMaterials = NULL;
+}
+
 CLightTarget::~CLightTarget()
 {
 	ReleaseShaderVariables();

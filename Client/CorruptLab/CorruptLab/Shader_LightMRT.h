@@ -41,7 +41,7 @@ struct MATERIALS
 class CLightTarget : public CShader
 {
 public:
-	CLightTarget() {}
+	CLightTarget();
 	virtual ~CLightTarget();
 
 	virtual D3D12_DEPTH_STENCIL_DESC CreateDepthStencilState();
@@ -63,16 +63,16 @@ public:
 	void BuildLightsAndMaterials();
 
 protected:
-	CTexture* m_pTextures = NULL;
+	CTexture            * m_pTextures;
 
-	MATERIALS* m_pMaterials = NULL;
-	LIGHTS* m_pLights = NULL;
+	MATERIALS           * m_pMaterials;
+	LIGHTS              * m_pLights;
 
-	ID3D12Resource* m_pd3dcbLights = NULL;
-	LIGHTS* m_pcbMappedLights = NULL;
+	ID3D12Resource      * m_pd3dcbLights;
+	LIGHTS              * m_pcbMappedLights ;
 
-	ID3D12Resource* m_pd3dcbMaterials = NULL;
-	MATERIAL* m_pcbMappedMaterials = NULL;
+	ID3D12Resource      * m_pd3dcbMaterials ;
+	MATERIAL            * m_pcbMappedMaterials;
 
 };
 

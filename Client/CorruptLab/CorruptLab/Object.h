@@ -22,8 +22,8 @@ class CGameObject
 private:
 	int								m_nReferences = 0;
 
-	XMFLOAT3* m_xmf3AABBCenter;
-	XMFLOAT3* m_xmf3AABBExtents;
+	XMFLOAT3                      * m_xmf3AABBCenter;
+	XMFLOAT3                      * m_xmf3AABBExtents;
 
 public:
 	void AddRef();
@@ -45,25 +45,21 @@ public:
 	int								m_nMaterials = 0;
 	CMaterial                    ** m_ppMaterials = NULL;
 
-	XMFLOAT4X4						m_xmf4x4Transform; // animation ¿¡¼­´Â m_xmf4x4ToParent
+	XMFLOAT4X4						m_xmf4x4Transform;
 	XMFLOAT4X4						m_xmf4x4World;
 
 	XMFLOAT3						m_xmf3Scale = XMFLOAT3(0.0f,0.0f,0.0f);
 	XMFLOAT4						m_xmf4Rotation = XMFLOAT4(0.0f,0.0f,0.0f,0.0f);
 
-	CGameObject* m_pParent = NULL;
-	CGameObject* m_pChild = NULL;
-	CGameObject* m_pSibling = NULL;
+	CGameObject                   * m_pParent = NULL;
+	CGameObject                   * m_pChild = NULL;
+	CGameObject                   * m_pSibling = NULL;
 
-	ID3D12Resource* m_pd3dcbGameObjects = NULL;
-	CB_GAMEOBJECT_INFO* m_pcbMappedGameObjects = NULL;
+	ID3D12Resource                * m_pd3dcbGameObjects = NULL;
+	CB_GAMEOBJECT_INFO            * m_pcbMappedGameObjects = NULL;
 
-	Shader_CollisionBox* m_pCollisionBoxShader = NULL;
-	//ID3D12Resource                * m_pd3dCollisionBuffer = NULL;
-	//ID3D12Resource                * m_pd3dBoneWeightUploadBuffer = NULL;
-	//D3D12_VERTEX_BUFFER_VIEW		m_d3dBoneWeightBufferView;
+	Shader_CollisionBox           * m_pCollisionBoxShader = NULL;
 
-	//Shader_CollisionBox * m
 
 	CCollisionBox* GetCollisionBoxes();
 	void SetMesh(CMesh* pMesh);
@@ -143,24 +139,25 @@ public:
 class CCollisionBox 
 {
 public:
-
+	CCollisionBox(); 
+	~CCollisionBox();
 	void Update(XMFLOAT4X4* Parentworld,  XMFLOAT4* ParentOrientation = NULL, XMFLOAT3* ParentScale = NULL);
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* ParentWorld = NULL);
 	void BuildBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, XMFLOAT4X4* ParentWorld = NULL);
 	void Release(); 
 
-	BoundingOrientedBox boundingBox;
-	XMFLOAT3 m_Center;
-	XMFLOAT3 m_Extents;
-	XMFLOAT4 m_Orientation;
-	int		 m_iBoneIndex;
+	BoundingOrientedBox             boundingBox;
+	XMFLOAT3                        m_Center;
+	XMFLOAT3                        m_Extents;
+	XMFLOAT4                        m_Orientation;
+	int		                        m_iBoneIndex;
 
 	XMFLOAT4X4						m_xmf4x4World;
-	CGameObject* m_pParent = NULL;
+	CGameObject                   * m_pParent;
 
-	ID3D12Resource* m_pd3dCollisionBuffer = NULL;
-	ID3D12Resource* m_pd3dCollisionUploadBuffer = NULL;
-	D3D12_VERTEX_BUFFER_VIEW		 m_d3dCollisionBufferView;
+	ID3D12Resource                * m_pd3dCollisionBuffer;
+	ID3D12Resource                * m_pd3dCollisionUploadBuffer;
+	D3D12_VERTEX_BUFFER_VIEW		m_d3dCollisionBufferView;
 
 };

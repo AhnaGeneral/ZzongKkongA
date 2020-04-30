@@ -13,7 +13,7 @@ class CHeightMapTerrain : public CGameObject
 {
 private:
 	D3D12_GPU_DESCRIPTOR_HANDLE	    	m_d3dCbvGPUDescriptorHandle;
-	CHeightMapImage* m_pHeightMapImage;
+	CHeightMapImage                   * m_pHeightMapImage;
 
 	XMFLOAT3					    	m_xmf3Scale;
 

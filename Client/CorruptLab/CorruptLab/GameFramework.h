@@ -16,7 +16,9 @@
 //____________________________________________
 class CGameFramework
 {
+
 public:
+
 	CGameFramework();
 	~CGameFramework();
 
@@ -55,78 +57,83 @@ public:
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 private:
-	float								m_fSunTime = 0;
-	HINSTANCE						    m_hInstance;
-	HWND							    m_hWnd;
+
+	IDXGIFactory4                     * m_pdxgiFactory;
+	IDXGISwapChain3                   * m_pdxgiSwapChain;
+	ID3D12Device                      * m_pd3dDevice;
+
+	ID3D12CommandAllocator            * m_pd3dCommandAllocator;
+	ID3D12CommandQueue                * m_pd3dCommandQueue;
+	ID3D12GraphicsCommandList         * m_pd3dCommandList;
 
 	int								    m_nWndClientWidth;
 	int								    m_nWndClientHeight;
 
-	IDXGIFactory4                     * m_pdxgiFactory = NULL;
-	IDXGISwapChain3                   * m_pdxgiSwapChain = NULL;
-	ID3D12Device                      * m_pd3dDevice = NULL;
-
-	bool							    m_bMsaa4xEnable = false;
-	UINT							    m_nMsaa4xQualityLevels = 0;
-
-	static const UINT				    m_nSwapChainBuffers = 2;
-	UINT							    m_nSwapChainBufferIndex = 0;
-
-	ID3D12Resource                    * m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
-	ID3D12DescriptorHeap              * m_pd3dRtvDescriptorHeap = NULL;
-	ID3D12DescriptorHeap			  * m_pd3dLightDescriptorHeap = NULL;
-	ID3D12DescriptorHeap              * m_pd3dShadowDescriptorHeap = NULL;
+	float								m_fSunTime;
+	HINSTANCE						    m_hInstance;
+	HWND							    m_hWnd;
 
 
-	UINT							    m_nRtvDescriptorIncrementSize;
-	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBuffers];
+	bool							    m_bMsaa4xEnable;
+	UINT							    m_nMsaa4xQualityLevels;
 
-	ID3D12Resource                    * m_pd3dDepthStencilBuffer = NULL;
-	ID3D12DescriptorHeap              * m_pd3dDsvDescriptorHeap = NULL;
-	D3D12_CPU_DESCRIPTOR_HANDLE		    m_d3dDsvDepthStencilBufferCPUHandle;
-
-	ID3D12CommandAllocator            * m_pd3dCommandAllocator = NULL;
-	ID3D12CommandQueue                * m_pd3dCommandQueue = NULL;
-	ID3D12GraphicsCommandList         * m_pd3dCommandList = NULL;
-
-	ID3D12Fence                       * m_pd3dFence = NULL;
-	UINT64							    m_nFenceValues[m_nSwapChainBuffers];
-	HANDLE							    m_hFenceEvent;
-
-	CGameTimer						    m_GameTimer;
-
-	UINT                                m_nSceneState = 0;
-
+	// 다중랜더타겟 [ 힙, 핸들, 버퍼 ]________________________________________________________________________
+	ID3D12DescriptorHeap              * m_pd3dRtvDescriptorHeap;
 	static const UINT				    m_nOffScreenRenderTargetBuffers = 5;
 	ID3D12Resource                    * m_ppd3dOffScreenRenderTargetBuffers[m_nOffScreenRenderTargetBuffers];
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nOffScreenRenderTargetBuffers];
 	
+	ID3D12DescriptorHeap			  * m_pd3dLightDescriptorHeap;
 	static const UINT				    m_nOffScreenLightBuffers = 1;
 	ID3D12Resource                    * m_ppd3dLightMapRenderTargetBuffers[m_nOffScreenLightBuffers];
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenLightBufferCPUHandles[m_nOffScreenLightBuffers];
 
+	ID3D12DescriptorHeap              * m_pd3dShadowDescriptorHeap;
 	static const UINT				    m_nOffScreenShadowBuffers = 1;
 	ID3D12Resource                    * m_ppd3dShadowRenderTargetBuffers[m_nOffScreenShadowBuffers];
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenShadowBufferCPUHandles[m_nOffScreenShadowBuffers];
+    // _____________________________________________________________________________________________________
+
+	UINT							    m_nSwapChainBufferIndex;
+	static const UINT				    m_nSwapChainBuffers = 2;
+	ID3D12Resource                    * m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
+
+	UINT							    m_nRtvDescriptorIncrementSize;
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBuffers];
+
+	ID3D12Resource                    * m_pd3dDepthStencilBuffer;
+	ID3D12DescriptorHeap              * m_pd3dDsvDescriptorHeap;
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_d3dDsvDepthStencilBufferCPUHandle;
+
+	HANDLE							    m_hFenceEvent;
+	ID3D12Fence                       * m_pd3dFence;
+	UINT64							    m_nFenceValues[m_nSwapChainBuffers];
+
+	CGameTimer						    m_GameTimer;
+
+	UINT                                m_nSceneState;
+
 
      POINT							    m_ptOldCursorPos;
 
 	_TCHAR							    m_pszFrameRate[50];
 
 public:
-	CTexture                          * m_pFinalTexture = NULL;
-	CTexture                          * m_pShadowMap = NULL;
-	CTexture                          * m_pDepthTextue = NULL; 
+
+	CTexture                          * m_pFinalTexture;
+	CTexture                          * m_pShadowMap;
+	CTexture                          * m_pDepthTextue; 
 
 private:
-	CPostProcessingShader             * m_pPostProcessingShader = NULL;
-	CLightTarget                      * m_pLightProcessingShader = NULL; 
-	Shader_ShadowMRT                  * m_pShadowShader = NULL; 
+
+	CPostProcessingShader             * m_pPostProcessingShader;
+	CLightTarget                      * m_pLightProcessingShader; 
+	Shader_ShadowMRT                  * m_pShadowShader; 
 
 	CScene                            * m_pScene[2];
-	UINT                               m_SceneItemReact = 0;
+	UINT                                m_SceneItemReact;
 
-	CPlayer                           * m_pPlayer = NULL;
-	CCamera                           * m_pCamera = NULL;
+	CPlayer                           * m_pPlayer ;
+	CCamera                           * m_pCamera ;
 };
 

@@ -28,10 +28,10 @@ class CCloudGSShader : public CShader
 private:
 
 	CMaterial                      * m_pBillboardMaterial;
-	int			                     m_nInstances = 0;
+	int			                     m_nInstances;
 
-	ID3D12Resource                 * m_pd3dInstancesBuffer = NULL;
-	ID3D12Resource                 * m_pd3dInstanceUploadBuffer = NULL;
+	ID3D12Resource                 * m_pd3dInstancesBuffer;
+	ID3D12Resource                 * m_pd3dInstanceUploadBuffer;
 	D3D12_VERTEX_BUFFER_VIEW		 m_d3dInstancingBufferView;
 
 public:
@@ -60,19 +60,21 @@ class CObjectNosie;
 
 class CSoftParticleShader :public CShader
 {
+private:
+	CTexture                       * m_pSceneDepthTextures;
+	CTexture                       * m_pFireNoiseTextures;
+	CTexture                       * m_pFogNoiseTextures;
+
+	CObjectNosie			      ** m_pFireObjects;
+	int			                     m_nFire;
+
+	CObjectNosie**					 m_pFogObjects;
+	int			                     m_nFog;
+
 public:
-	CSoftParticleShader() {}
+	CSoftParticleShader();
 	virtual ~CSoftParticleShader();
 
-	CTexture* m_pSceneDepthTextures = NULL;
-	CTexture* m_pFireNoiseTextures = NULL;
-	CTexture* m_pFogNoiseTextures = NULL;
-
-	CObjectNosie					** m_pFireObjects = NULL;
-	int			                     m_nFire = 0;
-
-	CObjectNosie**					m_pFogObjects = NULL;
-	int			                     m_nFog = 0;
 
 	virtual D3D12_BLEND_DESC         CreateBlendState();
 	virtual D3D12_INPUT_LAYOUT_DESC  CreateInputLayout();

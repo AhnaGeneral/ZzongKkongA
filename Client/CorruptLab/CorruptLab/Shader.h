@@ -16,7 +16,7 @@ public:
 
 private:
 	int	 m_nReferences = 0;
-	int	 m_nCurreuntOffest = 0;
+	UINT	 m_nCurreuntOffest = 0;
 
 public:
 	void AddRef() { m_nReferences++; }
@@ -76,19 +76,19 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUSrvDescriptorStartHandle() { return(m_d3dSrvGPUDescriptorStartHandle); }
 
 protected:
-	ID3D12PipelineState           ** m_ppd3dPipelineStates = NULL;
-	int								m_nPipelineStates = 0;
+	ID3D12PipelineState              ** m_ppd3dPipelineStates ;
+	int							        m_nPipelineStates;
+								     
+	ID3D12DescriptorHeap              * m_pd3dCbvSrvDescriptorHeap;
+								     
+	D3D12_CPU_DESCRIPTOR_HANDLE	  	    m_d3dCbvCPUDescriptorStartHandle;
+	D3D12_GPU_DESCRIPTOR_HANDLE	  	    m_d3dCbvGPUDescriptorStartHandle;
+	D3D12_CPU_DESCRIPTOR_HANDLE	  	    m_d3dSrvCPUDescriptorStartHandle;
+	D3D12_GPU_DESCRIPTOR_HANDLE	  	    m_d3dSrvGPUDescriptorStartHandle;
+								     
+	ID3D12RootSignature               * m_pd3dGraphicsRootSignature ;
 
-	ID3D12DescriptorHeap          * m_pd3dCbvSrvDescriptorHeap = NULL;
-
-	D3D12_CPU_DESCRIPTOR_HANDLE		m_d3dCbvCPUDescriptorStartHandle;
-	D3D12_GPU_DESCRIPTOR_HANDLE		m_d3dCbvGPUDescriptorStartHandle;
-	D3D12_CPU_DESCRIPTOR_HANDLE		m_d3dSrvCPUDescriptorStartHandle;
-	D3D12_GPU_DESCRIPTOR_HANDLE		m_d3dSrvGPUDescriptorStartHandle;
-
-	ID3D12RootSignature* m_pd3dGraphicsRootSignature = NULL;
-
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_d3dPipelineStateDesc;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC	m_d3dPipelineStateDesc ;
 };
 
 

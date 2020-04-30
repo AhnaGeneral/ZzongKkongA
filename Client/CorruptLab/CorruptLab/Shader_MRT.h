@@ -52,48 +52,46 @@ public:
 
 
 protected:
-	CTexture* m_pTexture = NULL;
-	CTexture* m_pLightTexture = NULL;
-	CTexture* m_pShadowTexture = NULL;
-	CTexture* m_pItemTex = NULL;
-	CShader*  m_pBaseUIShader = NULL; 
-	CShader*  m_pItemShader = NULL;
+	CTexture                     * m_pTexture;
+	CTexture                     * m_pLightTexture;
+	CTexture                     * m_pShadowTexture;
+	CTexture                     * m_pItemTex;
+	CShader                      * m_pBaseUIShader; 
+	CShader                      * m_pItemShader;
+					            
+	int                            m_nMRTSwitch;
+	int                            m_nRenderTargetUI;
+	CGameObject                 ** m_pRenderTargetUIs ;
+	CMRTUI                       * pRenderTargetUI;
+					            
+	CUI_Root                     * m_pHP;
+	CUI_Root                     * m_Radiation;
+					            
+	CUI_MiniMap                  * m_pMinimap;
 
-	CGameObject** m_pRenderTargetUIs = NULL;
-	int m_nRenderTargetUI;
-	CMRTUI* pRenderTargetUI = NULL;
-	int  m_nMRTSwitch = 1;
-
-	CUI_MiniMap* m_pMinimap = NULL;
-
-	CUI_Root* m_pHP = NULL;
-
-	CUI_Root* m_Radiation = NULL;
-
-	CGameObject** m_RadiationLevels = NULL;
-	CUI_RaditaionLevel* m_RadiationCount = NULL;
-
-	CShader* m_pRadiationShader = NULL;
-
-
-	CUI_Root* m_HPBAR = NULL;
-
-	CGameObject** InVentoryBoxs = NULL;
-	CUI_Root* InventoryBox = NULL;
-
-	CGameObject** m_pItems = NULL;
-	CUI_ITem* m_pItem = NULL;
-	CUI_HP* m_PlayerHP = NULL;
-
-	UINT                             nIventoryCount = 3;
+	CShader                      * m_pRadiationShader;
+	CGameObject                 ** m_RadiationLevels;
+	CUI_RaditaionLevel           * m_RadiationCount;
+					            
+	CUI_Root                     * m_HPBAR;
+					            
+	CGameObject                 ** m_ppInVentoryBoxs;
+	CUI_Root                    *  m_pInventoryBox;
+					            
+	CGameObject                 ** m_ppItems;
+	CUI_ITem                     * m_pItem ;
+					            
+	CUI_HP                       * m_PlayerHP;
+					            
+	UINT                           nIventoryCount;
 
 
 
-	ID3D12Resource* m_pd3dcbvOrthoCamera = NULL;
-	VS_CB_EYE_CAMERA_ORTHO* m_pcbMappedOrthoCamera = NULL;
+	ID3D12Resource               * m_pd3dcbvOrthoCamera;
+	VS_CB_EYE_CAMERA_ORTHO       * m_pcbMappedOrthoCamera ;
 
-	XMFLOAT4X4		             m_xmf4x4OrthoView;
-	XMFLOAT4X4                   m_xmf4x4Ortho;
+	XMFLOAT4X4		               m_xmf4x4OrthoView;
+	XMFLOAT4X4                     m_xmf4x4Ortho;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

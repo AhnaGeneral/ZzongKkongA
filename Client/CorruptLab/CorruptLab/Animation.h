@@ -14,8 +14,8 @@ class CSkinnedMesh;
 
 struct CALLBACKKEY
 {
-	float  				       m_fTime = 0.0f;
-	void                     * m_pCallbackData = NULL;
+	float  				          m_fTime = 0.0f;
+	void                        * m_pCallbackData = NULL;
 };
 
 //#define _WITH_ANIMATION_SRT

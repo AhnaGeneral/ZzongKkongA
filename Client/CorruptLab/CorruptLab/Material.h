@@ -83,13 +83,6 @@ struct MATERIALLOADINFO
 
 	UINT							m_nType = 0x00;
 
-	//char							m_pstrAlbedoMapName[64] = { '\0' };
-	//char							m_pstrSpecularMapName[64] = { '\0' };
-	//char							m_pstrMetallicMapName[64] = { '\0' };
-	//char							m_pstrNormalMapName[64] = { '\0' };
-	//char							m_pstrEmissionMapName[64] = { '\0' };
-	//char							m_pstrDetailAlbedoMapName[64] = { '\0' };
-	//char							m_pstrDetailNormalMapName[64] = { '\0' };
 };
 
 struct MATERIALSLOADINFO

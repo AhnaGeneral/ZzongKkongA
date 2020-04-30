@@ -7,11 +7,11 @@ class CDiffused2TexturedVertex;
 class CHeightMapImage
 {
 private:
-	BYTE* m_pHeightMapPixels;
+	BYTE                      * m_pHeightMapPixels = NULL;
 	
-	int							m_nWidth;
-	int							m_nLength;
-	XMFLOAT3					m_xmf3Scale;
+	int							m_nWidth = 0;
+	int							m_nLength = 0;
+	XMFLOAT3					m_xmf3Scale = { 0.0f, 0.0f, 0.0f };
 
 public:
 	CHeightMapImage(LPCTSTR pFileName, int nWidth, int nLength, XMFLOAT3 xmf3Scale);
@@ -28,24 +28,25 @@ public:
 
 struct HeightMapVertex
 {
-	XMFLOAT3						m_xmf3Position;
-	XMFLOAT4						m_xmf4Color;
-	XMFLOAT3						m_xmf3Normal;
-	XMFLOAT2						m_xmf2TexCoord0;
-	XMFLOAT2						m_xmf2TexCoord1;
+	XMFLOAT3						m_xmf3Position = { 0.0f, 0.0f, 0.0f };
+	XMFLOAT4						m_xmf4Color = { 0.0f, 0.0f, 0.0f, 0.0f };
+	XMFLOAT3						m_xmf3Normal = { 0.0f, 0.0f, 0.0f };
+	XMFLOAT2						m_xmf2TexCoord0 = { 0.0f, 0.0f };
+	XMFLOAT2						m_xmf2TexCoord1 = { 0.0f, 0.0f };
 };
 
 class CHeightMapGridMesh : public CMesh
 {
 protected:
-	int						m_nWidth;
-	int						m_nLength;
-	XMFLOAT3				m_xmf3Scale;
-	HeightMapVertex			*m_pVertices;
-	XMFLOAT3				*m_xmf3Positions;
+	int						m_nWidth = 0 ;
+	int						m_nLength = 0;
+	XMFLOAT3				m_xmf3Scale = { 0.0f, 0.0f, 0.0f };
+	HeightMapVertex       * m_pVertices = NULL ; 
+	XMFLOAT3			  * m_xmf3Positions = NULL ;
 
 public:
 	BoundingBox				m_boundingbox;
+
 	CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, int xStart, int zStart, int nWidth,
 		int nLength, XMFLOAT3 xmf3Scale = XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4 xmf4Color = XMFLOAT4(1.0f, 1.0f, 0.0f, 0.0f), void* pContext = NULL);
 	virtual ~CHeightMapGridMesh();

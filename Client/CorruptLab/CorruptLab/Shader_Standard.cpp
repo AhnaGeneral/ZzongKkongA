@@ -3,6 +3,8 @@
 
 CStandardShader::CStandardShader()
 {
+	m_pd3dVertexShaderBlob = NULL;
+	m_pd3dPixelShaderBlob = NULL;
 }
 
 CStandardShader::~CStandardShader()
