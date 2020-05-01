@@ -777,7 +777,7 @@ void CGameFramework::MoveToNextFrame()
 
 void CGameFramework::ShadowMapRender()
 {
-	m_fSunTime -= m_GameTimer.GetTimeElapsed();
+	//m_fSunTime -= m_GameTimer.GetTimeElapsed();
 
 	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
 

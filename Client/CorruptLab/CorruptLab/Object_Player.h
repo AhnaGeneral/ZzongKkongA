@@ -36,7 +36,7 @@ protected:
 	LPVOID		           m_pCameraUpdatedContext = NULL;
 
 	CPlayerCamera        * m_pCamera = NULL;
-	CGameObject          * m_pRightHand = NULL;
+	CGameObject          * m_pDummy = NULL;
 	int					   m_nRightHandIndex = 25;
 
 //GameContents
@@ -121,7 +121,10 @@ public:
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
 
 	virtual void Update(float fTimeElapsed);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 
 	void SetAnimation();
+private:
+	CGameObject* m_pSword;
 };
 

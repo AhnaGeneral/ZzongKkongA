@@ -249,11 +249,11 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 
 	if (m_pBoundingBoxes)
 	{
-		//m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
+		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
 		for (int i = 0; i < m_nBoundingBoxes; i++)
 		{
 			m_pBoundingBoxes[i].Update(&m_xmf4x4World);
-			//m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
+			m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
 			if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox))
 				return;
 		}

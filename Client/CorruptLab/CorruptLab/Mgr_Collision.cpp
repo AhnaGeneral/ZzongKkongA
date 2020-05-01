@@ -21,13 +21,19 @@ bool CCollisionMgr::StaticCollisionCheck()
 	return false;
 }
 
-void CCollisionMgr::MonsterAttackCheck(int iDamaege, CCollisionBox box)
+void CCollisionMgr::MonsterAttackCheck(int iDamaege, CCollisionBox box, float fTimeElapsed)
 {
 	CCollisionBox* playerBodybox = m_pPlayer->m_pBodyCollision;
 
+
 	if (box.boundingBox.Intersects(playerBodybox->boundingBox))
 	{
-		m_pPlayer->GetDamaage(iDamaege);
+		m_fTime += fTimeElapsed;
+		if (m_fTime > 0.5f)
+		{
+			m_pPlayer->GetDamaage(iDamaege);
+			m_fTime = 0.0f;
+		}
 	}
 }
 

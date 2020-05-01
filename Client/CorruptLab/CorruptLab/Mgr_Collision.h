@@ -15,6 +15,7 @@ public:
 private:
 	static CCollisionMgr* m_pInstance ;
 	CPlayer* m_pPlayer = NULL;
+	float m_fTime = 0.0f;
 
 public:
 	void Initialize(void);
@@ -37,7 +38,7 @@ public:
 	void SetPlayer(CPlayer* player) { m_pPlayer = player;  }
 
 	bool StaticCollisionCheck();
-	void MonsterAttackCheck(int iDamaege, CCollisionBox box);
+	void MonsterAttackCheck(int iDamaege, CCollisionBox box, float fTimeElapsed);
 
 
 public:

@@ -31,8 +31,8 @@ CPlayer::CPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComman
 	CCollisionMgr::GetInstance()->SetPlayer(this);
 
 	m_iMaxHP = 100;
-	m_iCurrentHP = 30;
-	m_iAtt = 20;
+	m_iCurrentHP = 100;
+	m_iAtt = 5;
 
 }
 
@@ -269,19 +269,29 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	: CPlayer(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, pContext, nMeshes)
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
+	m_pSword = NULL;
 
 	CGameObject* pGameObject =
 		CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
 			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson.bin", NULL, true);
+
+
+	m_pSword = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
+			pd3dGraphicsRootSignature, "Model/Sword.bin", NULL, false);
+
 	//SetPosition(0.0f, 0.0f, 0.0f);
 
-	//m_pRightHand = pGameObject->FindFrame("Bip001_R_Hand");
+	m_pDummy = pGameObject->FindFrame("Dummy001");
 	m_pBodyCollision = &(pGameObject->m_pBoundingBoxes[0]);
 
 	//pGameObject->m_pBoundingBoxes[1].m_pParent = m_pRightHand;
 	m_pHandCollision = &(pGameObject->m_pBoundingBoxes[1]);
+	//pGameObject->m_xmf4Rotation
+
+	m_pSword->m_xmf4x4Transform = m_pDummy->m_xmf4x4Transform;
 
 	SetChild(pGameObject, true);
+
 	OnInitialize();
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -354,7 +364,17 @@ void CMainPlayer::Update(float fTimeElapsed)
 
 	m_xmf3PrePosition = m_xmf3Position;
 
+	if (m_pSword && m_pDummy)
+	{
+		m_pSword->m_xmf4x4World = m_pDummy->m_xmf4x4World;
+	}
 	//SetAnimation();
+}
+
+void CMainPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+{
+	CPlayer::Render(pd3dCommandList, pCamera, nPipelineState);
+	m_pSword->Render(pd3dCommandList, pCamera, nPipelineState);
 }
 
 void CMainPlayer::SetAnimation()
