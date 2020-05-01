@@ -60,7 +60,8 @@ float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 t
 
 	}
 
-	return((lightStrength * fDiffuseFactor) * float3(0.4f, 0.4f, 0.4f) + fSpecularFactor * float3(0.2f,0.2f,0.2f) );
+	return((lightStrength * fDiffuseFactor) * float3(0.4f, 0.4f, 0.4f)
+		+ fSpecularFactor * float3(0.9f,0.9f,0.9f) );
 }
 
 

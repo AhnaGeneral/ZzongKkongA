@@ -34,14 +34,26 @@ VS_TERRAIN_SHADOW_OUTPUT VSTerrainShadow(VS_TERRAIN_INPUT input)
 HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<VS_TERRAIN_SHADOW_OUTPUT, 25> input)
 {
 
+	//HS_TERRAIN_TESSELLATION_CONSTANT output;
+
+
+	float3 vCenter;
+	for (int i = 0; i < 25; i++)
+		vCenter += input[i].position;
+	vCenter = vCenter / 25.f;
+
+	float fDistanceToCamera = distance(vCenter, gvCameraPosition);
+
+	float fTessFactor = (1 / fDistanceToCamera) * 150;
+	//if (fDistanceToCamera > 1000.f) fTessFactor = 1.f;
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
-	output.fTessEdges[0]   = 10.0f;
-	output.fTessEdges[1]   = 10.0f;
-	output.fTessEdges[2]   = 10.0f;
-	output.fTessEdges[3]   = 10.0f;
-	output.fTessInsides[0] = 10.0f;
-	output.fTessInsides[1] = 10.0f;
+	output.fTessEdges[0] = fTessFactor;
+	output.fTessEdges[1] = fTessFactor;
+	output.fTessEdges[2] = fTessFactor;
+	output.fTessEdges[3] = fTessFactor;
+	output.fTessInsides[0] = fTessFactor;
+	output.fTessInsides[1] = fTessFactor;
 
 	return(output);
 }

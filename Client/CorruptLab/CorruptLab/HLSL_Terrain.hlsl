@@ -123,20 +123,20 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 	//if (fDistanceToCamera > 1000.f) fTessFactor = 1.f;
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
-	//output.fTessEdges[0] = fTessFactor;
-	//output.fTessEdges[1] = fTessFactor;
-	//output.fTessEdges[2] = fTessFactor;
-	//output.fTessEdges[3] = fTessFactor;
-	//output.fTessInsides[0] = fTessFactor;
-	//output.fTessInsides[1] = fTessFactor;
+	output.fTessEdges[0] = fTessFactor;
+	output.fTessEdges[1] = fTessFactor;
+	output.fTessEdges[2] = fTessFactor;
+	output.fTessEdges[3] = fTessFactor;
+	output.fTessInsides[0] = fTessFactor;
+	output.fTessInsides[1] = fTessFactor;
 
 	// 일정한 격자로 보고 싶을 때 
-	output.fTessEdges[0] = 10.0f;
-	output.fTessEdges[1] = 10.0f;
-	output.fTessEdges[2] = 10.0f;
-	output.fTessEdges[3] = 10.0f;
-	output.fTessInsides[0] = 10.0f;
-	output.fTessInsides[1] = 10.0f;
+	//output.fTessEdges[0] = 3.0f;
+	//output.fTessEdges[1] = 3.0f;
+	//output.fTessEdges[2] = 3.0f;
+	//output.fTessEdges[3] = 3.0f;
+	//output.fTessInsides[0] = 1.0f;
+	//output.fTessInsides[1] = 1.0f;
 
 	return(output);
 }

@@ -35,9 +35,13 @@ PS_WATER_INPUT WaterVertexShader(VS_WATER_INPUT input)
 
 	output.tex2 = (input.tex * scales.z);
 	output.tex2.x = output.tex2.x + (frameTime * (-scrollSpeeds.z));
+	output.tex2.y = output.tex2.y + (frameTime * (0.04));
+
 
 	output.tex3 = (input.tex * scales.z);
 	output.tex3.x = output.tex3.x + (frameTime * scrollSpeeds.z);
+	output.tex3.y = output.tex3.y + (frameTime * 0.08);
+
 
 	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.tangent = float3 (1.0f, 0.0f, 0.0f);
