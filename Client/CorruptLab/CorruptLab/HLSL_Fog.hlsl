@@ -3,11 +3,6 @@
 
 // FogAlpha.hlsl =========================================================
 
-cbuffer cbRadiationLevel : register(b11) // 플레이어 위치
-{
-	uint	 gf3RadiationLevel :packoffset(c0);
-}
-
 
 struct VS_FOG_INPUT
 {

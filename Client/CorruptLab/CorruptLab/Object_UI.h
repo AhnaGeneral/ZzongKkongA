@@ -1,6 +1,14 @@
 #pragma once 
 #include "Object.h"
 
+
+struct GS_BILLBOARD_INSTANCE
+{
+	XMFLOAT3 m_xmf3Position;
+	XMFLOAT2 m_xmf2Size;
+};
+
+
 class CMRTUI : public CGameObject
 {
 private:
@@ -144,4 +152,35 @@ private:
 	ID3D12Resource* m_pd3dcbRadiationLevel = NULL;
 	int m_RadiationNumber = 0 ;
 	int* m_pcbRadiationNum = NULL;
+};
+
+class CUI_MonsterHP : public CMRTUI
+{
+public:
+	CUI_MonsterHP();
+	CUI_MonsterHP(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
+
+	virtual ~CUI_MonsterHP() {}
+
+	virtual void SetInstanceInfo( XMFLOAT2 Scale, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
+	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
+	virtual void ReleaseShaderVariables();
+
+
+	void SetObjectID(UINT objectID) { m_nobjectID = objectID; }
+	virtual UINT GetObjectID() { return m_nobjectID; }
+
+	ID3D12Resource* m_pd3dcbMonsterHP = NULL;
+	int* m_MonsterHP = NULL;
+	int* m_pcbMonsterHP = NULL;
+
+private:
+	UINT m_nobjectID = 0;
+	GS_BILLBOARD_INSTANCE InstanceInfo;
+
+	ID3D12Resource* m_pd3dPositionBuffer = NULL;
+	ID3D12Resource* m_pd3dPositionUploadBuffer = NULL;
+	D3D12_VERTEX_BUFFER_VIEW		m_d3dPositionBufferView;
 };

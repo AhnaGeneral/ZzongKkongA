@@ -29,6 +29,11 @@ cbuffer cbOrthoInfo : register(b4)
 	matrix		    gmtxOrthoView: packoffset(c4);
 };
 
+cbuffer cbRadiationLevel : register(b11) // 플레이어 위치
+{
+	uint	 gf3RadiationLevel :packoffset(c0);
+}
+
 cbuffer cbShadowCameraInfo : register(b5) // 그림자 카메라 
 {
 	matrix		    shadowgmtxView : packoffset(c0);

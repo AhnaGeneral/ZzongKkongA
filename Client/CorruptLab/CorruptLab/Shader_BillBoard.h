@@ -2,11 +2,6 @@
 #include "Shader.h"
 #include "Object_BillBoard.h"
 
-struct GS_BILLBOARD_INSTANCE
-{
-	XMFLOAT3 m_xmf3Position;
-	XMFLOAT2 m_xmf2Size;
-};
 
 class CSkyBoxShader : public CShader
 {

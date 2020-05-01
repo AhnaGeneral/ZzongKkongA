@@ -5,6 +5,9 @@
 #include "Monster_Yangmal.h"
 #include "Object_ItemBox.h"
 #include "Mgr_Collision.h"
+#include "Object_UI.h"
+#include "Shader_ObjHP.h"
+#include "Shader_BillBoard.h"
 //#include "Monster_Yangmal.h"
 
 void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -56,8 +59,9 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	/*Monster*/
 	//Yangmal-------------------------------------------------
 	
+
 	CGameObject* pYangmalModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Yangmal.bin", NULL, true);
-	PlaceMonsterFromFile(pYangmalModel, "ObjectsData/Yangmals.bin", MONSTER_TYPE_YANGMAL);
+	PlaceMonsterFromFile(pYangmalModel, "ObjectsData/Yangmals.bin", MONSTER_TYPE_YANGMAL, pd3dDevice,pd3dCommandList);
 
 
 }
@@ -140,7 +144,7 @@ void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int i
 	fclose(pInFile);
 }
 
-void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index)
+void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice,ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	FILE* pInFile = NULL;
 	::fopen_s(&pInFile, FileName, "rb");
@@ -152,7 +156,18 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 	XMFLOAT3 xmf3Position, xmf3Rotation, xmf3Scale;
 	XMFLOAT4 xmf4Rotation;
 
+
+	CTexture* pMonsterHPTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pMonsterHPTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/MonsterHP.dds", 0);
+	//CShader* pShder = new CShader_MonsterHP();
+	CShader* pShder = new CCloudGSShader();
+	
+	pShder->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 5);
+	pShder->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1);
+	pShder->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMonsterHPTex, ROOT_PARAMETER_ALBEDO_TEX, 0);
+
 	CMonster* pGameObject = NULL;
+	
 	for (int i = 0; i < nObjects; i++)
 	{
 		(UINT)::fread(&xmf3Position, sizeof(float), 3, pInFile);
@@ -163,8 +178,19 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		XMFLOAT4X4 xmmtxWorld;
 		(UINT)::fread(&xmmtxWorld, sizeof(XMFLOAT4X4), 1, pInFile);
 		pGameObject = new CYangmal();
+
+		CUI_MonsterHP* hp = new CUI_MonsterHP();
 	
+		hp->SetShader(pShder);
+		hp->SetTexture(pMonsterHPTex);
+
 		pGameObject->SetChild(pModel, true);
+		hp->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		pGameObject->SetHPUI(hp);
+
+		float scale = xmf3Scale.x;
+		XMFLOAT2 SCALE = XMFLOAT2(scale, scale / 10);
+		hp->SetInstanceInfo(SCALE, pd3dDevice, pd3dCommandList);
 
 		pGameObject->m_xmf4Rotation = xmf4Rotation;
 		pGameObject->m_xmf3Scale = Vector3::ScalarProduct(xmf3Scale, 0.5f, false);

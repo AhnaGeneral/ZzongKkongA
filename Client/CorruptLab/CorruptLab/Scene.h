@@ -102,7 +102,7 @@ public:
 	void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList);
 	void PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, int index);
 	void PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index);
-	void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index);
+	void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 
 	void ChangeTerrainPipeline();
 

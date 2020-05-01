@@ -301,7 +301,7 @@ void CUI_HP::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XM
 	XMFLOAT4X4 xmf4x4World;
 	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
-	std::cout << *m_PlayerHP << std::endl;
+	//std::cout << *m_PlayerHP << std::endl;
 
 	memcpy(m_pcbPlayerHP, m_PlayerHP, sizeof(int));
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbPlayerHP->GetGPUVirtualAddress();
@@ -393,4 +393,68 @@ void CUI_RaditaionLevel::ReleaseShaderVariables()
 void CUI_RaditaionLevel::SetRadiationNumber(int num)
 {
 	m_RadiationNumber = num;
+}
+
+CUI_MonsterHP::CUI_MonsterHP()
+{
+	m_pd3dcbMonsterHP = NULL;
+	m_MonsterHP = NULL;
+	m_pcbMonsterHP = NULL;
+}
+
+CUI_MonsterHP::CUI_MonsterHP(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+{
+	InstanceInfo.m_xmf3Position = XMFLOAT3(0, 0, 0);
+	InstanceInfo.m_xmf2Size = XMFLOAT2(0, 0);
+}
+
+void CUI_MonsterHP::SetInstanceInfo( XMFLOAT2 Scale, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	InstanceInfo.m_xmf3Position = XMFLOAT3(0, 10 * Scale.x, 0);
+	InstanceInfo.m_xmf2Size = Scale;
+
+	m_pd3dPositionBuffer =
+		::CreateBufferResource(pd3dDevice, pd3dCommandList, &InstanceInfo, sizeof(GS_BILLBOARD_INSTANCE),
+			D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dPositionUploadBuffer);
+
+	m_d3dPositionBufferView.BufferLocation = m_pd3dPositionBuffer->GetGPUVirtualAddress();
+	m_d3dPositionBufferView.StrideInBytes = sizeof(XMFLOAT3);
+	m_d3dPositionBufferView.SizeInBytes = sizeof(XMFLOAT3);
+}
+
+void CUI_MonsterHP::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	UINT ncbElementBytes = ((sizeof(int) + 255) & ~255); //256ÀÇ ¹è¼ö  
+	m_pd3dcbMonsterHP = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes,
+		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	m_pd3dcbMonsterHP->Map(0, NULL, (void**)&m_MonsterHP);
+}
+
+void CUI_MonsterHP::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+{
+	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList,pCamera);
+	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
+
+	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[1] = { m_d3dPositionBufferView };
+	pd3dCommandList->IASetVertexBuffers(0, _countof(pVertexBufferViews), pVertexBufferViews);
+	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	pd3dCommandList->DrawInstanced(1, 1, 0, 0);
+}
+
+void CUI_MonsterHP::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
+{
+	XMFLOAT4X4 xmf4x4World;
+	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
+	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
+	//std::cout << *m_PlayerHP << std::endl;
+
+	memcpy(m_MonsterHP, m_pcbMonsterHP, sizeof(int));
+	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbMonsterHP->GetGPUVirtualAddress();
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_RADIATIONLEVEL, d3dGpuVirtualAddress);
+}
+
+void CUI_MonsterHP::ReleaseShaderVariables()
+{
 }
