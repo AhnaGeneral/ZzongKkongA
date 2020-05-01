@@ -103,3 +103,8 @@ D3D12_SHADER_BYTECODE CShader_MonsterHP::CreateGeometryShader(ID3DBlob** ppd3dSh
 {
 	return(CShader::CompileShaderFromFile(L"HLSL_UI.hlsl", "MosnterHPGS", "gs_5_1", ppd3dShaderBlob));
 }
+
+void CShader_MonsterHP::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	CShader::Render(pd3dCommandList, pCamera, 0);
+}

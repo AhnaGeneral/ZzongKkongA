@@ -81,9 +81,8 @@ void CUI_MiniMap::InterLinkShaderTexture(ID3D12Device* pd3dDevice,
 	pMinimapTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map.dds", 0);
 	pMinimapTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog1.dds", 1);
 	pMinimapTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog2.dds", 2);
-
-	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMinimapTex, ROOT_PARAMETER_ITEM_TEX, true);
-	SetShader(pShader);
+	
+	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMinimapTex, ROOT_PARAMETER_ITEM_TEX, true); SetShader(pShader);
 	m_ppMaterials[0]->SetTexture(pMinimapTex);
 }
 
@@ -420,8 +419,8 @@ void CUI_MonsterHP::SetInstanceInfo( XMFLOAT2 Scale, ID3D12Device* pd3dDevice, I
 			D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dPositionUploadBuffer);
 
 	m_d3dPositionBufferView.BufferLocation = m_pd3dPositionBuffer->GetGPUVirtualAddress();
-	m_d3dPositionBufferView.StrideInBytes = sizeof(XMFLOAT3);
-	m_d3dPositionBufferView.SizeInBytes = sizeof(XMFLOAT3);
+	m_d3dPositionBufferView.StrideInBytes = sizeof(GS_BILLBOARD_INSTANCE);
+	m_d3dPositionBufferView.SizeInBytes = sizeof(GS_BILLBOARD_INSTANCE);
 }
 
 void CUI_MonsterHP::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -438,7 +437,7 @@ void CUI_MonsterHP::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* 
 {
 	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList,pCamera);
 	m_ppMaterials[0]->UpdateShaderVariable(pd3dCommandList);
-
+	UpdateShaderVariable(pd3dCommandList,&m_xmf4x4World);
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[1] = { m_d3dPositionBufferView };
 	pd3dCommandList->IASetVertexBuffers(0, _countof(pVertexBufferViews), pVertexBufferViews);
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
@@ -455,8 +454,4 @@ void CUI_MonsterHP::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandL
 	memcpy(m_MonsterHP, m_pcbMonsterHP, sizeof(int));
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbMonsterHP->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_RADIATIONLEVEL, d3dGpuVirtualAddress);
-}
-
-void CUI_MonsterHP::ReleaseShaderVariables()
-{
 }

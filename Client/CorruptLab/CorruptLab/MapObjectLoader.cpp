@@ -159,8 +159,8 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 
 	CTexture* pMonsterHPTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 	pMonsterHPTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/MonsterHP.dds", 0);
-	//CShader* pShder = new CShader_MonsterHP();
-	CShader* pShder = new CCloudGSShader();
+	CShader* pShder = new CShader_MonsterHP();
+	//CShader* pShder = new CCloudGSShader();
 	
 	pShder->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 5);
 	pShder->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1);
@@ -188,7 +188,7 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		hp->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		pGameObject->SetHPUI(hp);
 
-		float scale = xmf3Scale.x;
+		float scale = xmf3Scale.x / 10.f;
 		XMFLOAT2 SCALE = XMFLOAT2(scale, scale / 10);
 		hp->SetInstanceInfo(SCALE, pd3dDevice, pd3dCommandList);
 

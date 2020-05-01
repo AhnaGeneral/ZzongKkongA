@@ -1,9 +1,9 @@
 #include "HLSL_MRT.hlsl"
 
-
 Texture2D gtxtRootUITexture : register(t25);
+Texture2D gtxtHandLighTexture : register(t26);
 
-//[체력박스]================================================================================
+//[PSHP]================================================================================
 float4 PSHP(VS_TEXTURED_OUTPUT input ): SV_TARGET
 {
 	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, input.uv);
@@ -23,11 +23,10 @@ cbuffer cbPlayerHPRemaining : register(b8) // 플레이어
 	uint          gfremainingHP :packoffset(c0);
 }
 
-Texture2D gtxtHandLighTexture : register(t26);
 Texture2D gtxtHPKitdTexture : register(t27);
 Texture2D gtxtPillddsTexture : register(t28);
 
-//[아이템]================================================================================
+//[ITEM]================================================================================
 float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 {
 
@@ -72,10 +71,10 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 	return float4(cColor);
 }
 
-//[미니맵]================================================================================
+//[Minimap]================================================================================
 float4 PSMinimap(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 {
-	float4 Minmap   = gtxtHandLighTexture.Sample(gSamplerState, input.uv);
+	float4 Minmap = gtxtHandLighTexture.Sample(gSamplerState, input.uv);
 	float4 Map_Fog1 = gtxtHPKitdTexture.Sample(gSamplerState, input.uv);
 	float4 Map_Fog2 = gtxtPillddsTexture.Sample(gSamplerState, input.uv);
 
@@ -91,9 +90,9 @@ float4 PSMinimap(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 
 	float4 cColor = Minmap; /*+ Map_Fog2*/
 
-	float2 playerpos = float2 (gf3PlayerPos.z / 512.0f, gf3PlayerPos.x / 512.0f );
-	
-	float fDistance  =  distance(playerpos, input.uv);
+	float2 playerpos = float2 (gf3PlayerPos.z / 512.0f, gf3PlayerPos.x / 512.0f);
+
+	float fDistance = distance(playerpos, input.uv);
 
 	if (fDistance < 0.03f)
 		cColor = float4(1, 1, 0, 1);
@@ -101,8 +100,6 @@ float4 PSMinimap(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 	return cColor;
 }
 
-
-//[체력바]================================================================================
 float4 PSPlayerHP(VS_TEXTURED_OUTPUT input) : SV_TARGET
 {
 	float HP = (float)gfremainingHP / 100.0f;
@@ -153,8 +150,7 @@ float4 PSRadiationLevel(VS_TEXTURED_OUTPUT input) : SV_TARGET
 
 
 
-
-//몬스터 hp 
+//[MonsterHP]================================================================================
 
 struct GS_BILLBOARD_OUTPUT
 {
@@ -179,8 +175,10 @@ VS_BILLBOARD_INPUT VSMONSTERHP(VS_BILLBOARD_INPUT input)
 {
 	VS_BILLBOARD_OUTPUT output;
 
-	float4 PositionW = mul(float4(input.positionW, 1), gmtxGameObject);
-	output.positionW = PositionW.xyz;
+	//float4 PositionW = mul(float4(input.positionW, 1), gmtxGameObject);
+	output.positionW.x = gmtxGameObject._41;
+	output.positionW.y = gmtxGameObject._42 + (10 * input.sizeW.y);
+	output.positionW.z = gmtxGameObject._43;
 
 	output.sizeW = input.sizeW;
 	return(output);
@@ -207,12 +205,14 @@ void MosnterHPGS(point VS_BILLBOARD_OUTPUT input[1], inout TriangleStream<GS_BIL
 	float2 pUVs[4] = { float2 (0.0f, 1.0f), float2(0.0f, 0.0f), float2(1.0f, 1.0f), float2(1.0f, 0.0f) };
 
 	GS_BILLBOARD_OUTPUT output;
-
-	for (int i = 0; i < 4; ++i)
-	{
-		output.posH = mul(mul(pVertices[i], gmtxView), gmtxProjection);
-		output.UV = pUVs[i];
-		outStream.Append(output);
+	float Distance = distance(gvCameraPosition.xyz, input[0].positionW);
+	if (Distance < 40){
+		for (int i = 0; i < 4; ++i)
+		{
+			output.posH = mul(mul(pVertices[i], gmtxView), gmtxProjection);
+			output.UV = pUVs[i];
+			outStream.Append(output);
+		}
 	}
 }
 
@@ -220,11 +220,11 @@ void MosnterHPGS(point VS_BILLBOARD_OUTPUT input[1], inout TriangleStream<GS_BIL
 
 float4 PSMonsterHP(GS_BILLBOARD_OUTPUT input) : SV_TARGET4
 {
-	//float HP = (float)gf3RadiationLevel / 100.0f;
+	float HP = (float)gf3RadiationLevel / 100.0f;
 	float4 cColor = gtxtAlbedoTexture.Sample(gSamplerClamp, input.UV);
 
-	//if (input.uv.x > HP)
-	//	float4 cColor = float4(1, 1, 1, 1);
+	if (input.UV.x > HP)
+		 cColor = float4(0.25f, 0.25f, 0.25f, 1);
 
 	return float4(cColor);
 }

@@ -4,6 +4,7 @@
 
 CMonster::~CMonster()
 {
+	m_HPUI->ReleaseShaderVariables();
 	m_HPUI->Release();
 }
 
@@ -11,8 +12,8 @@ CMonster::~CMonster()
 void CMonster::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	CGameObject::Render(pd3dCommandList, pCamera, nPipelineState);
-	m_HPUI->SetPosition(GetPosition());
-	//m_HPUI->Render(pd3dCommandList, pCamera);
+	m_HPUI->UpdateTransform(&m_xmf4x4World);
+	m_HPUI->Render(pd3dCommandList, pCamera);
 }
 
 void CMonster::SetHPUI(CUI_MonsterHP* pHP)

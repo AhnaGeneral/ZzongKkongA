@@ -1,6 +1,5 @@
 #pragma once
-#include "Shader_BillboardUI.h"
-#include "Shader_Noise.h"
+#include "Shader_Billboard.h"
 class CShader_ObjHP :public CShader
 {
 public:
@@ -19,7 +18,7 @@ public:
 
 };
 
-class CShader_MonsterHP : public Shader_Noise
+class CShader_MonsterHP : public CSoftParticleShader
 {
 	virtual ~CShader_MonsterHP() {}
 
@@ -28,5 +27,6 @@ class CShader_MonsterHP : public Shader_Noise
 	virtual D3D12_SHADER_BYTECODE    CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
 	virtual D3D12_SHADER_BYTECODE    CreateGeometryShader(ID3DBlob** ppd3dShaderBlob);
 
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 
 };

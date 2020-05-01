@@ -14,7 +14,7 @@ protected:
 
 	int				m_iState = MONSTER_STATE_IDLE;
 	int				m_iMaxHP = 100;
-	int				m_iCurrentHP = 100;
+	int				m_iCurrentHP = 80;
 	int				m_iAtt = 5;
 	CCollisionBox*	m_pAttCollision;
 	CCollisionBox*  m_pBodyCollision;
