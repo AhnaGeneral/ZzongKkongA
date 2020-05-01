@@ -33,6 +33,7 @@ public:
 
 	void CreateSwapChainRenderTargetViews();
 	void CreateDepthStencilView();
+	void CreateShadowDepthStencilView();
 
 	void ChangeSwapChainState();
 
@@ -104,6 +105,11 @@ private:
 	ID3D12Resource                    * m_pd3dDepthStencilBuffer;
 	ID3D12DescriptorHeap              * m_pd3dDsvDescriptorHeap;
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_d3dDsvDepthStencilBufferCPUHandle;
+
+	ID3D12Resource                    * m_pd3dShadowDepthStencilBuffer;
+	ID3D12DescriptorHeap              * m_pd3dShadowDsvDescriptorHeap;
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_d3dShadowDsvDepthStencilBufferCPUHandle;
+
 
 	HANDLE							    m_hFenceEvent;
 	ID3D12Fence                       * m_pd3dFence;

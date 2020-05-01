@@ -83,7 +83,7 @@ VS_TEXTURED_OUTPUT VSUI(VS_TEXTURED_INPUT input)  /// 직교투영
 float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 {
 	float4 cColor = float4 (1.0f, 0.0f, 0.0f,0.0f);
-
+	float2 UV = input.uv * 0.5;
 	if (gnObjectID == 0)  cColor = gtxtNormal.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 1)  cColor = gtxtScene.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 2)  cColor = gtxtDepth.Sample(gSamplerState, input.uv);

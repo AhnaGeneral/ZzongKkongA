@@ -52,7 +52,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 {
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	std::cout << "누나 졸작 화이팅 by 은우" << std::endl;
+	//std::cout << "누나 졸작 화이팅 by 은우" << std::endl;
 
 	XMFLOAT3 xmf3Scale(2.0f, 0.6f, 2.0f);
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
@@ -642,29 +642,24 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 }
 
 
-void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool bPlayer)
+void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
-	if (!bPlayer)
+	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
+	m_pTerrain->Render(pd3dCommandList, pCamera, 2);
+	if (m_pStaticObjLists) // 오브젝트 Render
 	{
-		if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
-		m_pTerrain->Render(pd3dCommandList, pCamera, 2);
-		if (m_pStaticObjLists) // 오브젝트 Render
+		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
 		{
-			for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+			for (auto Obj : *m_pStaticObjLists[i])
 			{
-				for (auto Obj : *m_pStaticObjLists[i])
-				{
-					Obj->UpdateTransform(NULL);
-					Obj->Render(pd3dCommandList, pCamera, 1);
-				}
+				Obj->UpdateTransform(NULL);
+				Obj->Render(pd3dCommandList, pCamera, 1);
 			}
 		}
 	}
-
-	else
-		m_pPlayer->Render(pd3dCommandList, pCamera, 1);
+	m_pPlayer->Render(pd3dCommandList, pCamera, 1);
 }
 void CGameScene::Update(float fTimeElapsed)
 {
