@@ -66,7 +66,10 @@ protected:
 					            
 	CUI_Root                     * m_pHP;
 	CUI_Root                     * m_Radiation;
-					            
+
+	CUI_Root                     * m_pMapOne;
+	CUI_Root                     * m_pMapTwo;
+				            
 	CUI_MiniMap                  * m_pMinimap;
 
 	CShader                      * m_pRadiationShader;

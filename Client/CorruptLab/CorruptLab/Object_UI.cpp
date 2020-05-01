@@ -74,13 +74,15 @@ void CUI_MiniMap::InterLinkShaderTexture(ID3D12Device* pd3dDevice,
 	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* Texture)
 {
 	CMinimapShader* pShader = new CMinimapShader();
-	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 3, 1);
+	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 3, 3);
 	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
 
-	CTexture* pMinimapTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pMinimapTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Minimap.dds", 0);
+	CTexture* pMinimapTex = new CTexture(3, RESOURCE_TEXTURE2D, 0);
+	pMinimapTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map.dds", 0);
+	pMinimapTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog1.dds", 1);
+	pMinimapTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog2.dds", 2);
 
-	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMinimapTex, ROOT_PARAMETER_LIGHT_MRT, 0);
+	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMinimapTex, ROOT_PARAMETER_ITEM_TEX, true);
 	SetShader(pShader);
 	m_ppMaterials[0]->SetTexture(pMinimapTex);
 }

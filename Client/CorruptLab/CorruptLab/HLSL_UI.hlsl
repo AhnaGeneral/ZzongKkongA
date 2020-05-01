@@ -1,22 +1,9 @@
 #include "HLSL_MRT.hlsl"
 
-float4 PSMinimap(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
-{
-	float4 cColor = gtxtLight.Sample(gSamplerState, input.uv);
-
-	float2 playerpos = float2 (gf3PlayerPos.z / 512.0f, gf3PlayerPos.x / 512.0f );
-	
-	float fDistance  =  distance(playerpos, input.uv);
-
-	if (fDistance < 0.03f)
-		cColor = float4(1, 1, 0, 1);
-
-	return cColor;
-}
 
 Texture2D gtxtRootUITexture : register(t25);
 
-
+//[체력박스]================================================================================
 float4 PSHP(VS_TEXTURED_OUTPUT input ): SV_TARGET
 {
 	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, input.uv);
@@ -40,7 +27,7 @@ Texture2D gtxtHandLighTexture : register(t26);
 Texture2D gtxtHPKitdTexture : register(t27);
 Texture2D gtxtPillddsTexture : register(t28);
 
-
+//[아이템]================================================================================
 float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 {
 
@@ -85,8 +72,37 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 	return float4(cColor);
 }
 
+//[미니맵]================================================================================
+float4 PSMinimap(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
+{
+	float4 Minmap   = gtxtHandLighTexture.Sample(gSamplerState, input.uv);
+	float4 Map_Fog1 = gtxtHPKitdTexture.Sample(gSamplerState, input.uv);
+	float4 Map_Fog2 = gtxtPillddsTexture.Sample(gSamplerState, input.uv);
+
+	if (Map_Fog1.a < 0.6f)
+	{
+		Map_Fog1.a = 0.0f;
+	}
+
+	if (Map_Fog2.a < 0.6f)
+	{
+		Map_Fog2.a = 0.0f;
+	}
+
+	float4 cColor = Minmap; /*+ Map_Fog2*/
+
+	float2 playerpos = float2 (gf3PlayerPos.z / 512.0f, gf3PlayerPos.x / 512.0f );
+	
+	float fDistance  =  distance(playerpos, input.uv);
+
+	if (fDistance < 0.03f)
+		cColor = float4(1, 1, 0, 1);
+
+	return cColor;
+}
 
 
+//[체력바]================================================================================
 float4 PSPlayerHP(VS_TEXTURED_OUTPUT input) : SV_TARGET
 {
 	float HP = (float)gfremainingHP / 100.0f;

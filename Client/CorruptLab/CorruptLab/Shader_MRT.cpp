@@ -316,7 +316,6 @@ void CPostProcessingShader::SetRenderTargets(ID3D12Device* pd3dDevice, ID3D12Gra
 
 void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-
 	m_xmf4x4OrthoView =
 		Matrix4x4::LookAtLH(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
 	// position이 왜 0 이여야 하지 ? // 모두 수직이여야 하는거 아닌가 ? 
@@ -371,6 +370,31 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 250, 200, 0.0f, 1.0f);
 	m_Radiation->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
 	m_Radiation->SetMesh(mesh);
+
+
+	// ========================================================================================================
+	CTexture * pMinmapFog1 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pMinmapFog1->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog1.dds", 0);
+
+	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog1, ROOT_PARAMETER_HP_TEX, true);
+
+	m_pMapOne = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	m_pMapOne->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pMinmapFog1);
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
+	m_pMapOne->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
+	m_pMapOne->SetMesh(mesh);
+
+	CTexture* pMinmapFog2 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+
+	pMinmapFog2->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog2.dds", 0);
+	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog2, ROOT_PARAMETER_HP_TEX, true);
+
+	m_pMapTwo = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	m_pMapTwo->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pMinmapFog2);
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
+	m_pMapTwo->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
+	m_pMapTwo->SetMesh(mesh);
+
 
 	//[ 인벤토리 ] ==============================================================================================
 	m_ppInVentoryBoxs = new CGameObject * [nIventoryCount];
@@ -495,7 +519,8 @@ void CPostProcessingShader::ReleaseObjects()
 			m_ppItems[i]->ReleaseUploadBuffers();
 	}
 	if (m_PlayerHP) m_PlayerHP->ReleaseUploadBuffers();
-
+	if (m_pMapOne)m_pMapOne->ReleaseUploadBuffers();
+	if (m_pMapTwo)m_pMapTwo->ReleaseUploadBuffers();
 
 	if (m_pTexture) m_pTexture->Release();
 	if (m_pLightTexture) m_pLightTexture->Release();
@@ -504,6 +529,9 @@ void CPostProcessingShader::ReleaseObjects()
 	if (m_pItemTex) m_pItemTex->Release();
 	if (m_pBaseUIShader) m_pBaseUIShader->Release();
 	if (m_pItemShader)m_pItemShader->Release();
+
+	if (m_pMapOne)m_pMapOne->Release();
+	if (m_pMapTwo)m_pMapTwo->Release();
 
 	if (m_pRadiationShader) m_pRadiationShader->Release();
 	if (m_pRenderTargetUIs) 
@@ -605,6 +633,9 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 
 	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
 	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
+
+	if (m_pMapOne)m_pMapOne->Render (pd3dCommandList, pCamera);
+	if (m_pMapTwo)m_pMapTwo->Render(pd3dCommandList, pCamera);
 
 	for (int i = 0; i < int(nIventoryCount); ++i)
 	{
