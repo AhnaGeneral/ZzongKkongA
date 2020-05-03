@@ -46,6 +46,7 @@ CPlayer::~CPlayer()
 void CPlayer::SetAttackState()
 {
 	m_iState = JOHNSON_ANIAMATION_ATTACK;
+	CCollisionMgr::GetInstance()->MonsterDamageCheck(m_iAtt);
 	//SetAnima
 }
 

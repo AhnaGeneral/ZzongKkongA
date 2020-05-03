@@ -133,6 +133,12 @@ void CGameObject::SetMaterial(int nMaterial, CMaterial* pMaterial)
 	if (m_ppMaterials[nMaterial]) m_ppMaterials[nMaterial]->AddRef();
 }
 
+void CGameObject::SetParentRenderState(bool bRender)
+{
+	m_bRender = bRender;
+	if (m_pParent) m_pParent->SetParentRenderState(bRender);
+}
+
 void CGameObject::SetChild(CGameObject* pChild, bool bReferenceUpdate)
 {
 	if (pChild)
@@ -246,7 +252,7 @@ void CGameObject::OnPrepareRender() {}
 
 void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
-
+	m_bRender = true;
 	if (m_pBoundingBoxes)
 	{
 		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
@@ -255,7 +261,10 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 			m_pBoundingBoxes[i].Update(&m_xmf4x4World);
 			m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
 			if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox))
+			{
+				SetParentRenderState(false);
 				return;
+			}
 		}
 	}
 

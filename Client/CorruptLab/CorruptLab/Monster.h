@@ -12,7 +12,6 @@ public:
 protected:
 	//GameContents
 
-	int				m_iState = MONSTER_STATE_IDLE;
 	int				m_iMaxHP = 100;
 	int				m_iCurrentHP = 80;
 	int				m_iAtt = 5;
@@ -22,13 +21,14 @@ protected:
 	///
 public:
 
+	int				m_iState = MONSTER_STATE_IDLE;
 	//GameContents
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 
 	void SetHPUI(CUI_MonsterHP* pHP);
 	virtual void Update(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL);
-	void GetDamaage(int iDamage) { m_iCurrentHP -= iDamage; }
+	void GetDamaage(int iDamage);
 	void GetFullHP() { m_iCurrentHP = m_iMaxHP; }
 	///
 

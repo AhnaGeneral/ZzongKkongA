@@ -5,6 +5,7 @@ using namespace std;
 
 class CCollisionBox;
 class CPlayer;
+class CMonster;
 
 class CCollisionMgr
 {
@@ -39,9 +40,10 @@ public:
 
 	bool StaticCollisionCheck();
 	void MonsterAttackCheck(int iDamaege, CCollisionBox box, float fTimeElapsed);
-
-
+	void MonsterDamageCheck(int iDamage);
+		
 public:
 	list<BoundingOrientedBox> m_pStaticCollisionlist;
+	list<CMonster*>** m_pMonsterLists;
 };
 
