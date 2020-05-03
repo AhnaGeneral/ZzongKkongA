@@ -40,7 +40,7 @@ protected:
 	int					   m_nRightHandIndex = 25;
 
 //GameContents
-
+	int					   m_iState;
 	int				       m_iMaxHP ;
 	int				       m_iCurrentHP ;
 	int				       m_iAtt ;
@@ -67,6 +67,7 @@ public:
 	XMFLOAT3 GetUpVector() { return(m_xmf3Up); }
 	XMFLOAT3 GetRightVector() { return(m_xmf3Right); }
 
+	void SetAttackState();
 	void SetFriction(float fFriction) { m_fFriction = fFriction; }
 	void SetGravity(const XMFLOAT3& xmf3Gravity) { m_xmf3Gravity = xmf3Gravity; }
 	void SetMaxVelocityXZ(float fMaxVelocity) { m_fMaxVelocityXZ = fMaxVelocity; }

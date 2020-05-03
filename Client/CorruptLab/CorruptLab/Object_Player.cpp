@@ -43,6 +43,12 @@ CPlayer::~CPlayer()
 	if (m_pCamera) delete m_pCamera;
 }
 
+void CPlayer::SetAttackState()
+{
+	m_iState = JOHNSON_ANIAMATION_ATTACK;
+	//SetAnima
+}
+
 void CPlayer::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	if (m_pCamera) m_pCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -67,6 +73,7 @@ void CPlayer::UpdateCollisionBoxes(XMFLOAT4X4* world)
 
 void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
+	if (m_iState == JOHNSON_ANIAMATION_ATTACK) return;
 	if (dwDirection)
 	{
 		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
@@ -156,27 +163,41 @@ void CPlayer::Rotate(float x, float y, float z)
 
 void CPlayer::Update(float fTimeElapsed)
 {
-	if (::IsZero(m_fVelocityXZ))
-		SetAnimationSet(JOHNSON_ANIAMATION_IDLE);
-	else
-		SetAnimationSet(JOHNSON_ANIAMATION_WALK);
-
-	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Gravity, fTimeElapsed, false));
-	float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
-	float fMaxVelocityXZ = m_fMaxVelocityXZ * fTimeElapsed;
-	if (fLength >= 2.f)
+	if (m_iState == JOHNSON_ANIAMATION_ATTACK)
 	{
-		SetAnimationSet(JOHNSON_ANIAMATION_RUN);
-		m_xmf3Velocity.x *= (fMaxVelocityXZ / fLength);
-		m_xmf3Velocity.z *= (fMaxVelocityXZ / fLength);
+		SetAnimationSet(m_iState);
+		if (m_pChild->m_pAnimationController->m_pAnimationTracks->m_pAnimationSet->m_fPosition >= 0.7f)
+		{
+			m_iState = JOHNSON_ANIAMATION_IDLE;
+			m_pChild->m_pAnimationController->m_pAnimationTracks->m_pAnimationSet->m_fPosition = 0;
+		}
+		return;
 	}
-	float fMaxVelocityY = m_fMaxVelocityY * fTimeElapsed;
-	fLength = sqrtf(m_xmf3Velocity.y * m_xmf3Velocity.y);
-	if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
+	else
+	{
+		if (::IsZero(m_fVelocityXZ))
+			m_iState = JOHNSON_ANIAMATION_IDLE;  
+		else
+			m_iState = JOHNSON_ANIAMATION_WALK;  
 
-	Move(m_xmf3Velocity, false);
+		m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Gravity, fTimeElapsed, false));
+		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
+		float fMaxVelocityXZ = m_fMaxVelocityXZ * fTimeElapsed;
+		if (fLength >= 2.f)
+		{
+			m_xmf3Velocity.x *= (fMaxVelocityXZ / fLength);
+			m_xmf3Velocity.z *= (fMaxVelocityXZ / fLength);
+		}
+		float fMaxVelocityY = m_fMaxVelocityY * fTimeElapsed;
+		fLength = sqrtf(m_xmf3Velocity.y * m_xmf3Velocity.y);
+		if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
 
-	if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
+		Move(m_xmf3Velocity, false);
+
+		if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
+
+			SetAnimationSet(m_iState);
+	}
 
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
 	XMFLOAT3 pos = m_xmf3Position;
@@ -273,7 +294,7 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 
 	CGameObject* pGameObject =
 		CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
-			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson.bin", NULL, true);
+			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson_Attack.bin", NULL, true);
 
 
 	m_pSword = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
@@ -288,8 +309,10 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	m_pHandCollision = &(pGameObject->m_pBoundingBoxes[1]);
 	//pGameObject->m_xmf4Rotation
 
-	m_pSword->m_xmf4x4Transform = m_pDummy->m_xmf4x4Transform;
-
+	//m_pSword->m_xmf4x4Transform = m_pDummy->m_xmf4x4Transform;
+	m_pSword->m_xmf4x4Transform = Matrix4x4::Identity();
+	m_pSword->Rotate(0, 0, 180);
+	m_pSword->SetScale(2, 2, 2);
 	SetChild(pGameObject, true);
 
 	OnInitialize();
@@ -366,7 +389,7 @@ void CMainPlayer::Update(float fTimeElapsed)
 
 	if (m_pSword && m_pDummy)
 	{
-		m_pSword->m_xmf4x4World = m_pDummy->m_xmf4x4World;
+		m_pSword->UpdateTransform(&m_pDummy->m_xmf4x4World);
 	}
 	//SetAnimation();
 }
@@ -378,13 +401,13 @@ void CMainPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 }
 
 void CMainPlayer::SetAnimation()
-{
+{/*
 	if (::IsZero(m_fVelocityXZ))
 		SetAnimationSet(JOHNSON_ANIAMATION_IDLE);
 	else if (m_fVelocityXZ >= 1.3f)
 		SetAnimationSet(JOHNSON_ANIAMATION_RUN);
 	else
-		SetAnimationSet(JOHNSON_ANIAMATION_WALK);
+		SetAnimationSet(JOHNSON_ANIAMATION_WALK);*/
 }
 
 CPlayerCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapsed)

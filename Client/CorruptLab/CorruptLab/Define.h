@@ -82,7 +82,7 @@
 //---------------------------------------------------
 #define JOHNSON_ANIAMATION_IDLE			0
 #define JOHNSON_ANIAMATION_WALK			1
-#define JOHNSON_ANIAMATION_RUN			2
+#define JOHNSON_ANIAMATION_ATTACK		2
 
 /*ItemType*/
 //------------------------------------------------

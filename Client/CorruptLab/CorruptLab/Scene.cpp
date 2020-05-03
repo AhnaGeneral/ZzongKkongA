@@ -512,6 +512,9 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 		case 'H':
 			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]-=10.0f);
 			break;
+		case VK_SPACE:
+			m_pPlayer->SetAttackState();
+			break;
 		default:
 			break;
 		}
