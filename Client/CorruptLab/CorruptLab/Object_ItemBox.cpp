@@ -17,7 +17,7 @@ void CItemBox::Update(float fElapsedTime)
 		if (m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_fPosition >= 0.4f)
 		{
 			m_bAnimating = false;
-			CItemMgr::GetInstance()->GetItem(rand() % 3, GetPosition());
+			CItemMgr::GetInstance()->GetItem(rand() % 4, GetPosition());
 		}
 	}
 }

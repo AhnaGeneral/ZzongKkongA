@@ -17,7 +17,7 @@ public:
 	float	m_fElapsedTIme = 0.0f;
 	int		m_nItemType = 0;
 
-	CTexture* m_pItemTextures[3];
+	CTexture* m_pItemTextures[4]; // 알약, 지도, 손전등, 
 
 };
 

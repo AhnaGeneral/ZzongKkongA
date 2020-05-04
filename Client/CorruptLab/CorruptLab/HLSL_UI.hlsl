@@ -177,7 +177,7 @@ VS_BILLBOARD_INPUT VSMONSTERHP(VS_BILLBOARD_INPUT input)
 
 	//float4 PositionW = mul(float4(input.positionW, 1), gmtxGameObject);
 	output.positionW.x = gmtxGameObject._41;
-	output.positionW.y = gmtxGameObject._42 + (10 * input.sizeW.y);
+	output.positionW.y = gmtxGameObject._42 + (17 * input.sizeW.y);
 	output.positionW.z = gmtxGameObject._43;
 
 	output.sizeW = input.sizeW;
@@ -193,7 +193,7 @@ void MosnterHPGS(point VS_BILLBOARD_OUTPUT input[1], inout TriangleStream<GS_BIL
 	vLook = normalize(vLook);
 	float3 vRight = cross(vUP, vLook);
 
-	float fHalfW = input[0].sizeW.x * 0.5f;
+	float fHalfW = input[0].sizeW.x * 0.4f;
 	float fHalfH = input[0].sizeW.y * 0.5f;
 
 	float4 pVertices[4];

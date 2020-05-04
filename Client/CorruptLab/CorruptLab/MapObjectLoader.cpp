@@ -188,7 +188,7 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		hp->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		pGameObject->SetHPUI(hp);
 
-		float scale = xmf3Scale.x / 10.f;
+		float scale = xmf3Scale.x / 15.f;
 		XMFLOAT2 SCALE = XMFLOAT2(scale, scale / 10);
 		hp->SetInstanceInfo(SCALE, pd3dDevice, pd3dCommandList);
 
