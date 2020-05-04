@@ -2,6 +2,15 @@
 #include "Mgr_Collision.h"
 #include "Object_UI.h"
 
+CMonster::CMonster()
+{
+	m_iMaxHP = 100;
+	m_iCurrentHP = 80;
+	m_iAtt = 5;
+	m_bNotice = false;
+	m_fDistanceToPlayer = 0;
+}
+
 CMonster::~CMonster()
 {
 	m_HPUI->ReleaseShaderVariables();
@@ -14,6 +23,7 @@ void CMonster::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCame
 	CGameObject::Render(pd3dCommandList, pCamera, nPipelineState);
 	m_HPUI->UpdateTransform(&m_xmf4x4World);
 	m_HPUI->Render(pd3dCommandList, pCamera);
+
 }
 
 void CMonster::SetHPUI(CUI_MonsterHP* pHP)
@@ -25,6 +35,13 @@ void CMonster::SetHPUI(CUI_MonsterHP* pHP)
 
 void CMonster::Update(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
 {
+	if (!m_bNotice)
+	{
+		SetAnimationSet(0); // idle
+		if (m_fDistanceToPlayer < 70)
+			m_bNotice = true;
+	}
+	else SetAnimationSet(1); // walk
 	Animate(fTimeElapsed, pxmf4x4Parent);
 
 	UpdateCollisionBoxes(pxmf4x4Parent, &m_xmf4Rotation, &m_xmf3Scale);

@@ -620,6 +620,12 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 		{
 			for (auto Obj : *m_pMonsterLists[i])
 			{
+				XMFLOAT3 monsterpos = Obj->GetPosition();
+				XMFLOAT3 playerpos = m_pPlayer->GetPosition();
+				float Distance = Vector3::Length(Vector3::Subtract(monsterpos, playerpos));
+				Obj->SetDistanceToPlayer(Distance);
+				Obj->SetPlayerPosition(playerpos);
+
 				Obj->Update(m_fElapsedTime, NULL);
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 0);
@@ -657,11 +663,24 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 		{
 			for (auto Obj : *m_pStaticObjLists[i])
 			{
-				Obj->UpdateTransform(NULL);
+				//Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 1);
 			}
 		}
 	}
+
+	if (m_pMonsterLists) // ∏ÛΩ∫≈Õ Render
+	{
+		for (int i = 0; i < m_nMonsterTypeNum; i++)
+		{
+			for (auto Obj : *m_pMonsterLists[i])
+			{
+				
+				Obj->Render(pd3dCommandList, pCamera, 1);
+			}
+		}
+	}
+
 	m_pPlayer->Render(pd3dCommandList, pCamera, 1);
 }
 void CGameScene::Update(float fTimeElapsed)

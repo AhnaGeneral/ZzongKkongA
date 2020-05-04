@@ -47,10 +47,8 @@ void CCollisionMgr::MonsterDamageCheck(int iDamage)
 			for (auto Obj : *m_pMonsterLists[i])
 			{
 				if (!Obj->m_bRender || Obj->m_iState == MONSTER_STATE_STUN) continue;
-				XMFLOAT3 monsterpos = Obj->GetPosition();
-				XMFLOAT3 playerpos = m_pPlayer->GetPosition();
-				float Distance = Vector3::Length(Vector3::Subtract(monsterpos, playerpos));
-				if (Distance < 10)
+				
+				if (Obj->GetDistanceToPlayer() < 10)
 				{
 					Obj->GetDamaage(iDamage);
 				}

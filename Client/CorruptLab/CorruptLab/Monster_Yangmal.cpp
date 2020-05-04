@@ -11,6 +11,6 @@ void CYangmal::OnInitialize()
 
 void CYangmal::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
 {
-	SetAnimationSet(0);
+	//SetAnimationSet(1);
 	CGameObject::Animate(fTimeElapsed, NULL);
 }

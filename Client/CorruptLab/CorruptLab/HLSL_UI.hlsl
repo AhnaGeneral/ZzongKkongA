@@ -173,7 +173,7 @@ VS_BILLBOARD_INPUT VSMONSTERHP(VS_BILLBOARD_INPUT input)
 
 	//float4 PositionW = mul(float4(input.positionW, 1), gmtxGameObject);
 	output.positionW.x = gmtxGameObject._41;
-	output.positionW.y = gmtxGameObject._42 + (17 * input.sizeW.y);
+	output.positionW.y = gmtxGameObject._42 + (17 );
 	output.positionW.z = gmtxGameObject._43;
 
 	output.sizeW = input.sizeW;
