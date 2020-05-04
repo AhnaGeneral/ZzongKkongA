@@ -36,7 +36,7 @@ float CAnimationSet::GetPosition(float fPosition)
 	case ANIMATION_TYPE_LOOP:
 	{
 		fGetPosition = fPosition - int(fPosition / m_pfKeyFrameTransformTimes[m_nKeyFrameTransforms - 1]) * m_pfKeyFrameTransformTimes[m_nKeyFrameTransforms - 1];
-		//			fGetPosition = fPosition - int(fPosition / m_fLength) * m_fLength;
+				//	fGetPosition = fPosition - int(fPosition / m_fLength) * m_fLength;
 #ifdef _WITH_ANIMATION_INTERPOLATION			
 #else
 		m_nCurrentKey++;
@@ -46,7 +46,8 @@ float CAnimationSet::GetPosition(float fPosition)
 	}
 	case ANIMATION_TYPE_ONCE:
 	{
-		fGetPosition = fPosition - int(fPosition / m_pfKeyFrameTransformTimes[m_nKeyFrameTransforms - 1]) * m_pfKeyFrameTransformTimes[m_nKeyFrameTransforms - 1];		
+		//fGetPosition = fPosition - int(fPosition / m_pfKeyFrameTransformTimes[m_nKeyFrameTransforms - 1]) * m_pfKeyFrameTransformTimes[m_nKeyFrameTransforms - 1];		
+		fGetPosition = fPosition;
 		break;
 	}
 	case ANIMATION_TYPE_PINGPONG:
@@ -110,6 +111,15 @@ XMFLOAT4X4 CAnimationSet::GetSRT(int nFrame, float fPosition)
 #else
 	xmf4x4Transform = m_ppxmf4x4KeyFrameTransforms[m_nCurrentKey][nFrame];
 #endif
+	return(xmf4x4Transform);
+}
+
+XMFLOAT4X4 CAnimationSet::GetSRTSimple(int nFrame, int nPosition)
+{
+	XMFLOAT4X4 xmf4x4Transform = Matrix4x4::Identity();
+	XMVECTOR S0, R0, T0;
+	XMMatrixDecompose(&S0, &R0, &T0, XMLoadFloat4x4(&m_ppxmf4x4KeyFrameTransforms[nPosition][nFrame]));
+	XMStoreFloat4x4(&xmf4x4Transform, XMMatrixAffineTransformation(S0, XMVectorZero(), R0, T0));
 	return(xmf4x4Transform);
 }
 
@@ -184,12 +194,20 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHan
 
 				float fPositon = pAnimationSet->GetPosition(pAnimationSet->m_fPosition);
 
-				if (pAnimationSet->m_nType == ANIMATION_TYPE_ONCE && pAnimationSet->m_fPosition >= 0.4f)
-					return;
-
-				for (int i = 0; i < m_nAnimationBoneFrames; i++)
+				if (pAnimationSet->m_nType == ANIMATION_TYPE_ONCE && fPositon >= pAnimationSet->m_fLength-0.1f)
 				{
-					m_ppAnimationBoneFrameCaches[i]->m_xmf4x4Transform = pAnimationSet->GetSRT(i, fPositon);
+					for (int i = 0; i < m_nAnimationBoneFrames; i++)
+					{
+						m_ppAnimationBoneFrameCaches[i]->m_xmf4x4Transform = pAnimationSet->GetSRTSimple(i, pAnimationSet->m_nKeyFrameTransforms - 1);
+					}
+				}
+				else
+				{
+					for (int i = 0; i < m_nAnimationBoneFrames; i++)
+					{
+						m_ppAnimationBoneFrameCaches[i]->m_xmf4x4Transform = pAnimationSet->GetSRT(i, fPositon);
+					}
+
 				}
 			}
 		}

@@ -78,6 +78,8 @@
 #define MONSTER_STATE_WALK				1
 #define MONSTER_STATE_ATTACK			2
 #define MONSTER_STATE_STUN				3
+#define MONSTER_STATE_DAMAGEING			4
+#define MONSTER_STATE_RETURNING			5
 
 /*JohnsonAnimation*/
 //---------------------------------------------------

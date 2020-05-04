@@ -16,7 +16,7 @@ public:
 private:
 	static CCollisionMgr* m_pInstance ;
 	CPlayer* m_pPlayer = NULL;
-	float m_fTime = 0.0f;
+	float m_fTime = 0.5f;
 
 public:
 	void Initialize(void);

@@ -63,6 +63,7 @@ public:
 public:
 	float GetPosition(float fPosition);
 	XMFLOAT4X4 GetSRT(int nFrame, float fPosition);
+	XMFLOAT4X4 GetSRTSimple(int nFrame, int nPosition);
 
 	void SetCallbackKeys(int nCallbackKeys);
 	void SetCallbackKey(int nKeyIndex, float fTime, void* pData);

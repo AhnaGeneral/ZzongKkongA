@@ -13,4 +13,3 @@ public:
 private:
 	CGameObject* m_pNeck = NULL;
 };
-

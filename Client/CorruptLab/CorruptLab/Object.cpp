@@ -240,6 +240,9 @@ void CGameObject::Rotate(float fPitch, float fYaw, float fRoll)
 	XMMATRIX mtxRotate = XMMatrixRotationRollPitchYaw(XMConvertToRadians(fPitch), XMConvertToRadians(fYaw), XMConvertToRadians(fRoll));
 	m_xmf4x4Transform = Matrix4x4::Multiply(mtxRotate, m_xmf4x4Transform);
 	UpdateTransform(NULL);
+
+	if (XMMatrixIsNaN(XMLoadFloat4x4(&m_xmf4x4World)))
+		int a = 0;
 }
 
 void CGameObject::Rotate(XMFLOAT3* pxmf3Axis, float fAngle)
@@ -275,11 +278,11 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	m_bRender = true;
 	if (m_pBoundingBoxes)
 	{
-		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
+		//m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
 		for (int i = 0; i < m_nBoundingBoxes; i++)
 		{
 			m_pBoundingBoxes[i].Update(&m_xmf4x4World);
-			m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
+			//m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
 			if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox))
 			{
 				SetParentRenderState(false);
@@ -515,12 +518,17 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 	BYTE nStrLength = 0;
 	char pstrToken[64] = { '\0' };
 
-
 	(UINT)::fread(&nStrLength, sizeof(BYTE), 1, pInFile);
 	(UINT)::fread(pstrToken, sizeof(char), nStrLength, pInFile);
 
 	pstrToken[nStrLength] = '\0';
+	if (!strcmp(pstrToken, "</AnimationSets>"))
+	{
+		(UINT)::fread(&nStrLength, sizeof(BYTE), 1, pInFile);
+		(UINT)::fread(pstrToken, sizeof(char), nStrLength, pInFile);
 
+		pstrToken[nStrLength] = '\0';
+	}
 	if (!strcmp(pstrToken, "<Bounds>:"))
 	{
 		m_pCollisionBoxShader = new Shader_CollisionBox();
@@ -758,7 +766,7 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile)
 
 	BYTE nStrLength = 0;
 	UINT nReads = 0;
-
+	int nAnimations = 0;
 	for (; ; )
 	{
 		nReads = (UINT)::fread(&nStrLength, sizeof(BYTE), 1, pInFile);
@@ -798,6 +806,7 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile)
 		}
 		else if (!strcmp(pstrToken, "<AnimationSet>:"))
 		{
+			nAnimations++;
 			int nAnimationSet = 0;
 			nReads = (UINT)::fread(&nAnimationSet, sizeof(int), 1, pInFile);
 			CAnimationSet* pAnimationSet = &m_pAnimationController->m_pAnimationSets[nAnimationSet];
@@ -841,6 +850,9 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile)
 		{
 			break;
 		}
+
+		if (nAnimations == m_pAnimationController->m_nAnimationSets)
+			break;
 	}
 }
 

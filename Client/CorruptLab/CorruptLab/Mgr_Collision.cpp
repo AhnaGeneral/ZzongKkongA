@@ -25,11 +25,10 @@ bool CCollisionMgr::StaticCollisionCheck()
 void CCollisionMgr::MonsterAttackCheck(int iDamaege, CCollisionBox box, float fTimeElapsed)
 {
 	CCollisionBox* playerBodybox = m_pPlayer->m_pBodyCollision;
-
+	m_fTime += fTimeElapsed;
 
 	if (box.boundingBox.Intersects(playerBodybox->boundingBox))
 	{
-		m_fTime += fTimeElapsed;
 		if (m_fTime > 0.5f)
 		{
 			m_pPlayer->GetDamaage(iDamaege);
@@ -46,7 +45,7 @@ void CCollisionMgr::MonsterDamageCheck(int iDamage)
 		{
 			for (auto Obj : *m_pMonsterLists[i])
 			{
-				if (!Obj->m_bRender || Obj->m_iState == MONSTER_STATE_STUN) continue;
+				if (!Obj->m_bRender || Obj->m_iState == MONSTER_STATE_STUN || Obj->m_iState == MONSTER_STATE_DAMAGEING) continue;
 				
 				if (Obj->GetDistanceToPlayer() < 10)
 				{

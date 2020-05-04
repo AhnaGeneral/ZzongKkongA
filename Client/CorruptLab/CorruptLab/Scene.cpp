@@ -574,6 +574,18 @@ bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 
 void CGameScene::AnimateObjects(float fTimeElapsed)
 {
+
+	if (m_pMonsterLists) // ∏ÛΩ∫≈Õ Render
+	{
+		for (int i = 0; i < m_nMonsterTypeNum; i++)
+		{
+			for (auto Obj : *m_pMonsterLists[i])
+			{
+				Obj->Animate(fTimeElapsed, NULL);
+			}
+		}
+	}
+
 }
 
 void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)

@@ -1,5 +1,5 @@
 #include "Monster_Yangmal.h"
-
+#include "Animation.h"
 void CYangmal::OnInitialize()
 {
 
@@ -12,5 +12,13 @@ void CYangmal::OnInitialize()
 void CYangmal::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
 {
 	//SetAnimationSet(1);
-	CGameObject::Animate(fTimeElapsed, NULL);
+	switch (m_iState)
+	{
+	case MONSTER_STATE_STUN:
+		if (m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_fPosition >= m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_fLength)
+			return;
+	default:
+		CGameObject::Animate(fTimeElapsed, NULL);
+		break;
+	}
 }
