@@ -255,11 +255,11 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	m_bRender = true;
 	if (m_pBoundingBoxes)
 	{
-		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
+		//m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
 		for (int i = 0; i < m_nBoundingBoxes; i++)
 		{
 			m_pBoundingBoxes[i].Update(&m_xmf4x4World);
-			m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
+			//m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
 			if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox))
 			{
 				SetParentRenderState(false);
@@ -523,7 +523,7 @@ void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 
 			m_pBoundingBoxes[i].BuildBuffer(pd3dDevice, pd3dCommandList, NULL);
 		}
-		m_pCollisionBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
+		m_pCollisionBoxShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 		m_pCollisionBoxShader->BuildObjects(pd3dDevice, pd3dCommandList);
 	}
 

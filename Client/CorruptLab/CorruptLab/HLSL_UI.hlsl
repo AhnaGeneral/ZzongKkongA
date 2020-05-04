@@ -1,7 +1,5 @@
 #include "HLSL_MRT.hlsl"
 
-Texture2D gtxtRootUITexture : register(t25);
-Texture2D gtxtHandLighTexture : register(t26);
 
 //[PSHP]================================================================================
 float4 PSHP(VS_TEXTURED_OUTPUT input ): SV_TARGET
@@ -23,8 +21,6 @@ cbuffer cbPlayerHPRemaining : register(b8) // 플레이어
 	uint          gfremainingHP :packoffset(c0);
 }
 
-Texture2D gtxtHPKitdTexture : register(t27);
-Texture2D gtxtPillddsTexture : register(t28);
 
 //[ITEM]================================================================================
 float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET

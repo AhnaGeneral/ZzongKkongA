@@ -331,7 +331,6 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 		m_pd3dOffScreenRenderTargetBufferCPUHandles[0]);
 	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 
-
 	m_pd3dOffScreenRenderTargetBufferCPUHandles[1] = d3dRtvCPUDescriptorHandle;
 	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(1), &d3dRenderTargetViewDesc,
 		m_pd3dOffScreenRenderTargetBufferCPUHandles[1]);
@@ -355,9 +354,14 @@ void CGameFramework::CreateOffScreenRenderTargetViews()
 		m_pd3dOffScreenRenderTargetBufferCPUHandles[4]);
 	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
 
+	m_pd3dOffScreenRenderTargetBufferCPUHandles[5] = d3dRtvCPUDescriptorHandle;
+	m_pd3dDevice->CreateRenderTargetView(pTextureForPostProcessing->GetTexture(5), &d3dRenderTargetViewDesc,
+		m_pd3dOffScreenRenderTargetBufferCPUHandles[5]);
+	d3dRtvCPUDescriptorHandle.ptr += m_nRtvDescriptorIncrementSize; // 128 
+
 	m_pPostProcessingShader = new CPostProcessingByLaplacianShader();
 	m_pPostProcessingShader->CreateGraphicsRootSignature(m_pd3dDevice);
-	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pPostProcessingShader->GetGraphicsRootSignature(), 5);
+	m_pPostProcessingShader->CreateShader(m_pd3dDevice, m_pPostProcessingShader->GetGraphicsRootSignature(), FINAL_MRT_COUNT);
 	m_pPostProcessingShader->SetRenderTargets(m_pd3dDevice, m_pd3dCommandList, pTextureForPostProcessing, NULL, NULL);
 
 

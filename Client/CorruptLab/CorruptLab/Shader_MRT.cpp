@@ -90,34 +90,34 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	D3D12_DESCRIPTOR_RANGE pd3dDescriptorRanges[3];
 
 	pd3dDescriptorRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dDescriptorRanges[0].NumDescriptors = 5;
+	pd3dDescriptorRanges[0].NumDescriptors = 6;
 	pd3dDescriptorRanges[0].BaseShaderRegister = 1; //Texture[]
 	pd3dDescriptorRanges[0].RegisterSpace = 0;
 	pd3dDescriptorRanges[0].OffsetInDescriptorsFromTableStart = 0;
 
 	pd3dDescriptorRanges[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[1].NumDescriptors = 1;
-	pd3dDescriptorRanges[1].BaseShaderRegister = 20; //LightTexture
+	pd3dDescriptorRanges[1].BaseShaderRegister = 21; //LightTexture
 	pd3dDescriptorRanges[1].RegisterSpace = 0;
 	pd3dDescriptorRanges[1].OffsetInDescriptorsFromTableStart = 0;
 
 	pd3dDescriptorRanges[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dDescriptorRanges[2].NumDescriptors = 1;
-	pd3dDescriptorRanges[2].BaseShaderRegister = 23; //ShadowMap
+	pd3dDescriptorRanges[2].BaseShaderRegister = 24; //ShadowMap
 	pd3dDescriptorRanges[2].RegisterSpace = 0;
 	pd3dDescriptorRanges[2].OffsetInDescriptorsFromTableStart = 0;
 
 	D3D12_DESCRIPTOR_RANGE pd3dHPTextureRanges;
 	pd3dHPTextureRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dHPTextureRanges.NumDescriptors = 1;
-	pd3dHPTextureRanges.BaseShaderRegister = 25;
+	pd3dHPTextureRanges.BaseShaderRegister = 26;
 	pd3dHPTextureRanges.RegisterSpace = 0;
 	pd3dHPTextureRanges.OffsetInDescriptorsFromTableStart = 0;
 
 	D3D12_DESCRIPTOR_RANGE pd3dItemTextureRanges;
 	pd3dItemTextureRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dItemTextureRanges.NumDescriptors = 3;
-	pd3dItemTextureRanges.BaseShaderRegister = 26;
+	pd3dItemTextureRanges.BaseShaderRegister = 27;
 	pd3dItemTextureRanges.RegisterSpace = 0;
 	pd3dItemTextureRanges.OffsetInDescriptorsFromTableStart = 0;
 
@@ -293,7 +293,7 @@ void CPostProcessingShader::SetRenderTargets(ID3D12Device* pd3dDevice, ID3D12Gra
 	if (pContext != NULL)
 	{
 		m_pTexture = (CTexture*)pContext;
-		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 7);
+		CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 8);
 		CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTexture, ROOT_PARAMETER_CDN_MRT, true);
 	}
@@ -323,7 +323,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	// [ 다중랜더타겟 텍스쳐 ] ===============================================================================
 	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 5.5f, FRAME_BUFFER_HEIGHT / 5.5f, 0.0f, 1.0f);
-	m_nRenderTargetUI = 6;
+	m_nRenderTargetUI = 7;
 	m_pRenderTargetUIs = new CGameObject * [m_nRenderTargetUI];
 
 	for (int i = 0; i < m_nRenderTargetUI;)
@@ -350,7 +350,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	m_pBaseUIShader = new CShader_BaseUI();
 	m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 5);
-	m_pBaseUIShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 5);
+	m_pBaseUIShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
 	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)m_pHPTexture, ROOT_PARAMETER_HP_TEX, true);
 
 	m_HPBAR = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
@@ -428,7 +428,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	m_pItemShader = new CShader_Item();
 	m_pItemShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 3);
-	m_pItemShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 5);
+	m_pItemShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
     m_pItemShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTex, ROOT_PARAMETER_ITEM_TEX, true);
 
 	for (int i = 0; i < int(nIventoryCount);)
@@ -463,7 +463,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	m_pRadiationShader = new CShader_Radiation();
 	m_pRadiationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 1);
-	m_pRadiationShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 5);
+	m_pRadiationShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
 	m_pRadiationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pRadiationCountTexture, ROOT_PARAMETER_HP_TEX, true);
 
 	m_RadiationLevels = new CGameObject*[2];
