@@ -41,18 +41,22 @@ PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 	float weight = 0;
 	//±Û·Î¿ì¸Ê
 	
-	for (int i = 0; i < 4; i++)
-	{
-		weight = ((7 - i) * (7- i) / 3);
-		for (int j = 0; j < 9; j++)
-		{
-			float4 cNonLight = gtxtNonLightNoise[int2(position.xy) + (gnOffsets[j] * i)];
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	weight = ((7 - i) * (7- i) / 3);
+	//	for (int j = 0; j < 9; j++)
+	//	{
+	//		float4 cNonLight = gtxtNonLightNoise[int2(position.xy) + (gnOffsets[j] * i)];
 
-			if (cNonLight.r == 22.0f/255.0f && cNonLight.g == 138.0f / 255.0f&
-				cNonLight.b == 139.0f/255.0f)
-				output.Light += cNonLight * weight;
-		}
-	}
+	//		if (cNonLight.r == 22.0f/255.0f && cNonLight.g == 138.0f / 255.0f&
+	//			cNonLight.b == 139.0f/255.0f)  // Å« Àüº¿´ë ? 
+	//			output.Light += cNonLight * weight;
+
+	//		//if (cNonLight.r == 0.0f / 255.0f && cNonLight.g == 194.0f / 255.0f &
+	//		//	cNonLight.b == 183.0f / 255.0f) // Ä®
+	//		//	output.Light += float4(0.0f, 0.0f, 1.0f,1.0f) * weight; 
+	//	}
+	//}
 
 	return output;
 

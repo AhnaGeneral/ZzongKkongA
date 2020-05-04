@@ -411,7 +411,7 @@ CUI_MonsterHP::CUI_MonsterHP(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList
 
 void CUI_MonsterHP::SetInstanceInfo( XMFLOAT2 Scale, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	InstanceInfo.m_xmf3Position = XMFLOAT3(0, 10 * Scale.x, 0);
+	InstanceInfo.m_xmf3Position = XMFLOAT3(0, 20.0f  * Scale.x, 0);
 	InstanceInfo.m_xmf2Size = Scale;
 
 	m_pd3dPositionBuffer =

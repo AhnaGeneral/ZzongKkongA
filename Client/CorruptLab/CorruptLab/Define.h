@@ -89,6 +89,8 @@
 #define ITEM_TYPE_HANDLIGHT				0
 #define ITEM_TYPE_HPKIT					1
 #define ITEM_TYPE_PILL					2
+#define ITEM_TYPE_MAPSEGMENT			3
+
 
 /*CameraCullRange*/
 #define CAMERA_CULL_RANGE				300	

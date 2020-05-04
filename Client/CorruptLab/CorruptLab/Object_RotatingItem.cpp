@@ -5,21 +5,25 @@
 CRotatingItem::CRotatingItem(ID3D12Device* pd3dDevice,
 	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 4; i++)
 		m_pItemTextures[i] = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 
 	m_pItemTextures[ITEM_TYPE_HANDLIGHT]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HandLight.dds", 0);
 	m_pItemTextures[ITEM_TYPE_HPKIT]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HP_Kit.dds", 0);
 	m_pItemTextures[ITEM_TYPE_PILL]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/Pill.dds", 0);
+	m_pItemTextures[ITEM_TYPE_MAPSEGMENT]->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/MapSegment.dds", 0);
 
 	CTriangleRect* pMesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 3, 3, 0, 1.f);
 	SetMesh(pMesh);
+
 	CBillboardUIShader* pShader = new CBillboardUIShader();
 	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
-	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 3);
+	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 4);
 	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTextures[ITEM_TYPE_HANDLIGHT], ROOT_PARAMETER_ALBEDO_TEX,0);
 	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTextures[ITEM_TYPE_HPKIT], ROOT_PARAMETER_ALBEDO_TEX, 0);
 	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTextures[ITEM_TYPE_PILL], ROOT_PARAMETER_ALBEDO_TEX, 0);
+	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTextures[ITEM_TYPE_MAPSEGMENT], ROOT_PARAMETER_ALBEDO_TEX, 0);
+
 	SetShader(pShader);
 
 	//SetPosition(XMFLOAT3(464.0f, 40.0f, 354.0f));
@@ -61,7 +65,7 @@ void CRotatingItem::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
 	Rotate(0, fTimeElapsed * 200, 0);
 	MoveUp(fTimeElapsed * 4);
 
-	if (m_fElapsedTIme >1.5f)
+	if (m_fElapsedTIme > 1.5f)
 	{
 		m_fElapsedTIme = 0.0f;
 		m_bAnimate = false;
