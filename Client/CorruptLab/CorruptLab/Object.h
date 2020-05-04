@@ -34,7 +34,7 @@ public:
 	virtual ~CGameObject();
 
 public:
-
+	bool							m_bRender = true;
 	int								m_nBoundingBoxes;
 	CCollisionBox                 * m_pBoundingBoxes = NULL;
 
@@ -67,6 +67,7 @@ public:
 	void CreateMaterial();
 	void SetShader(int nMaterial, CShader* pShader);
 	void SetMaterial(int nMaterial, CMaterial* pMaterial);
+	void SetParentRenderState(bool bRender);
 
 	void SetChild(CGameObject* pChild, bool bReferenceUpdate = false);
 

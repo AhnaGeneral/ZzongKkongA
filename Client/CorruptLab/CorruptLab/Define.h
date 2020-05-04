@@ -77,6 +77,7 @@
 #define MONSTER_STATE_IDLE				0
 #define MONSTER_STATE_WALK				1
 #define MONSTER_STATE_ATTACK			2
+#define MONSTER_STATE_STUN				3
 
 /*JohnsonAnimation*/
 //---------------------------------------------------

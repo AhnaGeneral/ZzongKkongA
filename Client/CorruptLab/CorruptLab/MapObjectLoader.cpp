@@ -63,7 +63,7 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	CGameObject* pYangmalModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Yangmal.bin", NULL, true);
 	PlaceMonsterFromFile(pYangmalModel, "ObjectsData/Yangmals.bin", MONSTER_TYPE_YANGMAL, pd3dDevice,pd3dCommandList);
 
-
+	CCollisionMgr::GetInstance()->m_pMonsterLists = m_pMonsterLists;
 }
 
 void CGameScene::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, int index)
