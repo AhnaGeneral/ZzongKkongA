@@ -42,18 +42,22 @@ PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 
 	if (!gtxtEmmisive[int2(position.xy)].g)
 	{
+		float4 GlowColor = float4(0, 0 , 0, 0);
 		for (int i = 0; i < 3; i++)
 		{
 			weight = ((7 - i) * (7 - i) / 3);
 			for (int j = 0; j < 9; j++)
 			{
 				float4 cEmmisive = gtxtEmmisive[int2(position.xy) + (gnOffsets[j] * i)];
-
+				int Depth =  3 - (gtxtDepth[int2(position.xy) + (gnOffsets[j] * i)].y  * 3);
 				//if (cEmmisive.g)
-					output.Light += cEmmisive * weight;
+				GlowColor += cEmmisive * Depth;
 			}
+			GlowColor /= 3;
 		}
+		output.Light += GlowColor;
 	}
+
 	return output;
 
 }

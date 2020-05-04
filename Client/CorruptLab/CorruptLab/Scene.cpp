@@ -626,7 +626,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 				Obj->SetDistanceToPlayer(Distance);
 				Obj->SetPlayerPosition(playerpos);
 
-				Obj->Update(m_fElapsedTime, NULL);
+				Obj->Update(m_fElapsedTime, NULL, m_pTerrain);
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 0);
 			}

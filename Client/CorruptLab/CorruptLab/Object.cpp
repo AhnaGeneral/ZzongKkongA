@@ -98,6 +98,26 @@ CCollisionBox* CGameObject::GetCollisionBoxes()
 	return NULL;
 }
 
+XMFLOAT4 CGameObject::GetRotateQuaternion(float Scale, XMFLOAT4X4& world)
+{
+	XMFLOAT4X4 RotateMat;
+	XMFLOAT4X4 inverse = Matrix4x4::Identity();
+
+	inverse._41 = world._41;
+	inverse._42 = world._42;
+	inverse._43 = world._43;
+	inverse = Matrix4x4::Inverse(inverse);
+	RotateMat = Matrix4x4::Multiply(world, inverse);
+	inverse = Matrix4x4::Identity();
+
+	XMFLOAT4X4 mtxScale = Matrix4x4::Inverse(Matrix4x4::Scale(inverse, Scale));
+	RotateMat = Matrix4x4::Multiply(mtxScale, RotateMat);
+	XMFLOAT4 Quart;
+	XMStoreFloat4(&Quart, XMQuaternionRotationMatrix(XMLoadFloat4x4(&RotateMat)));
+
+	return Quart;
+}
+
 void CGameObject::SetMesh(CMesh* pMesh)
 {
 	if (m_pMesh) m_pMesh->Release();
@@ -255,11 +275,11 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	m_bRender = true;
 	if (m_pBoundingBoxes)
 	{
-		//m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
+		m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
 		for (int i = 0; i < m_nBoundingBoxes; i++)
 		{
 			m_pBoundingBoxes[i].Update(&m_xmf4x4World);
-			//m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
+			m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
 			if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox))
 			{
 				SetParentRenderState(false);
@@ -863,7 +883,7 @@ void CCollisionBox::Update(XMFLOAT4X4* Parentworld, XMFLOAT4* ParentOrientation,
 
 	XMFLOAT4 Position = XMFLOAT4(m_Center.x, m_Center.y, m_Center.z, 1);
 	Position = Vector4::MultiflyMATRIX(Position, world);
-
+	
 	XMFLOAT4 orientation = m_Orientation;
 	
 	if (ParentOrientation) orientation = *ParentOrientation;

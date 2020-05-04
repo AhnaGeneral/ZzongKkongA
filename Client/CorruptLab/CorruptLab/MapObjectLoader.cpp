@@ -193,7 +193,7 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		hp->SetInstanceInfo(SCALE, pd3dDevice, pd3dCommandList);
 
 		pGameObject->m_xmf4Rotation = xmf4Rotation;
-		pGameObject->m_xmf3Scale = Vector3::ScalarProduct(xmf3Scale, 0.5f, false);
+		pGameObject->m_xmf3Scale = xmf3Scale; // Vector3::ScalarProduct(xmf3Scale, 0.5f, false);
 		pGameObject->m_xmf4x4Transform = xmmtxWorld;
 		pGameObject->SetScale(2, 2, 2);
 

@@ -17,6 +17,7 @@ protected:
 	int				m_iAtt ;
 	bool			m_bNotice ;
 	float			m_fDistanceToPlayer;
+	float			m_fSpeed;
 	XMFLOAT3		m_xmf3PlayerPosition;
 
 	CCollisionBox*	m_pAttCollision;
@@ -33,7 +34,7 @@ public:
 	inline float GetDistanceToPlayer() { return m_fDistanceToPlayer; }
 	inline void SetPlayerPosition(const XMFLOAT3& pos) { m_xmf3PlayerPosition = pos; }
 	void SetHPUI(CUI_MonsterHP* pHP);
-	virtual void Update(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL);
+	virtual void Update(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
 	void GetDamaage(int iDamage);
 	void GetFullHP() { m_iCurrentHP = m_iMaxHP; }
 	///
