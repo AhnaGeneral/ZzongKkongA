@@ -162,66 +162,66 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 
 	pd3dMaterialTexRanges[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dMaterialTexRanges[0].NumDescriptors = 1;
-	pd3dMaterialTexRanges[0].BaseShaderRegister = 6; //t4: gtxtAlbedoTexture
+	pd3dMaterialTexRanges[0].BaseShaderRegister = 7; //t4: gtxtAlbedoTexture
 	pd3dMaterialTexRanges[0].RegisterSpace = 0;
 	pd3dMaterialTexRanges[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	pd3dMaterialTexRanges[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dMaterialTexRanges[1].NumDescriptors = 1;
-	pd3dMaterialTexRanges[1].BaseShaderRegister = 7; //t7: gtxtSpecularTexture
+	pd3dMaterialTexRanges[1].BaseShaderRegister = 8; //t7: gtxtSpecularTexture
 	pd3dMaterialTexRanges[1].RegisterSpace = 0;
 	pd3dMaterialTexRanges[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	pd3dMaterialTexRanges[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dMaterialTexRanges[2].NumDescriptors = 1;
-	pd3dMaterialTexRanges[2].BaseShaderRegister = 8; //t8: gtxtNormalTexture
+	pd3dMaterialTexRanges[2].BaseShaderRegister = 9; //t8: gtxtNormalTexture
 	pd3dMaterialTexRanges[2].RegisterSpace = 0;
 	pd3dMaterialTexRanges[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	pd3dMaterialTexRanges[3].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dMaterialTexRanges[3].NumDescriptors = 1;
-	pd3dMaterialTexRanges[3].BaseShaderRegister = 9; //t9: gtxtMetallicTexture
+	pd3dMaterialTexRanges[3].BaseShaderRegister = 10; //t9: gtxtMetallicTexture
 	pd3dMaterialTexRanges[3].RegisterSpace = 0;
 	pd3dMaterialTexRanges[3].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	pd3dMaterialTexRanges[4].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dMaterialTexRanges[4].NumDescriptors = 1;
-	pd3dMaterialTexRanges[4].BaseShaderRegister = 10; //t10: gtxtEmissionTexture
+	pd3dMaterialTexRanges[4].BaseShaderRegister = 11; //t10: gtxtEmissionTexture
 	pd3dMaterialTexRanges[4].RegisterSpace = 0;
 	pd3dMaterialTexRanges[4].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dSkyTexRange;
 	pd3dSkyTexRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dSkyTexRange.NumDescriptors = 1;
-	pd3dSkyTexRange.BaseShaderRegister = 11; // t13:gtxtSkyCubeTexture
+	pd3dSkyTexRange.BaseShaderRegister = 12; // t13:gtxtSkyCubeTexture
 	pd3dSkyTexRange.RegisterSpace = 0;
 	pd3dSkyTexRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dCloudTexRange;
 	pd3dCloudTexRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dCloudTexRange.NumDescriptors = 1;
-	pd3dCloudTexRange.BaseShaderRegister = 12; // t14:gtxtCloudTexture
+	pd3dCloudTexRange.BaseShaderRegister = 13; // t14:gtxtCloudTexture
 	pd3dCloudTexRange.RegisterSpace = 0;
 	pd3dCloudTexRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dNoiseTexRanges;  // ( 12~14 ) firenosie 
 	pd3dNoiseTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dNoiseTexRanges.NumDescriptors = 3; 
-	pd3dNoiseTexRanges.BaseShaderRegister = 13;
+	pd3dNoiseTexRanges.BaseShaderRegister = 14;
 	pd3dNoiseTexRanges.RegisterSpace = 0;
 	pd3dNoiseTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dFogTexRanges;    //( 15 ~ 17 ) Fognoise
 	pd3dFogTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dFogTexRanges.NumDescriptors = 3;
-	pd3dFogTexRanges.BaseShaderRegister = 16;
+	pd3dFogTexRanges.BaseShaderRegister = 17;
 	pd3dFogTexRanges.RegisterSpace = 0;
 	pd3dFogTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dWaterTexRanges;  // ( 18 ) waternoise
 	pd3dWaterTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dWaterTexRanges.NumDescriptors = 1; 
-	pd3dWaterTexRanges.BaseShaderRegister = 19;
+	pd3dWaterTexRanges.BaseShaderRegister = 20;
 	pd3dWaterTexRanges.RegisterSpace = 0;
 	pd3dWaterTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -235,14 +235,14 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	D3D12_DESCRIPTOR_RANGE pd3dShadowMapTex; // ( 50 ~ 62 ) onsstageterrain
 	pd3dShadowMapTex.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dShadowMapTex.NumDescriptors = 1;
-	pd3dShadowMapTex.BaseShaderRegister = 21;
+	pd3dShadowMapTex.BaseShaderRegister = 22;
 	pd3dShadowMapTex.RegisterSpace = 0;
 	pd3dShadowMapTex.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	D3D12_DESCRIPTOR_RANGE pd3dSceneDepthTex; // ( 50 ~ 62 ) onsstageterrain
 	pd3dSceneDepthTex.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dSceneDepthTex.NumDescriptors = 1;
-	pd3dSceneDepthTex.BaseShaderRegister = 22;
+	pd3dSceneDepthTex.BaseShaderRegister = 23;
 	pd3dSceneDepthTex.RegisterSpace = 0;
 	pd3dSceneDepthTex.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -620,6 +620,12 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 		{
 			for (auto Obj : *m_pMonsterLists[i])
 			{
+				XMFLOAT3 monsterpos = Obj->GetPosition();
+				XMFLOAT3 playerpos = m_pPlayer->GetPosition();
+				float Distance = Vector3::Length(Vector3::Subtract(monsterpos, playerpos));
+				Obj->SetDistanceToPlayer(Distance);
+				Obj->SetPlayerPosition(playerpos);
+
 				Obj->Update(m_fElapsedTime, NULL);
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 0);
@@ -657,11 +663,24 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 		{
 			for (auto Obj : *m_pStaticObjLists[i])
 			{
-				Obj->UpdateTransform(NULL);
+				//Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 1);
 			}
 		}
 	}
+
+	if (m_pMonsterLists) // ∏ÛΩ∫≈Õ Render
+	{
+		for (int i = 0; i < m_nMonsterTypeNum; i++)
+		{
+			for (auto Obj : *m_pMonsterLists[i])
+			{
+				
+				Obj->Render(pd3dCommandList, pCamera, 1);
+			}
+		}
+	}
+
 	m_pPlayer->Render(pd3dCommandList, pCamera, 1);
 }
 void CGameScene::Update(float fTimeElapsed)

@@ -57,34 +57,40 @@ SamplerState gSamplerClamp : register(s1);
 Texture2D gtxtScene : register(t1);  // 0  
 Texture2D gtxtNormal : register(t2); // 1
 Texture2D gtxtDepth : register(t3);  // 2 
-//T4번이 빈다.
-
+//Texture2D gtxtT4RenderTarget : register(t4);
 Texture2D gtxtNonLightNoise : register(t5); // 4 
+Texture2D gtxtEmmisive : register(t6); // 4 
 
 
-Texture2D gtxtLight : register(t20);
-Texture2D gtxtShadowCameraTexture : register(t21);
 
-Texture2D gtxtAlbedoTexture : register(t6);
-Texture2D gtxtSpecularTexture : register(t7);
-Texture2D gtxtNormalTexture : register(t8);
-Texture2D gtxtMetallicTexture : register(t9);
-Texture2D gtxtEmissionTexture : register(t10);
+Texture2D gtxtLight : register(t21);
+Texture2D gtxtShadowCameraTexture : register(t22);
 
-TextureCube gtxtSkyCubeTexture : register(t11);
-Texture2D gtxCloudTextures : register(t12);
+Texture2D gtxtAlbedoTexture : register(t7);
+Texture2D gtxtSpecularTexture : register(t8);
+Texture2D gtxtNormalTexture : register(t9);
+Texture2D gtxtMetallicTexture : register(t10);
+Texture2D gtxtEmissionTexture : register(t11);
 
-Texture2D gtxtBaseColorNoiseTex : register(t13);
-Texture2D gtxtAlphaNoiseTex : register(t14);
-Texture2D gtxtNoiseTex : register(t15);
+TextureCube gtxtSkyCubeTexture : register(t12);
+Texture2D gtxCloudTextures : register(t13);
 
-Texture2D gtxtFinalAlpha : register(t16);
-Texture2D gtxtAlpha01 : register(t17);
-Texture2D gtxtAlpha02 : register(t18);
+Texture2D gtxtBaseColorNoiseTex : register(t14);
+Texture2D gtxtAlphaNoiseTex : register(t15);
+Texture2D gtxtNoiseTex : register(t16);
 
-Texture2D gtxtWaterNormal : register(t19);
-Texture2D gtxtCopySunTex : register(t23); // 썬카메라를 새롭게 리소스 만들었어요
+Texture2D gtxtFinalAlpha : register(t17);
+Texture2D gtxtAlpha01 : register(t18);
+Texture2D gtxtAlpha02 : register(t19);
 
+Texture2D gtxtWaterNormal : register(t20);
+Texture2D gtxtCopySunTex : register(t24); // 썬카메라를 새롭게 리소스 만들었어요
+Texture2D gtxtLobbyTex : register(t25); // 썬카메라를 새롭게 리소스 만들었어요
+
+Texture2D gtxtRootUITexture : register(t26);
+Texture2D gtxtHandLighTexture : register(t27);
+Texture2D gtxtHPKitdTexture : register(t28);
+Texture2D gtxtPillddsTexture : register(t29);
 
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
@@ -93,6 +99,8 @@ struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 	float4 depth        : SV_TARGET2;
 	float4 ShadowCamera : SV_TARGET3;
 	float4 NonLight		: SV_TARGET4;
+	float4 EmmisiveMRT	: SV_TARGET5;
+
 };
 struct PS_NONLIGHT_MRT_OUTPUT
 {

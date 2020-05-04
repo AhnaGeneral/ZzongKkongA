@@ -22,8 +22,6 @@ class CGameObject
 private:
 	int								m_nReferences = 0;
 
-	XMFLOAT3                      * m_xmf3AABBCenter;
-	XMFLOAT3                      * m_xmf3AABBExtents;
 
 public:
 	void AddRef();

@@ -18,12 +18,14 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	float fDepth = gtxtDepth[int2(position.xy)].r;
 	float4 fLighted = gtxtLight[int2(position.xy)];
 	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
+	float4 cEmmisive = gtxtEmmisive[int2(position.xy)];
+
 
     cColor = lerp(cColor, fLighted, 0.6f);
 	float4 cFogColor = float4(0.15f, 0.15f, 0.15f,1.f);
 	
 	//cColor = lerp(cColor, cFogColor, fDepth * 5);
-	cColor = cColor + cNonLight; 
+	cColor = cColor + cNonLight + cEmmisive;
 
 	return(cColor);
 }
@@ -83,14 +85,14 @@ VS_TEXTURED_OUTPUT VSUI(VS_TEXTURED_INPUT input)  /// 직교투영
 float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 {
 	float4 cColor = float4 (1.0f, 0.0f, 0.0f,0.0f);
-	float2 UV = input.uv * 0.5;
+
 	if (gnObjectID == 0)  cColor = gtxtNormal.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 1)  cColor = gtxtScene.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 2)  cColor = gtxtDepth.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 3)  cColor = gtxtNonLightNoise.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 4)  cColor = gtxtCopySunTex.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 5)  cColor = gtxtLight.Sample(gSamplerState, input.uv);
-	//if (gnObjectID == 6)  cColor = gtxtShadowCameraTexture.Sample(gSamplerState, input.uv);
+	if (gnObjectID == 6)  cColor = gtxtEmmisive.Sample(gSamplerState, input.uv);
 
 	//gtxtShadowCameraTexture
 

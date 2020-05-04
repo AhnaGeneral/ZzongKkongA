@@ -33,7 +33,7 @@ ID3D12RootSignature* CLobbyScene::CreateGraphicsRootSignature(ID3D12Device* pd3d
 
 	pd3dLobbyTexture.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 	pd3dLobbyTexture.NumDescriptors = 1;
-	pd3dLobbyTexture.BaseShaderRegister = 24; //t4: gtxtAlbedoTexture
+	pd3dLobbyTexture.BaseShaderRegister = 25; //t25 : gtxtLobbyTex
 	pd3dLobbyTexture.RegisterSpace = 0;
 	pd3dLobbyTexture.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 

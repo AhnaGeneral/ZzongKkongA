@@ -65,7 +65,7 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
 	CTerrainShader* pTerrainShader = new CTerrainShader();
-	pTerrainShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
+	pTerrainShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	pTerrainShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	pTerrainShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 13);
 	pTerrainShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTerrainTexture, ROOT_PARAMETER_TERRAIN_TEX, true);

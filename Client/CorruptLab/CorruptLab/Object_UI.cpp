@@ -75,7 +75,7 @@ void CUI_MiniMap::InterLinkShaderTexture(ID3D12Device* pd3dDevice,
 {
 	CMinimapShader* pShader = new CMinimapShader();
 	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 3, 3);
-	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
+	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 
 	CTexture* pMinimapTex = new CTexture(3, RESOURCE_TEXTURE2D, 0);
 	pMinimapTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map.dds", 0);
@@ -267,7 +267,7 @@ void CUI_HP::InterLinkShaderTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsComm
 
 	CShader_ObjHP* pShader = new CShader_ObjHP();
 	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 1);
-	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
+	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 
 	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)Texture, ROOT_PARAMETER_HP_TEX, true);
 	SetShader(pShader);

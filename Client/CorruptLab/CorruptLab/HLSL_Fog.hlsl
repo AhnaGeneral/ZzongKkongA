@@ -18,7 +18,7 @@ struct PS_FOG_INPUT
 	float4 vPorjPos : TEXCOORD3;
 };
 
-Texture2D gtxtSceneDepthTexture : register(t22);
+Texture2D gtxtSceneDepthTexture : register(t23);
 
 GS_NOISE_INPUT FogVertexShader(VS_FOG_INPUT input)
 {

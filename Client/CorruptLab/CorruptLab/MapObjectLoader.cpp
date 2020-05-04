@@ -162,7 +162,7 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 	CShader* pShder = new CShader_MonsterHP();
 	//CShader* pShder = new CCloudGSShader();
 	
-	pShder->CreateShader(pd3dDevice, GetGraphicsRootSignature(), 5);
+	pShder->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
 	pShder->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1);
 	pShder->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMonsterHPTex, ROOT_PARAMETER_ALBEDO_TEX, 0);
 

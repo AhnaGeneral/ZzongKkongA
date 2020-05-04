@@ -17,7 +17,7 @@ CRotatingItem::CRotatingItem(ID3D12Device* pd3dDevice,
 	SetMesh(pMesh);
 
 	CBillboardUIShader* pShader = new CBillboardUIShader();
-	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
+	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 4);
 	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTextures[ITEM_TYPE_HANDLIGHT], ROOT_PARAMETER_ALBEDO_TEX,0);
 	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTextures[ITEM_TYPE_HPKIT], ROOT_PARAMETER_ALBEDO_TEX, 0);

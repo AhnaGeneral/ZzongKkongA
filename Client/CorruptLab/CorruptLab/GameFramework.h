@@ -80,7 +80,7 @@ private:
 
 	// 다중랜더타겟 [ 힙, 핸들, 버퍼 ]________________________________________________________________________
 	ID3D12DescriptorHeap              * m_pd3dRtvDescriptorHeap;
-	static const UINT				    m_nOffScreenRenderTargetBuffers = 5;
+	static const UINT				    m_nOffScreenRenderTargetBuffers = FINAL_MRT_COUNT;
 	ID3D12Resource                    * m_ppd3dOffScreenRenderTargetBuffers[m_nOffScreenRenderTargetBuffers];
 	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nOffScreenRenderTargetBuffers];
 	

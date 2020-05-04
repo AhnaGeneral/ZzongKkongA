@@ -53,6 +53,8 @@ using Microsoft::WRL::ComPtr;
 #define SPOT_LIGHT				2
 #define DIRECTIONAL_LIGHT		3
 
+#define FINAL_MRT_COUNT         6
+
 //#define _WITH_CB_GAMEOBJECT_32BIT_CONSTANTS
 //#define _WITH_CB_GAMEOBJECT_ROOT_DESCRIPTOR
 

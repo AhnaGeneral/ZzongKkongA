@@ -457,7 +457,7 @@ void CSoftParticleShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSigna
 
 void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext, CHeightMapTerrain* pTerrain)
 {
-	CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 5);
+	CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 8);
 
 	m_pSceneDepthTextures = new CTexture(1, RESOURCE_TEXTURE2D, 0);
