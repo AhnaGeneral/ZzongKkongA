@@ -230,7 +230,7 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 
 	D3D12_DESCRIPTOR_RANGE pd3dTerrainTexRanges; // ( 50 ~ 62 ) onsstageterrain
 	pd3dTerrainTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dTerrainTexRanges.NumDescriptors = 12;
+	pd3dTerrainTexRanges.NumDescriptors = 9;
 	pd3dTerrainTexRanges.BaseShaderRegister = 50;
 	pd3dTerrainTexRanges.RegisterSpace = 0;
 	pd3dTerrainTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;

@@ -64,6 +64,22 @@ float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 t
 		+ fSpecularFactor * float3(0.9f,0.9f,0.9f) );
 }
 
+float4 NormalLight(float3 vNormal, float3 vToCamera)
+{
+	float3 vToLight = -float3(1.0f, -1.0f, 1.0f);
+	float fDiffuseFactor = dot(vToLight, vNormal);
+	float fSpecularFactor = 0.0f;
+
+	if (fDiffuseFactor > 0.0f)
+	{
+		float3 vHalf = normalize(float3(vToCamera + vToLight));
+		fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), 10.f);
+	}
+
+	return((float4(1.0f, 1.0f, 1.0f, 1.0f) * fDiffuseFactor) * float4(0.4f, 0.4f, 0.4f, 1.f) +
+		fSpecularFactor  * float4(0.4f, 0.4f, 0.4f, 1.f));
+}
+
 
 float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 {
