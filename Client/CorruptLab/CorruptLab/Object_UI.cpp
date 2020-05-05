@@ -233,13 +233,21 @@ void CUI_ITem::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, 
 	{
 		m_ItemReact.m_fTIme = 0.0f;
 	}
+	if (m_ItemReact.m_f4iTemCount.w == 1.0f && m_ItemReact.m_fTIme > 0.96)
+	{
+		m_ItemReact.m_Control = 1;
+	}
+	if (m_ItemReact.m_f4iTemCount.w == 2.0f && m_ItemReact.m_fTIme > 0.96)
+	{
+		m_ItemReact.m_Control = 2;
+	}
 	XMFLOAT4X4 xmf4x4World;
 	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
 
 	UINT getobjectID = m_nobjectID;
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
-	//cout << m_ItemReact.m_fTIme << endl;
+	cout << m_ItemReact.m_f4iTemCount.w << endl;
 	memcpy(m_pcbItemReact, &m_ItemReact, sizeof(CB_ITEM));
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbItemReact->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_ITEM_REACT, d3dGpuVirtualAddress);

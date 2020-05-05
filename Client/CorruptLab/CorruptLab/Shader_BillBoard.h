@@ -63,8 +63,14 @@ private:
 	CObjectNosie			      ** m_pFireObjects;
 	int			                     m_nFire;
 
-	CObjectNosie**					 m_pFogObjects;
+	CObjectNosie                 **	 m_pFogObjects;
+	CObjectNosie                 **  m_pOneStageFog;
+	CObjectNosie                 **  m_pTwoStageFog;
+
+
 	int			                     m_nFog;
+	int			                     m_nOneFog;
+	int			                     m_nTwoFog;
 
 public:
 	CSoftParticleShader();

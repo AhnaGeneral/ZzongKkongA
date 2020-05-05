@@ -915,6 +915,7 @@ void CGameFramework::FrameAdvanceLobby()
 	ProcessInput();
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
+
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };

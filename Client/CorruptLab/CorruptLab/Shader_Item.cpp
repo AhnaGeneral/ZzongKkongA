@@ -15,6 +15,7 @@ D3D12_INPUT_LAYOUT_DESC CShader_Item::CreateInputLayout()
 	return d3dInputLayoutDesc;
 }
 
+
 D3D12_DEPTH_STENCIL_DESC CShader_Item::CreateDepthStencilState()
 {
 	D3D12_DEPTH_STENCIL_DESC d3dDepthStencilDesc;

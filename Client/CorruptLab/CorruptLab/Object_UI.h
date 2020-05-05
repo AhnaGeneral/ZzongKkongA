@@ -75,8 +75,9 @@ public:
 struct CB_ITEM
 {
 	XMFLOAT4 m_f4iTemCount = { 0.0f,0.0f,0.0f,0.0f };
-	int  m_iTemReact = 0; 
+	int    m_iTemReact = 0; 
 	float  m_fTIme = 0;
+	int    m_Control = 0;
 };
 
 class CUI_ITem : public CMRTUI
