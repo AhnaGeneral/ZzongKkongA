@@ -197,24 +197,15 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	return(output);
 }
 
-Texture2D gtxtStage1SplatAlpha1 : register(t50);
-Texture2D gtxtStage1SplatAlpha2 : register(t51);
-Texture2D gtxtStage1TerrainNM   : register(t52);
-
-Texture2D gtxtDryGround_BC      : register(t53);
-Texture2D gtxtDryGround_NM      : register(t54);
-
-Texture2D gtxtDryStone_BC       : register(t55);
-Texture2D gtxtDryStone_NM       : register(t56);
-
-Texture2D gtxtGrass1_BC         : register(t57);
-
-Texture2D gtxtGrass2_BC         : register(t58);
-
-Texture2D gtxtSand1             : register(t59);
-
-Texture2D gtxtStone1_BC         : register(t60);
-Texture2D gtxtStone1_NM         : register(t61);
+Texture2D gtxtSplatAlpha   : register(t50);
+Texture2D gtxtTerrain1_NM  : register(t51);
+Texture2D gtxtSand2_BC     : register(t52);
+Texture2D gtxtDryGround_NM : register(t53);
+Texture2D gtxtDryStone_BC  : register(t54);
+Texture2D gtxtDryStone_NM  : register(t55);
+Texture2D gtxtGrass1_BC    : register(t56);
+Texture2D gtxtGrass2_BC    : register(t57);
+Texture2D gtxtSand1        : register(t58);
 
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input) : SV_TARGET
@@ -223,60 +214,46 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);
 
-	float4 t_gtxtStage1SplatAlpha1 = gtxtStage1SplatAlpha1.Sample(gSamplerState, input.uv0);
-	float4 t_gtxtStage1SplatAlpha2 = gtxtStage1SplatAlpha2.Sample(gSamplerState, input.uv0);
-	float4 t_gtxtStage1TerrainNM   = gtxtStage1TerrainNM.Sample(gSamplerState, input.uv0);
+	float4 Tex_SplatAlpha = gtxtSplatAlpha.Sample(gSamplerState, input.uv0);
+	float4 Tex_Terrain1_NM = gtxtTerrain1_NM.Sample(gSamplerState, input.uv0);
 
-	float4 t_gtxtDryGround_BC      = gtxtDryGround_BC.Sample(gSamplerState, input.uv1);
-	float4 t_gtxtDryGround_NM      = gtxtDryGround_NM.Sample(gSamplerState, input.uv1);
+	float4 Tex_Sand2_BC = gtxtSand2_BC.Sample(gSamplerState, input.uv1);
+	float4 Tex_DryGround_NM = gtxtDryGround_NM.Sample(gSamplerState, input.uv1);
 
-	float4 t_gtxtDryStone_BC       = gtxtDryStone_BC.Sample(gSamplerState, input.uv1);
-	float4 t_gtxtDryStone_NM       = gtxtDryStone_NM.Sample(gSamplerState, input.uv1);
+	float4 Tex_DryStone_BC = gtxtDryStone_BC.Sample(gSamplerState, input.uv1);
+	float4 Tex_DryStone_NM = gtxtDryStone_NM.Sample(gSamplerState, input.uv1);
 
-	float4 t_gtxtGrass1_BC         = gtxtGrass1_BC.Sample(gSamplerState, input.uv1);
-	float4 t_gtxtGrass2_BC         = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
+	float4 Tex_Grass1_BC = gtxtGrass1_BC.Sample(gSamplerState, input.uv1);
+	float4 Tex_Grass2_BC = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
 
-	float4 t_gtxtSand1             = gtxtStone1_BC.Sample(gSamplerState, input.uv1);
+	float4 Tex_Sand1 = gtxtSand1.Sample(gSamplerState, input.uv1);
 
-	float4 t_gtxtStone1_BC         = gtxtStone1_BC.Sample(gSamplerState, input.uv1);
-	float4 t_gtxtStone1_NM         = gtxtStone1_NM.Sample(gSamplerState, input.uv1);
+	float3 vNormal = normalize(Tex_Terrain1_NM.rgb * 2.0f - 1.0f);
 
-	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float3 vNormal_DryGround = normalize(Tex_DryGround_NM.rgb * 2.0f - 1.0f);
+	float3 vNormal_DryStone  = normalize(Tex_DryStone_NM.rgb * 2.0f - 1.0f);
 
-	float3 vNormal = normalize(t_gtxtStage1TerrainNM.rgb * 2.0f - 1.0f); 
+	float3 toCamera = normalize(gvCameraPosition - input.positionW);
 
+	vNormal_DryGround = normalize(mul(vNormal_DryGround, TBN));
+	vNormal_DryStone = normalize(mul(vNormal_DryStone, TBN));
 
-	float3 vNormalDryGround_NM = normalize(t_gtxtDryGround_NM.rgb * 2.0f - 1.0f);
-	float3 vNormalDryStone_NM  = normalize(t_gtxtDryStone_NM.rgb * 2.0f - 1.0f);
-	float3 vNormalStone1_NM    = normalize(t_gtxtStone1_NM.rgb * 2.0f - 1.0f);
-
-
-	vNormalDryGround_NM = normalize(mul(vNormalDryGround_NM, TBN));
-	vNormalDryStone_NM = normalize(mul(vNormalDryStone_NM, TBN));
-	vNormalStone1_NM = normalize(mul(vNormalStone1_NM, TBN));
 
 	vNormal = normalize(mul(vNormal, TBN));
 
-	//float3 SplatNormal = t_gtxtStage1SplatAlpha1.r
-	float4 Splat01 = (t_gtxtStage1SplatAlpha1.r * t_gtxtDryGround_BC) +
-					 (t_gtxtStage1SplatAlpha1.g * t_gtxtDryStone_BC) +
-		             (t_gtxtStage1SplatAlpha1.b * t_gtxtGrass2_BC);
-		             (t_gtxtStage1SplatAlpha1.a * t_gtxtGrass1_BC);
 
-	float4 Splat02 = (t_gtxtStage1SplatAlpha2.r * t_gtxtStone1_BC) +
-		             (t_gtxtStage1SplatAlpha2.g * t_gtxtSand1) +
-		             (t_gtxtStage1SplatAlpha2.b * t_gtxtGrass2_BC);
 
-	cColor = Splat01+ Splat02;
+	float4 Splat = (Tex_SplatAlpha.r * Tex_DryStone_BC) + (Tex_SplatAlpha.g * Tex_Sand1) +
+		    (Tex_SplatAlpha.b * Tex_Grass1_BC) +(Tex_SplatAlpha.a * Tex_Sand2_BC);
 
-	output.normal = float4(vNormal, 1.0f);
-
+	//===================================================================================
+	output.color = Splat;
+	output.normal = float4(vNormal,1.0f);
 	output.depth = float4(input.posj.z/input.posj.w, input.posj.w/ 300.0f, 0, 1);
-
-	output.color = cColor;
 
 	output.ShadowCamera = input.posj;
 
+	//[그림자]============================================================================
 	float2 projectTexCoord;
 	float lightDepthValue;
 	float depthValue;
@@ -291,6 +268,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 		output.color = float4 (output.color.rgb * 0.5, 1.0f) ;
 	}
 
+	//[바다 셰이더]==========================================================================
 	if (input.positionW.y < 30.f)
 	{
 		float fAlpha = (30.f - input.positionW.y) / 15.f;
