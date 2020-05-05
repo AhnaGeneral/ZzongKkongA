@@ -34,14 +34,15 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 		
 		if (gnObjectID == 2 && gf4ItemCount.z > 0.0f) cColor = cPillds;
 
-		//if (gnObjectID == 0 && gf4ItemCount.x <= 0.0f)
-		//	cColor = float4(cHandLight.rgb * 0.2, cHandLight.a);
-		//
-		//if (gnObjectID == 1 && gf4ItemCount.y <= 0.0f)
-		//	cColor = float4(cHPKit.rgb * 0.2, cHPKit.a);
-		//
-		//if (gnObjectID == 2 && gf4ItemCount.z <= 0.0f) 
-		//	cColor = float4(cPillds.rgb * 0.2, cPillds.a);
+
+		if (gnObjectID == 0 && gf4ItemCount.x <= 0.0f)
+			cColor = float4(cHandLight.rgb * 0.2, cHandLight.a);
+		
+		if (gnObjectID == 1 && gf4ItemCount.y <= 0.0f)
+			cColor = float4(cHPKit.rgb * 0.2, cHPKit.a);
+		
+		if (gnObjectID == 2 && gf4ItemCount.z <= 0.0f) 
+			cColor = float4(cPillds.rgb * 0.2, cPillds.a);
 	}
 
 	else
@@ -49,18 +50,50 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 		if (gnObjectID == 0 && gf3ItemReaction == 0 && gf4ItemCount.x > 0.0f)
 		{
 			cColor = float4(cHandLight.b + 0.5, cHandLight.gba);
+			
+			if (gnObjectID == 1)
+			{
+				if (gf4ItemCount.y > 0.0f) cColor = cHPKit;
+				if (gf4ItemCount.y == 0.0f) cColor = float4(cHPKit.rgb * 0.2, cHPKit.a);
+			}
+			if (gnObjectID == 2)
+			{
+				if (gf4ItemCount.z > 0.0f) cColor = cPillds;
+				if (gf4ItemCount.z == 0.0f) cColor = float4(cPillds.rgb * 0.2, cPillds.a);
+			}
 		}
 
 		if (gnObjectID == 1 && gf3ItemReaction == 1 && gf4ItemCount.y > 0.0f)
 		{
 			cColor = float4(cHPKit.b + 0.5, cHPKit.gba);
+
+			if (gnObjectID == 0)
+			{
+				if (gf4ItemCount.x > 0.0f) cColor = cHandLight;
+				if (gf4ItemCount.x == 0.0f) cColor = float4(cHandLight.rgb * 0.2, cHandLight.a);
+			}
+			if (gnObjectID == 2)
+			{
+				if (gf4ItemCount.z > 0.0f) cColor = cPillds;
+				if (gf4ItemCount.z == 0.0f) cColor = float4(cPillds.rgb * 0.2, cPillds.a);
+			}
 		}
 
-		 if (gnObjectID == 2 && gf3ItemReaction == 2 && gf4ItemCount.z > 0.0f)
+		if (gnObjectID == 0 && gf3ItemReaction == 0 && gf4ItemCount.x > 0.0f)
 		{
-			cColor = float4(cPillds.b + 0.5, cPillds.gba);
-		}
+			cColor = float4(cHandLight.b + 0.5, cHandLight.gba);
 
+			if (gnObjectID == 1)
+			{
+				if (gf4ItemCount.y > 0.0f) cColor = cHPKit;
+				if (gf4ItemCount.y == 0.0f) cColor = float4(cHPKit.rgb * 0.2, cHPKit.a);
+			}
+			if (gnObjectID == 2)
+			{
+				if (gf4ItemCount.z > 0.0f) cColor = cPillds;
+				if (gf4ItemCount.z == 0.0f) cColor = float4(cPillds.rgb * 0.2, cPillds.a);
+			}
+		}
 	}
 
 	if (gnObjectID == 0 && gf4ItemCount.x == 0.0f)

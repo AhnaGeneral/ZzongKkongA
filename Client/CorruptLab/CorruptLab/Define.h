@@ -47,6 +47,7 @@
 #define ROOT_PARAMETER_ITEM_TEX             7  
 #define ROOT_PARAMETER_ITEM_REACT           8 
 #define ROOT_PARAMETER_PLAYER_HP            9  
+#define ROOT_PARAMETER_MINIIMAPFOG         10
 //#define
 
 
@@ -93,6 +94,7 @@
 #define ITEM_TYPE_HPKIT					1
 #define ITEM_TYPE_PILL					2
 #define ITEM_TYPE_MAPSEGMENT			3
+#define ITEM_NONE                       4
 
 
 /*CameraCullRange*/

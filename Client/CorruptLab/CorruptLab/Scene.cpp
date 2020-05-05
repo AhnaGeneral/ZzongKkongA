@@ -22,7 +22,10 @@ CGameScene::CGameScene()
 	WindowCursorPos = { 0L,0L };
 
 	n_ReactItem = 3;
+	CItemMgr::GetInstance()->SetReactItem(ITEM_NONE);
+
 	itemRange = 0.0f;
+
 
 	m_pCObjectWater = NULL;
 
@@ -444,23 +447,27 @@ bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 			if ((WindowCursorPos.x >= 0.0f) && (WindowCursorPos.x <= itemRange))
 			{
 				n_ReactItem = ITEM_TYPE_HANDLIGHT;
+				CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_HANDLIGHT);
 				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HANDLIGHT);
 			}
 			if ((WindowCursorPos.x >= itemRange) && (WindowCursorPos.x <= (itemRange * 2)))
 			{
 				n_ReactItem = ITEM_TYPE_HPKIT;
+				CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_HPKIT);
 				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HPKIT);
 			}
-		
+
 			if ((WindowCursorPos.x >= itemRange * 2) && (WindowCursorPos.x <= (itemRange * 3)))
 			{
 				n_ReactItem = ITEM_TYPE_PILL;
+				CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_PILL);
 				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_PILL);
 			}
 		}
 		else
 		{
-			n_ReactItem = 3;
+			n_ReactItem = ITEM_NONE;
+			CItemMgr::GetInstance()->SetReactItem(ITEM_NONE);
 		}
 		//std::cout << " ReactItem  " << n_ReactItem << std::endl;
 
@@ -598,7 +605,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	UpdateShaderVariables(pd3dCommandList);
 
 	pd3dCommandList->OMSetStencilRef(1);
-	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, m_bPipelineStateIndex);
+	//if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, m_bPipelineStateIndex);
 
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
@@ -668,7 +675,7 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 	m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
 	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
-	m_pTerrain->Render(pd3dCommandList, pCamera, 2);
+	//m_pTerrain->Render(pd3dCommandList, pCamera, 2);
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
