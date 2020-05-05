@@ -65,7 +65,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,
-		_T("Geometry/OneStageTerrain.raw"), 257, 257, 9, 9, xmf3Scale, xmf4Color, m_pShadowMap);
+		_T("Geometry/OneStageTerrain.raw"), 257, 257, 17, 17, xmf3Scale, xmf4Color, m_pShadowMap);
 	
 
 	m_pCloudGSShader = new CCloudGSShader;
@@ -605,7 +605,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	UpdateShaderVariables(pd3dCommandList);
 
 	pd3dCommandList->OMSetStencilRef(1);
-	//if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, m_bPipelineStateIndex);
+	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, m_bPipelineStateIndex);
 
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
@@ -675,7 +675,7 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 	m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
 	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
-	//m_pTerrain->Render(pd3dCommandList, pCamera, 2);
+	m_pTerrain->Render(pd3dCommandList, pCamera, 2);
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)

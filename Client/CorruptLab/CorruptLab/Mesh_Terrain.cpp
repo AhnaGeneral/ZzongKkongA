@@ -113,9 +113,11 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	float fMinWidth = +FLT_MAX, fMaxWidth = -FLT_MAX;
 	float fMinLength = +FLT_MAX, fMaxLength = -FLT_MAX;
 	float fHeight = 0.0f, fMinHeight = +FLT_MAX, fMaxHeight = -FLT_MAX;
-	for (int i = 0, z = (zStart + nLength - 1); z >= zStart; z -= 2)
+	float z = (zStart + nLength - 1);
+	for (int i = 0;  z >= zStart; z -= 4.f)
 	{
-		for (int x = xStart; x < (xStart + nWidth); x += 2, i++)
+		float x = xStart;
+		for (; x < (xStart + nWidth); x += 4.f, i ++)
 		{
 			fHeight = OnGetHeight(x, z, pContext);
 
@@ -136,8 +138,8 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 		}
 	}
 
-	m_boundingbox.Extents.x = 16;
-	m_boundingbox.Extents.z = 16;
+	m_boundingbox.Extents.x = nWidth;
+	m_boundingbox.Extents.z = nLength;
 	m_boundingbox.Extents.y = fMaxHeight - fMinHeight;
 	m_boundingbox.Center.y = (fMaxHeight + fMinHeight) / 2.f;
 	m_boundingbox.Center.x = (fMinWidth + fMaxWidth) / 2.f ;
