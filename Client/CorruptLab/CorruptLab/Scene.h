@@ -65,7 +65,7 @@ public:
 	CObjectWater              * m_pCObjectWater; 
 	CMRTUI                    * m_pUIObj;
 
-	int                         n_ReactItem; 
+	//int                         n_ReactItem; 
 	float                       itemRange;
 
 public:

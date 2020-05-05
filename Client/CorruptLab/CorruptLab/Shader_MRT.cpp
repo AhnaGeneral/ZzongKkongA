@@ -3,6 +3,8 @@
 #include "Shader_Item.h"
 #include "Shader_Radiation.h"
 #include "Mgr_Radiation.h"
+#include "Mgr_Item.h"
+#include "Shader_MinmapFog.h"
 
 CPostProcessingShader::CPostProcessingShader()
 {
@@ -14,6 +16,7 @@ CPostProcessingShader::CPostProcessingShader()
 	m_pShadowTexture = NULL;
 	m_pItemTex = NULL;
 	m_pBaseUIShader = NULL;
+	m_pMinimapFog = NULL;
 	m_pItemShader = NULL;
 
 	m_pRenderTargetUIs = NULL;
@@ -121,7 +124,14 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dItemTextureRanges.RegisterSpace = 0;
 	pd3dItemTextureRanges.OffsetInDescriptorsFromTableStart = 0;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[10];
+	D3D12_DESCRIPTOR_RANGE pd3dMinimapFog;
+	pd3dMinimapFog.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dMinimapFog.NumDescriptors = 1;
+	pd3dMinimapFog.BaseShaderRegister = 30;
+	pd3dMinimapFog.RegisterSpace = 0;
+	pd3dMinimapFog.OffsetInDescriptorsFromTableStart = 0;
+
+	D3D12_ROOT_PARAMETER pd3dRootParameters[11];
 
 	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	pd3dRootParameters[ROOT_PARAMETER_CDN_MRT].DescriptorTable.NumDescriptorRanges = 1;
@@ -173,6 +183,13 @@ void CPostProcessingShader::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice
 	pd3dRootParameters[ROOT_PARAMETER_PLAYER_HP].Descriptor.ShaderRegister = 8; //playerHP
 	pd3dRootParameters[ROOT_PARAMETER_PLAYER_HP].Descriptor.RegisterSpace = 0;
 	pd3dRootParameters[ROOT_PARAMETER_PLAYER_HP].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+
+	pd3dRootParameters[ROOT_PARAMETER_MINIIMAPFOG].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_MINIIMAPFOG].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_MINIIMAPFOG].DescriptorTable.pDescriptorRanges = &pd3dMinimapFog;
+	pd3dRootParameters[ROOT_PARAMETER_MINIIMAPFOG].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+
 
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
@@ -349,7 +366,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	m_pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_3.dds", 0);
 
 	m_pBaseUIShader = new CShader_BaseUI();
-	m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 5);
+	m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 3);
 	m_pBaseUIShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
 	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)m_pHPTexture, ROOT_PARAMETER_HP_TEX, true);
 
@@ -373,27 +390,35 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 
 	// ========================================================================================================
-	CTexture * pMinmapFog1 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	m_pMinimapFog = new CShader_MinmapFog();
+	m_pMinimapFog->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 2);
+	m_pMinimapFog->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
+
+	pMinmapFog1 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 	pMinmapFog1->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog1.dds", 0);
 
-	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog1, ROOT_PARAMETER_HP_TEX, true);
+	m_pMinimapFog->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog1, ROOT_PARAMETER_MINIIMAPFOG, true);
 
-	m_pMapOne = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	m_pMapOne->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pMinmapFog1);
+	m_pMapOne = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
+	m_pMapOne->SetObjectID(0);
 	m_pMapOne->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
+	m_pMapOne->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	m_pMapOne->SetMesh(mesh);
 
-	CTexture* pMinmapFog2 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+    pMinmapFog2 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 
 	pMinmapFog2->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog2.dds", 0);
-	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog2, ROOT_PARAMETER_HP_TEX, true);
 
-	m_pMapTwo = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	m_pMapTwo->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pMinmapFog2);
+	m_pMinimapFog->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog2, ROOT_PARAMETER_MINIIMAPFOG, true);
+
+	m_pMapTwo = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
+	m_pMapTwo->SetObjectID(1);
 	m_pMapTwo->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
+	m_pMapTwo->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	m_pMapTwo->SetMesh(mesh);
+
 
 
 	//[ 인벤토리 ] ==============================================================================================
@@ -440,8 +465,8 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		m_pItem->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		m_pItem->SetMesh(mesh);
 		m_pItem->SetObjectID(i);
-		UINT unber = 1;
-		m_pItem->SetItemReact(&unber);
+		//UINT unber = 1;
+		//m_pItem->SetItemReact(&unber);
 		m_pItem->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
 		m_ppItems[i++] = m_pItem;
 	}
@@ -494,6 +519,7 @@ void CPostProcessingShader::ReleaseObjects()
 	if (m_pShadowTexture) m_pShadowTexture->ReleaseUploadBuffers();
 	if (m_pItemTex) m_pItemTex->ReleaseUploadBuffers();
 	if (m_pBaseUIShader) m_pBaseUIShader->ReleaseUploadBuffers();
+	if (m_pMinimapFog)m_pMinimapFog->ReleaseUploadBuffers();
 	if (m_pItemShader)m_pItemShader->ReleaseUploadBuffers();
 	if (m_pRadiationShader) m_pRadiationShader->ReleaseUploadBuffers();
 
@@ -528,6 +554,7 @@ void CPostProcessingShader::ReleaseObjects()
 	if (m_pShadowTexture) m_pShadowTexture->Release();
 	if (m_pItemTex) m_pItemTex->Release();
 	if (m_pBaseUIShader) m_pBaseUIShader->Release();
+	if (m_pMinimapFog)m_pMinimapFog->Release();
 	if (m_pItemShader)m_pItemShader->Release();
 
 	if (m_pMapOne)m_pMapOne->Release();
@@ -562,37 +589,9 @@ void CPostProcessingShader::ReleaseObjects()
 
 void CPostProcessingShader::ReleaseUploadBuffers()
 {
-	//if (m_pTexture) m_pTexture->ReleaseUploadBuffers();
-	//if (m_pLightTexture) m_pLightTexture->ReleaseUploadBuffers();
-	//if (m_pMinimap) m_pMinimap->ReleaseUploadBuffers();
-	//if (m_pShadowTexture) m_pShadowTexture->ReleaseUploadBuffers();
-	//if (m_pItemTex) m_pItemTex->ReleaseUploadBuffers();
-	//if (m_pBaseUIShader) m_pBaseUIShader->ReleaseUploadBuffers();
-
-	//if (m_pRenderTargetUIs)
-	//{
-	//	for (int i = 0; i < m_nRenderTargetUI; ++i)
-	//		m_pRenderTargetUIs[i]->ReleaseUploadBuffers();
-	//}
-
-	//if (m_pHP) m_pHP->ReleaseUploadBuffers();
-	//if (m_Radiation) m_Radiation->ReleaseUploadBuffers();
-	//if (m_HPBAR) m_HPBAR->ReleaseUploadBuffers();
-
-	//if (InVentoryBoxs)
-	//{
-	//	for (int i = 0; i < 3; ++i)
-	//		InVentoryBoxs[i]->ReleaseUploadBuffers();
-	//}
-	//if (m_pItems)
-	//{
-	//	for (int i = 0; i < 3; ++i)
-	//		m_pItems[i]->ReleaseUploadBuffers();
-	//} 
-	//if (m_PlayerHP) m_PlayerHP->ReleaseUploadBuffers();
 }
 
-void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, UINT ItemReact)
+void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
@@ -626,55 +625,56 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 			}
 		}
 	}
-	
+
 	if (m_pMinimap) m_pMinimap->Render(pd3dCommandList, pCamera);
-
 	if (m_pBaseUIShader)m_pBaseUIShader->Render(pd3dCommandList, pCamera);
-
 	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
 	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
 
-	if (m_pMapOne)m_pMapOne->Render (pd3dCommandList, pCamera);
-	if (m_pMapTwo)m_pMapTwo->Render(pd3dCommandList, pCamera);
 
 	for (int i = 0; i < int(nIventoryCount); ++i)
 	{
 		m_ppInVentoryBoxs[i]->Render(pd3dCommandList, 0);
 	}
 
-	//OnPrepareRender(pd3dCommandList, 1);
 	if (m_pItemShader)m_pItemShader->Render(pd3dCommandList, pCamera);
-	//m_pItemShader->UpdateShaderVariable(pd3dCommandList,)
 	if (m_pItemTex) m_pItemTex->UpdateShaderVariable(pd3dCommandList, 0);
 
 	for (int i = 0; i < int(nIventoryCount); ++i)
 	{
-		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemReact(&ItemReact);
-		m_ppItems[i]->Render(pd3dCommandList, 0 );
+		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemReact(CItemMgr::GetInstance()->GetReactIten());
+		m_ppItems[i]->Render(pd3dCommandList, 0);
 	}
 
 	if (m_PlayerHP) m_PlayerHP->Render(pd3dCommandList, pCamera);
-	//std::cout << ItemReact << std::endl; 
-
 	if (m_pRadiationShader) m_pRadiationShader->Render(pd3dCommandList, pCamera);
-
 	if (m_RadiationLevels)
 	{
 		int number = CRadationMgr::GetInstance()->GetRaditaion();
 		dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[0])->SetRadiationNumber(int(number / 10));
 		dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[1])->SetRadiationNumber(int(number % 10));
 
-
-
 		for (int i = 0; i < 2; ++i)
 		{
 			m_RadiationLevels[i]->Render(pd3dCommandList, pCamera);
-
 		}
 	}
-	//if (m_RadiationCount) m_RadiationCount->Render(pd3dCommandList, pCamera);
 
 
+	if (m_pMinimapFog)m_pMinimapFog->Render(pd3dCommandList, pCamera);
+	if (pMinmapFog1) pMinmapFog1->UpdateShaderVariable(pd3dCommandList, 0);
+	if (m_pMapOne)
+	{
+		(m_pMapOne)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		m_pMapOne->Render(pd3dCommandList, pCamera);
+	}
+	if (pMinmapFog2) pMinmapFog2->UpdateShaderVariable(pd3dCommandList, 0);
+	if (m_pMapTwo) 
+	{
+	   (m_pMapTwo)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		m_pMapTwo->Render(pd3dCommandList, pCamera);
+	}
 }
 
 void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)

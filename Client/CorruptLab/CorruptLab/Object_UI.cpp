@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include "Shader_Minimap.h"
 #include "shader_ObjHP.h"
+#include "Mgr_Item.h"
 
 
 CMRTUI::CMRTUI(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -206,7 +207,7 @@ void CUI_ITem::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 {
 	CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	UINT ncbElementBytes = ((sizeof(UINT) + 255) & ~255); //256의 배수  
+	UINT ncbElementBytes = ((sizeof(CB_ITEM) + 255) & ~255); //256의 배수  
 	m_pd3dcbItemReact = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes,
 		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 	m_pd3dcbItemReact->Map(0, NULL, (void**)&m_pcbItemReact);
@@ -227,14 +228,19 @@ void CUI_ITem::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCame
 
 void CUI_ITem::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
 {
+	m_ItemReact.m_fTIme += 0.01f;
+	if (m_ItemReact.m_fTIme > 1.0f)
+	{
+		m_ItemReact.m_fTIme = 0.0f;
+	}
 	XMFLOAT4X4 xmf4x4World;
 	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
 
 	UINT getobjectID = m_nobjectID;
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
-
-	memcpy(m_pcbItemReact, m_ItemReact, sizeof(UINT));
+	//cout << m_ItemReact.m_fTIme << endl;
+	memcpy(m_pcbItemReact, &m_ItemReact, sizeof(CB_ITEM));
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbItemReact->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_ITEM_REACT, d3dGpuVirtualAddress);
 
@@ -251,6 +257,14 @@ void CUI_ITem::ReleaseShaderVariables()
 	}
 	m_pd3dcbItemReact = NULL;
 
+}
+
+void CUI_ITem::SetItemCount(XMFLOAT4 itemCount)
+{
+	m_ItemReact.m_f4iTemCount.x = itemCount.x;
+	m_ItemReact.m_f4iTemCount.y = itemCount.y;
+	m_ItemReact.m_f4iTemCount.z = itemCount.z;
+	m_ItemReact.m_f4iTemCount.w = itemCount.w;
 }
 
 CUI_HP::CUI_HP()
@@ -367,11 +381,6 @@ void CUI_RaditaionLevel::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCam
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
 	if (m_pMesh) m_pMesh->Render(pd3dCommandList, 0);
-	//if (m_pMeshTen)
-	//	m_pMeshTen->Render(pd3dCommandList, 0);
-
-	//if (m_pMeshOne)
-	//	m_pMeshOne->Render(pd3dCommandList, 0);
 }
 
 void CUI_RaditaionLevel::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)

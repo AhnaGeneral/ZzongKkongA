@@ -37,7 +37,7 @@ public:
 	virtual void ReleaseObjects();
 	virtual void ReleaseUploadBuffers();
 
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, UINT ItemReact = 0);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
@@ -56,7 +56,12 @@ protected:
 	CTexture                     * m_pLightTexture;
 	CTexture                     * m_pShadowTexture;
 	CTexture                     * m_pItemTex;
+	CTexture                     * pMinmapFog1;
+	CTexture                     * pMinmapFog2;
+
+
 	CShader                      * m_pBaseUIShader; 
+	CShader                      * m_pMinimapFog;
 	CShader                      * m_pItemShader;
 					            
 	int                            m_nMRTSwitch;
@@ -67,8 +72,8 @@ protected:
 	CUI_Root                     * m_pHP;
 	CUI_Root                     * m_Radiation;
 
-	CUI_Root                     * m_pMapOne;
-	CUI_Root                     * m_pMapTwo;
+	CUI_ITem                     * m_pMapOne;
+	CUI_ITem                     * m_pMapTwo;
 				            
 	CUI_MiniMap                  * m_pMinimap;
 

@@ -189,6 +189,7 @@
     <ClInclude Include="Shader_LightMRT.h" />
     <ClInclude Include="Shader_Lobby.h" />
     <ClInclude Include="Shader_Minimap.h" />
+    <ClInclude Include="Shader_MinmapFog.h" />
     <ClInclude Include="Shader_Noise.h" />
     <ClInclude Include="Shader_ObjHP.h" />
     <ClInclude Include="Shader_Radiation.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="Shader_LightMRT.cpp" />
     <ClCompile Include="Shader_Lobby.cpp" />
     <ClCompile Include="Shader_Minimap.cpp" />
+    <ClCompile Include="Shader_MinmapFog.cpp" />
     <ClCompile Include="Shader_MRT.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Object_Player.cpp" />

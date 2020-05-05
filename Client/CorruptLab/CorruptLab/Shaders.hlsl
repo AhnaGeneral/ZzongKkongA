@@ -91,6 +91,8 @@ Texture2D gtxtRootUITexture : register(t26);
 Texture2D gtxtHandLighTexture : register(t27);
 Texture2D gtxtHPKitdTexture : register(t28);
 Texture2D gtxtPillddsTexture : register(t29);
+Texture2D gtxtMinimapFogTexture : register(t30);
+
 
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {

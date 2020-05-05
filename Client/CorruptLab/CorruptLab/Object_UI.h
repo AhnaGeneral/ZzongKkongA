@@ -72,12 +72,18 @@ public:
 
 };
 
+struct CB_ITEM
+{
+	XMFLOAT4 m_f4iTemCount = { 0.0f,0.0f,0.0f,0.0f };
+	int  m_iTemReact = 0; 
+	float  m_fTIme = 0;
+};
 
 class CUI_ITem : public CMRTUI
 {
-private:
-	UINT   m_nobjectID = 0 ;
-	UINT* m_ItemReact = NULL;
+protected:
+	UINT     m_nobjectID = 0 ;
+	CB_ITEM  m_ItemReact;
 
 public:
 	CUI_ITem();
@@ -94,11 +100,13 @@ public:
 
 	void SetObjectID(UINT objectID) { m_nobjectID = objectID; }
 	virtual UINT GetObjectID() { return m_nobjectID; }
-	void SetItemReact(UINT* React) { m_ItemReact = React; }
-
-private:
+	void SetItemReact(int React) { m_ItemReact.m_iTemReact = React;}
+	void SetItemCount(XMFLOAT4 itemCount);
+	///void SetItemElapsedTime(){}
+	
+protected:
 	ID3D12Resource* m_pd3dcbItemReact = NULL;
-	UINT* m_pcbItemReact = NULL;
+	CB_ITEM* m_pcbItemReact = NULL;
 };
 
 

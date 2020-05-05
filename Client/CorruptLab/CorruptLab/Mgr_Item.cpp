@@ -7,6 +7,8 @@ void CItemMgr::Initialize(ID3D12Device* pd3dDevice,
 	    ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
 	m_pRotatingItem = new CRotatingItem(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	m_pRotatingItem->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//m_cb_item = new CB_ITEM;
 }
 
 void CItemMgr::BillboardUIRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
@@ -25,6 +27,42 @@ void CItemMgr::GetItem(int iType, XMFLOAT3 Pos)
 	m_pRotatingItem->m_nItemType = iType;
 	m_pRotatingItem->SetPosition(Pos);
 	m_pRotatingItem->m_bAnimate = true;
+}
+
+void CItemMgr::GiveItemToPlayer(int iType)
+{
+	if (iType == ITEM_TYPE_HANDLIGHT)
+		m_fItemNums.x += 1.0f;
+
+	if (iType == ITEM_TYPE_HPKIT)
+		m_fItemNums.y += 1.0f;
+
+	if (iType == ITEM_TYPE_PILL)
+		m_fItemNums.z += 1.0f;
+
+	if (iType == ITEM_TYPE_MAPSEGMENT)
+		m_fItemNums.w += 1.0f;
+
+}
+
+void CItemMgr::UseItemToPlayer(int iType)
+{
+	if (iType == ITEM_TYPE_HANDLIGHT)
+		if (m_fItemNums.x > 0.0f)
+			m_fItemNums.x -= 1.0f;
+
+	if (iType == ITEM_TYPE_HPKIT)
+		if (m_fItemNums.y> 0.0f)
+			m_fItemNums.y -= 1.0f;
+
+	if (iType == ITEM_TYPE_PILL)
+		if (m_fItemNums.z > 0.0f)
+			m_fItemNums.z -= 1.0f;
+
+	if (iType == ITEM_TYPE_MAPSEGMENT)
+		if (m_fItemNums.w > 0.0f)
+			m_fItemNums.w -= 1.0f;
+
 }
 
 void CItemMgr::Destroy()

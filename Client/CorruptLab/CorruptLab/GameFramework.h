@@ -137,7 +137,7 @@ private:
 	Shader_ShadowMRT                  * m_pShadowShader; 
 
 	CScene                            * m_pScene[2];
-	UINT                                m_SceneItemReact;
+	//UINT                                m_SceneItemReact;
 
 	CPlayer                           * m_pPlayer ;
 	CCamera                           * m_pCamera ;

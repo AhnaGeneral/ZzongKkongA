@@ -149,6 +149,9 @@
     <Filter Include="09.GameManager\02.Mgr_Radiation">
       <UniqueIdentifier>{ca2cc818-79a3-4616-911a-bce7db6f94ee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Shader\09.Shader_UI\06.Shader_MinimapFog">
+      <UniqueIdentifier>{b6757143-ec10-486f-8ac0-b5f66428a6fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -307,6 +310,9 @@
     <ClInclude Include="Mgr_Radiation.h">
       <Filter>09.GameManager\02.Mgr_Radiation</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_MinmapFog.h">
+      <Filter>04.Shader\09.Shader_UI\06.Shader_MinimapFog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -449,6 +455,9 @@
     </ClCompile>
     <ClCompile Include="Mgr_Radiation.cpp">
       <Filter>09.GameManager\02.Mgr_Radiation</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_MinmapFog.cpp">
+      <Filter>04.Shader\09.Shader_UI\06.Shader_MinimapFog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

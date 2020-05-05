@@ -5,68 +5,87 @@
 float4 PSHP(VS_TEXTURED_OUTPUT input ): SV_TARGET
 {
 	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, input.uv);
-	
-	if (cColor.a > 0.6f)
-		cColor.a = 1.0f;
-
 	return float4(cColor);
 }
 cbuffer cbItemReaction : register(b7) // 플레이어 위치
 {
-	uint	   gf3ItemReaction :packoffset(c0);
+	float4     gf4ItemCount : packoffset(c0);
+	uint	   gf3ItemReaction : packoffset(c1);
+	float       guintTime : packoffset(c1.y);
 }
 
 cbuffer cbPlayerHPRemaining : register(b8) // 플레이어
 {
 	uint          gfremainingHP :packoffset(c0);
 }
-
-
 //[ITEM]================================================================================
 float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 {
-
 	float4 cHandLight = gtxtHandLighTexture.Sample(gSamplerClamp, input.uv);
 	float4 cHPKit = gtxtHPKitdTexture.Sample(gSamplerClamp, input.uv);
 	float4 cPillds = gtxtPillddsTexture.Sample(gSamplerClamp, input.uv);
-
 	float4 cColor;
 
-	if (gf3ItemReaction == 3)
+	if (gf3ItemReaction == 4)
 	{
-		if (gnObjectID == 0) cColor = cHandLight;
-		if (gnObjectID == 1) cColor = cHPKit;
-		if (gnObjectID == 2) cColor = cPillds;
+		if (gnObjectID == 0 && gf4ItemCount.x > 0.0f) cColor = cHandLight;
+		
+		if (gnObjectID == 1 && gf4ItemCount.y > 0.0f) cColor = cHPKit;
+		
+		if (gnObjectID == 2 && gf4ItemCount.z > 0.0f) cColor = cPillds;
+
+		//if (gnObjectID == 0 && gf4ItemCount.x <= 0.0f)
+		//	cColor = float4(cHandLight.rgb * 0.2, cHandLight.a);
+		//
+		//if (gnObjectID == 1 && gf4ItemCount.y <= 0.0f)
+		//	cColor = float4(cHPKit.rgb * 0.2, cHPKit.a);
+		//
+		//if (gnObjectID == 2 && gf4ItemCount.z <= 0.0f) 
+		//	cColor = float4(cPillds.rgb * 0.2, cPillds.a);
 	}
+
 	else
 	{
-		if (gnObjectID == 0 && gf3ItemReaction == 0)
+		if (gnObjectID == 0 && gf3ItemReaction == 0 && gf4ItemCount.x > 0.0f)
 		{
-			cColor = float4(cHandLight.r + 0.4, cHandLight.gba);
+			cColor = float4(cHandLight.b + 0.5, cHandLight.gba);
 		}
 
-		else if (gnObjectID == 1 && gf3ItemReaction == 1)
+		if (gnObjectID == 1 && gf3ItemReaction == 1 && gf4ItemCount.y > 0.0f)
 		{
-			cColor = float4(cHPKit.r + 0.4, cHPKit.gba);
-
+			cColor = float4(cHPKit.b + 0.5, cHPKit.gba);
 		}
 
-		else if (gnObjectID == 2 && gf3ItemReaction == 2)
+		 if (gnObjectID == 2 && gf3ItemReaction == 2 && gf4ItemCount.z > 0.0f)
 		{
-			cColor = float4(cPillds.r + 0.4, cPillds.gba);
+			cColor = float4(cPillds.b + 0.5, cPillds.gba);
 		}
 
-		else if (gnObjectID == 0) cColor = cHandLight;
-		else if (gnObjectID == 1) cColor = cHPKit;
-		else if (gnObjectID == 2) cColor = cPillds;
 	}
 
-	if (cColor.a > 0.6f)
-		cColor.a = 1.0f;
+	if (gnObjectID == 0 && gf4ItemCount.x == 0.0f)
+	{
+		cColor = float4(cHandLight.rgb * 0.2, cHandLight.a);
+	}
+	if (gnObjectID == 1 && gf4ItemCount.y == 0.0f)
+	{
+		cColor = float4(cHPKit.rgb * 0.2, cHPKit.a);
+	}
+	if (gnObjectID == 2 && gf4ItemCount.z == 0.0f)
+	{
+		cColor = float4(cPillds.rgb * 0.2, cPillds.a);
+	}
+
+
+	//if(gf4ItemCount.g == 3.0f)
+	//{
+	//	cColor = float4(1, 0, 0, 1);
+	//}
+	//if (cColor.a > 0.6f)
+	//	cColor.a = 1.0f;
 
 	return float4(cColor);
 }
-
 //[Minimap]================================================================================
 float4 PSMinimap(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 {
@@ -74,15 +93,15 @@ float4 PSMinimap(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 	float4 Map_Fog1 = gtxtHPKitdTexture.Sample(gSamplerState, input.uv);
 	float4 Map_Fog2 = gtxtPillddsTexture.Sample(gSamplerState, input.uv);
 
-	if (Map_Fog1.a < 0.6f)
-	{
-		Map_Fog1.a = 0.0f;
-	}
+	//if (Map_Fog1.a < 0.6f)
+	//{
+	//	Map_Fog1.a = 0.0f;
+	//}
 
-	if (Map_Fog2.a < 0.6f)
-	{
-		Map_Fog2.a = 0.0f;
-	}
+	//if (Map_Fog2.a < 0.6f)
+	//{
+	//	Map_Fog2.a = 0.0f;
+	//}
 
 	float4 cColor = Minmap; /*+ Map_Fog2*/
 
@@ -106,7 +125,6 @@ float4 PSPlayerHP(VS_TEXTURED_OUTPUT input) : SV_TARGET
 
 	return float4(cColor);
 }
-
 
 
 VS_TEXTURED_OUTPUT BillboardUI_VS(VS_TEXTURED_INPUT input)
@@ -138,16 +156,13 @@ float4 PSRadiationLevel(VS_TEXTURED_OUTPUT input) : SV_TARGET
 	
 	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, uv);
 
-	if (cColor.a > 0.6f)
-		cColor.a = 1.0f;
+	//if (cColor.a > 0.6f)
+	//	cColor.a = 1.0f;
 
 	return float4(cColor);
 }
 
-
-
 //[MonsterHP]================================================================================
-
 struct GS_BILLBOARD_OUTPUT
 {
 	float4 posH :SV_POSITION;
@@ -171,15 +186,13 @@ VS_BILLBOARD_INPUT VSMONSTERHP(VS_BILLBOARD_INPUT input)
 {
 	VS_BILLBOARD_OUTPUT output;
 
-	//float4 PositionW = mul(float4(input.positionW, 1), gmtxGameObject);
 	output.positionW.x = gmtxGameObject._41;
-	output.positionW.y = gmtxGameObject._42 + (17 );
+	output.positionW.y = gmtxGameObject._42 + (17);
 	output.positionW.z = gmtxGameObject._43;
 
 	output.sizeW = input.sizeW;
 	return(output);
 }
-
 
 [maxvertexcount(4)]
 void MosnterHPGS(point VS_BILLBOARD_OUTPUT input[1], inout TriangleStream<GS_BILLBOARD_OUTPUT> outStream)
@@ -213,7 +226,6 @@ void MosnterHPGS(point VS_BILLBOARD_OUTPUT input[1], inout TriangleStream<GS_BIL
 }
 
 
-
 float4 PSMonsterHP(GS_BILLBOARD_OUTPUT input) : SV_TARGET4
 {
 	float HP = (float)gf3RadiationLevel / 100.0f;
@@ -222,5 +234,46 @@ float4 PSMonsterHP(GS_BILLBOARD_OUTPUT input) : SV_TARGET4
 	if (input.UV.x > HP)
 		 cColor = float4(0.25f, 0.25f, 0.25f, 1);
 
+	return float4(cColor);
+}
+
+float4 PSMINIMAPFOG(VS_TEXTURED_OUTPUT input) : SV_TARGET
+{
+	float4 MiniFogTex = gtxtMinimapFogTexture.Sample(gSamplerClamp, input.uv);
+	float4 cColor;
+	int controlfog = 0;
+	float alphaFog1 = MiniFogTex.a;
+
+	if (gf4ItemCount.a == 0.0f)
+	{
+		cColor = MiniFogTex;
+    }
+
+	if (gf4ItemCount.a == 1.0f)
+	{
+		if (gnObjectID == 0) 
+		{ 
+			alphaFog1 -=  guintTime;
+			if(alphaFog1 > 0.0f)
+			    cColor = float4(MiniFogTex.rgb, alphaFog1);
+			if (alphaFog1 < 0.05f)
+			{
+				cColor = float4(0,0,0, 0.0f);
+				//controlfog++;
+			}
+			//if(controlfog)
+			//	cColor = float4(MiniFogTex.rgb, 0.0f);
+		}
+		if (gnObjectID == 1)
+			cColor = gtxtMinimapFogTexture.Sample(gSamplerClamp, input.uv);
+	}
+
+	if (gf4ItemCount.a == 2.0f)
+	{
+		if (gnObjectID == 1)
+			cColor = float4(MiniFogTex.rgb, MiniFogTex.a - guintTime);
+		if (gnObjectID == 0)
+			cColor = float4(MiniFogTex.rgb, MiniFogTex.a - guintTime);
+	}
 	return float4(cColor);
 }
