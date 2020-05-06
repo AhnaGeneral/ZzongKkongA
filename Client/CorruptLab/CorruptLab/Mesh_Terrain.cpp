@@ -113,17 +113,17 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	float fMinWidth = +FLT_MAX, fMaxWidth = -FLT_MAX;
 	float fMinLength = +FLT_MAX, fMaxLength = -FLT_MAX;
 	float fHeight = 0.0f, fMinHeight = +FLT_MAX, fMaxHeight = -FLT_MAX;
-	float z = (zStart + nLength - 1);
+	float z = float(zStart + nLength - 1);
 	for (int i = 0;  z >= zStart; z -= 4.f)
 	{
-		float x = xStart;
+		float x = float(xStart);
 		for (; x < (xStart + nWidth); x += 4.f, i ++)
 		{
-			fHeight = OnGetHeight(x, z, pContext);
+			fHeight = OnGetHeight(int(x), int(z), pContext);
 
 			m_xmf3Positions[i] =  m_pVertices[i].m_xmf3Position = XMFLOAT3((x * m_xmf3Scale.x), fHeight, (z * m_xmf3Scale.z));
-			m_pVertices[i].m_xmf4Color = Vector4::Add(OnGetColor(x, z, pContext), xmf4Color);
-			m_pVertices[i].m_xmf3Normal = pHeightMapImage->GetHeightMapNormal(x,z);
+			m_pVertices[i].m_xmf4Color = Vector4::Add(OnGetColor(int(x), int(z), pContext), xmf4Color);
+			m_pVertices[i].m_xmf3Normal = pHeightMapImage->GetHeightMapNormal(int(x),int(z));
 			m_pVertices[i].m_xmf2TexCoord0 = XMFLOAT2(float(x) / float(cxHeightMap - 1), float(czHeightMap - 1 - z) / float(czHeightMap - 1));
 			m_pVertices[i].m_xmf2TexCoord1 = XMFLOAT2(float(x) / float(m_xmf3Scale.x * 1.5 ), float(z) / float(m_xmf3Scale. z * 1.5 ));
 
@@ -138,8 +138,8 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 		}
 	}
 
-	m_boundingbox.Extents.x = nWidth;
-	m_boundingbox.Extents.z = nLength;
+	m_boundingbox.Extents.x = float(nWidth);
+	m_boundingbox.Extents.z = float(nLength);
 	m_boundingbox.Extents.y = fMaxHeight - fMinHeight;
 	m_boundingbox.Center.y = (fMaxHeight + fMinHeight) / 2.f;
 	m_boundingbox.Center.x = (fMinWidth + fMaxWidth) / 2.f ;

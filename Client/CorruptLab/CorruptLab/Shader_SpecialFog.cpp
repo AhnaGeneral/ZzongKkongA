@@ -218,11 +218,11 @@ void CShader_SpecialFog::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	
 	for (int i = 0; i < m_nOneFog; i ++)
 	{
-		float Xpos = rand() % 40 + 280;
-		float Ypos = rand() % 400 + 56;
-			float fHeight = pTerrain->GetHeight(Xpos, Ypos) + 40;
+		int Xpos = rand() % 40 + 280;
+		int Ypos = rand() % 400 + 56;
+			float fHeight = pTerrain->GetHeight(float(Xpos), float (Ypos)) + 40;
 			poneNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-				XMFLOAT3(Xpos, fHeight, Ypos), this);  //object
+				XMFLOAT3(float(Xpos), fHeight, float(Ypos)), this);  //object
 			poneNoise->GenerateShaderDistortionBuffer();
 			poneNoise->SetAngle(XMFLOAT3(1, 0, 0));
 			m_pOneStageFog[one++] = poneNoise;
@@ -236,22 +236,22 @@ void CShader_SpecialFog::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	CObjectNosie* ptwoNoise;
 	for (int i = 0; i < 7; i++)
 	{
-		float Xpos = rand() % 250 + 20;
-		float Ypos = rand() % 40 + 210;
-			float fHeight = pTerrain->GetHeight(Xpos, Ypos) + 40;
+		int Xpos = rand() % 250 + 20;
+		int Ypos = rand() % 40 + 210;
+			float fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
 			ptwoNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-				XMFLOAT3(Xpos, fHeight, Ypos), this);  //object
+				XMFLOAT3(float(Xpos), fHeight, float (Ypos)), this);  //object
 			ptwoNoise->GenerateShaderDistortionBuffer();
 			ptwoNoise->SetAngle(XMFLOAT3(0, 0, 1));
 			m_pTwoStageFog[two++] = ptwoNoise;
 	}
 	for (int i = 7; i < m_nTwoFog; i++)
 	{
-		float Xpos = rand() % 40 + 280;
-		float Ypos = rand() % 220 + 280;
-		float fHeight = pTerrain->GetHeight(Xpos, Ypos) + 40;
+		int Xpos = rand() % 40 + 280;
+		int Ypos = rand() % 220 + 280;
+		float fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
 		poneNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-			XMFLOAT3(Xpos, fHeight, Ypos), this);  //object
+			XMFLOAT3(float(Xpos), fHeight, float(Ypos)), this);  //object
 		poneNoise->GenerateShaderDistortionBuffer();
 		poneNoise->SetAngle(XMFLOAT3(1, 0, 0));
 		m_pTwoStageFog[i] = poneNoise;
