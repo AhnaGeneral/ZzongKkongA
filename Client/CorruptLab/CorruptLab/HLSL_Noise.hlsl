@@ -16,6 +16,7 @@ cbuffer cbNoiseBuffer : register(b9)
 	float3   scales : packoffset (c1);
 	float    padding : packoffset (c1.w);
 	float3	 angle : packoffset(c2);
+	float    fogTime : packoffset(c2.w);
 };
 
 struct VS_NOISE_INPUT

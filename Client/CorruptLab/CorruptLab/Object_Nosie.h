@@ -9,6 +9,7 @@ struct CB_NOISEBUFFERTYPE
 	XMFLOAT3    scales = { 0.0f, 0.0f, 0.0f };
 	float       padding = 0.0f;
 	XMFLOAT3	Angle = { 0,0,0 };
+	float       FogTime = 4.0f;
 };
 
 struct CB_DISTORTIONBUFFERTYPE
@@ -26,6 +27,8 @@ protected:
 	CB_DISTORTIONBUFFERTYPE     m_cbvdistortion;
 	CB_NOISEBUFFERTYPE          m_cbvNoisebuffer;
 	float					    m_fFrameTime = 0.0f;
+	float                       m_FogTime = 3.0f;
+	int                         ControlFog = 0;
 	XMFLOAT3				    m_fPosition = { 0.0f, 0.0f, 0.0f };
 
 public:

@@ -91,7 +91,7 @@ void Shader_Lobby::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 void Shader_Lobby::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
 {
 	CTexture* pUITexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pUITexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Lobby/lobby.dds", 0);
+	pUITexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Lobby/MainScene.dds", 0);
 
 	m_pLobbyMaterial = new CMaterial(1);
 	m_pLobbyMaterial->SetTexture(pUITexture);

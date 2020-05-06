@@ -2,7 +2,7 @@
 #include "Shader_SpecialFog.h"
 #include "Object_Nosie.h"
 #include "Mgr_Collision.h"
-
+#include "Mgr_Item.h"
 D3D12_INPUT_LAYOUT_DESC CShader_SpecialFog::CreateInputLayout()
 {
 	UINT nInputElementDescs = 1;
@@ -211,32 +211,30 @@ void CShader_SpecialFog::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pSceneDepthTextures, ROOT_PARAMETER_SCENEDEPTHTEX, 0);
 
 	// ===========================================================================================
-	m_nOneFog = 12;
+	m_nOneFog = 14;
 	m_pOneStageFog = new CObjectNosie * [m_nOneFog];
 	int one = 0;
 	CObjectNosie* poneNoise;
 	
 	for (int i = 0; i < m_nOneFog; i ++)
 	{
-		int Xpos = rand() % 40 + 280;
-		int Ypos = rand() % 400 + 56;
-			float fHeight = pTerrain->GetHeight(float(Xpos), float (Ypos)) + 40;
+		int Xpos = rand() % 40 + 300; //280 ~ 320
+		int Ypos = rand() % 400 + 56; //56 ~ 456
+			float fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
 			poneNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 				XMFLOAT3(float(Xpos), fHeight, float(Ypos)), this);  //object
 			poneNoise->GenerateShaderDistortionBuffer();
 			poneNoise->SetAngle(XMFLOAT3(1, 0, 0));
 			m_pOneStageFog[one++] = poneNoise;
-
-
 	}
 
-	m_nTwoFog = 14;
+	m_nTwoFog = 17;
 	m_pTwoStageFog = new CObjectNosie * [m_nTwoFog];
 	int two = 0;
 	CObjectNosie* ptwoNoise;
 	for (int i = 0; i < 7; i++)
 	{
-		int Xpos = rand() % 250 + 20;
+		int Xpos = rand() % 250 + 20; //20 ~ 270 
 		int Ypos = rand() % 40 + 210;
 			float fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
 			ptwoNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
@@ -247,8 +245,8 @@ void CShader_SpecialFog::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	}
 	for (int i = 7; i < m_nTwoFog; i++)
 	{
-		int Xpos = rand() % 40 + 280;
-		int Ypos = rand() % 220 + 280;
+		int Xpos = rand() % 40 + 320; // 320 ~ 360
+		int Ypos = rand() % 280 + 200; // 200 ~ 480 
 		float fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
 		poneNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 			XMFLOAT3(float(Xpos), fHeight, float(Ypos)), this);  //object
@@ -276,7 +274,8 @@ void CShader_SpecialFog::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCam
 	m_pFogNoiseTextures->UpdateShaderVariable(pd3dCommandList, 0);
 
 	int Progress = CCollisionMgr::GetInstance()->m_iSceneProgress;
-
+	float StageFog = CItemMgr::GetInstance()->GetItemNums().w;
+	
 	switch (Progress)
 	{
 	case PROGRESS_FILED1:
@@ -286,11 +285,14 @@ void CShader_SpecialFog::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCam
 	case PROGRESS_FILED2:
 		for (int i = 0; i < m_nTwoFog; i++)
 			m_pTwoStageFog[i]->Render(pd3dCommandList, pCamera);
+
+	case PROGRESS_FILED3:
+	/*	for (int i = 0; i < m_nTwoFog; i++)
+			m_pTwoStageFog[i]->Render(pd3dCommandList, pCamera);*/
 		break;
 	default:
 		break;
 	}
-
 }
 
 void CShader_SpecialFog::ReleaseObjects()

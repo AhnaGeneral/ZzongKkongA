@@ -3,6 +3,8 @@
 #include "Shader_Noise.h"
 #include "Mesh.h"
 #include "Mgr_Radiation.h"
+#include "Mgr_Item.h"
+#include "Mgr_Collision.h"
 
 CObjectNosie::CObjectNosie()
 {
@@ -109,12 +111,35 @@ void CObjectNosie::ReleaseShaderVariables()
 
 void CObjectNosie::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
 {
-
 	// 프레임 시간 카운터를 증가시킵니다.
 	m_fFrameTime += 0.01f;
 	if (m_fFrameTime > 1000.0f)
 	{
 		m_fFrameTime = 0.0f;
+	}
+
+	if (CItemMgr::GetInstance()->GetItemNums().w == 1.0f && ControlFog!= PROGRESS_FILED2)
+	{
+		m_FogTime += 0.1f;
+
+		if (m_FogTime > 20.0f)
+		{
+		    CCollisionMgr::GetInstance()->m_iSceneProgress = PROGRESS_FILED2;
+			ControlFog = PROGRESS_FILED2;
+			m_FogTime = 3.0f;
+		}
+	}
+
+	if (CItemMgr::GetInstance()->GetItemNums().w == 2.0f && ControlFog != PROGRESS_FILED3)
+	{
+		m_FogTime += 0.1f;
+
+		if (m_FogTime > 20.0f)
+		{
+			CCollisionMgr::GetInstance()->m_iSceneProgress = PROGRESS_FILED3;
+			ControlFog = PROGRESS_FILED3;
+			m_FogTime = 3.0f;
+		}
 	}
 
 	// GameObject[게임 오브젝트 콘스탄트버퍼] -------------------------------------------------------------
@@ -131,6 +156,8 @@ void CObjectNosie::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLi
 	::memcpy(&m_pcbMappedNoiseBuffers->scales, &m_cbvNoisebuffer.scales, sizeof(XMFLOAT3));
 	::memcpy(&m_pcbMappedNoiseBuffers->padding, &m_cbvNoisebuffer.padding, sizeof(float));
 	::memcpy(&m_pcbMappedNoiseBuffers->Angle, &m_cbvNoisebuffer.Angle, sizeof(XMFLOAT3));
+	::memcpy(&m_pcbMappedNoiseBuffers->FogTime, &m_FogTime, sizeof(float));
+
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbNoiseBuffer->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_NOISEBUFFER, d3dGpuVirtualAddress);

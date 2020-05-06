@@ -3,5 +3,5 @@
 CDrugMaker::CDrugMaker(int iMonsterType)
 {
 	m_bEnable = true;
-	m_iMonsterType - iMonsterType;
+	m_iMonsterType = iMonsterType;
 }

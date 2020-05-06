@@ -316,6 +316,7 @@
     <ClInclude Include="Shader_MinmapFog.h">
       <Filter>04.Shader\09.Shader_UI\06.Shader_MinimapFog</Filter>
     </ClInclude>
+    <ClInclude Include="Object_DrugMaker.h" />
     <ClInclude Include="Shader_SpecialFog.h">
       <Filter>04.Shader\03.Shader_BillBoard\00.Shader_SpecialFog</Filter>
     </ClInclude>
@@ -468,6 +469,7 @@
     <ClCompile Include="Shader_SpecialFog.cpp">
       <Filter>04.Shader\03.Shader_BillBoard\00.Shader_SpecialFog</Filter>
     </ClCompile>
+    <ClCompile Include="Object_DrugMaker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">

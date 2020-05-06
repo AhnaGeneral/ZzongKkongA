@@ -100,8 +100,13 @@ public:
 	virtual void ReleaseShaderVariables();
 
 	void SetObjectID(UINT objectID) { m_nobjectID = objectID; }
+	
 	virtual UINT GetObjectID() { return m_nobjectID; }
+	
 	void SetItemReact(int React) { m_ItemReact.m_iTemReact = React;}
+	
+	int GetFogControl() { return m_ItemReact.m_Control; }
+
 	void SetItemCount(XMFLOAT4 itemCount);
 	///void SetItemElapsedTime(){}
 	

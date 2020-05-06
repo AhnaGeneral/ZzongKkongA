@@ -246,6 +246,8 @@ float4 PSMonsterHP(GS_BILLBOARD_OUTPUT input) : SV_TARGET5
 	return float4(cColor);
 }
 
+
+//[¹Ì´Ï¸Ê ¾È°³] ============================================================================
 float4 PSMINIMAPFOG(VS_TEXTURED_OUTPUT input) : SV_TARGET
 {
 	float4 MiniFogTex = gtxtMinimapFogTexture.Sample(gSamplerClamp, input.uv);

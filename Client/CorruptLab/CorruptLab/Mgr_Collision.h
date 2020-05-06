@@ -47,7 +47,7 @@ public:
 public:
 	list<BoundingOrientedBox> m_pStaticCollisionlist;
 	list<CMonster*>** m_pMonsterLists;
-	int m_iSceneProgress = PROGRESS_FILED2;
+	int m_iSceneProgress = PROGRESS_FILED1;
 	BoundingBox m_pFiledCollision1;
 	BoundingBox m_pFiledCollision2[2];
 

@@ -464,13 +464,13 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	m_pSceneDepthTextures->SetTexture(0, pContext);
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pSceneDepthTextures, ROOT_PARAMETER_SCENEDEPTHTEX, 0);
 	
-	m_nFog = 64;
+	m_nFog = 100;
 	int w = 0;
 	m_pFogObjects = new CObjectNosie * [m_nFog];
 	CObjectNosie* pNoise;
-	for (int i = 50; i < 450; i+= 50)
+	for (int i = 0; i < 500; i+= 50)
 	{
-		for (int j = 50; j < 450; j+=50)
+		for (int j = 0; j < 500; j+=50) // 50 100 150 
 		{
 			float fHeight = pTerrain->GetHeight((float)i, (float)j) + 15;
 			pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
@@ -496,10 +496,10 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 void CSoftParticleShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	OnPrepareRender(pd3dCommandList);
+
 	m_pSceneDepthTextures->UpdateShaderVariables(pd3dCommandList);
 
 	m_pFireNoiseTextures->UpdateShaderVariable(pd3dCommandList, 0);
-
 
 	for (int i = 0; i < m_nFire; i++)
 		m_pFireObjects[i]->Render(pd3dCommandList, pCamera);
