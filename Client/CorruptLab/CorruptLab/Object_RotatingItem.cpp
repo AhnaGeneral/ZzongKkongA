@@ -89,7 +89,7 @@ void CRotatingItem::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
 	
 	m_fElapsedTIme += fTimeElapsed;
 	Rotate(0, fTimeElapsed * 200, 0);
-	MoveUp(fTimeElapsed * 4);
+	MoveUp(fTimeElapsed * 6);
 
 	if (m_fElapsedTIme > 1.5f)
 	{

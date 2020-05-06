@@ -117,6 +117,12 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	output.EmmisiveMRT = float4(0, 0, 0, 0);
 
+	if (gnTextureMask & MATERIAL_EMISSION_MAP)
+	{
+		float4 cColorEmission = gtxtEmissionTexture.Sample(gSamplerState, input.uv);
+		output.EmmisiveMRT = cColorEmission;
+	}
+
 	//float2 projectTexCoord;
 	//float lightDepthValue;
 	//float depthValue;
