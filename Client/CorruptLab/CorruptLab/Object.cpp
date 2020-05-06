@@ -276,8 +276,9 @@ void CGameObject::OnPrepareRender() {}
 void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	m_bRender = true;
-	if (m_pBoundingBoxes)
+	if (m_pBoundingBoxes && nPipelineState == 0)
 	{
+		int CullCount = 0;
 		//m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
 		for (int i = 0; i < m_nBoundingBoxes; i++)
 		{
@@ -285,9 +286,14 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 			//m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
 			if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox))
 			{
-				SetParentRenderState(false);
-				return;
+				
+				CullCount++;
 			}
+		}
+		if (CullCount >= m_nBoundingBoxes)
+		{
+			SetParentRenderState(false);
+			return;
 		}
 	}
 

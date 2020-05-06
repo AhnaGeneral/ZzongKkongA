@@ -36,7 +36,7 @@ PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 	vPosition = mul(mul(vPosition, gmtxInverseProjection), gmtxInverseView);
 
 	float4 vNormal = gtxtNormal[int2(position.xy)];
-	output.Light = Lighting(vPosition.xyz, vNormal.xyz);
+	output.Light = Lighting(vPosition.xyz, vNormal.xyz) * 1.5f;
 
 	float weight = 0;
 

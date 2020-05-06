@@ -203,7 +203,7 @@ void CPlayer::Update(float fTimeElapsed)
 
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
 	XMFLOAT3 pos = m_xmf3Position;
-	pos.y += 8.f;
+	pos.y += 9.3f;
 
 	if (nCurrentCameraMode == THIRD_PERSON_CAMERA) m_pCamera->Update(pos, fTimeElapsed);
 	if (m_pCameraUpdatedContext) OnCameraUpdateCallback(fTimeElapsed);
@@ -451,7 +451,7 @@ CPlayerCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapse
 		SetMaxVelocityY(400.0f);
 		m_pCamera = dynamic_cast<CPlayerCamera*>(OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode));
 		m_pCamera->SetTimeLag(0.25f);
-		m_pCamera->SetOffset(XMFLOAT3(0.0f, 3.0f, -10.5f));
+		m_pCamera->SetOffset(XMFLOAT3(0.0f, 2.0f, -10.5f));
 		m_pCamera->GenerateProjectionMatrix(1.01f, CAMERA_CULL_RANGE, ASPECT_RATIO, 60.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);

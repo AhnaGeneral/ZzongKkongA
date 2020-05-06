@@ -13,7 +13,7 @@
 
 void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_nStaticObjectTypeNum = 3;
+	m_nStaticObjectTypeNum = 6;
 	m_pStaticObjLists = new list<CGameObject*> * [m_nStaticObjectTypeNum];
 
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++) // ÃÊ±âÈ­
@@ -48,6 +48,20 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	CGameObject* pTowerModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/TRMTower.bin", NULL, false);
 	PlaceStaticObjectsFromFile(pTowerModel, "ObjectsData/Towers.bin", OBJECT_TYPE_TRMTOWER);
 
+
+	//AnimalBone------------------------------------------
+	CGameObject* pBoneModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/AnimalBon.bin", NULL, false);
+	PlaceStaticObjectsFromFile(pBoneModel, "ObjectsData/AnimalBones.bin", OBJECT_TYPE_BONE);
+
+
+	//House-----------------------------------------------
+	CGameObject* pHouseModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/HouseAll.bin", NULL, false);
+	PlaceStaticObjectsFromFile(pHouseModel, "ObjectsData/Houses.bin", OBJECT_TYPE_HOUSE);
+
+
+	//Tree-----------------------------------------------
+	CGameObject* pTreeModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Tree1.bin", NULL, false);
+	PlaceStaticObjectsFromFile(pTreeModel, "ObjectsData/Trees.bin", OBJECT_TYPE_TREE);
 
 	/*Dynamic*/
 	//ItemBox--------------------------------------------
