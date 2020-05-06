@@ -55,7 +55,7 @@ class CObjectNosie;
 
 class CSoftParticleShader :public CShader
 {
-private:
+protected:
 	CTexture                       * m_pSceneDepthTextures;
 	CTexture                       * m_pFireNoiseTextures;
 	CTexture                       * m_pFogNoiseTextures;
@@ -64,13 +64,7 @@ private:
 	int			                     m_nFire;
 
 	CObjectNosie                 **	 m_pFogObjects;
-	CObjectNosie                 **  m_pOneStageFog;
-	CObjectNosie                 **  m_pTwoStageFog;
-
-
 	int			                     m_nFog;
-	int			                     m_nOneFog;
-	int			                     m_nTwoFog;
 
 public:
 	CSoftParticleShader();

@@ -152,6 +152,9 @@
     <Filter Include="04.Shader\09.Shader_UI\06.Shader_MinimapFog">
       <UniqueIdentifier>{b6757143-ec10-486f-8ac0-b5f66428a6fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Shader\03.Shader_BillBoard\00.Shader_SpecialFog">
+      <UniqueIdentifier>{e18da939-403b-4e85-9f13-985de3457bc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -313,6 +316,9 @@
     <ClInclude Include="Shader_MinmapFog.h">
       <Filter>04.Shader\09.Shader_UI\06.Shader_MinimapFog</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_SpecialFog.h">
+      <Filter>04.Shader\03.Shader_BillBoard\00.Shader_SpecialFog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -458,6 +464,9 @@
     </ClCompile>
     <ClCompile Include="Shader_MinmapFog.cpp">
       <Filter>04.Shader\09.Shader_UI\06.Shader_MinimapFog</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_SpecialFog.cpp">
+      <Filter>04.Shader\03.Shader_BillBoard\00.Shader_SpecialFog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

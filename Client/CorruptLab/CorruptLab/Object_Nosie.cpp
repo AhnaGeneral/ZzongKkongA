@@ -130,6 +130,7 @@ void CObjectNosie::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLi
 	::memcpy(&m_pcbMappedNoiseBuffers->scrollSpeeds, &m_cbvNoisebuffer.scrollSpeeds, sizeof(XMFLOAT3));
 	::memcpy(&m_pcbMappedNoiseBuffers->scales, &m_cbvNoisebuffer.scales, sizeof(XMFLOAT3));
 	::memcpy(&m_pcbMappedNoiseBuffers->padding, &m_cbvNoisebuffer.padding, sizeof(float));
+	::memcpy(&m_pcbMappedNoiseBuffers->Angle, &m_cbvNoisebuffer.Angle, sizeof(XMFLOAT3));
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbNoiseBuffer->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_NOISEBUFFER, d3dGpuVirtualAddress);

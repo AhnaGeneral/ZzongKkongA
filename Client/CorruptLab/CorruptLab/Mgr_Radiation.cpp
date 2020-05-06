@@ -11,6 +11,8 @@ void CRadationMgr::Initialize()
 	m_Radiations[2] = RadiationInfo(XMFLOAT2(194.f, 340.f), 170, 35);
 	m_Radiations[3] = RadiationInfo(XMFLOAT2(203.f, 138.f), 150, 45);
 	m_Radiations[4] = RadiationInfo(XMFLOAT2(101.f, 176.f), 100, 55);
+
+	
 }
 void CRadationMgr::Update(float fElapsedTime)
 {

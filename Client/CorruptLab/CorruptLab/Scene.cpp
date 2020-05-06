@@ -11,6 +11,7 @@
 #include "Mgr_Item.h"
 #include "Mgr_Radiation.h"
 
+
 CGameScene::CGameScene()
 {
 	m_pPlayer = NULL;
@@ -76,6 +77,9 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pSoftParticleShader = new CSoftParticleShader();
 	m_pSoftParticleShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex, m_pTerrain);
 
+	m_pSpecialFogShader = new CShader_SpecialFog();
+	m_pSpecialFogShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex, m_pTerrain);
+
 
 	m_pCObjectWater = new CObjectWater(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature); //object
 
@@ -84,7 +88,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pCObjectWater->GenerateShaderDistortionBuffer();
 
 	CItemMgr::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-
+	CCollisionMgr::GetInstance()->Initialize();
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -139,6 +143,8 @@ void CGameScene::ReleaseObjects()
 	}
 
 	if (m_pSoftParticleShader) m_pSoftParticleShader->Release();
+	if (m_pSpecialFogShader) m_pSpecialFogShader->Release();
+
 }
 
 void CGameScene::ReleaseUploadBuffers()
@@ -664,7 +670,8 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
 
-	if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
+	//if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
+	if (m_pSpecialFogShader) m_pSpecialFogShader->Render(pd3dCommandList, pCamera);
 
 
 }

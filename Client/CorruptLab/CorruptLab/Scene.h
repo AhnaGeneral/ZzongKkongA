@@ -7,6 +7,7 @@
 #include "Shader_BillBoard.h"
 #include "Object_Player.h"
 #include "Object_Nosie.h"
+#include "Shader_SpecialFog.h"
 using namespace std;
 
 
@@ -119,6 +120,7 @@ private:
 	list<CDynamicObject*>    ** m_pDynamicObjLists;
 	list<CMonster*>          ** m_pMonsterLists;
 	CSoftParticleShader       * m_pSoftParticleShader;
+	CShader_SpecialFog       * m_pSpecialFogShader;
 
 public:
 	CCamera                   * m_pShadowCamera;

@@ -15,14 +15,13 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
 float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
 	float4 cColor = gtxtScene[int2(position.xy)];
-	float fDepth = gtxtDepth[int2(position.xy)].r;
+	//float fDepth = gtxtDepth[int2(position.xy)].r;
 	float4 fLighted = gtxtLight[int2(position.xy)];
 	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
 	float4 cEmmisive = gtxtEmmisive[int2(position.xy)];
 
 
     cColor = lerp(cColor, fLighted, 0.6f);
-	float4 cFogColor = float4(0.15f, 0.15f, 0.15f,1.f);
 	
 	//cColor = lerp(cColor, cFogColor, fDepth * 5);
 	cColor = cColor + cNonLight + cEmmisive;

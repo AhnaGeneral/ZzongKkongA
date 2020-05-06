@@ -235,7 +235,7 @@ void MosnterHPGS(point VS_BILLBOARD_OUTPUT input[1], inout TriangleStream<GS_BIL
 }
 
 
-float4 PSMonsterHP(GS_BILLBOARD_OUTPUT input) : SV_TARGET4
+float4 PSMonsterHP(GS_BILLBOARD_OUTPUT input) : SV_TARGET5
 {
 	float HP = (float)gf3RadiationLevel / 100.0f;
 	float4 cColor = gtxtAlbedoTexture.Sample(gSamplerClamp, input.UV);

@@ -359,8 +359,6 @@ CSoftParticleShader::CSoftParticleShader()
 	m_nFire = 0;
 
 	m_pFogObjects = NULL;
-	m_pOneStageFog = NULL; 
-	m_pTwoStageFog = NULL;
 	m_nFog = 0;
 }
 
@@ -483,39 +481,6 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	}
 
 	// ===========================================================================================
-	m_nOneFog = 15;
-	m_pOneStageFog = new CObjectNosie * [m_nOneFog];
-	int one = 0;
-	CObjectNosie* poneNoise;
-	for (int i = 0; i < 150; i += 50)
-	{
-		for (int j = 50; j < 100; j += 10)
-		{
-			float fHeight = pTerrain->GetHeight((float)i, (float)j) + 15;
-			poneNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-				XMFLOAT3((float)i, fHeight, (float)j), this);  //object
-			poneNoise->GenerateShaderDistortionBuffer();
-			m_pOneStageFog[one++] = poneNoise;
-		}
-	}
-
-	m_nTwoFog = 15;
-	m_pTwoStageFog = new CObjectNosie * [m_nTwoFog];
-	int two = 0;
-	CObjectNosie* ptwoNoise;
-	for (int i = 150; i < 300; i += 50)
-	{
-		for (int j = 100; j < 150; j += 10)
-		{
-			float fHeight = pTerrain->GetHeight((float)i, (float)j) + 15;
-			ptwoNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-				XMFLOAT3((float)i, fHeight, (float)j), this);  //object
-			ptwoNoise->GenerateShaderDistortionBuffer();
-			m_pTwoStageFog[two++] = ptwoNoise;
-		}
-	}
-
-	// ===========================================================================================
 	m_nFire = 1;
 	m_pFireObjects = new CObjectNosie * [m_nFire];
 
@@ -545,12 +510,6 @@ void CSoftParticleShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCa
 
 	for (int i = 0; i < m_nFog; i++)
 		m_pFogObjects[i]->Render(pd3dCommandList, pCamera);
-
-	for (int i = 0; i < m_nOneFog; i++)
-		m_pOneStageFog[i]->Render(pd3dCommandList, pCamera);
-
-	for (int i = 0; i < m_nTwoFog; i++)
-		m_pTwoStageFog[i]->Render(pd3dCommandList, pCamera);
 }
 
 void CSoftParticleShader::ReleaseObjects()
@@ -567,18 +526,6 @@ void CSoftParticleShader::ReleaseObjects()
 		m_pFogObjects[i]->Release();
 	}
 	delete[] m_pFogObjects;
-
-	for (int i = 0; i < m_nOneFog; i++)
-	{
-		m_pOneStageFog[i]->Release();
-	}
-	delete[] m_pOneStageFog;
-
-	for (int i = 0; i < m_nTwoFog; i++)
-	{
-		m_pTwoStageFog[i]->Release();
-	}
-	delete[] m_pTwoStageFog;
 
 	if (m_pSceneDepthTextures)m_pSceneDepthTextures->ReleaseUploadBuffers();
 	if (m_pFireNoiseTextures)m_pFireNoiseTextures->ReleaseUploadBuffers();
@@ -599,13 +546,5 @@ void CSoftParticleShader::ReleaseUploadBuffers()
 	for (int i = 0; i < m_nFog; i++)
 	{
 		m_pFogObjects[i]->ReleaseUploadBuffers();
-	}
-	for (int i = 0; i < m_nOneFog; i++)
-	{
-		m_pOneStageFog[i]->ReleaseUploadBuffers();
-	}
-	for (int i = 0; i < m_nTwoFog; i++)
-	{
-		m_pTwoStageFog[i]->ReleaseUploadBuffers();
 	}
 }

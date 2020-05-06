@@ -8,6 +8,7 @@ struct CB_NOISEBUFFERTYPE
 	XMFLOAT3    scrollSpeeds = {0.0f, 0.0f, 0.0f};
 	XMFLOAT3    scales = { 0.0f, 0.0f, 0.0f };
 	float       padding = 0.0f;
+	XMFLOAT3	Angle = { 0,0,0 };
 };
 
 struct CB_DISTORTIONBUFFERTYPE
@@ -32,13 +33,14 @@ public:
 	CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
 		ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader =NULL);
 	virtual ~CObjectNosie();
-
+	
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 
+	void SetAngle(XMFLOAT3 angle) { m_cbvNoisebuffer.Angle = angle; }
 	void UpdateShaderNoiseBuffer(float Time, XMFLOAT3 scrollspeed, XMFLOAT3 scales, float padding);
 
 	virtual void GenerateShaderDistortionBuffer();

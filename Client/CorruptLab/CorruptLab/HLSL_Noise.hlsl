@@ -15,6 +15,7 @@ cbuffer cbNoiseBuffer : register(b9)
 	float3   scrollSpeeds : packoffset(c0.y);
 	float3   scales : packoffset (c1);
 	float    padding : packoffset (c1.w);
+	float3	 angle : packoffset(c2);
 };
 
 struct VS_NOISE_INPUT

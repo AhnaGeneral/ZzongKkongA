@@ -193,6 +193,7 @@
     <ClInclude Include="Shader_Noise.h" />
     <ClInclude Include="Shader_ObjHP.h" />
     <ClInclude Include="Shader_Radiation.h" />
+    <ClInclude Include="Shader_SpecialFog.h" />
     <ClInclude Include="Shader_Standard.h" />
     <ClInclude Include="Shader_Terrain.h" />
     <ClInclude Include="Shader_BillBoard.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="Shader_Noise.cpp" />
     <ClCompile Include="Shader_ObjHP.cpp" />
     <ClCompile Include="Shader_Radiation.cpp" />
+    <ClCompile Include="Shader_SpecialFog.cpp" />
     <ClCompile Include="Shader_Standard.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Timer.cpp" />

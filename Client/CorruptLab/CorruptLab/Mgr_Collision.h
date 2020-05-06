@@ -7,6 +7,7 @@ class CCollisionBox;
 class CPlayer;
 class CMonster;
 
+
 class CCollisionMgr
 {
 public:
@@ -35,6 +36,7 @@ public:
 		}
 	}
 
+	
 	void InsertCollisionBoxes(BoundingOrientedBox box);
 	void SetPlayer(CPlayer* player) { m_pPlayer = player;  }
 
@@ -45,5 +47,9 @@ public:
 public:
 	list<BoundingOrientedBox> m_pStaticCollisionlist;
 	list<CMonster*>** m_pMonsterLists;
+	int m_iSceneProgress = PROGRESS_FILED2;
+	BoundingBox m_pFiledCollision1;
+	BoundingBox m_pFiledCollision2[2];
+
 };
 

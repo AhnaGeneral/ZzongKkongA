@@ -100,4 +100,10 @@
 /*CameraCullRange*/
 #define CAMERA_CULL_RANGE				300	
 
+/*SCENEPROGRESS*/
+//-----------------------------------------------
+#define PROGRESS_FILED1					0
+#define PROGRESS_FILED2					1
+#define PROGRESS_FILED3					2
+//-------------------------------------------------
 #define EPSILON						1.0e-10f

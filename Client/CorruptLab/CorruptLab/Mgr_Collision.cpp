@@ -5,6 +5,18 @@
 
 CCollisionMgr* CCollisionMgr::m_pInstance = NULL;
 
+void CCollisionMgr::Initialize(void)
+{
+	m_pFiledCollision1.Center = XMFLOAT3(280.f, 65.f, 256.f);
+	m_pFiledCollision1.Extents = XMFLOAT3(30, 20, 510.f);
+
+	m_pFiledCollision2[0].Center = XMFLOAT3(160.f, 70.f, 230.f);
+	m_pFiledCollision2[0].Extents = XMFLOAT3(130.0f, 30, 5.f);
+
+	m_pFiledCollision2[1].Center = XMFLOAT3(300.f, 70.f, 380.f);
+	m_pFiledCollision2[1].Extents = XMFLOAT3(5.f, 20.f, 140.f);
+}
+
 void CCollisionMgr::InsertCollisionBoxes(BoundingOrientedBox box)
 {
 	m_pStaticCollisionlist.push_back(box);
@@ -18,6 +30,22 @@ bool CCollisionMgr::StaticCollisionCheck()
 	{
 		if (objCol.Intersects(playerBodybox->boundingBox))
 			return true;
+	}
+	switch (m_iSceneProgress)
+	{
+	case PROGRESS_FILED1:
+		if (m_pFiledCollision1.Intersects(playerBodybox->boundingBox))
+			return true;
+		break;
+	case PROGRESS_FILED2:
+		for (int i = 0; i < 2; i++)
+		{
+			if (m_pFiledCollision2[i].Intersects(playerBodybox->boundingBox))
+				return true;
+		}
+		break;
+	default:
+		break;
 	}
 	return false;
 }
