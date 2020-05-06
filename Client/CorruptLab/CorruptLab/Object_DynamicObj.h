@@ -5,6 +5,7 @@ class CDynamicObject :
 {
 public:
 
+	virtual void OnInitialize();
 	virtual void Update(float fElapsedTime) {}
 };
 

@@ -112,7 +112,7 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 
 	float4 noise1 = gtxtAlpha01.Sample(gSamplerState, input.tex1);
 	float4 noise2 = gtxtAlpha02.Sample(gSamplerState, input.tex2);
-	float2 f2pos = float2(input.position.x / 380 / 2 - 1, input.position.y / 300 / 2 - 1);
+	float2 f2pos = float2(input.position.x / 380 / 2 - 1, input.position.y / 600 / 2 - 1);
 
 	float myDepth = input.vPorjPos.z;
 	float4 fSceneDepth = gtxtSceneDepthTexture.Sample(gSamplerState, f2pos);

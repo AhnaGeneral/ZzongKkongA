@@ -4,6 +4,7 @@
 #include "Object_StaticObj.h"
 #include "Monster_Yangmal.h"
 #include "Object_ItemBox.h"
+#include "Object_DrugMaker.h"
 #include "Mgr_Collision.h"
 #include "Object_UI.h"
 #include "Shader_ObjHP.h"
@@ -18,7 +19,7 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++) // ÃÊ±âÈ­
 		m_pStaticObjLists[i] = new list<CGameObject*>();
 
-	m_nDynamicObjectTypeNum = 1;
+	m_nDynamicObjectTypeNum = 2;
 	m_pDynamicObjLists = new list<CDynamicObject*> * [m_nDynamicObjectTypeNum];
 	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
 		m_pDynamicObjLists[i] = new list<CDynamicObject*> ();
@@ -55,6 +56,10 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	PlaceDynamicFromFile(pItemBox, "ObjectsData/ItemBoxes.bin", OBJECT_TYPE_ITEMBOX);
 
 
+	//ItemBox--------------------------------------------
+	CGameObject* pDrugMaker = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/DrugMaker.bin", NULL, true);
+
+	PlaceDynamicFromFile(pDrugMaker, "ObjectsData/DrugMakers.bin", OBJECT_TYPE_DRUGMAKER);
 
 	/*Monster*/
 	//Yangmal-------------------------------------------------
@@ -127,8 +132,18 @@ void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int i
 		XMFLOAT4X4 xmmtxWorld;
 		(UINT)::fread(&xmmtxWorld, sizeof(XMFLOAT4X4), 1, pInFile);
 
-		if (index == OBJECT_TYPE_ITEMBOX)
+		switch (index)
+		{
+		case OBJECT_TYPE_ITEMBOX:
 			pGameObject = new CItemBox();
+			break;
+		case OBJECT_TYPE_DRUGMAKER:
+			pGameObject = new CDrugMaker(i);
+			break;
+		default:
+			pGameObject = new CDynamicObject();
+			break;
+		}
 
 		pGameObject->SetChild(pModel, true);
 

@@ -37,6 +37,7 @@ protected:
 	float			m_fDistanceToPlayer;
 	float			m_fSpeed;
 	float			m_fIdleTick;
+	bool			m_bIsPurified;
 	XMFLOAT3		m_xmf3PlayerPosition;
 	XMFLOAT3		m_xmf3RandomMoveDest;
 	XMFLOAT3		m_xmf3FiledCenter;
@@ -56,6 +57,10 @@ public:
 	inline void SetPlayerPosition(const XMFLOAT3& pos) { m_xmf3PlayerPosition = pos; }
 	void SetHPUI(CUI_MonsterHP* pHP);
 	virtual void Update(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
+	virtual void BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
+	virtual void GoodUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
+	virtual void GetPurified();
+
 	void GetDamaage(int iDamage);
 	void GetFullHP() { m_iCurrentHP = m_iMaxHP; }
 	///

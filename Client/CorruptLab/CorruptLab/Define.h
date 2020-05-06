@@ -70,6 +70,7 @@
 
 // Dynamic
 #define OBJECT_TYPE_ITEMBOX				0
+#define OBJECT_TYPE_DRUGMAKER			1
 
 /*Monster*/
 //---------------------------------------------------
@@ -98,7 +99,7 @@
 
 
 /*CameraCullRange*/
-#define CAMERA_CULL_RANGE				300	
+#define CAMERA_CULL_RANGE				500	
 
 /*SCENEPROGRESS*/
 //-----------------------------------------------

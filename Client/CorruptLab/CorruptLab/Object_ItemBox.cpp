@@ -3,7 +3,7 @@
 #include "Mgr_Item.h"
 void CItemBox::OnInitialize()
 {
-	CStaticObject::OnInitialize();
+	CDynamicObject::OnInitialize();
 	m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_nType = ANIMATION_TYPE_ONCE;
 	m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_fSpeed /= 3.f;
 }

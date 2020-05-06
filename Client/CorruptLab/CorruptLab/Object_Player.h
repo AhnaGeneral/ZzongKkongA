@@ -23,6 +23,7 @@ protected:
 	XMFLOAT3	           m_xmf3Velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	XMFLOAT3               m_xmf3Gravity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
+	float				   m_fSpeed = 10;
 	float                  m_fPitch = 0.0f;
 	float                  m_fYaw = 0.0f;
 	float                  m_fRoll = 0.0f;

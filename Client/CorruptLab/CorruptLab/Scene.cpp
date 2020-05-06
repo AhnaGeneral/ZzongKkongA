@@ -10,6 +10,7 @@
 #include "Monster_Yangmal.h"
 #include "Mgr_Item.h"
 #include "Mgr_Radiation.h"
+#include "Object_DrugMaker.h"
 
 
 CGameScene::CGameScene()
@@ -505,6 +506,7 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 			break;
 		case 'Q':
 		case 'q':
+			PurifyMonster();
 			ItemBoxCheck();
 			break;
 		case 'A':
@@ -578,13 +580,34 @@ bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 			}
 		}
 		if (dwDirection)
-			m_pPlayer->Move(dwDirection, 0.5f, true);
+			m_pPlayer->Move(dwDirection, m_fElapsedTime, true);
 	}
 	m_pPlayer->Update(m_fElapsedTime);
 
 	return true;
 }
 
+
+void CGameScene::PurifyMonster()
+{
+	for (auto pObj : *m_pDynamicObjLists[OBJECT_TYPE_DRUGMAKER])
+	{
+		XMFLOAT3 ObjPos = pObj->GetPosition();
+		XMFLOAT3 PlayerPos = m_pPlayer->GetPosition();
+
+		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
+		if (Distance < 15)
+		{
+			CDrugMaker* pMaker = dynamic_cast<CDrugMaker*>(pObj);
+			if (pMaker->m_bEnable)
+				for (auto pMon : *m_pMonsterLists[pMaker->m_iMonsterType])
+				{
+					pMaker->m_bEnable = false;
+					pMon->GetPurified();
+				}
+		}
+	}
+}
 void CGameScene::AnimateObjects(float fTimeElapsed)
 {
 
