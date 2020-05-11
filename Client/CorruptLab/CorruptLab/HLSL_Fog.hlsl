@@ -18,7 +18,6 @@ struct PS_FOG_INPUT
 	float4 vPorjPos : TEXCOORD3;
 };
 
-Texture2D gtxtSceneDepthTexture : register(t23);
 
 GS_NOISE_INPUT FogVertexShader(VS_FOG_INPUT input)
 {
@@ -125,14 +124,14 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 	float4 alphaColor = gtxtFinalAlpha.Sample(gSamplerClamp, input.tex);
 	output.NonLight = float4(1, 1, 1, alphaColor.a * (finalNoise.a * 1.5));
 	float fDepthDistance = fSceenZ - myDepth;
-	if (/*(fDepthDistance < 80.f) &&*/ (fDepthDistance > 0))
+	if (/*(fDepthDistance < 80.f) &&*/ (fDepthDistance > 0.0f))
 	{
-		fDepthDistance = saturate(1 - (fDepthDistance / 150.f)); // 0.7 //0.8 //0.9 
+		fDepthDistance = saturate(1 - (fDepthDistance / myDepth / 2.f)); // 0.7 //0.8 //0.9 
 		//fDepthDistance *= 100; //0.3  //0.2 // 0.1 ..
 		//fDepthDistance/= 
 		output.NonLight.a -= fDepthDistance;
 	}
-	output.NonLight.a /= 7.5f;
+	output.NonLight.a /= 7.f;
 
 	if (gf3RadiationLevel > 0)
 	{
@@ -241,7 +240,7 @@ PS_NONLIGHT_MRT_OUTPUT SpecialFogPixelShader(PS_FOG_INPUT input)
 	float fDepthDistance = fSceenZ - myDepth;
 	if (/*(fDepthDistance < 80.f) &&*/ (fDepthDistance > 0))
 	{
-		fDepthDistance = saturate(1 - (fDepthDistance / 150.f)); // 0.7 //0.8 //0.9 
+		fDepthDistance = saturate(1 - (fDepthDistance / 150.f) ); // 0.7 //0.8 //0.9 
 		//fDepthDistance *= 100; //0.3  //0.2 // 0.1 ..
 		//fDepthDistance/= 
 		output.NonLight.a -= fDepthDistance;

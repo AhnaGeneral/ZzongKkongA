@@ -32,6 +32,7 @@ struct GS_BILLBOARD_OUTPUT
 	float2 tex1 : TEXCOORD1;
 	float2 tex2 : TEXCOORD2;
 	float2 tex3 : TEXCOORD3;
+	float4 vPorjPos : TEXCOORD4;
 };
 
 struct GS_NOISE_INPUT
@@ -73,6 +74,8 @@ void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<GS_BILLBOARD_OUTPUT>
 
 	output.posW = pVertices[0].xyz;
 	output.posH = mul(mul(pVertices[0], gmtxView), gmtxProjection);
+	output.vPorjPos = output.posH;
+
 	output.tex = pUVs[0];
 
 	output.tex1 = output.tex2 = output.tex3 = output.tex;
@@ -89,6 +92,8 @@ void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<GS_BILLBOARD_OUTPUT>
 
 	output.posW = pVertices[1].xyz;
 	output.posH = mul(mul(pVertices[1], gmtxView), gmtxProjection);
+	output.vPorjPos = output.posH;
+
 	output.tex = pUVs[1];
 
 	output.tex1 = output.tex2 = output.tex3 = output.tex;
@@ -105,6 +110,8 @@ void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<GS_BILLBOARD_OUTPUT>
 
 	output.posW = pVertices[2].xyz;
 	output.posH = mul(mul(pVertices[2], gmtxView), gmtxProjection);
+	output.vPorjPos = output.posH;
+
 	output.tex = pUVs[2];
 
 	output.tex1 = output.tex2 = output.tex3 = output.tex;
@@ -121,6 +128,8 @@ void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<GS_BILLBOARD_OUTPUT>
 
 	output.posW = pVertices[3].xyz;
 	output.posH = mul(mul(pVertices[3], gmtxView), gmtxProjection);
+	output.vPorjPos = output.posH;
+
 	output.tex = pUVs[3];
 
 	output.tex1 = output.tex2 = output.tex3 = output.tex;
@@ -166,5 +175,25 @@ PS_NONLIGHT_MRT_OUTPUT NoisePixelShader(GS_BILLBOARD_OUTPUT input)
 	float4 alphaColor = gtxtAlphaNoiseTex.Sample(gSamplerClamp, noiseCoords.xy);
 	fireColor.a = alphaColor;
 	output.NonLight = fireColor;
+
+	float2 f2pos = float2(input.posH.x / 380 / 2 - 1, input.posH.y / 300 / 2 - 1);
+
+	float myDepth = input.vPorjPos.z;
+	float4 fSceneDepth = gtxtSceneDepthTexture.Sample(gSamplerState, f2pos);
+
+	float fSceenW = fSceneDepth.g * 600.f;
+	float fSceenZ = fSceneDepth.r * fSceenW;
+
+	float fDepthDistance = fSceenZ - myDepth;
+	if (/*(fDepthDistance < 80.f) &&*/ (fDepthDistance > 0.0f))
+	{
+		fDepthDistance = saturate(1 - (fDepthDistance / myDepth / 10.f)); // 0.7 //0.8 //0.9 
+		//fDepthDistance *= 100; //0.3  //0.2 // 0.1 ..
+		//fDepthDistance/= 
+		output.NonLight.a -= fDepthDistance;
+	}
+	
+	
+	
 	return output;
 }

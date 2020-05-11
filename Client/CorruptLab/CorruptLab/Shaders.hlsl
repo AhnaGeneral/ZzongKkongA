@@ -84,6 +84,7 @@ Texture2D gtxtAlpha01 : register(t18);
 Texture2D gtxtAlpha02 : register(t19);
 
 Texture2D gtxtWaterNormal : register(t20);
+Texture2D gtxtSceneDepthTexture : register(t23);
 Texture2D gtxtCopySunTex : register(t24); // 썬카메라를 새롭게 리소스 만들었어요
 Texture2D gtxtLobbyTex : register(t25); // 썬카메라를 새롭게 리소스 만들었어요
 
