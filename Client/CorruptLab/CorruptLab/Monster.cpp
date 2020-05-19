@@ -38,12 +38,14 @@ void CMonster::MoveToTarget(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHei
 	float RotateYaw = fAngle * fTimeElapsed * ((xmf3CrossProduct.y > 0.0f) ? 1.0f : -1.0f);
 	if (isnan(RotateYaw))
 		RotateYaw = 0;
-	Rotate(0.0f,RotateYaw, 0.0f);
-	XMFLOAT3 MovePos = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Look, Speed * fTimeElapsed));
+	Rotate(0.0f, RotateYaw, 0.0f);
+	if (m_fDistanceToPlayer > 12.f)
+	{
+		XMFLOAT3 MovePos = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Look, Speed * fTimeElapsed));
+		MovePos.y = pTerrain->GetHeight(MovePos.x, MovePos.z);
 
-	MovePos.y = pTerrain->GetHeight(MovePos.x, MovePos.z);
-
-	SetPosition(MovePos);
+		SetPosition(MovePos);
+	}
 }
 
 void CMonster::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)

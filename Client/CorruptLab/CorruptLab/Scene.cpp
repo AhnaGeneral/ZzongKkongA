@@ -102,20 +102,16 @@ void CGameScene::ReleaseObjects()
 
 	if (m_pSkyBox)        delete m_pSkyBox;
 	if (m_pTerrain)       delete m_pTerrain;
-	if (m_pCloudGSShader) delete m_pCloudGSShader;
 
 	if (m_pStaticObjLists) // 오브젝트 Release
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
 		{
-			for (auto Obj : *m_pStaticObjLists[i])
-			{
-				Obj->Release();
-			}
-			m_pStaticObjLists[i]->clear();
+			if(m_pStaticObjLists[i])
+				m_pStaticObjLists[i]->Release();
 		}
 	}
-
+	delete[] m_pStaticObjLists; m_pStaticObjLists = NULL;
 
 	if (m_pDynamicObjLists) // 오브젝트 Release
 	{
@@ -129,7 +125,7 @@ void CGameScene::ReleaseObjects()
 		}
 	}
 
-	delete[] m_pStaticObjLists;
+	delete[] m_pDynamicObjLists; m_pDynamicObjLists = NULL;
 
 	if (m_pMonsterLists) // 오브젝트 Release
 	{
@@ -152,6 +148,43 @@ void CGameScene::ReleaseUploadBuffers()
 {
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
 	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
+	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
+
+
+	if (m_pStaticObjLists) // 오브젝트 Release
+	{
+		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+		{
+			if (m_pStaticObjLists[i])
+			{
+				m_pStaticObjLists[i]->ReleaseUploadBuffers();
+			}
+		}
+	}
+
+
+	if (m_pDynamicObjLists) // 오브젝트 Release
+	{
+		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pDynamicObjLists[i])
+			{
+				Obj->ReleaseUploadBuffers();
+			}
+		}
+	}
+
+	if (m_pMonsterLists) // 오브젝트 Release
+	{
+		for (int i = 0; i < m_nMonsterTypeNum; i++)
+		{
+			for (auto Obj : *m_pMonsterLists[i])
+			{
+				Obj->ReleaseUploadBuffers();
+			}
+		}
+	}
+
 }
 
 
@@ -640,26 +673,26 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
 		{
-			for (auto Obj : *m_pStaticObjLists[i])
+			if (m_pStaticObjLists[i])
 			{
-				Obj->UpdateTransform(NULL);
-				Obj->Render(pd3dCommandList, pCamera, 0);
+				m_pStaticObjLists[i]->UpdateTransform(NULL);
+				m_pStaticObjLists[i]->Render(pd3dCommandList, pCamera, 0);
 			}
 		}
 	}
 
-	if (m_pDynamicObjLists) // 오브젝트 Render
-	{
-		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
-		{
-			for (auto Obj : *m_pDynamicObjLists[i])
-			{
-				Obj->Update(m_fElapsedTime);
-				Obj->UpdateTransform(NULL);
-				Obj->Render(pd3dCommandList, pCamera, 0);
-			}
-		}
-	}
+	//if (m_pDynamicObjLists) // 오브젝트 Render
+	//{
+	//	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pDynamicObjLists[i])
+	//		{
+	//			Obj->Update(m_fElapsedTime);
+	//			Obj->UpdateTransform(NULL);
+	//			Obj->Render(pd3dCommandList, pCamera, 0);
+	//		}
+	//	}
+	//}
 
 
 	if (m_pMonsterLists) // 몬스터 Render
@@ -710,10 +743,10 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
 		{
-			for (auto Obj : *m_pStaticObjLists[i])
+			if (m_pStaticObjLists[i])
 			{
-				Obj->UpdateTransform(NULL);
-				Obj->Render(pd3dCommandList, pCamera, 1);
+				m_pStaticObjLists[i]->UpdateTransform(NULL);
+				m_pStaticObjLists[i]->Render(pd3dCommandList, pCamera, 1);
 			}
 		}
 	}

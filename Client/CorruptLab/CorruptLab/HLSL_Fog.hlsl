@@ -131,7 +131,7 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 		//fDepthDistance/= 
 		output.NonLight.a -= fDepthDistance;
 	}
-	output.NonLight.a /= 7.f;
+	output.NonLight.a /= 4.f;
 
 	if (gf3RadiationLevel > 0)
 	{

@@ -103,7 +103,7 @@ public:
 	void CheckPlayerCollision();
 
 	void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList);
-	void PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, int index);
+	void PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, int* index);
 	void PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index);
 	void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 
@@ -118,7 +118,7 @@ private:
 	int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
 	int						    m_nMonsterTypeNum; // 몬스터 종류 개수
 
-	list<CGameObject*>       ** m_pStaticObjLists; // list<CGameObject*>*의 배열
+	CGameObject**				m_pStaticObjLists = NULL; // list<CGameObject*>*의 배열 67개
 	list<CDynamicObject*>    ** m_pDynamicObjLists;
 	list<CMonster*>          ** m_pMonsterLists;
 	CSoftParticleShader       * m_pSoftParticleShader;

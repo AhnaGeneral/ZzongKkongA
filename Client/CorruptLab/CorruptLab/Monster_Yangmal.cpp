@@ -4,8 +4,11 @@ void CYangmal::OnInitialize()
 {
 
 	m_pNeck = m_pChild->FindFrame("Bip001_Neck");
-	m_pAttCollision = &(m_pChild->m_pBoundingBoxes[1]);
-	m_pAttCollision->m_pParent = m_pNeck;
+	if (m_pChild->m_pBoundingBoxes)
+	{
+		m_pAttCollision = &(m_pChild->m_pBoundingBoxes[1]);
+		m_pAttCollision->m_pParent = m_pNeck;
+	}
 
 }
 
