@@ -41,6 +41,12 @@ CPlayer::~CPlayer()
 	ReleaseShaderVariables();
 
 	if (m_pCamera) delete m_pCamera;
+
+	if (m_pSword)
+	{
+		m_pSword->ReleaseUploadBuffers();
+		m_pSword->Release();
+	}
 }
 
 void CPlayer::SetAttackState()
@@ -311,7 +317,7 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	m_pHandCollision = &(pGameObject->m_pBoundingBoxes[1]);
 	//pGameObject->m_xmf4Rotation
 
-	//m_pSword->m_xmf4x4Transform = m_pDummy->m_xmf4x4Transform;
+	m_pSword->m_xmf4x4Transform = m_pDummy->m_xmf4x4Transform;
 	m_pSword->m_xmf4x4Transform = Matrix4x4::Identity();
 	m_pSword->Rotate(0, 0, 180);
 	m_pSword->SetScale(2, 2, 2);
@@ -327,7 +333,10 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	
 }
 
-CMainPlayer::~CMainPlayer() {}
+CMainPlayer::~CMainPlayer()
+{
+
+}
 
 void CMainPlayer::OnPrepareRender()
 {
@@ -399,7 +408,7 @@ void CMainPlayer::Update(float fTimeElapsed)
 void CMainPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	CPlayer::Render(pd3dCommandList, pCamera, nPipelineState);
-	m_pSword->Render(pd3dCommandList, pCamera, nPipelineState);
+	if(m_pSword) m_pSword->Render(pd3dCommandList, pCamera, nPipelineState);
 }
 
 void CMainPlayer::SetAnimation()

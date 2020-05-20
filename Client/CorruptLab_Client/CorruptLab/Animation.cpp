@@ -17,15 +17,17 @@ CAnimationSet::~CAnimationSet()
 	if (m_pfKeyFrameTransformTimes)
 		delete[] m_pfKeyFrameTransformTimes;
 
-	for (int j = 0; j < m_nKeyFrameTransforms; j++) 
-		if (m_ppxmf4x4KeyFrameTransforms[j]) 
-		delete[] m_ppxmf4x4KeyFrameTransforms[j];
-
+	for (int j = 0; j < m_nKeyFrameTransforms; j++)
+	{
+		if (m_ppxmf4x4KeyFrameTransforms[j])
+			delete[] m_ppxmf4x4KeyFrameTransforms[j];
+	}
 	if (m_ppxmf4x4KeyFrameTransforms) 
 		delete[] m_ppxmf4x4KeyFrameTransforms;
 
 	if (m_pCallbackKeys) 
 		delete[] m_pCallbackKeys;
+
 }
 
 float CAnimationSet::GetPosition(float fPosition)
@@ -212,4 +214,9 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHan
 			}
 		}
 	}
+}
+
+CAnimationTrack::~CAnimationTrack()
+{
+	
 }

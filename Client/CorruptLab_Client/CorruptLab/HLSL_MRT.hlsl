@@ -15,17 +15,14 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
 float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
 	float4 cColor = gtxtScene[int2(position.xy)];
-	//float fDepth = gtxtDepth[int2(position.xy)].r;
 	float4 fLighted = gtxtLight[int2(position.xy)];
 	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
 
 	int2 dir = int2(1, 1);
 	const int offset[] = { 0, 1, 2, 3, 4, 5 };
 	const float weight[] = { 0.3270270270, 0.2945945946, 0.1216216216, 0.0540540541, 0.0162162162 };
-	//float4 cEmmisive = gtxtEmmisive[int2(position.xy)] * weight[0];
 	float4 FragmentColor = float4(0, 0, 0, 0);
-	//(1.0, 0.0) -> horizontal blur
-	//(0.0, 1.0) -> vertical blur
+
 	int hstep = dir.x;
 	int vstep = dir.y;
 
@@ -38,9 +35,7 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 
 	fLighted = fLighted * 2 - float4(0.1f,0.1f,0.1f,0.f);
     cColor = lerp(cColor, fLighted, 0.5f);
-	
-	//cColor = lerp(cColor, cFogColor, fDepth * 5);
-	cColor = cColor + cNonLight + cEmmisive;
+		cColor = cColor + cNonLight + cEmmisive;
 
 	return(cColor);
 }
@@ -79,7 +74,6 @@ struct VS_TEXTURED_INPUT
 {
 	float3 position : POSITION;
 	float2 uv : TEXCOORD;
-	//uint object:TEXCOORD1; 
 };
 
 struct VS_TEXTURED_OUTPUT
@@ -108,8 +102,6 @@ float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 	if (gnObjectID == 4)  cColor = gtxtCopySunTex.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 5)  cColor = gtxtLight.Sample(gSamplerState, input.uv);
 	if (gnObjectID == 6)  cColor = gtxtEmmisive.Sample(gSamplerState, input.uv);
-
-	//gtxtShadowCameraTexture
 
 	return cColor;
 }

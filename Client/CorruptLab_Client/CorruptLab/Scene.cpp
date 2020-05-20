@@ -18,8 +18,7 @@ CGameScene::CGameScene()
 	m_pPlayer = NULL;
 	m_pTerrain = NULL;
 	m_pSkyBox = NULL;
-	//m_pCloudGSShader = NULL;
-	m_pUIObj = NULL;
+	m_pCObjectWater = NULL;
 
 	WindowCursorPos = { 0L,0L };
 
@@ -27,9 +26,6 @@ CGameScene::CGameScene()
 	CItemMgr::GetInstance()->SetReactItem(ITEM_NONE);
 
 	itemRange = 0.0f;
-
-
-	m_pCObjectWater = NULL;
 
 	m_bPipelineStateIndex = 0;
 	m_ptOldCursorPos = {0L, 0L};
@@ -42,6 +38,7 @@ CGameScene::CGameScene()
 	m_pDynamicObjLists = NULL;
 	m_pMonsterLists = NULL;
 	m_pSoftParticleShader = NULL;
+	m_pSpecialFogShader = NULL;
 
 	m_pShadowCamera = NULL;
 
@@ -51,28 +48,23 @@ CGameScene::CGameScene()
 
 CGameScene::~CGameScene()
 {
+	CItemMgr::GetInstance()->Destroy();
+	CCollisionMgr::GetInstance()->Destroy();
 }
 
 void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	m_pd3dGraphicsRootSignature = CreateGraphicsRootSignature(pd3dDevice);
 
-	//std::cout << "누나 졸작 화이팅 by 은우" << std::endl;
-
 	XMFLOAT3 xmf3Scale(2.0f, 0.6f, 2.0f);
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
 
 	m_pShadowCamera = new CSunCamera();
-	//m_pShadowCamera->Rotate(60.0f, 180.0f, 180.0f);
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,
 		_T("Geometry/OneStageTerrain.raw"), 257, 257, 17, 17, xmf3Scale, xmf4Color, m_pShadowMap);
 	
-
-	//m_pCloudGSShader = new CCloudGSShader;
-	//m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
-	//m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 
 	CRadationMgr::GetInstance()->Initialize();
 	m_pSoftParticleShader = new CSoftParticleShader();
@@ -100,9 +92,26 @@ void CGameScene::ReleaseObjects()
 
 	ReleaseShaderVariables();
 
-	if (m_pSkyBox)        delete m_pSkyBox;
-	if (m_pTerrain)       delete m_pTerrain;
+	if (m_pSkyBox)
+	{
+		m_pSkyBox->Release();
+		m_pSkyBox = NULL;
+	}
 
+	if (m_pTerrain)
+	{
+		m_pTerrain->Release();
+		m_pTerrain = NULL;
+	}
+
+	if (m_pCObjectWater) 
+	{
+		m_pCObjectWater->ReleaseUploadBuffers();
+		m_pCObjectWater->Release();
+		m_pCObjectWater = NULL;
+	}
+
+	//----------------------------------------------
 	if (m_pStaticObjLists) // 오브젝트 Release
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -117,6 +126,7 @@ void CGameScene::ReleaseObjects()
 	delete[] m_pStaticObjLists; 
 	m_pStaticObjLists = NULL;
 
+	//----------------------------------------------
 	if (m_pDynamicObjLists) // 오브젝트 Release
 	{
 		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
@@ -131,6 +141,7 @@ void CGameScene::ReleaseObjects()
 	delete[] m_pDynamicObjLists; 
 	m_pDynamicObjLists = NULL;
 
+	//----------------------------------------------
 	if (m_pMonsterLists) // 오브젝트 Release
 	{
 		for (int i = 0; i < m_nMonsterTypeNum; i++)
@@ -142,18 +153,49 @@ void CGameScene::ReleaseObjects()
 			m_pMonsterLists[i]->clear();
 		}
 	}
+	delete[] m_pMonsterLists;
+	m_pMonsterLists = NULL;
 
-	if (m_pSoftParticleShader) m_pSoftParticleShader->Release();
-	if (m_pSpecialFogShader) m_pSpecialFogShader->Release();
+	//----------------------------------------------
+	if (m_pSoftParticleShader)
+	{
+		m_pSoftParticleShader->Release();
+		m_pSoftParticleShader = NULL;
+	}
+
+	if (m_pSpecialFogShader)
+	{
+		m_pSpecialFogShader->Release();
+		m_pSpecialFogShader = NULL;
+	}
+	//----------------------------------------------
+	if (m_pShadowCamera)
+	{
+		m_pShadowCamera->ReleaseShaderVariables();
+		delete m_pShadowCamera;
+	}
+	if (m_pShadowMap)
+	{
+		m_pShadowMap->ReleaseUploadBuffers();
+		m_pShadowMap->Release();
+		m_pShadowMap = NULL;
+	}
+	//if (m_pDepthTex)
+	//{
+	//	m_pDepthTex->ReleaseUploadBuffers();
+	//	//m_pDepthTex->Release(); 다른 곳에서 하나 ..? 
+	//	m_pDepthTex = NULL; 
+	//}
+	//----------------------------------------------
 
 }
 void CGameScene::ReleaseUploadBuffers()
 {
+	//----------------------------------------------
 	if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
 	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
 	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
-
-
+	//----------------------------------------------
 	if (m_pStaticObjLists) // 오브젝트 Release
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -165,8 +207,7 @@ void CGameScene::ReleaseUploadBuffers()
 			}
 		}
 	}
-
-
+	//----------------------------------------------
 	if (m_pDynamicObjLists) // 오브젝트 Release
 	{
 		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
@@ -177,7 +218,7 @@ void CGameScene::ReleaseUploadBuffers()
 			}
 		}
 	}
-
+	//----------------------------------------------
 	if (m_pMonsterLists) // 오브젝트 Release
 	{
 		for (int i = 0; i < m_nMonsterTypeNum; i++)
@@ -188,7 +229,7 @@ void CGameScene::ReleaseUploadBuffers()
 			}
 		}
 	}
-
+	//----------------------------------------------
 }
 
 
@@ -479,10 +520,7 @@ bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 		WindowCursorPos = m_ptOldCursorPos;
 
 		//ScreenToClient함수 전체화면 기준인 커서의를 해당 클라이언트 윈도우 기준으로 좌표를 변환해주는 함수 이다. 
-		//std::cout << "전체화면 기준 cursor:" << m_ptOldCursorPos.x << "," << m_ptOldCursorPos.y << "  " << std::endl;
 		ScreenToClient(hWnd, &WindowCursorPos);
-		//std::cout << "윈도우 기준  cursor:" << WindowCursorPos.x << "," << WindowCursorPos.y << "  " << std::endl;
-
 		//n_ReactItem
 		itemRange = FRAME_BUFFER_HEIGHT / 10.0f; //60
 
@@ -513,7 +551,6 @@ bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 			n_ReactItem = ITEM_NONE;
 			CItemMgr::GetInstance()->SetReactItem(ITEM_NONE);
 		}
-		//std::cout << " ReactItem  " << n_ReactItem << std::endl;
 
 		break;
 	case WM_LBUTTONUP:
@@ -613,7 +650,6 @@ bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 			else
 			{
 				m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
-				//m_pShadowCamera->Rotate(cyDelta, cxDelta, 0.0f);
 			}
 		}
 		if (dwDirection)
@@ -717,23 +753,18 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 			}
 		}
 	}
-
-
 	CheckCollisions();
 
-	/*if (m_pCloudGSShader) m_pCloudGSShader->Render(pd3dCommandList, pCamera);
-	*/m_pPlayer->Render(pd3dCommandList, pCamera);
+	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
 
 	if (m_pCObjectWater) m_pCObjectWater->Render(pd3dCommandList, pCamera);
 
-	if (m_pSkyBox)       m_pSkyBox->Render(pd3dCommandList, pCamera);
+	if (m_pSkyBox)  m_pSkyBox->Render(pd3dCommandList, pCamera);
 
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
 
 	if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
 	if (m_pSpecialFogShader) m_pSpecialFogShader->Render(pd3dCommandList, pCamera);
-
-
 }
 
 
@@ -742,7 +773,9 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 	m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
 	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
-	m_pTerrain->Render(pd3dCommandList, pCamera, 2);
+
+	if(m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, 2);
+
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -765,7 +798,6 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 			}
 		}
 	}
-
 	if (m_pMonsterLists) // 몬스터 Render
 	{
 		for (int i = 0; i < m_nMonsterTypeNum; i++)
@@ -777,7 +809,6 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 			}
 		}
 	}
-
 	m_pPlayer->Render(pd3dCommandList, pCamera, 1);
 }
 void CGameScene::Update(float fTimeElapsed)
@@ -788,7 +819,6 @@ void CGameScene::Update(float fTimeElapsed)
 	m_pPlayer->Animate(fTimeElapsed, NULL);
 	CItemMgr::GetInstance()->Update(fTimeElapsed);
 	CRadationMgr::GetInstance()->Update(m_fElapsedTime);
-
 }
 
 void CGameScene::ItemBoxCheck()
@@ -812,4 +842,6 @@ CScene::CScene()
 
 CScene::~CScene()
 {
+	//if (m_pd3dGraphicsRootSignature)
+	//	m_pd3dGraphicsRootSignature->Release();
 }

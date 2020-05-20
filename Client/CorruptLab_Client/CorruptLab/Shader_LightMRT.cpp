@@ -18,6 +18,12 @@ CLightTarget::~CLightTarget()
 {
 	ReleaseShaderVariables();
 	ReleaseObjects();
+	if (m_pTextures)
+	{
+		m_pTextures->ReleaseShaderVariables();
+	}
+	m_pcbMappedLights = NULL;
+	m_pcbMappedMaterials = NULL;
 }
 
 D3D12_DEPTH_STENCIL_DESC CLightTarget::CreateDepthStencilState()
@@ -173,11 +179,14 @@ void CLightTarget::ReleaseShaderVariables()
 		m_pd3dcbLights->Unmap(0, NULL);
 		m_pd3dcbLights->Release();
 	}
+	m_pd3dcbLights = NULL;
 	if (m_pd3dcbMaterials)
 	{
 		m_pd3dcbMaterials->Unmap(0, NULL);
 		m_pd3dcbMaterials->Release();
 	}
+	m_pd3dcbMaterials = NULL;
+
 }
 
 void CLightTarget::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
@@ -198,10 +207,7 @@ void CLightTarget::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* p
 
 void CLightTarget::ReleaseObjects()
 {
-	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
-
 	if (m_pMaterials)  delete m_pMaterials;
-
 	if (m_pLights)  delete m_pLights;
 }
 

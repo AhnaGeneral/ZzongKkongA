@@ -164,7 +164,7 @@ void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pSkinnedAnimationShader = new CSkinnedAnimationShader();
 	m_pSkinnedAnimationShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	m_pSkinnedAnimationShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	m_pSkinnedAnimationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 3, 10);
+	m_pSkinnedAnimationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 3, 8);
 
 	//m_pCollisionShader = new Shader_CollisionBox(); 
 	//m_pCollisionShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3); 

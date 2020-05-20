@@ -82,7 +82,16 @@ CHeightMapTerrain::~CHeightMapTerrain(void)
 	if (m_nMeshes > 0)
 	{
 		for (int i = 0; i < m_nMeshes; ++i)
+		{
+			m_ppMeshes[i]->ReleaseUploadBuffers(); 
 			m_ppMeshes[i]->Release();
+		}
+		delete[]m_ppMeshes;
+	}
+	if (m_pShadowMap)
+	{
+		m_pShadowMap->ReleaseShaderVariables(); 
+		m_pShadowMap = NULL;
 	}
 }
 
@@ -90,7 +99,8 @@ void CHeightMapTerrain::SetMesh(int nIndex, CHeightMapGridMesh* pMesh)
 {
 	if (m_ppMeshes)
 	{
-		if (m_ppMeshes[nIndex]) m_ppMeshes[nIndex]->Release();
+		if (m_ppMeshes[nIndex])
+			m_ppMeshes[nIndex]->Release();
 		m_ppMeshes[nIndex] = pMesh;
 		if (pMesh) pMesh->AddRef();
 	}
@@ -103,7 +113,7 @@ void CHeightMapTerrain::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Gr
 
 void CHeightMapTerrain::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_pShadowMap->UpdateShaderVariables(pd3dCommandList);
+	if(m_pShadowMap)m_pShadowMap->UpdateShaderVariables(pd3dCommandList);
 }
 
 
@@ -143,8 +153,9 @@ void CHeightMapTerrain::ReleaseUploadBuffers()
 {
 	if (m_nMeshes)
 		for (int i = 0; i < m_nMeshes; ++i)
+		{
 			m_ppMeshes[i]->ReleaseUploadBuffers();
-
+		}
 	m_ppMaterials[0]->ReleaseUploadBuffers();
 }
 

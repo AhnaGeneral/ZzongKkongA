@@ -67,8 +67,13 @@ void CItemMgr::UseItemToPlayer(int iType)
 
 void CItemMgr::Destroy()
 {
-	if (m_pRotatingItem) m_pRotatingItem->ReleaseUploadBuffers();
-	if (m_pRotatingItem) m_pRotatingItem->Release();
+	if (m_pRotatingItem)
+	{
+		m_pRotatingItem->ReleaseShaderVariables();
+		m_pRotatingItem->ReleaseUploadBuffers();
+		m_pRotatingItem->Release();
+	}
+
 
 	if (m_pInstance)
 	{

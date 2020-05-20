@@ -42,7 +42,8 @@ void CMonster::MoveToTarget(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHei
 	if (m_fDistanceToPlayer > 12.f)
 	{
 		XMFLOAT3 MovePos = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Look, Speed * fTimeElapsed));
-		MovePos.y = pTerrain->GetHeight(MovePos.x, MovePos.z);
+		if (pTerrain)
+			MovePos.y = pTerrain->GetHeight(MovePos.x, MovePos.z);
 
 		SetPosition(MovePos);
 	}
@@ -96,7 +97,8 @@ void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 				randompos.y = 0.0f;
 				randompos.z = float(rand() % 60) - 30.f;
 				m_xmf3RandomMoveDest = Vector3::Add(randompos, m_xmf3FiledCenter);
-				m_xmf3RandomMoveDest.y = pTerrain->GetHeight(m_xmf3RandomMoveDest.x, m_xmf3RandomMoveDest.z);
+				if(pTerrain) 
+					m_xmf3RandomMoveDest.y = pTerrain->GetHeight(m_xmf3RandomMoveDest.x, m_xmf3RandomMoveDest.z);
 			}
 		}
 		else if (m_iState == MONSTER_STATE_WALK || m_iState == MONSTER_STATE_RETURNING)

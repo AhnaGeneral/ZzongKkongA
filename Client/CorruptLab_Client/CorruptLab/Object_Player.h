@@ -38,6 +38,8 @@ protected:
 
 	CPlayerCamera        * m_pCamera = NULL;
 	CGameObject          * m_pDummy = NULL;
+	CGameObject          * m_pSword = NULL;
+
 	int					   m_nRightHandIndex = 25;
 
 //GameContents
@@ -126,7 +128,5 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 
 	void SetAnimation();
-private:
-	CGameObject* m_pSword;
 };
 

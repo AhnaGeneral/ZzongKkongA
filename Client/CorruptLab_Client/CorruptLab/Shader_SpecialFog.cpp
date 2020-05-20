@@ -220,7 +220,11 @@ void CShader_SpecialFog::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	{
 		int Xpos = rand() % 40 + 300; //280 ~ 320
 		int Ypos = rand() % 400 + 56; //56 ~ 456
-			float fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
+		float fHeight = 0.0f; 
+		if (pTerrain)
+		{
+			fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
+		}
 			poneNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 				XMFLOAT3(float(Xpos), fHeight, float(Ypos)), this);  //object
 			poneNoise->GenerateShaderDistortionBuffer();
@@ -236,7 +240,11 @@ void CShader_SpecialFog::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	{
 		int Xpos = rand() % 250 + 20; //20 ~ 270 
 		int Ypos = rand() % 40 + 210;
-			float fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
+		float fHeight = 0.0f;
+		if (pTerrain)
+		{
+			fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
+		}
 			ptwoNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 				XMFLOAT3(float(Xpos), fHeight, float (Ypos)), this);  //object
 			ptwoNoise->GenerateShaderDistortionBuffer();
@@ -247,7 +255,11 @@ void CShader_SpecialFog::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	{
 		int Xpos = rand() % 40 + 320; // 320 ~ 360
 		int Ypos = rand() % 280 + 200; // 200 ~ 480 
-		float fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
+		float fHeight = 0.0f; 
+		if (pTerrain)
+		{
+			fHeight = pTerrain->GetHeight(float(Xpos), float(Ypos)) + 40;
+		}
 		poneNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 			XMFLOAT3(float(Xpos), fHeight, float(Ypos)), this);  //object
 		poneNoise->GenerateShaderDistortionBuffer();

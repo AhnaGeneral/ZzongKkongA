@@ -31,6 +31,9 @@ CShader::~CShader()
 		}
 		delete[] m_ppd3dPipelineStates;
 	}
+	if (m_pd3dGraphicsRootSignature)
+		m_pd3dGraphicsRootSignature->Release();
+
 	ReleaseShaderVariables();
 }
 

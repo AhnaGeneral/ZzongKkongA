@@ -7,6 +7,7 @@ CTerrainShader::CTerrainShader()
 
 CTerrainShader::~CTerrainShader()
 {
+	ReleaseShaderVariables();
 }
 
 D3D12_INPUT_LAYOUT_DESC CTerrainShader::CreateInputLayout()

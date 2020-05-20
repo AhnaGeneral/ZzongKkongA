@@ -20,9 +20,9 @@ private:
 	int							    	m_nWidth;
 	int							    	m_nLength;
 
-	CHeightMapGridMesh** m_ppMeshes;
+	CHeightMapGridMesh               ** m_ppMeshes;
 	int							    	m_nMeshes;
-	CTexture* m_pShadowMap;
+	CTexture                          * m_pShadowMap;
 
 public:
 	CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature,

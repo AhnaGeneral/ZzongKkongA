@@ -962,6 +962,11 @@ void CCollisionBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* 
 
 void CCollisionBox::Release()
 {
-	if (m_pd3dCollisionUploadBuffer)m_pd3dCollisionUploadBuffer->Release();
-	if (m_pd3dCollisionBuffer)m_pd3dCollisionBuffer->Release();
+	if (m_pd3dCollisionUploadBuffer) 
+		m_pd3dCollisionUploadBuffer->Release();
+
+	if (m_pd3dCollisionBuffer)
+		m_pd3dCollisionBuffer->Release();
+
+	//if (m_pParent)m_pParent->Release();
 }

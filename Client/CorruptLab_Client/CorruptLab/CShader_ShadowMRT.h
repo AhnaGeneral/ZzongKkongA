@@ -22,7 +22,5 @@ public:
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
 
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
-protected:
-	CTexture  * m_pTextures;
 };
 

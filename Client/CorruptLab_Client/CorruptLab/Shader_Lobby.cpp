@@ -103,7 +103,13 @@ void Shader_Lobby::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandL
 
 void Shader_Lobby::ReleaseObjects()
 {
-	m_pLobbyMaterial->Release();
+	if (m_pLobbyMaterial)
+	{
+		m_pLobbyMaterial->m_ppTextures[0]->ReleaseShaderVariables();
+		m_pLobbyMaterial->ReleaseUploadBuffers();
+		m_pLobbyMaterial->Release();
+		m_pLobbyMaterial = NULL;
+	}
 }
 
 void Shader_Lobby::ReleaseUploadBuffers()

@@ -23,6 +23,15 @@ void CLobbyScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 void CLobbyScene::ReleaseObjects()
 {
+	if (m_pd3dGraphicsRootSignature)
+		m_pd3dGraphicsRootSignature->Release();
+
+	if (pUIShader)
+	{
+		pUIShader->ReleaseShaderVariables(); 
+		pUIShader->ReleaseUploadBuffers();
+		pUIShader->Release();
+	}
 }
 
 ID3D12RootSignature* CLobbyScene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
@@ -128,12 +137,8 @@ void CLobbyScene::ReleaseUploadBuffers()
 void CLobbyScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature); 
-	//pCamera->SetViewportsAndScissorRects(pd3dCommandList);
-	//pCamera->UpdateShaderVariables(pd3dCommandList);
 
 	pUIShader->Render(pd3dCommandList, pCamera);
-	
-	//UIObject->Render(pd3dCommandList, pCamera);
 }
 
 void CLobbyScene::Update(float fTimeElapsed)

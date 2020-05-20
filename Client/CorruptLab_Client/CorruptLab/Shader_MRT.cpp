@@ -342,7 +342,6 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 5.5f, FRAME_BUFFER_HEIGHT / 5.5f, 0.0f, 1.0f);
 	m_nRenderTargetUI = 7;
 	m_pRenderTargetUIs = new CGameObject * [m_nRenderTargetUI];
-
 	for (int i = 0; i < m_nRenderTargetUI;)
 	{
 		int remainder = i % 5;
@@ -512,82 +511,180 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 void CPostProcessingShader::ReleaseObjects()
 {
-	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
-	if (m_pTexture) m_pTexture->ReleaseUploadBuffers();
-	if (m_pLightTexture) m_pLightTexture->ReleaseUploadBuffers();
-	if (m_pMinimap) m_pMinimap->ReleaseUploadBuffers();
-	if (m_pShadowTexture) m_pShadowTexture->ReleaseUploadBuffers();
-	if (m_pItemTex) m_pItemTex->ReleaseUploadBuffers();
-	if (m_pBaseUIShader) m_pBaseUIShader->ReleaseUploadBuffers();
-	if (m_pMinimapFog)m_pMinimapFog->ReleaseUploadBuffers();
-	if (m_pItemShader)m_pItemShader->ReleaseUploadBuffers();
-	if (m_pRadiationShader) m_pRadiationShader->ReleaseUploadBuffers();
+	if (m_pTexture)
+	{
+		m_pTexture->ReleaseShaderVariables();
+		m_pTexture->ReleaseUploadBuffers();
+		m_pTexture->Release(); 
+		m_pTexture = NULL;
+	}
+
+	if (m_pLightTexture)
+	{
+		m_pLightTexture->ReleaseShaderVariables();
+		m_pLightTexture->ReleaseUploadBuffers();
+		m_pLightTexture->Release();
+		m_pLightTexture = NULL;
+	}
+	if (m_pShadowTexture)
+	{
+		m_pShadowTexture->ReleaseShaderVariables();
+		m_pShadowTexture->ReleaseUploadBuffers();
+		m_pShadowTexture->Release();
+		m_pShadowTexture = NULL;
+	}
+
+	if (m_pItemTex)
+	{
+		m_pItemTex->ReleaseShaderVariables();
+		m_pItemTex->ReleaseUploadBuffers();
+		m_pItemTex->Release();
+		m_pItemTex = NULL;
+	}
+
+	if (pMinmapFog1)
+	{
+		pMinmapFog1->ReleaseShaderVariables();
+		pMinmapFog1->ReleaseUploadBuffers();
+		pMinmapFog1->Release();
+		pMinmapFog1 = NULL;
+	}
+	if (pMinmapFog2)
+	{
+		pMinmapFog2->ReleaseShaderVariables();
+		pMinmapFog2->ReleaseUploadBuffers();
+		pMinmapFog2->Release();
+		pMinmapFog2 = NULL;
+	}
+
+	if (m_pBaseUIShader)
+	{
+		m_pBaseUIShader->ReleaseShaderVariables();
+		m_pBaseUIShader->ReleaseUploadBuffers();
+		m_pBaseUIShader->Release();
+		m_pBaseUIShader = NULL;
+	}
+
+	if (m_pMinimapFog)
+	{
+		m_pMinimapFog->ReleaseShaderVariables();
+		m_pMinimapFog->ReleaseUploadBuffers();
+		m_pMinimapFog->Release();
+		m_pMinimapFog = NULL;
+	}
+	if (m_pItemShader)
+	{
+		m_pItemShader->ReleaseShaderVariables();
+		m_pItemShader->ReleaseUploadBuffers();
+		m_pItemShader->Release();
+		m_pItemShader = NULL;
+	}
 
 	if (m_pRenderTargetUIs)
 	{
 		for (int i = 0; i < m_nRenderTargetUI; ++i)
+		{
+			m_pRenderTargetUIs[i]->ReleaseShaderVariables();
 			m_pRenderTargetUIs[i]->ReleaseUploadBuffers();
-	}
-
-	if (m_pHP) m_pHP->ReleaseUploadBuffers();
-	if (m_Radiation) m_Radiation->ReleaseUploadBuffers();
-	if (m_HPBAR) m_HPBAR->ReleaseUploadBuffers();
-
-	if (m_ppInVentoryBoxs)
-	{
-		for (int i = 0; i < 3; ++i)
-			m_ppInVentoryBoxs[i]->ReleaseUploadBuffers();
-	}
-
-	if (m_ppItems)
-	{
-		for (int i = 0; i < 3; ++i)
-			m_ppItems[i]->ReleaseUploadBuffers();
-	}
-	if (m_PlayerHP) m_PlayerHP->ReleaseUploadBuffers();
-	if (m_pMapOne)m_pMapOne->ReleaseUploadBuffers();
-	if (m_pMapTwo)m_pMapTwo->ReleaseUploadBuffers();
-
-	//if (m_pTexture)
-	//{
-	//	m_pTexture->Release();/*
-	//	m_pTexture = NULL;*/
-	//}
-	if (m_pLightTexture) m_pLightTexture->Release();
-	if (m_pMinimap) m_pMinimap->Release();
-	if (m_pShadowTexture) m_pShadowTexture->Release();
-	if (m_pItemTex) m_pItemTex->Release();
-	if (m_pBaseUIShader) m_pBaseUIShader->Release();
-	if (m_pMinimapFog)m_pMinimapFog->Release();
-	if (m_pItemShader)m_pItemShader->Release();
-
-	if (m_pMapOne)m_pMapOne->Release();
-	if (m_pMapTwo)m_pMapTwo->Release();
-
-	if (m_pRadiationShader) m_pRadiationShader->Release();
-	if (m_pRenderTargetUIs) 
-	{
-		for (int i = 0; i < m_nRenderTargetUI; ++i)
 			m_pRenderTargetUIs[i]->Release();
+			m_pRenderTargetUIs[i] = NULL;
+		}
+		m_pRenderTargetUIs = NULL;
 	}
 
-	if (m_pHP) m_pHP->Release();
-	if (m_Radiation) m_Radiation->Release();
-	if (m_HPBAR) m_HPBAR->Release();
+	if (m_pHP)
+	{
+		m_pHP->ReleaseShaderVariables();
+		m_pHP->ReleaseUploadBuffers();
+		m_pHP->Release();
+		m_pHP = NULL;
+	}
+	if (m_Radiation)
+	{
+		m_Radiation->ReleaseShaderVariables();
+		m_Radiation->ReleaseUploadBuffers();
+		m_Radiation->Release();
+		m_Radiation = NULL;
+	}
+
+	if (m_pMapOne)
+	{
+		m_pMapOne->ReleaseShaderVariables();
+		m_pMapOne->ReleaseUploadBuffers();
+		m_pMapOne->Release();
+		m_pMapOne = NULL;
+	}
+	if (m_pMapTwo)
+	{
+		m_pMapTwo->ReleaseShaderVariables();
+		m_pMapTwo->ReleaseUploadBuffers();
+		m_pMapTwo->Release();
+		m_pMapTwo = NULL;
+	}
+
+	if (m_pMinimap)
+	{
+		m_pMinimap->ReleaseShaderVariables();
+		m_pMinimap->ReleaseUploadBuffers();
+		m_pMinimap->Release();
+		m_pMinimap = NULL;
+	}
+	if (m_pRadiationShader)
+	{
+		m_pRadiationShader->ReleaseShaderVariables();
+		m_pRadiationShader->ReleaseUploadBuffers();
+		m_pRadiationShader->Release();
+		m_pRadiationShader = NULL;
+	}
+
+	if (m_RadiationLevels)
+	{
+		for (int i = 0; i < 2; ++i)
+		{
+			m_RadiationLevels[i]->ReleaseShaderVariables();
+			m_RadiationLevels[i]->ReleaseUploadBuffers();
+			m_RadiationLevels[i]->Release();
+			m_RadiationLevels[i] = NULL;
+		}
+		m_RadiationLevels = NULL;
+	}
+
+	if (m_HPBAR)
+	{
+		m_HPBAR->ReleaseShaderVariables();
+		m_HPBAR->ReleaseUploadBuffers();
+		m_HPBAR->Release();
+		m_HPBAR = NULL;
+	}
 
 	if (m_ppInVentoryBoxs)
 	{
 		for (int i = 0; i < 3; ++i)
+		{
+			m_ppInVentoryBoxs[i]->ReleaseShaderVariables();
+			m_ppInVentoryBoxs[i]->ReleaseUploadBuffers();
 			m_ppInVentoryBoxs[i]->Release();
+			m_ppInVentoryBoxs[i] = NULL; 
+		}
 	}
-
 
 	if (m_ppItems)
 	{
-		for (int i = 0; i < 3; ++i)
+		for (int i = 0; i < nIventoryCount; ++i)
+		{
+			m_ppItems[i]->ReleaseShaderVariables();
+			m_ppItems[i]->ReleaseUploadBuffers();
 			m_ppItems[i]->Release();
+			m_ppItems[i] = NULL;
+		}
 	}
-	if (m_PlayerHP) m_PlayerHP->Release();
+	if (m_PlayerHP)
+	{
+		m_PlayerHP->ReleaseShaderVariables();
+		m_PlayerHP->ReleaseUploadBuffers();
+		m_PlayerHP->Release();
+		m_PlayerHP = NULL;
+	}
 
 }
 
@@ -707,7 +804,6 @@ void CPostProcessingShader::ReleaseShaderVariables()
 		m_pd3dcbvOrthoCamera->Unmap(0, NULL);
 		m_pd3dcbvOrthoCamera->Release();
 	}
-
 	// --------------------------------------------------------------------------------------------
 	
 	CRadationMgr::GetInstance()->Destroy();
@@ -717,7 +813,6 @@ void CPostProcessingShader::ReleaseShaderVariables()
 	if (m_pMinimap) m_pMinimap->ReleaseShaderVariables();
 	if (m_pShadowTexture) m_pShadowTexture->ReleaseShaderVariables();
 	if (m_pItemTex) m_pItemTex->ReleaseShaderVariables();
-	//if (m_pBaseUIShader) m_pBaseUIShader->ReleaseShaderVariables();
 
 	if (m_pRenderTargetUIs)
 	{

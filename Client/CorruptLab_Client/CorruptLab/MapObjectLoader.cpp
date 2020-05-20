@@ -206,7 +206,6 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 	CTexture* pMonsterHPTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 	pMonsterHPTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/MonsterHP.dds", 0);
 	CShader* pShder = new CShader_MonsterHP();
-	//CShader* pShder = new CCloudGSShader();
 	
 	pShder->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
 	pShder->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1);

@@ -156,6 +156,15 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 
 CHeightMapGridMesh::~CHeightMapGridMesh() {
 	if (m_pVertices) delete [] m_pVertices;
+	if (m_xmf3Positions)
+	{
+		for (int i = 0; i < m_nVertices; ++i)
+		{
+			m_xmf3Positions[i] = XMFLOAT3(0.0f, 0.0f,0.0f);
+		}
+		delete[] m_xmf3Positions;
+		m_xmf3Positions = NULL;
+	}
 	m_pVertices = NULL;
 }
 

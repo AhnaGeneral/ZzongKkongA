@@ -119,9 +119,6 @@ ID3D12Resource *CreateTextureResourceFromFile(ID3D12Device *pd3dDevice, ID3D12Gr
 	D3D12_RESOURCE_DESC d3dTextureResourceDesc = pd3dTexture->GetDesc();
 	UINT nSubResources = (UINT)vSubresources.size();
 	UINT64 nBytes = GetRequiredIntermediateSize(pd3dTexture, 0, nSubResources);
-	//	UINT nSubResources = d3dTextureResourceDesc.DepthOrArraySize * d3dTextureResourceDesc.MipLevels;
-	//	UINT64 nBytes = 0;
-	//	pd3dDevice->GetCopyableFootprints(&d3dTextureResourceDesc, 0, nSubResources, 0, NULL, NULL, NULL, &nBytes);
 
 	D3D12_RESOURCE_DESC d3dBufferResourceDesc;
 	::ZeroMemory(&d3dBufferResourceDesc, sizeof(D3D12_RESOURCE_DESC));
@@ -139,11 +136,6 @@ ID3D12Resource *CreateTextureResourceFromFile(ID3D12Device *pd3dDevice, ID3D12Gr
 
 	pd3dDevice->CreateCommittedResource(&d3dHeapPropertiesDesc, D3D12_HEAP_FLAG_NONE, &d3dBufferResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, __uuidof(ID3D12Resource), (void **)ppd3dUploadBuffer);
 
-	//UINT nSubResources = (UINT)vSubresources.size();
-	//D3D12_SUBRESOURCE_DATA *pd3dSubResourceData = new D3D12_SUBRESOURCE_DATA[nSubResources];
-	//for (UINT i = 0; i < nSubResources; i++) pd3dSubResourceData[i] = vSubresources.at(i);
-
-	//	std::vector<D3D12_SUBRESOURCE_DATA>::pointer ptr = &vSubresources[0];
 	UINT64 nBytesUpdated = ::UpdateSubresources(pd3dCommandList, pd3dTexture, *ppd3dUploadBuffer, 0, 0, nSubResources, &vSubresources[0]);
 
 	D3D12_RESOURCE_BARRIER d3dResourceBarrier;
@@ -155,8 +147,6 @@ ID3D12Resource *CreateTextureResourceFromFile(ID3D12Device *pd3dDevice, ID3D12Gr
 	d3dResourceBarrier.Transition.StateAfter = d3dResourceStates;
 	d3dResourceBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	pd3dCommandList->ResourceBarrier(1, &d3dResourceBarrier);
-
-	//	delete[] pd3dSubResourceData;
 
 	return(pd3dTexture);
 }
@@ -222,11 +212,7 @@ ID3D12Resource* CreateTextureResourceFromDDSFile(ID3D12Device* pd3dDevice, ID3D1
 	d3dHeapPropertiesDesc.CreationNodeMask = 1;
 	d3dHeapPropertiesDesc.VisibleNodeMask = 1;
 
-	//	D3D12_RESOURCE_DESC d3dResourceDesc = pd3dTexture->GetDesc();
-	//	UINT nSubResources = d3dResourceDesc.DepthOrArraySize * d3dResourceDesc.MipLevels;
 	UINT nSubResources = (UINT)vSubresources.size();
-	//	UINT64 nBytes = 0;
-	//	pd3dDevice->GetCopyableFootprints(&d3dResourceDesc, 0, nSubResources, 0, NULL, NULL, NULL, &nBytes);
 	UINT64 nBytes = GetRequiredIntermediateSize(pd3dTexture, 0, nSubResources);
 
 	D3D12_RESOURCE_DESC d3dResourceDesc;
@@ -245,11 +231,6 @@ ID3D12Resource* CreateTextureResourceFromDDSFile(ID3D12Device* pd3dDevice, ID3D1
 
 	pd3dDevice->CreateCommittedResource(&d3dHeapPropertiesDesc, D3D12_HEAP_FLAG_NONE, &d3dResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, NULL, __uuidof(ID3D12Resource), (void**)ppd3dUploadBuffer);
 
-	//UINT nSubResources = (UINT)vSubresources.size();
-	//D3D12_SUBRESOURCE_DATA *pd3dSubResourceData = new D3D12_SUBRESOURCE_DATA[nSubResources];
-	//for (UINT i = 0; i < nSubResources; i++) pd3dSubResourceData[i] = vSubresources.at(i);
-
-	//	std::vector<D3D12_SUBRESOURCE_DATA>::pointer ptr = &vSubresources[0];
 	::UpdateSubresources(pd3dCommandList, pd3dTexture, *ppd3dUploadBuffer, 0, 0, nSubResources, &vSubresources[0]);
 
 	D3D12_RESOURCE_BARRIER d3dResourceBarrier;

@@ -63,8 +63,6 @@ CGameFramework::CGameFramework()
 	m_pLightProcessingShader = NULL;
 	m_pShadowShader = NULL;
 
-	//m_SceneItemReact = 0;
-
 	m_pPlayer = NULL;
 	m_pCamera = NULL;
 
@@ -75,6 +73,7 @@ CGameFramework::CGameFramework()
 
 CGameFramework::~CGameFramework()
 {
+
 }
 
 bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
@@ -446,7 +445,6 @@ void CGameFramework::CreateShadowRenderTargetViews()
 
 	m_pShadowShader = new Shader_ShadowMRT();
 	m_pShadowShader->CreateGraphicsRootSignature(m_pd3dDevice);
-	//m_pShadowShader->CreateShader(m_pd3dDevice, m_pShadowShader->GetGraphicsRootSignature());
 
 	m_pPostProcessingShader->SetRenderTargets(m_pd3dDevice, m_pd3dCommandList, NULL, NULL, pShadowMap);
 
@@ -646,27 +644,48 @@ void CGameFramework::OnDestroy()
 	if (m_pd3dDepthStencilBuffer) m_pd3dDepthStencilBuffer->Release();
 	if (m_pd3dDsvDescriptorHeap) m_pd3dDsvDescriptorHeap->Release();
 
-	//for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
-	//	if (m_ppd3dOffScreenRenderTargetBuffers[i])
-	//		m_ppd3dOffScreenRenderTargetBuffers[i]->Release();
+	if (m_pd3dShadowDepthStencilBuffer) m_pd3dShadowDepthStencilBuffer->Release();
+	if (m_pd3dShadowDsvDescriptorHeap) m_pd3dShadowDsvDescriptorHeap->Release();
 
+	
 
-	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
-		if (m_ppd3dLightMapRenderTargetBuffers[i])
-			m_ppd3dLightMapRenderTargetBuffers[i]->Release();
-
-	for (int i = 0; i < m_nSwapChainBuffers; i++)
-		if (m_ppd3dSwapChainBackBuffers[i])
-			m_ppd3dSwapChainBackBuffers[i]->Release();
-
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 채원이는 x
+	{
+		if (m_ppd3dOffScreenRenderTargetBuffers[i])
+			m_ppd3dOffScreenRenderTargetBuffers[i]->Release();
+	}
 	if (m_pd3dRtvDescriptorHeap) m_pd3dRtvDescriptorHeap->Release();
 
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+	{
+		if (m_ppd3dLightMapRenderTargetBuffers[i])
+			m_ppd3dLightMapRenderTargetBuffers[i]->Release();
+	}
+	if (m_pd3dLightDescriptorHeap) m_pd3dLightDescriptorHeap->Release();
+
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+	{
+		if (m_ppd3dShadowRenderTargetBuffers[i])
+			m_ppd3dShadowRenderTargetBuffers[i]->Release();
+	}
+	if (m_pd3dShadowDescriptorHeap) m_pd3dShadowDescriptorHeap->Release();
+
+	for (int i = 0; i < m_nSwapChainBuffers; i++)
+	{
+		if (m_ppd3dSwapChainBackBuffers[i])
+			m_ppd3dSwapChainBackBuffers[i]->Release();
+	}
+
 	if (m_pd3dCommandAllocator) m_pd3dCommandAllocator->Release();
+
 	if (m_pd3dCommandQueue) m_pd3dCommandQueue->Release();
+
 	if (m_pd3dCommandList) m_pd3dCommandList->Release();
 
-	if (m_pd3dFence) m_pd3dFence->Release();
-
+	if (m_pd3dFence)
+	{
+		m_pd3dFence->Release();
+	}
 	m_pdxgiSwapChain->SetFullscreenState(FALSE, NULL);
 
 	if (m_pdxgiSwapChain) m_pdxgiSwapChain->Release();
@@ -679,7 +698,6 @@ void CGameFramework::OnDestroy()
 		pDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_SUMMARY);
 		pDebug->Release();
 	}
-
 }
 
 void CGameFramework::BuildObjects()
@@ -705,9 +723,7 @@ void CGameFramework::BuildObjects()
 	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList,
 		        m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pTerrain);
 	pAirplanePlayer->SetPosition(XMFLOAT3(437.0f, 15.0f, 366.0f)); 
-	//pAirplanePlayer->Rotate(0.f, 90.f, 0.f);
 	
-	//pAirplanePlayer->SetPosition(XMFLOAT3(0.0f, 100.0f, 0.0f));
 	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pPlayer = m_pPlayer = pAirplanePlayer;
 	CRadationMgr::GetInstance()->SetPlayer(m_pPlayer);
 	m_pPostProcessingShader->GetMinimap()->SetPlayerPosition(m_pPlayer->GetPositionPointer());
@@ -723,8 +739,10 @@ void CGameFramework::BuildObjects()
 	WaitForGpuComplete();
 
 	if (m_pScene) m_pScene[SCENE_STAGE_OUTDOOR]->ReleaseUploadBuffers();
-	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
-
+	if (m_pPlayer)
+	{
+		m_pPlayer->ReleaseUploadBuffers();
+	}
 	m_GameTimer.Reset();
 }
 
@@ -732,17 +750,25 @@ void CGameFramework::ReleaseObjects()
 {
 	if (m_pPlayer) m_pPlayer->Release();
 
+	if (m_pScene[SCENE_LOBBY]) m_pScene[SCENE_LOBBY]->ReleaseObjects();
+	if (m_pScene[SCENE_LOBBY]) delete m_pScene[SCENE_LOBBY];
+
 	if (m_pScene[SCENE_STAGE_OUTDOOR]) m_pScene[SCENE_STAGE_OUTDOOR]->ReleaseObjects();
 	if (m_pScene[SCENE_STAGE_OUTDOOR]) delete m_pScene[SCENE_STAGE_OUTDOOR];
 
 	if (m_pPostProcessingShader)
+	{
 		m_pPostProcessingShader->Release();
+	}
+	if (m_pLightProcessingShader)
+	{
+		m_pLightProcessingShader->Release();
+	}
+	if (m_pShadowShader)
+	{
+		m_pShadowShader->Release();
+	}
 
-	//if (CMaterial::m_pSkinnedAnimationShader)
-	//	CMaterial::m_pSkinnedAnimationShader->Release();
-
-	//if (CMaterial::m_pStandardShader)
-	//	CMaterial::m_pStandardShader->Release();
 }
 
 void CGameFramework::ProcessInput()
@@ -782,8 +808,6 @@ void CGameFramework::MoveToNextFrame()
 
 void CGameFramework::ShadowMapRender()
 {
-	//m_fSunTime -= m_GameTimer.GetTimeElapsed();
-
 	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
 
 	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
@@ -794,18 +818,11 @@ void CGameFramework::ShadowMapRender()
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenShadowBuffers, m_pd3dOffScreenShadowBufferCPUHandles, TRUE, &m_d3dShadowDsvDepthStencilBufferCPUHandle);
 
-	//if (m_fSunTime <= 0)
-//	{  //만약에 relaese Render 문제가 또 발생하면 이거문제가 아닙니다..
 
 		for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
 			m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenShadowBufferCPUHandles[i], pfClearColor, 0, NULL);
 
 		dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera);
-		//m_fSunTime = 0.08f;
-	//}
-
-	  // dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera, true);
-	
 
 		for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
 			::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
@@ -821,7 +838,6 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 	ProcessInput();
 
 	m_pScene[SCENE_STAGE_OUTDOOR]->Update(m_GameTimer.GetTimeElapsed());
-	//m_SceneItemReact = dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->n_ReactItem;
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -871,7 +887,6 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 	m_pd3dCommandList->ClearRenderTargetView(m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
 	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
-	//m_pScene[SCENE_LOBBY]->Render(m_pd3dCommandList, m_pCamera);
 	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera); // 화면 좌표계에 해당하는 투영좌표계의 좌표로 인해 사각형을하나 그려서 그림을 복사 해서 그림을 그려라.
 																   // 스크린 좌표계 !! 
 

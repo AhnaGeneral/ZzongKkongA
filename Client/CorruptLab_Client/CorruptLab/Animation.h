@@ -75,7 +75,7 @@ class CAnimationTrack
 {
 public:
 	CAnimationTrack() { }
-	~CAnimationTrack() { }
+	~CAnimationTrack();
 
 public:
 	BOOL 							m_bEnable = true;
@@ -83,7 +83,7 @@ public:
 	float 							m_fPosition = 0.0f;
 	float 							m_fWeight = 1.0f;
 
-	CAnimationSet* m_pAnimationSet = NULL;
+	CAnimationSet                  * m_pAnimationSet = NULL;
 };
 
 class CAnimationCallbackHandler
@@ -113,8 +113,6 @@ public:
 	CAnimationTrack               * m_pAnimationTracks = NULL;
 
 	int  				 			m_nAnimationTrack = 0;
-
-	CGameObject                   * m_pRootFrame = NULL;
 
 public:
 	void SetAnimationSet(int nAnimationSet);

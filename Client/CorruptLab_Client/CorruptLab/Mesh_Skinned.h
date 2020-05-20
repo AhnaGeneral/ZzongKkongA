@@ -16,7 +16,7 @@ protected:
 
 	int								m_nBonesPerVertex;
 
-	XMUINT4                       * m_pxmu4BoneIndices;
+	XMUINT4                       * m_pxmu4BoneIndices; 
 	ID3D12Resource                * m_pd3dBoneIndexBuffer;
 	ID3D12Resource                * m_pd3dBoneIndexUploadBuffer;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dBoneIndexBufferView;
@@ -32,7 +32,7 @@ public:
 	char(*m_ppstrSkinningBoneNames)[64]; 
 	XMFLOAT4X4                     * m_pxmf4x4BindPoseBoneOffsets;
 								 
-	CGameObject                   ** m_ppSkinningBoneFrameCaches;
+	CGameObject                   ** m_ppSkinningBoneFrameCaches;//
 								 
 	ID3D12Resource                 * m_pd3dcbBoneOffsets;
 	XMFLOAT4X4                     * m_pcbxmf4x4BoneOffsets;

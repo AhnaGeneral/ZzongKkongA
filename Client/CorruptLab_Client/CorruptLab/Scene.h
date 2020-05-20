@@ -15,7 +15,6 @@ class CHeightMapTerrain;
 class CSkyBox;
 class CItemBox;
 
-
 class CScene
 {
 public:
@@ -44,7 +43,6 @@ public:
 	virtual void Update(float fTimeElapsed) = 0;
 
 protected:
-
 	ID3D12RootSignature       * m_pd3dGraphicsRootSignature;
 	float                       m_fElapsedTime;
 };
@@ -52,7 +50,6 @@ protected:
 
 class CMonster;
 class CDynamicObject;
-
 
 class CGameScene : public CScene
 {
@@ -62,9 +59,7 @@ public:
 	CPlayer                   * m_pPlayer;						      
 	CHeightMapTerrain         * m_pTerrain;
 	CSkyBox                   * m_pSkyBox;
-	//CCloudGSShader            * m_pCloudGSShader;
 	CObjectWater              * m_pCObjectWater; 
-	CMRTUI                    * m_pUIObj;
 
 	int                         n_ReactItem; 
 	float                       itemRange;
@@ -116,17 +111,17 @@ private:
 							    
 	int						    m_nDynamicObjectTypeNum;
 	int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
-	int						    m_nMonsterTypeNum; // 몬스터 종류 개수
+	int						    m_nMonsterTypeNum;      // 몬스터 종류 개수
 
-	vector<CGameObject*> 	   ** m_pStaticObjLists = NULL; // list<CGameObject*>*의 배열 67개
+	vector<CGameObject*> 	   ** m_pStaticObjLists; 
 	vector<CDynamicObject*>    ** m_pDynamicObjLists;
 	vector<CMonster*>          ** m_pMonsterLists;
-	CSoftParticleShader       * m_pSoftParticleShader;
-	CShader_SpecialFog       * m_pSpecialFogShader;
+	CSoftParticleShader         * m_pSoftParticleShader;
+	CShader_SpecialFog          * m_pSpecialFogShader;
+	
 
 public:
 	CCamera                   * m_pShadowCamera;
-			                  
 	CTexture                  * m_pShadowMap;
 	CTexture                  * m_pDepthTex;
 						      

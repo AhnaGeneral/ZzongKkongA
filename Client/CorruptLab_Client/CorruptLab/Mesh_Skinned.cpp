@@ -179,6 +179,7 @@ void CSkinnedMesh::ReleaseShaderVariables()
 	}
 	m_pd3dcbBoneTransforms = NULL;
 	//-----------------------------------------
+
 }
 
 void CSkinnedMesh::ReleaseUploadBuffers()

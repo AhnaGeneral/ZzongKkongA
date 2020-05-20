@@ -2,11 +2,11 @@
 
 Shader_ShadowMRT::Shader_ShadowMRT()
 {
-	m_pTextures = NULL;
 }
 
 Shader_ShadowMRT::~Shader_ShadowMRT()
 {
+	ReleaseShaderVariables(); 
 }
 
 D3D12_DEPTH_STENCIL_DESC Shader_ShadowMRT::CreateDepthStencilState()
