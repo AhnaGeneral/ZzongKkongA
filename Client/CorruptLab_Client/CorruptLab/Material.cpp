@@ -30,7 +30,10 @@ CTexture::~CTexture()
 	{
 		for (int i = 0; i < m_nTextures; i++)
 			if (m_ppd3dTextures[i])
+			{
 				m_ppd3dTextures[i]->Release();
+				m_ppd3dTextures[i] = NULL;
+			}
 	}
 
 	if (m_pRootArgumentInfos) {delete[] m_pRootArgumentInfos;}

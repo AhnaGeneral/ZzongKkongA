@@ -110,7 +110,7 @@ CShader_SpecialFog::CShader_SpecialFog()
 
 CShader_SpecialFog::~CShader_SpecialFog()
 {
-	//ReleaseObjects();
+	ReleaseObjects();
 }
 
 D3D12_BLEND_DESC CShader_SpecialFog::CreateBlendState()
@@ -322,13 +322,13 @@ void CShader_SpecialFog::ReleaseObjects()
 	}
 	delete[] m_pTwoStageFog;
 
-	if (m_pSceneDepthTextures)m_pSceneDepthTextures->ReleaseUploadBuffers();
-	if (m_pFireNoiseTextures)m_pFireNoiseTextures->ReleaseUploadBuffers();
-	if (m_pFogNoiseTextures)m_pFogNoiseTextures->ReleaseUploadBuffers();
+	//if (m_pSceneDepthTextures)m_pSceneDepthTextures->ReleaseUploadBuffers();
+	//if (m_pFireNoiseTextures)m_pFireNoiseTextures->ReleaseUploadBuffers();
+	//if (m_pFogNoiseTextures)m_pFogNoiseTextures->ReleaseUploadBuffers();
 
-	if (m_pSceneDepthTextures)m_pSceneDepthTextures->Release();
-	if (m_pFireNoiseTextures)m_pFireNoiseTextures->Release();
-	if (m_pFogNoiseTextures)m_pFogNoiseTextures->Release();
+	//if (m_pSceneDepthTextures)m_pSceneDepthTextures->Release();
+	//if (m_pFireNoiseTextures)m_pFireNoiseTextures->Release();
+	//if (m_pFogNoiseTextures)m_pFogNoiseTextures->Release();
 }
 
 void CShader_SpecialFog::ReleaseUploadBuffers()

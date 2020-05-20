@@ -15,7 +15,7 @@ private:
 
 public:
 	CShader_SpecialFog();
-	virtual ~CShader_SpecialFog();
+	~CShader_SpecialFog();
 
 
 	virtual D3D12_BLEND_DESC         CreateBlendState();

@@ -517,6 +517,7 @@ void CSoftParticleShader::ReleaseObjects()
 	for (int i = 0; i < m_nFire; i++)
 	{
 		m_pFireObjects[i]->Release();
+		m_pFireObjects[i] = NULL;
 	}
 	delete[] m_pFireObjects;
 
@@ -524,16 +525,29 @@ void CSoftParticleShader::ReleaseObjects()
 	for (int i = 0; i < m_nFog; i++)
 	{
 		m_pFogObjects[i]->Release();
+		m_pFogObjects[i] = NULL;
 	}
 	delete[] m_pFogObjects;
 
-	if (m_pSceneDepthTextures)m_pSceneDepthTextures->ReleaseUploadBuffers();
-	if (m_pFireNoiseTextures)m_pFireNoiseTextures->ReleaseUploadBuffers();
-	if (m_pFogNoiseTextures)m_pFogNoiseTextures->ReleaseUploadBuffers();
 
-	if (m_pSceneDepthTextures)m_pSceneDepthTextures->Release();
-	if (m_pFireNoiseTextures)m_pFireNoiseTextures->Release();
-	if (m_pFogNoiseTextures)m_pFogNoiseTextures->Release();
+	if (m_pFireNoiseTextures)
+	{
+		m_pFireNoiseTextures->ReleaseUploadBuffers();
+		m_pFireNoiseTextures->Release(); 
+		m_pFireNoiseTextures = NULL;
+	}
+	if (m_pFogNoiseTextures)
+	{
+		m_pFogNoiseTextures->ReleaseUploadBuffers();
+		m_pFogNoiseTextures->Release(); 
+		m_pFogNoiseTextures = NULL;
+	}
+	if (m_pSceneDepthTextures)
+	{
+		m_pSceneDepthTextures->ReleaseUploadBuffers();
+		m_pSceneDepthTextures->Release();
+		m_pSceneDepthTextures = NULL;
+	}
 }
 
 void CSoftParticleShader::ReleaseUploadBuffers()

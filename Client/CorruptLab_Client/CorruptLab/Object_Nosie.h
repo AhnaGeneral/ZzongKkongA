@@ -62,8 +62,7 @@ protected:
 
 	ID3D12Resource                * m_pd3dRadiationLevel = NULL;
 	int                           * m_iRadiationLevel = NULL;
-
-	CTexture                      * m_pSceneDepthTextures = NULL; 
+;
 };
 
 //CObjectFog ===========================================================================================================

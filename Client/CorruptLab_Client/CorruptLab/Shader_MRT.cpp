@@ -548,11 +548,11 @@ void CPostProcessingShader::ReleaseObjects()
 	if (m_pMapOne)m_pMapOne->ReleaseUploadBuffers();
 	if (m_pMapTwo)m_pMapTwo->ReleaseUploadBuffers();
 
-	if (m_pTexture)
-	{
-		m_pTexture->Release();/*
-		m_pTexture = NULL;*/
-	}
+	//if (m_pTexture)
+	//{
+	//	m_pTexture->Release();/*
+	//	m_pTexture = NULL;*/
+	//}
 	if (m_pLightTexture) m_pLightTexture->Release();
 	if (m_pMinimap) m_pMinimap->Release();
 	if (m_pShadowTexture) m_pShadowTexture->Release();

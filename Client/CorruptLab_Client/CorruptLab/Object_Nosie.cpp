@@ -10,6 +10,7 @@ CObjectNosie::CObjectNosie()
 {
 	m_fFrameTime = 0.0f;
 	m_fPosition = { 0.0f, 0.0f, 0.0f };
+	
 }
 
 CObjectNosie::CObjectNosie(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader)
@@ -53,7 +54,6 @@ void CObjectNosie::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	m_pd3dcbDistortionBuffer->Map(0, NULL, (void**)&m_pcbMappdeDistortBuffers);
 
-
 	ncbElementBytes = ((sizeof(int) + 255) & ~255);
 	m_pd3dRadiationLevel = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD,
 		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
@@ -66,7 +66,7 @@ void CObjectNosie::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 void CObjectNosie::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_pSceneDepthTextures->UpdateShaderVariables(pd3dCommandList);
+	
 }
 
 void CObjectNosie::ReleaseShaderVariables()
@@ -97,6 +97,7 @@ void CObjectNosie::ReleaseShaderVariables()
 	if (m_pd3dPositionBuffer)
 	{
 	//	m_pd3dPositionBuffer->Unmap(0, NULL);
+		m_pd3dPositionUploadBuffer->Release();
 		m_pd3dPositionBuffer->Release();
 	}
 	//if (m_pcbMappdeDistortBuffers) delete m_pcbMappdeDistortBuffers;

@@ -75,16 +75,25 @@ void CGameObject::Release()
 	if (m_pChild) m_pChild->Release();
 	if (m_pSibling) m_pSibling->Release();
 
-	//for(int i =0 ; i<m_nBoundingBoxes; ++i)
-	//	m_pBoundingBoxes[i]-
-	//if (m_pCollisionBoxShader)m_pCollisionBoxShader->ReleaseUploadBuffers();
-	//if (m_pCollisionBoxShader)
-	//	m_pCollisionBoxShader->Release(); 
+	if (m_pAnimationController)
+	{
+		delete m_pAnimationController;
+		m_pAnimationController = NULL;
+	}
+
+	if (m_pCollisionBoxShader)
+	{
+		m_pCollisionBoxShader->Release();
+		m_pCollisionBoxShader = NULL;
+	}
 
 	if (m_pBoundingBoxes)
+	{
+		for(int i =0; i<m_nBoundingBoxes; i++)
+			m_pBoundingBoxes[i].Release();
 		delete[] m_pBoundingBoxes;
-
-	m_pBoundingBoxes = NULL;
+		m_pBoundingBoxes = NULL;
+	}
 
 	if (--m_nReferences <= 0) delete this;
 }

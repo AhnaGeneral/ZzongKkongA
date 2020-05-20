@@ -62,7 +62,7 @@ public:
 	CPlayer                   * m_pPlayer;						      
 	CHeightMapTerrain         * m_pTerrain;
 	CSkyBox                   * m_pSkyBox;
-	CCloudGSShader            * m_pCloudGSShader;
+	//CCloudGSShader            * m_pCloudGSShader;
 	CObjectWater              * m_pCObjectWater; 
 	CMRTUI                    * m_pUIObj;
 

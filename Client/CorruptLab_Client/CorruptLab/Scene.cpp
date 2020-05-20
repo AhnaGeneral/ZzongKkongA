@@ -18,7 +18,7 @@ CGameScene::CGameScene()
 	m_pPlayer = NULL;
 	m_pTerrain = NULL;
 	m_pSkyBox = NULL;
-	m_pCloudGSShader = NULL;
+	//m_pCloudGSShader = NULL;
 	m_pUIObj = NULL;
 
 	WindowCursorPos = { 0L,0L };
@@ -70,9 +70,9 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 		_T("Geometry/OneStageTerrain.raw"), 257, 257, 17, 17, xmf3Scale, xmf4Color, m_pShadowMap);
 	
 
-	m_pCloudGSShader = new CCloudGSShader;
-	m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
-	m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
+	//m_pCloudGSShader = new CCloudGSShader;
+	//m_pCloudGSShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature);
+	//m_pCloudGSShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pTerrain);
 
 	CRadationMgr::GetInstance()->Initialize();
 	m_pSoftParticleShader = new CSoftParticleShader();
@@ -721,8 +721,8 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	CheckCollisions();
 
-	if (m_pCloudGSShader) m_pCloudGSShader->Render(pd3dCommandList, pCamera);
-	m_pPlayer->Render(pd3dCommandList, pCamera);
+	/*if (m_pCloudGSShader) m_pCloudGSShader->Render(pd3dCommandList, pCamera);
+	*/m_pPlayer->Render(pd3dCommandList, pCamera);
 
 	if (m_pCObjectWater) m_pCObjectWater->Render(pd3dCommandList, pCamera);
 

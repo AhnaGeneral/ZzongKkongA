@@ -646,9 +646,9 @@ void CGameFramework::OnDestroy()
 	if (m_pd3dDepthStencilBuffer) m_pd3dDepthStencilBuffer->Release();
 	if (m_pd3dDsvDescriptorHeap) m_pd3dDsvDescriptorHeap->Release();
 
-	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
-		if (m_ppd3dOffScreenRenderTargetBuffers[i])
-			m_ppd3dOffScreenRenderTargetBuffers[i]->Release();
+	//for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
+	//	if (m_ppd3dOffScreenRenderTargetBuffers[i])
+	//		m_ppd3dOffScreenRenderTargetBuffers[i]->Release();
 
 
 	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
