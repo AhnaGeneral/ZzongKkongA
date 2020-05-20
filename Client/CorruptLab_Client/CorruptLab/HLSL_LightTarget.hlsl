@@ -38,32 +38,6 @@ PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 	float4 vNormal = gtxtNormal[int2(position.xy)];
 	output.Light = Lighting(vPosition.xyz, vNormal.xyz) * 1.5f;
 
-	float weight = 0;
-
-	if (!gtxtEmmisive[int2(position.xy)].g)
-	{
-		const float offset[] = { 0.0f, 1.0f, 2.0f, 3.0f, 4.0f };
-		const float weight[] = { 0.2270270270, 0.1945945946, 0.1216216216, 0.0540540541, 0.0162162162 };
-		float4 cEmmisive = gtxtEmmisive.Sample(gSamplerState, float2(uvX , uvY)) ;
-
-
-
-	//	float4 GlowColor = float4(0, 0 , 0, 0);
-	//	for (int i = 0; i < 3; i++)
-	//	{
-	//		weight = ((7 - i) * (7 - i) / 3);
-	//		for (int j = 0; j < 9; j++)
-	//		{
-	//			float4 cEmmisive = gtxtEmmisive[int2(position.xy) + (gnOffsets[j] * i)];
-	//			int Depth =  3 - (gtxtDepth[int2(position.xy) + (gnOffsets[j] * i)].y  * 3);
-	//			//if (cEmmisive.g)
-	//			GlowColor += cEmmisive * Depth;
-	//		}
-	//		GlowColor /= 3;
-	//	}
-		output.Light += cEmmisive;
-	}
-
 	return output;
 
 }

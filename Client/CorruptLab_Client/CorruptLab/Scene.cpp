@@ -685,18 +685,18 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 		}
 	}
 
-	//if (m_pDynamicObjLists) // 오브젝트 Render
-	//{
-	//	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
-	//	{
-	//		for (auto Obj : *m_pDynamicObjLists[i])
-	//		{
-	//			Obj->Update(m_fElapsedTime);
-	//			Obj->UpdateTransform(NULL);
-	//			Obj->Render(pd3dCommandList, pCamera, 0);
-	//		}
-	//	}
-	//}
+	if (m_pDynamicObjLists) // 오브젝트 Render
+	{
+		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pDynamicObjLists[i])
+			{
+				Obj->Update(m_fElapsedTime);
+				Obj->UpdateTransform(NULL);
+				Obj->Render(pd3dCommandList, pCamera, 0);
+			}
+		}
+	}
 
 
 	if (m_pMonsterLists) // 몬스터 Render

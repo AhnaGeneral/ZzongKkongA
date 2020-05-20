@@ -18,9 +18,25 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	//float fDepth = gtxtDepth[int2(position.xy)].r;
 	float4 fLighted = gtxtLight[int2(position.xy)];
 	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
-	float4 cEmmisive = gtxtEmmisive[int2(position.xy)];
 
-	//fLighted *= 2;
+	int2 dir = int2(1, 1);
+	const int offset[] = { 0, 1, 2, 3, 4, 5 };
+	const float weight[] = { 0.3270270270, 0.2945945946, 0.1216216216, 0.0540540541, 0.0162162162 };
+	//float4 cEmmisive = gtxtEmmisive[int2(position.xy)] * weight[0];
+	float4 FragmentColor = float4(0, 0, 0, 0);
+	//(1.0, 0.0) -> horizontal blur
+	//(0.0, 1.0) -> vertical blur
+	int hstep = dir.x;
+	int vstep = dir.y;
+
+	for (int i = 1; i < 5; i++) {
+		FragmentColor += gtxtEmmisive[int2(position.xy) + int2(hstep * offset[i], vstep * offset[i])] * weight[i] +
+			gtxtEmmisive[int2(position.xy) - int2(hstep * offset[i], vstep * offset[i])] * weight[i];
+	}
+	float4 cEmmisive = FragmentColor;
+
+
+	fLighted = fLighted * 2 - float4(0.1f,0.1f,0.1f,0.f);
     cColor = lerp(cColor, fLighted, 0.5f);
 	
 	//cColor = lerp(cColor, cFogColor, fDepth * 5);

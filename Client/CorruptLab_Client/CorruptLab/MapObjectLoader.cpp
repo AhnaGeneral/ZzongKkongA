@@ -76,9 +76,9 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 
 
 	////ItemBox--------------------------------------------
-	//CGameObject* pDrugMaker = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/DrugMaker.bin", NULL, true);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/DrugMaker.bin", NULL, false);
 
-	//PlaceDynamicFromFile(pDrugMaker, "ObjectsData/DrugMakers.bin", OBJECT_TYPE_DRUGMAKER);
+	PlaceDynamicFromFile(pDiverObject, "ObjectsData/DrugMakers.bin", OBJECT_TYPE_DRUGMAKER);
 
 	/*Monster*/
 	//Yangmal-------------------------------------------------
