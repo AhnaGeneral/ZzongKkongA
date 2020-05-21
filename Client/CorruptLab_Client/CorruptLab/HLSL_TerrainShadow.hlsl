@@ -1,15 +1,12 @@
 #include "HLSL_Terrain.hlsl"
 
-struct VS_TERRAIN_SHADOW_OUTPUT
-{
-	float3 position : POSITION;
-	float4 posj : TEXCOORD0;
-};
-
 struct HS_TERRAIN_TESSELLATION_SHADOW_OUTPUT
 {
 	float3 position : POSITION;
 	float4 posj : TEXCOORD0;
+	float2 uv0 : TEXCOORD1;
+	float2 uv1 : TEXCOORD2;
+	float3 normal : NORMAL;
 };
 
 struct DS_TERRAIN_TESSELLATION_SHADOW_OUTPUT
@@ -20,18 +17,23 @@ struct DS_TERRAIN_TESSELLATION_SHADOW_OUTPUT
 };
 
 
-VS_TERRAIN_SHADOW_OUTPUT VSTerrainShadow(VS_TERRAIN_INPUT input)
+VS_TERRAIN_OUTPUT VSTerrainShadow(VS_TERRAIN_INPUT input)
 {
-	VS_TERRAIN_SHADOW_OUTPUT output;
+	VS_TERRAIN_OUTPUT output;
 
+	output.color = input.color;
 	output.position = input.position;
-	output.posj = float4 (input.position, 1.0f);
+	output.normal = input.normal;
 
+	output.uv0 = input.uv0;
+	output.uv1 = input.uv1;
+
+	output.posj = float4 (input.position, 1.0f);
 	return(output);
 }
 
 
-HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<VS_TERRAIN_SHADOW_OUTPUT, 25> input)
+HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<VS_TERRAIN_OUTPUT, 25> input)
 {
 
 	//HS_TERRAIN_TESSELLATION_CONSTANT output;
@@ -44,8 +46,11 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<
 
 	float fDistanceToCamera = distance(vCenter, gvCameraPosition);
 
-	float fTessFactor = 1000.f / fDistanceToCamera;
-	//if (fDistanceToCamera > 1000.f) fTessFactor = 1.f;
+	float fTessFactor = 500.f / fDistanceToCamera * 20;
+	if (fDistanceToCamera > 150.f)
+	{
+		fTessFactor = 1000.f / fDistanceToCamera;
+	}
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
 	output.fTessEdges[0] = fTessFactor;
@@ -66,11 +71,14 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<
 [outputcontrolpoints(25)]
 [patchconstantfunc("VSTerrainTessellationConstantShadow")]
 [maxtessfactor(64.0f)]
-HS_TERRAIN_TESSELLATION_SHADOW_OUTPUT HSTerrainTessellationShadow(InputPatch<VS_TERRAIN_SHADOW_OUTPUT, 25> input, uint i : SV_OutputControlPointID)
+HS_TERRAIN_TESSELLATION_SHADOW_OUTPUT HSTerrainTessellationShadow(InputPatch<VS_TERRAIN_OUTPUT, 25> input, uint i : SV_OutputControlPointID)
 {
 	HS_TERRAIN_TESSELLATION_SHADOW_OUTPUT output;
-
 	output.position = input[i].position;
+	//output.color = input[i].color;
+	output.uv0 = input[i].uv0;
+	output.uv1 = input[i].uv1;
+	output.normal = input[i].normal;
 	output.posj = input[i].posj;
 
 	return(output);
@@ -98,9 +106,23 @@ DS_TERRAIN_TESSELLATION_SHADOW_OUTPUT DSTerrainTessellationShadow(HS_TERRAIN_TES
 	BernsteinCoeffcient5x5(uv.x, uB);
 	BernsteinCoeffcient5x5(uv.y, vB);
 
+	float2 uv0 = lerp(lerp(patch[0].uv0, patch[4].uv0, uv.x), lerp(patch[20].uv0, patch[24].uv0, uv.x), uv.y);
+	float2 uv1 = lerp(lerp(patch[0].uv1, patch[4].uv1, uv.x), lerp(patch[20].uv1, patch[24].uv1, uv.x), uv.y);
+	float3 worldnormal = lerp(lerp(patch[0].normal, patch[4].normal, uv.x), lerp(patch[20].normal, patch[24].normal, uv.x), uv.y);
+
 	///float3 tangentuv = float3(output.uv0, 0.0f); //텍스처의 UV값을  
 
+	float3 tmpnormal = normalize(mul(worldnormal, (float3x3)gmtxGameObject));
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
+
+	float4 Tex_SplatAlpha = gtxtSplatAlpha.SampleLevel(gSamplerState, uv0, 10);
+
+	float fHeight = Tex_SplatAlpha.r * gtxtDryStone_HT.SampleLevel(gSamplerState, uv1, 10).r
+		+ Tex_SplatAlpha.g * gtxtSand_HT.SampleLevel(gSamplerState, uv1, 10).r
+		+ Tex_SplatAlpha.a * gtxtSand_HT.SampleLevel(gSamplerState, uv1, 10).r;
+	
+	position += tmpnormal * (fHeight * 0.2f - 0.5f);
+
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, shadowgmtxView), shadowgmtxProjection);
 
 	//matrix

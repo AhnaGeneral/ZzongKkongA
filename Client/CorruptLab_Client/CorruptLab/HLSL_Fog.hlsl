@@ -119,25 +119,26 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 	float fSceenW = fSceneDepth.g * 600.f;
 	float fSceenZ = fSceneDepth.r * fSceenW;
 
-
 	float4 finalNoise = lerp(noise1, noise2, 0.7);
 	float4 alphaColor = gtxtFinalAlpha.Sample(gSamplerClamp, input.tex);
 	output.NonLight = float4(1, 1, 1, alphaColor.a * (finalNoise.a * 1.5));
+	
 	float fDepthDistance = fSceenZ - myDepth;
 	if (/*(fDepthDistance < 80.f) &&*/ (fDepthDistance > 0.0f))
 	{
 		fDepthDistance = saturate(1 - (fDepthDistance / myDepth / 2.f)); // 0.7 //0.8 //0.9 
 		//fDepthDistance *= 100; //0.3  //0.2 // 0.1 ..
 		//fDepthDistance/= 
-		output.NonLight.a -= fDepthDistance;
+		output.NonLight.a -= fDepthDistance - 0.1f;
 	}
 	output.NonLight.a /= 4.f;
 
 	if (gf3RadiationLevel > 0)
 	{
-		float Percent = 1.f - float(gf3RadiationLevel) / 100.f;
-		output.NonLight.r = output.NonLight.b = Percent;
-		output.NonLight.g = 0.7f;
+		float Percent = float(gf3RadiationLevel) / 100.f;
+		float3 white = float3(0.8f, 0.8f, 0.8f);
+		float3 green = float3(0.3f, 0.8f, 0.3f);
+		output.NonLight.xyz = lerp(white, green, Percent);
 	}
 
 	return output;
@@ -249,10 +250,13 @@ PS_NONLIGHT_MRT_OUTPUT SpecialFogPixelShader(PS_FOG_INPUT input)
 
 	if (gf3RadiationLevel > 0)
 	{
-		float Percent = 1.f - float(gf3RadiationLevel) / 100.f;
-		output.NonLight.r = output.NonLight.b = Percent;
-		output.NonLight.g = 0.8f;
+		float Percent = float(gf3RadiationLevel) / 100.f;
+
+		float3 white = float3(0.7f, 0.7f, 0.7f);
+		float3 green = float3(0.2f, 0.8f, 0.2f);
+		output.NonLight.xyz = lerp(white, green, Percent);
 	}
+
 
 	return output;
 

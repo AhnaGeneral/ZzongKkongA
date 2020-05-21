@@ -119,8 +119,11 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 
 	float fDistanceToCamera = distance(vCenter, gvCameraPosition);
 
-	float fTessFactor = 1000.f / fDistanceToCamera;
-	//if (fDistanceToCamera > 1000.f) fTessFactor = 1.f;
+	float fTessFactor = 500.f / fDistanceToCamera * 20;
+	if (fDistanceToCamera > 150.f)
+	{
+		fTessFactor = 1000.f / fDistanceToCamera;
+	}
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
 	output.fTessEdges[0] = fTessFactor;
@@ -147,8 +150,21 @@ static matrix gmtxProjectToTexture =
   0.0f, 0.0f, 1.0f, 0.0f,
   0.5f, 0.5f, 0.0f, 1.0f };
 
+
+Texture2D gtxtSplatAlpha   : register(t50);
+Texture2D gtxtTerrain1_NM  : register(t51);
+Texture2D gtxtSand2_BC     : register(t52);
+Texture2D gtxtSand_NM	   : register(t53);
+Texture2D gtxtDryStone_BC  : register(t54);
+Texture2D gtxtDryStone_NM  : register(t55);
+Texture2D gtxtGrass1_BC    : register(t56);
+Texture2D gtxtGrass2_BC    : register(t57);
+Texture2D gtxtSand1        : register(t58);
+Texture2D gtxtGrass1_NM    : register(t59);
+Texture2D gtxtDryStone_HT  : register(t60);
+Texture2D gtxtSand_HT	   : register(t61);
+
 [domain("quad")]
-[earlydepthstencil]
 DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CONSTANT patchConstant, float2 uv : SV_DomainLocation, OutputPatch<HS_TERRAIN_TESSELLATION_OUTPUT, 25> patch)
 {
 	DS_TERRAIN_TESSELLATION_OUTPUT output = (DS_TERRAIN_TESSELLATION_OUTPUT)0;
@@ -157,7 +173,7 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	BernsteinCoeffcient5x5(uv.x, uB);
 	BernsteinCoeffcient5x5(uv.y, vB);
 
-	output.color = lerp(lerp(patch[0].color, patch[4].color, uv.x), lerp(patch[20].color, patch[24].color, uv.x), uv.y);
+	output.color = float4(0,0,0,1);
 	output.uv0 = lerp(lerp(patch[0].uv0, patch[4].uv0, uv.x), lerp(patch[20].uv0, patch[24].uv0, uv.x), uv.y);
 	output.uv1 = lerp(lerp(patch[0].uv1, patch[4].uv1, uv.x), lerp(patch[20].uv1, patch[24].uv1, uv.x), uv.y);
 	float3 worldnormal = lerp(lerp(patch[0].normal, patch[4].normal, uv.x), lerp(patch[20].normal, patch[24].normal, uv.x), uv.y);
@@ -178,12 +194,25 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
     worldbitanget = mul(tmpbitanget, (float3x3)gmtxGameObject);
     output.bitanget = worldbitanget;
 
+
+
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, gmtxView), gmtxProjection);
 	matrix mtxShadowViewProjection = mul(mul(gmtxGameObject, shadowgmtxView), shadowgmtxProjection);
+
+	float4 Tex_SplatAlpha = gtxtSplatAlpha.SampleLevel(gSamplerState, output.uv0,10);
+
+	float fHeight = Tex_SplatAlpha.r * gtxtDryStone_HT.SampleLevel(gSamplerState, output.uv1 * 1.5f,0.1).r
+				  + Tex_SplatAlpha.g *  gtxtSand_HT.SampleLevel(gSamplerState, output.uv1 * 1.5f, 0.1).r
+				  + Tex_SplatAlpha.a * gtxtSand_HT.SampleLevel(gSamplerState, output.uv1 * 1.5f, 0.1).r
+				  + Tex_SplatAlpha.b * 1.f;
 	
+	position += output.normal * (fHeight * 0.45f);
+	output.color.xyz = fHeight ;
+
 	output.positionW = mul(float4(position, 1.0f), gmtxGameObject);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
+
 
 	//shadow
 	matrix shadowProject = mul(mul(shadowgmtxView, shadowgmtxProjection), gmtxProjectToTexture);
@@ -197,16 +226,6 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	return(output);
 }
 
-Texture2D gtxtSplatAlpha   : register(t50);
-Texture2D gtxtTerrain1_NM  : register(t51);
-Texture2D gtxtSand2_BC     : register(t52);
-Texture2D gtxtDryGround_NM : register(t53);
-Texture2D gtxtDryStone_BC  : register(t54);
-Texture2D gtxtDryStone_NM  : register(t55);
-Texture2D gtxtGrass1_BC    : register(t56);
-Texture2D gtxtGrass2_BC    : register(t57);
-Texture2D gtxtSand1        : register(t58);
-
 
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input) : SV_TARGET
 {
@@ -218,36 +237,40 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	float4 Tex_Terrain1_NM = gtxtTerrain1_NM.Sample(gSamplerState, input.uv0);
 
 	float4 Tex_Sand2_BC = gtxtSand2_BC.Sample(gSamplerState, input.uv1);
-	float4 Tex_DryGround_NM = gtxtDryGround_NM.Sample(gSamplerState, input.uv1);
+	float4 Tex_Sand_NM = gtxtSand_NM.Sample(gSamplerState, input.uv1);
 
 	float4 Tex_DryStone_BC = gtxtDryStone_BC.Sample(gSamplerState, input.uv1);
 	float4 Tex_DryStone_NM = gtxtDryStone_NM.Sample(gSamplerState, input.uv1);
 
 	float4 Tex_Grass1_BC = gtxtGrass1_BC.Sample(gSamplerState, input.uv1);
 	float4 Tex_Grass2_BC = gtxtGrass2_BC.Sample(gSamplerState, input.uv1);
-
+	float4 Tex_Grass1_NM = gtxtGrass1_NM.Sample(gSamplerState, input.uv1);
+	
 	float4 Tex_Sand1 = gtxtSand1.Sample(gSamplerState, input.uv1);
 
 	float3 vNormal = normalize(Tex_Terrain1_NM.rgb * 2.0f - 1.0f);
 
-	float3 vNormal_DryGround = normalize(Tex_DryGround_NM.rgb * 2.0f - 1.0f);
+	float3 vNormal_DrySand = normalize(Tex_Sand_NM.rgb * 2.0f - 1.0f);
 	float3 vNormal_DryStone  = normalize(Tex_DryStone_NM.rgb * 2.0f - 1.0f);
-
+	float3 vNormal_Grass1 = normalize(Tex_Grass1_NM.rgb * 2.0f - 1.0f);
+	
 	float3 toCamera = normalize(gvCameraPosition - input.positionW);
 
-	vNormal_DryGround = normalize(mul(vNormal_DryGround, TBN));
+	vNormal_DrySand = normalize(mul(vNormal_DrySand, TBN));
 	vNormal_DryStone = normalize(mul(vNormal_DryStone, TBN));
+	vNormal_Grass1 = normalize(mul(vNormal_Grass1, TBN));
 
-
-	vNormal = normalize(mul(vNormal, TBN));
-
-
+	vNormal = normalize(lerp(mul(vNormal, TBN),(Tex_SplatAlpha.r * vNormal_DryStone)+ (Tex_SplatAlpha.g * vNormal_DrySand) + (Tex_SplatAlpha.a * vNormal_DrySand)
+					+ (Tex_SplatAlpha.b * vNormal_Grass1),0.7f));
 
 	float4 Splat = (Tex_SplatAlpha.r * Tex_DryStone_BC) + (Tex_SplatAlpha.g * Tex_Sand1) +
 		    (Tex_SplatAlpha.b * Tex_Grass1_BC) +(Tex_SplatAlpha.a * Tex_Sand2_BC);
 
 	//===================================================================================
-	output.color = Splat;
+	if (input.color.r > 0.175f)
+		output.color = Splat + (input.color / 2.5f - 0.35f);
+	else
+		output.color = Splat;
 	output.normal = float4(vNormal,1.0f);
 	output.depth = float4(input.posj.z/input.posj.w, input.posj.w/ 500.0f, 0, 1);
 
