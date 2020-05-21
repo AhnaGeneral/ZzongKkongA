@@ -119,7 +119,7 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 
 	float fDistanceToCamera = distance(vCenter, gvCameraPosition);
 
-	float fTessFactor = 500.f / fDistanceToCamera * 20;
+	float fTessFactor = 500.f / fDistanceToCamera * 30;
 	if (fDistanceToCamera > 150.f)
 	{
 		fTessFactor = 1000.f / fDistanceToCamera;
@@ -176,15 +176,18 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	output.color = float4(0,0,0,1);
 	output.uv0 = lerp(lerp(patch[0].uv0, patch[4].uv0, uv.x), lerp(patch[20].uv0, patch[24].uv0, uv.x), uv.y);
 	output.uv1 = lerp(lerp(patch[0].uv1, patch[4].uv1, uv.x), lerp(patch[20].uv1, patch[24].uv1, uv.x), uv.y);
-	float3 worldnormal = lerp(lerp(patch[0].normal, patch[4].normal, uv.x), lerp(patch[20].normal, patch[24].normal, uv.x), uv.y);
+	float3 worldnormal = gtxtTerrain1_NM.SampleLevel(gSamplerState, output.uv0 , 1).xyz;
 	
+	float3x3 TBN = float3x3(float3(1,0,0),float3(0,0,1),float3(0,1,0));
+	worldnormal = normalize(worldnormal * 2.0f - 1.0f);
+	worldnormal = normalize(mul(worldnormal, TBN));
 	///float3 tangentuv = float3(output.uv0, 0.0f); //텍스처의 UV값을  
 
     float3 worldtanget = float3(1.0f, 1.0f, 1.0f);
     float3 worldbitanget = float3(1.0f, 1.0f, 1.0f);
 
     float3 tmpnormal = mul(worldnormal, (float3x3)gmtxGameObject);
-    output.normal = normalize(tmpnormal);
+	output.normal = worldnormal; // normalize(tmpnormal) ;
 
     float3 tmptanget = cross(tmpnormal, float3(output.uv0.x, 0.0f, 0.0f));
     worldtanget = mul(tmptanget, (float3x3)gmtxGameObject);
@@ -194,21 +197,22 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
     worldbitanget = mul(tmpbitanget, (float3x3)gmtxGameObject);
     output.bitanget = worldbitanget;
 
-
-
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, gmtxView), gmtxProjection);
 	matrix mtxShadowViewProjection = mul(mul(gmtxGameObject, shadowgmtxView), shadowgmtxProjection);
 
-	float4 Tex_SplatAlpha = gtxtSplatAlpha.SampleLevel(gSamplerState, output.uv0,10);
-
-	float fHeight = Tex_SplatAlpha.r * gtxtDryStone_HT.SampleLevel(gSamplerState, output.uv1 * 1.5f,0.1).r
-				  + Tex_SplatAlpha.g *  gtxtSand_HT.SampleLevel(gSamplerState, output.uv1 * 1.5f, 0.1).r
-				  + Tex_SplatAlpha.a * gtxtSand_HT.SampleLevel(gSamplerState, output.uv1 * 1.5f, 0.1).r
-				  + Tex_SplatAlpha.b * 1.f;
 	
-	position += output.normal * (fHeight * 0.45f);
-	output.color.xyz = fHeight ;
+	if (gf3RadiationLevel != 0)
+	{
+		float4 Tex_SplatAlpha = gtxtSplatAlpha.SampleLevel(gSamplerState, output.uv0,10);
+	
+		float fHeight = Tex_SplatAlpha.r * gtxtDryStone_HT.SampleLevel(gSamplerState, output.uv1 ,10).r
+					  + Tex_SplatAlpha.g *  gtxtSand_HT.SampleLevel(gSamplerState, output.uv1, 10).r
+					  + Tex_SplatAlpha.a * gtxtSand_HT.SampleLevel(gSamplerState, output.uv1 , 10).r
+					  + Tex_SplatAlpha.b * 1.f;
+		position += output.normal * (fHeight * 0.35f) ;
+		output.color.xyz = fHeight ;
+	}
 
 	output.positionW = mul(float4(position, 1.0f), gmtxGameObject);
 	output.position = mul(float4(position, 1.0f), mtxWorldViewProjection);
@@ -234,7 +238,6 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	float3x3 TBN = float3x3(input.tangent, input.bitanget, input.normal);
 
 	float4 Tex_SplatAlpha = gtxtSplatAlpha.Sample(gSamplerState, input.uv0);
-	float4 Tex_Terrain1_NM = gtxtTerrain1_NM.Sample(gSamplerState, input.uv0);
 
 	float4 Tex_Sand2_BC = gtxtSand2_BC.Sample(gSamplerState, input.uv1);
 	float4 Tex_Sand_NM = gtxtSand_NM.Sample(gSamplerState, input.uv1);
@@ -248,7 +251,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	
 	float4 Tex_Sand1 = gtxtSand1.Sample(gSamplerState, input.uv1);
 
-	float3 vNormal = normalize(Tex_Terrain1_NM.rgb * 2.0f - 1.0f);
+	float3 vNormal = input.normal; 
 
 	float3 vNormal_DrySand = normalize(Tex_Sand_NM.rgb * 2.0f - 1.0f);
 	float3 vNormal_DryStone  = normalize(Tex_DryStone_NM.rgb * 2.0f - 1.0f);
@@ -260,17 +263,22 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	vNormal_DryStone = normalize(mul(vNormal_DryStone, TBN));
 	vNormal_Grass1 = normalize(mul(vNormal_Grass1, TBN));
 
-	vNormal = normalize(lerp(mul(vNormal, TBN),(Tex_SplatAlpha.r * vNormal_DryStone)+ (Tex_SplatAlpha.g * vNormal_DrySand) + (Tex_SplatAlpha.a * vNormal_DrySand)
-					+ (Tex_SplatAlpha.b * vNormal_Grass1),0.7f));
+	if (gf3RadiationLevel == 2)
+	{
+		vNormal = (Tex_SplatAlpha.r * vNormal_DryStone) + (Tex_SplatAlpha.g * vNormal_DrySand) + (Tex_SplatAlpha.a * vNormal_DrySand)
+			+ (Tex_SplatAlpha.b * vNormal_Grass1);
 
+	}
+	vNormal /= 1.25f; // 조명 영향이 너무 가서..
 	float4 Splat = (Tex_SplatAlpha.r * Tex_DryStone_BC) + (Tex_SplatAlpha.g * Tex_Sand1) +
 		    (Tex_SplatAlpha.b * Tex_Grass1_BC) +(Tex_SplatAlpha.a * Tex_Sand2_BC);
 
 	//===================================================================================
-	if (input.color.r > 0.175f)
-		output.color = Splat + (input.color / 2.5f - 0.35f);
+	if (input.color.r > 0.f)
+		output.color = Splat + (input.color / 3.f - 0.125f);
 	else
 		output.color = Splat;
+
 	output.normal = float4(vNormal,1.0f);
 	output.depth = float4(input.posj.z/input.posj.w, input.posj.w/ 500.0f, 0, 1);
 
@@ -288,7 +296,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	if (input.LightViewPosition.z > (depthValue + bias))
 	{
-		output.color = float4 (output.color.rgb * 0.5, 1.0f) ;
+		output.color = float4 (output.color.rgb * 0.6, 1.0f) ;
 	}
 
 	//[바다 셰이더]==========================================================================

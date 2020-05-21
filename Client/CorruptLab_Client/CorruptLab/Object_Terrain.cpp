@@ -6,6 +6,9 @@
 CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature,
 	LPCTSTR pFileName, int nWidth, int nLength, int nBlockWidth, int nBlockLength, XMFLOAT3 xmf3Scale, XMFLOAT4 xmf4Color, void* ShadowMap)
 {
+	m_pd3dHeightFactorBuffer = NULL;
+	m_ipcbHeightFactor = NULL;
+
 	m_nWidth = nWidth; // 512
 	m_nLength = nLength; // 512
 
@@ -86,6 +89,13 @@ CHeightMapTerrain::~CHeightMapTerrain(void)
 		for (int i = 0; i < m_nMeshes; ++i)
 			m_ppMeshes[i]->Release();
 	}
+
+	if (m_pd3dHeightFactorBuffer)
+	{
+		m_pd3dHeightFactorBuffer->Unmap(0, NULL);
+		m_pd3dHeightFactorBuffer->Release();
+	}
+
 }
 
 void CHeightMapTerrain::SetMesh(int nIndex, CHeightMapGridMesh* pMesh)
@@ -101,6 +111,12 @@ void CHeightMapTerrain::SetMesh(int nIndex, CHeightMapGridMesh* pMesh)
 void CHeightMapTerrain::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	int ncbElementBytes = ((sizeof(int) + 255) & ~255);
+	m_pd3dHeightFactorBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	m_pd3dHeightFactorBuffer->Map(0, NULL, (void**)&m_ipcbHeightFactor);
+	m_iHeightFactor = new int(2);
 }
 
 void CHeightMapTerrain::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
@@ -108,11 +124,27 @@ void CHeightMapTerrain::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCom
 	m_pShadowMap->UpdateShaderVariables(pd3dCommandList);
 }
 
+void CHeightMapTerrain::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
+{
+	CGameObject::UpdateShaderVariable(pd3dCommandList, pxmf4x4World);
+
+	::memcpy(m_ipcbHeightFactor, m_iHeightFactor, sizeof(int));
+	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dHeightFactorBuffer->GetGPUVirtualAddress();
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_RADIATIONLEVEL, d3dGpuVirtualAddress);
+}
+
+void CHeightMapTerrain::SetHeightFactor()
+{
+	*m_iHeightFactor += 1;
+	if (*m_iHeightFactor > 2)
+		*m_iHeightFactor = 0;
+}
+
 
 
 void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
-	OnPrepareRender();
+	//OnPrepareRender();
 
 	m_ppMaterials[0]->m_pShader->Render(pd3dCommandList, pCamera, nPipelineState);
 
@@ -122,6 +154,7 @@ void CHeightMapTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCame
 		UpdateShaderVariables(pd3dCommandList);
 
 	}
+
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
 	XMFLOAT3 CameraPos = pCamera->GetPosition();
@@ -148,5 +181,5 @@ void CHeightMapTerrain::ReleaseUploadBuffers()
 			m_ppMeshes[i]->ReleaseUploadBuffers();
 
 	m_ppMaterials[0]->ReleaseUploadBuffers();
-}
 
+}

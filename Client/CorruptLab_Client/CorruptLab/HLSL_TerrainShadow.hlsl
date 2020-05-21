@@ -108,20 +108,26 @@ DS_TERRAIN_TESSELLATION_SHADOW_OUTPUT DSTerrainTessellationShadow(HS_TERRAIN_TES
 
 	float2 uv0 = lerp(lerp(patch[0].uv0, patch[4].uv0, uv.x), lerp(patch[20].uv0, patch[24].uv0, uv.x), uv.y);
 	float2 uv1 = lerp(lerp(patch[0].uv1, patch[4].uv1, uv.x), lerp(patch[20].uv1, patch[24].uv1, uv.x), uv.y);
-	float3 worldnormal = lerp(lerp(patch[0].normal, patch[4].normal, uv.x), lerp(patch[20].normal, patch[24].normal, uv.x), uv.y);
-
+	float3 worldnormal = gtxtTerrain1_NM.SampleLevel(gSamplerState, uv0, 1) * 1.1;
+	float3x3 TBN = float3x3(float3(1, 0, 0), float3(0, 0, 1), float3(0, 1, 0));
+	worldnormal = normalize(mul(worldnormal, TBN));
 	///float3 tangentuv = float3(output.uv0, 0.0f); //텍스처의 UV값을  
 
 	float3 tmpnormal = normalize(mul(worldnormal, (float3x3)gmtxGameObject));
 	float3 position = CubicBezierSum5x5(patch, uB, vB);
 
-	float4 Tex_SplatAlpha = gtxtSplatAlpha.SampleLevel(gSamplerState, uv0, 10);
 
-	float fHeight = Tex_SplatAlpha.r * gtxtDryStone_HT.SampleLevel(gSamplerState, uv1, 10).r
-		+ Tex_SplatAlpha.g * gtxtSand_HT.SampleLevel(gSamplerState, uv1, 10).r
-		+ Tex_SplatAlpha.a * gtxtSand_HT.SampleLevel(gSamplerState, uv1, 10).r;
-	
-	position += tmpnormal * (fHeight * 0.2f - 0.5f);
+	if (gf3RadiationLevel != 0)
+	{
+		float4 Tex_SplatAlpha = gtxtSplatAlpha.SampleLevel(gSamplerState, uv0, 10);
+
+		float fHeight = Tex_SplatAlpha.r * gtxtDryStone_HT.SampleLevel(gSamplerState, uv1, 3).r
+			+ Tex_SplatAlpha.g * gtxtSand_HT.SampleLevel(gSamplerState, uv1, 3).r
+			+ Tex_SplatAlpha.a * gtxtSand_HT.SampleLevel(gSamplerState, uv1, 3).r
+			+ Tex_SplatAlpha.b * 1.f ;
+
+		position += tmpnormal * (fHeight * 0.4f);
+	}
 
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, shadowgmtxView), shadowgmtxProjection);
 

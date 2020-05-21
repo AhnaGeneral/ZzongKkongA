@@ -578,6 +578,9 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 		case VK_F1:
 			ChangeTerrainPipeline();
 			break;
+		case VK_F3:
+			m_pTerrain->SetHeightFactor();
+			break;
 		case 'Q':
 		case 'q':
 			PurifyMonster();
@@ -763,7 +766,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
 
-	//if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
+	if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
 	if (m_pSpecialFogShader) m_pSpecialFogShader->Render(pd3dCommandList, pCamera);
 }
 
