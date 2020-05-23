@@ -112,17 +112,22 @@ HS_TERRAIN_TESSELLATION_OUTPUT HSTerrainTessellation(InputPatch<VS_TERRAIN_OUTPU
 HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TERRAIN_OUTPUT, 25> input)
 {
 
-	float3 vCenter;
-	for (int i = 0; i < 25; i++)
-		vCenter += input[i].position;
-	vCenter = vCenter / 25.f;
-
-	float fDistanceToCamera = distance(vCenter, gvCameraPosition);
-
-	float fTessFactor = 500.f / fDistanceToCamera * 30;
-	if (fDistanceToCamera > 150.f)
+	float fTessFactor = 3;
+	if (gf3RadiationLevel != 0)
 	{
-		fTessFactor = 1000.f / fDistanceToCamera;
+		float3 vCenter;
+		for (int i = 0; i < 25; i++)
+			vCenter += input[i].position;
+		vCenter = vCenter / 25.f;
+	
+		float fDistanceToCamera = distance(vCenter, gvCameraPosition);
+
+		fTessFactor = 500.f / fDistanceToCamera * 30;
+		if (fDistanceToCamera > 150.f)
+		{
+			fTessFactor = 1000.f / fDistanceToCamera;
+		}
+
 	}
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
@@ -206,10 +211,10 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	{
 		float4 Tex_SplatAlpha = gtxtSplatAlpha.SampleLevel(gSamplerState, output.uv0,10);
 	
-		float fHeight = Tex_SplatAlpha.r * gtxtDryStone_HT.SampleLevel(gSamplerState, output.uv1 ,10).r
-					  + Tex_SplatAlpha.g *  gtxtSand_HT.SampleLevel(gSamplerState, output.uv1, 10).r
-					  + Tex_SplatAlpha.a * gtxtSand_HT.SampleLevel(gSamplerState, output.uv1 , 10).r
-					  + Tex_SplatAlpha.b * 1.f;
+		float fHeight = Tex_SplatAlpha.r * (gtxtDryStone_HT.SampleLevel(gSamplerState, output.uv1 ,0).r * 1.5f -0.1f) 
+					  + Tex_SplatAlpha.g *  gtxtSand_HT.SampleLevel(gSamplerState, output.uv1, 0).r
+					  + Tex_SplatAlpha.a * gtxtSand_HT.SampleLevel(gSamplerState, output.uv1 , 0).r
+					  + Tex_SplatAlpha.b * 0.2f;
 		position += output.normal * (fHeight * 0.35f) ;
 		output.color.xyz = fHeight ;
 	}
@@ -269,13 +274,13 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 			+ (Tex_SplatAlpha.b * vNormal_Grass1);
 
 	}
-	vNormal /= 1.25f; // 조명 영향이 너무 가서..
+	vNormal = vNormal / 1.25f + 0.1f; // 조명 영향이 너무 가서..
 	float4 Splat = (Tex_SplatAlpha.r * Tex_DryStone_BC) + (Tex_SplatAlpha.g * Tex_Sand1) +
 		    (Tex_SplatAlpha.b * Tex_Grass1_BC) +(Tex_SplatAlpha.a * Tex_Sand2_BC);
 
 	//===================================================================================
 	if (input.color.r > 0.f)
-		output.color = Splat + (input.color / 3.f - 0.125f);
+		output.color = Splat + (input.color / 3.f - 0.13f);
 	else
 		output.color = Splat;
 

@@ -32,8 +32,8 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	}
 	float4 cEmmisive = FragmentColor;
 
-	fLighted = fLighted * 1.7f - float4(0.2f, 0.2f, 0.2f, 0.2f);
-	cColor = lerp(cColor, fLighted, 0.5f);
+	fLighted = fLighted * 2.6f + 0.3f;
+	cColor = cColor * fLighted;
 	cColor += cNonLight + cEmmisive;
 	return(cColor);
 }

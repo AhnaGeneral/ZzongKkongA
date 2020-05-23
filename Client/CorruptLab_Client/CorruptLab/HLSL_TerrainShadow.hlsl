@@ -38,18 +38,22 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<
 
 	//HS_TERRAIN_TESSELLATION_CONSTANT output;
 
-
-	float3 vCenter;
-	for (int i = 0; i < 25; i++)
-		vCenter += input[i].position;
-	vCenter = vCenter / 25.f;
-
-	float fDistanceToCamera = distance(vCenter, gvCameraPosition);
-
-	float fTessFactor = 500.f / fDistanceToCamera * 20;
-	if (fDistanceToCamera > 150.f)
+	float fTessFactor = 3;
+	if (gf3RadiationLevel != 0)
 	{
-		fTessFactor = 1000.f / fDistanceToCamera;
+		float3 vCenter;
+		for (int i = 0; i < 25; i++)
+			vCenter += input[i].position;
+		vCenter = vCenter / 25.f;
+
+		float fDistanceToCamera = distance(vCenter, gvCameraPosition);
+
+		fTessFactor = 500.f / fDistanceToCamera * 30;
+		if (fDistanceToCamera > 150.f)
+		{
+			fTessFactor = 1000.f / fDistanceToCamera;
+		}
+
 	}
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
@@ -121,12 +125,12 @@ DS_TERRAIN_TESSELLATION_SHADOW_OUTPUT DSTerrainTessellationShadow(HS_TERRAIN_TES
 	{
 		float4 Tex_SplatAlpha = gtxtSplatAlpha.SampleLevel(gSamplerState, uv0, 10);
 
-		float fHeight = Tex_SplatAlpha.r * gtxtDryStone_HT.SampleLevel(gSamplerState, uv1, 3).r
-			+ Tex_SplatAlpha.g * gtxtSand_HT.SampleLevel(gSamplerState, uv1, 3).r
-			+ Tex_SplatAlpha.a * gtxtSand_HT.SampleLevel(gSamplerState, uv1, 3).r
-			+ Tex_SplatAlpha.b * 1.f ;
+		float fHeight = Tex_SplatAlpha.r * gtxtDryStone_HT.SampleLevel(gSamplerState, uv1, 0).r
+			+ Tex_SplatAlpha.g * gtxtSand_HT.SampleLevel(gSamplerState, uv1, 0).r
+			+ Tex_SplatAlpha.a * gtxtSand_HT.SampleLevel(gSamplerState, uv1, 0).r
+			+ Tex_SplatAlpha.b * 0.2f ;
 
-		position += tmpnormal * (fHeight * 0.4f);
+		position += tmpnormal * (fHeight * 0.5f);
 	}
 
 	matrix mtxWorldViewProjection = mul(mul(gmtxGameObject, shadowgmtxView), shadowgmtxProjection);
