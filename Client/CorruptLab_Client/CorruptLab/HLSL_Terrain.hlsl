@@ -181,11 +181,8 @@ DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CON
 	output.color = float4(0,0,0,1);
 	output.uv0 = lerp(lerp(patch[0].uv0, patch[4].uv0, uv.x), lerp(patch[20].uv0, patch[24].uv0, uv.x), uv.y);
 	output.uv1 = lerp(lerp(patch[0].uv1, patch[4].uv1, uv.x), lerp(patch[20].uv1, patch[24].uv1, uv.x), uv.y);
-	float3 worldnormal = gtxtTerrain1_NM.SampleLevel(gSamplerState, output.uv0 , 1).xyz;
+	float3 worldnormal = lerp(lerp(patch[0].normal, patch[4].normal, uv.x), lerp(patch[20].normal, patch[24].normal, uv.x), uv.y);
 	
-	float3x3 TBN = float3x3(float3(1,0,0),float3(0,0,1),float3(0,1,0));
-	worldnormal = normalize(worldnormal * 2.0f - 1.0f);
-	worldnormal = normalize(mul(worldnormal, TBN));
 	///float3 tangentuv = float3(output.uv0, 0.0f); //텍스처의 UV값을  
 
     float3 worldtanget = float3(1.0f, 1.0f, 1.0f);

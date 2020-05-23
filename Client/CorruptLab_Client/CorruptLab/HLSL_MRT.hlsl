@@ -17,6 +17,8 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	float4 cColor = gtxtScene[int2(position.xy)];
 	float4 fLighted = gtxtLight[int2(position.xy)];
 	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
+	float fDepth = gtxtDepth[int2(position.xy)].g;
+
 
 	int2 dir = int2(1, 1);
 	const int offset[] = { 0, 1, 2, 3, 4, 5 };
@@ -34,6 +36,7 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 
 	fLighted = fLighted * 2.6f + 0.3f;
 	cColor = cColor * fLighted;
+
 	cColor += cNonLight + cEmmisive;
 	return(cColor);
 }

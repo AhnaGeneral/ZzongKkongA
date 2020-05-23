@@ -217,23 +217,23 @@ void CLightTarget::BuildLightsAndMaterials()
 	::ZeroMemory(m_pLights, sizeof(LIGHTS));
 
 	//m_pLights->m_xmf4GlobalAmbient = XMFLOAT4(0.55f, 0.5f, 0.4f, 1.0f);
-	m_pLights->m_xmf4GlobalAmbient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_pLights->m_xmf4GlobalAmbient = XMFLOAT4(0.15f, 0.1f, 0.05f, 1.0f);
 
 	m_pLights->m_pLights[0].m_nType = DIRECTIONAL_LIGHT;
 	m_pLights->m_pLights[0].m_xmf4Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	m_pLights->m_pLights[0].m_xmf4Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_pLights->m_pLights[0].m_xmf4Specular = XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
-	m_pLights->m_pLights[0].m_xmf3Direction = XMFLOAT3(1.0f, -1.0f, 1.0f);
+	m_pLights->m_pLights[0].m_xmf4Specular = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	m_pLights->m_pLights[0].m_xmf3Direction = Vector3::Normalize(XMFLOAT3(1.0f, -0.5f, 1.0f));
 	m_pLights->m_pLights[0].m_bEnable = true;
 
 	m_pLights->m_pLights[1].m_nType = POINT_LIGHT;
 	m_pLights->m_pLights[1].m_xmf4Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_pLights->m_pLights[1].m_xmf4Diffuse = XMFLOAT4(0.0f, 0.0f, 0.5f, 1.0f);
-	m_pLights->m_pLights[1].m_xmf4Specular = XMFLOAT4(1.f, 0.f, 0.f, 1.0f);
+	m_pLights->m_pLights[1].m_xmf4Diffuse = XMFLOAT4(0.7f, 0.6f, 0.5f, 1.0f);
+	m_pLights->m_pLights[1].m_xmf4Specular = XMFLOAT4(0.0f, 0.f, 1.f, 1.0f);
 	m_pLights->m_pLights[1].m_bEnable = true;
-	m_pLights->m_pLights[1].m_fRange = 20;
-	m_pLights->m_pLights[1].m_xmf3Attenuation = XMFLOAT3(1.0f, 0.01f, 0.0001f);
-	m_pLights->m_pLights[1].m_xmf3Position = XMFLOAT3(331.0f, 53.0f, 133.0f);
+	m_pLights->m_pLights[1].m_fRange = 30;
+	m_pLights->m_pLights[1].m_xmf3Attenuation = XMFLOAT3(1.0f, 0.01f, 0.001f);
+	m_pLights->m_pLights[1].m_xmf3Position = XMFLOAT3(368, 53.0f, 107);
 
 
 	m_pMaterials = new MATERIALS;

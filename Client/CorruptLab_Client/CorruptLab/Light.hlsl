@@ -35,6 +35,7 @@ cbuffer cbLights : register(b3)
 
 // Schlick gives an approximation to Fresnel reflectance (see pg. 233 "Real-Time Rendering 3rd Ed.").
 // R0 = ( (n-1)/(n+1) )^2, where n is the index of refraction.
+
 float3 SchlickFresnel(float3 R0, float3 normal, float3 lightVec)
 {
 	float cosIncidentAngle = saturate(dot(normal, lightVec));
@@ -45,23 +46,19 @@ float3 SchlickFresnel(float3 R0, float3 normal, float3 lightVec)
 	return reflectPercent;
 }
 
-
-
 float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye)
 {
-	float3 vToLight = -lightVec;
-	float fDiffuseFactor = dot(vToLight, normal);
-	float fSpecularFactor = 0.0f;
-	if (fDiffuseFactor > 0.0f)
-	{
+	lightVec = -lightVec;
+	const float m = 0.06f * 256.0f;
+	float3 halfVec = normalize(-toEye + lightVec);
+	float fDiffuseFactor = dot(lightVec, normal);
 
-		float3 r = reflect(-lightVec, normal);
-		fSpecularFactor = pow(max(dot(r, toEye), 0.0f), 0.5f);
+	float roughnessFactor =(m + 3.0f) * pow(max(dot(halfVec, normal), 0.0f), m) / 8.0f;
+	float3 fresnelFactor = SchlickFresnel(float3(1.0f,1.0f,1.0f), halfVec, lightVec);
 
-	}
+	float3 specAlbedo = fresnelFactor * roughnessFactor;
 
-	return((lightStrength * fDiffuseFactor) * float3(0.4f, 0.4f, 0.4f)
-		+ fSpecularFactor * float3(0.9f,0.9f,0.9f) );
+	return (float3(0.6f,0.6f,0.6f) * specAlbedo) + float3(0.3f,0.3f,0.3f) * fDiffuseFactor;
 }
 
 float4 NormalLight(float3 vNormal, float3 vToCamera)
@@ -83,37 +80,45 @@ float4 NormalLight(float3 vNormal, float3 vToCamera)
 
 float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 {
-	float3 vToLight = -gLights[nIndex].m_vDirection;
-	float fDiffuseFactor = dot(vToLight, vNormal);
-	float fSpecularFactor = 0.0f;
+
+	float3 lightVec = -gLights[nIndex].m_vDirection;
+	const float m = 0.06f * 256.0f;
+	float3 halfVec = normalize(vToCamera + lightVec); 
+	float fDiffuseFactor = dot(lightVec, vNormal) / 1.2f + 0.1f;
+
+	float4 diffuse = fDiffuseFactor * gLights[nIndex].m_cDiffuse;
+	float4 spec = float4(0, 0, 0, 0);
 	if (fDiffuseFactor > 0.0f)
-	{	
-		float3 vHalf = normalize(float3(vToCamera + vToLight));
-		fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), 10.f);
+	{
+		float roughnessFactor = (m + 3.0f) * pow(max(dot(halfVec, vNormal), 0.0f), m) / 8.0f;
+		float3 fresnelFactor = SchlickFresnel(gLights[nIndex].m_cSpecular.xyz, halfVec, lightVec);
+		spec = float4 (fresnelFactor * roughnessFactor,1);
 	}
 
-	return((gLights[nIndex].m_cDiffuse * fDiffuseFactor) *float4(0.4f,0.4f,0.4f,1.f) +
-		fSpecularFactor * gLights[nIndex].m_cSpecular * float4(0.4f,0.4f,0.4f, 1.f));
+	return (spec) + diffuse;
 }
 
 float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera)
 {
 	float3 vToLight = gLights[nIndex].m_vPosition - vPosition;
 	float fDistance = length(vToLight);
-	if (fDistance <= gLights[nIndex].m_fRange+20.0f)
+	float fresnelFactor = 0;
+
+	if (fDistance <= gLights[nIndex].m_fRange)
 	{
 		float fSpecularFactor = 0.0f;
 		vToLight /= fDistance;
 		float fDiffuseFactor = dot(vToLight, vNormal);
 		if (fDiffuseFactor > 0.0f)
 		{
-				float3 vHalf = normalize(vToCamera + vToLight);
-				fSpecularFactor = pow(max(dot(vHalf, vNormal), 0.0f), 10.f);
+			float3 halfVec = normalize(vToCamera + vToLight);
+			const float m = 0.06f * 256.0f;
+			float roughnessFactor = (m + 3.0f) * pow(max(dot(halfVec, vNormal), 0.0f), m) / 8.0f;
+			fresnelFactor = SchlickFresnel(gLights[nIndex].m_cSpecular.xyz, halfVec, vToLight);
 		}
 		float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
-
-		return((gLights[nIndex].m_cDiffuse * fDiffuseFactor ) + 
-			(gLights[nIndex].m_cSpecular * fSpecularFactor) * fAttenuationFactor) + float4 (1.0f, 0.0f, 0.0f, 1.0f);
+		float4 LightColor = (gLights[nIndex].m_cDiffuse * fDiffuseFactor  + gLights[nIndex].m_cSpecular * fresnelFactor);
+		return LightColor * fAttenuationFactor;
 	}
 	return(float4(0.0f, 0.0f, 0.0f, 0.0f));
 }
@@ -166,7 +171,7 @@ float4 Lighting(float3 vPosition, float3 vNormal)
 	float3 vCameraPosition = float3(gvCameraPosition.x, gvCameraPosition.y, gvCameraPosition.z);
 	float3 vToCamera = normalize(vCameraPosition - vPosition);
 
-	float4 cColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 cColor = gcGlobalAmbientLight;
 	[unroll(MAX_LIGHTS)] for (int i = 0; i < MAX_LIGHTS; i++)
 	{
 		if (gLights[i].m_bEnable)
@@ -176,11 +181,11 @@ float4 Lighting(float3 vPosition, float3 vNormal)
 				//cColor += BlinnPhong(gLights[i].m_cDiffuse, gLights[i].m_vDirection, vNormal, vToCamera);
 				cColor += DirectionalLight(i, vNormal, vToCamera);
 			}
-		/*
-			else if (gLights[i].m_nType == SPOT_LIGHT)	else if (gLights[i].m_nType == POINT_LIGHT)
+			else if (gLights[i].m_nType == POINT_LIGHT)
 			{
 				cColor += PointLight(i, vPosition, vNormal, vToCamera);
-			}*/
+			}
+			else if (gLights[i].m_nType == SPOT_LIGHT)
 			{
 				cColor += SpotLight(i, vPosition, vNormal, vToCamera);
 			}
