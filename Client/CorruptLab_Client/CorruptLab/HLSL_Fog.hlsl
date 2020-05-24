@@ -137,7 +137,7 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 	{
 		float Percent = float(gf3RadiationLevel) / 100.f;
 		float3 white = float3(0.8f, 0.8f, 0.8f);
-		float3 green = float3(0.3f, 0.8f, 0.3f);
+		float3 green = float3(0.3f, 1.f, 0.3f);
 		output.NonLight.xyz = lerp(white, green, Percent);
 	}
 
@@ -253,7 +253,7 @@ PS_NONLIGHT_MRT_OUTPUT SpecialFogPixelShader(PS_FOG_INPUT input)
 		float Percent = float(gf3RadiationLevel) / 100.f;
 
 		float3 white = float3(0.7f, 0.7f, 0.7f);
-		float3 green = float3(0.2f, 0.8f, 0.2f);
+		float3 green = float3(0.2f, 1.0f, 0.2f);
 		output.NonLight.xyz = lerp(white, green, Percent);
 	}
 

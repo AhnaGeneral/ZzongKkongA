@@ -281,7 +281,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 	else
 		output.color = Splat;
 
-	output.normal = float4(vNormal,1.0f);
+	output.normal = float4(vNormal/2.f +0.5f ,1.0f);
 	output.depth = float4(input.posj.z/input.posj.w, input.posj.w/ 500.0f, 0, 1);
 
 	output.ShadowCamera = input.posj;

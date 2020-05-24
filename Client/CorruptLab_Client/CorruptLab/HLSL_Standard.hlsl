@@ -108,7 +108,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] ¡æ [-1, 1]
 
 	normalW = normalize(mul(vNormal, TBN));
-	output.normal = float4(normalW, 1);
+	output.normal = float4(normalW /2.f + 0.5f, 1);
 
 	output.depth = float4(input.vPorjPos.z/ input.vPorjPos.w, input.vPorjPos.w /500.0f,0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);

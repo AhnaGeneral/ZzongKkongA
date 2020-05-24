@@ -278,13 +278,15 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	{
 		for (int j = 0; j < 500; j+=50) // 50 100 150 
 		{
+			float x = i + rand() % 10;
+			float y = j + rand() % 10;
 			float fHeight = 0.0f;
 			if (pTerrain)
 			{
-				 fHeight = pTerrain->GetHeight((float)i, (float)j) + 15;
+				 fHeight = pTerrain->GetHeight((float)x, (float)y) + 15;
 			}
 			pNoise = new CObjectFog(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-				XMFLOAT3((float)i, fHeight, (float)j), this);  //object
+				XMFLOAT3((float)x, fHeight, (float)y), this);  //object
 			pNoise->GenerateShaderDistortionBuffer();
 			m_pFogObjects[w] = pNoise; w++;
 		}
