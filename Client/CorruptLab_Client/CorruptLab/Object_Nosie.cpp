@@ -299,7 +299,7 @@ void CObjectWater::GenerateShaderDistortionBuffer()
 	m_cbvdistortion.distortionScale = 0.8f;
 	m_cbvdistortion.distortionBias = 0.5f;
 
-	m_cbvNoisebuffer.scrollSpeeds = XMFLOAT3(1.f, 5.1f, 0.15f);
+	m_cbvNoisebuffer.scrollSpeeds = XMFLOAT3(0.8f, 2.1f, 0.05f);
 	m_cbvNoisebuffer.padding = 0.0;
 	m_cbvNoisebuffer.scales = XMFLOAT3(2.0f, 20.0f, 30.0f);
 }

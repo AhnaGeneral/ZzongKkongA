@@ -123,7 +123,7 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 		float fDistanceToCamera = distance(vCenter, gvCameraPosition);
 
 		fTessFactor = 500.f / fDistanceToCamera * 30;
-		if (fDistanceToCamera > 150.f)
+		if (fDistanceToCamera > 180.f)
 		{
 			fTessFactor = 1000.f / fDistanceToCamera;
 		}
@@ -271,7 +271,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 			+ (Tex_SplatAlpha.b * vNormal_Grass1);
 
 	}
-	vNormal = vNormal / 1.25f + 0.1f; // 조명 영향이 너무 가서..
+	vNormal = vNormal; // 조명 영향이 너무 가서..
 	float4 Splat = (Tex_SplatAlpha.r * Tex_DryStone_BC) + (Tex_SplatAlpha.g * Tex_Sand1) +
 		    (Tex_SplatAlpha.b * Tex_Grass1_BC) +(Tex_SplatAlpha.a * Tex_Sand2_BC);
 
@@ -301,10 +301,10 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 		output.color = float4 (output.color.rgb * 0.6, 1.0f) ;
 	}
 
-	//[바다 셰이더]==========================================================================
+	//[바다와 블렌딩]==========================================================================
 	if (input.positionW.y < 30.f)
 	{
-		float fAlpha = (30.f - input.positionW.y) / 15.f;
+		float fAlpha = (30.f - input.positionW.y) / 10.f;
 		output.color.w -= fAlpha;
 		output.depth.w == fAlpha;
 		output.normal.w -= fAlpha;

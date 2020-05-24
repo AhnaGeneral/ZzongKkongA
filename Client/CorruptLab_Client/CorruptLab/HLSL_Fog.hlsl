@@ -237,7 +237,7 @@ PS_NONLIGHT_MRT_OUTPUT SpecialFogPixelShader(PS_FOG_INPUT input)
 
 	float4 finalNoise = lerp(noise1, noise2, 1.0f);
 	float4 alphaColor = gtxtFinalAlpha.Sample(gSamplerClamp, input.tex);
-	output.NonLight = float4(0.8f, 0.8f, 0.8f, alphaColor.a * (finalNoise.a * 1.5));
+	output.NonLight = float4(0.7f, 0.7f, 0.7f, alphaColor.a * (finalNoise.a * 1.5));
 	float fDepthDistance = fSceenZ - myDepth;
 	if (/*(fDepthDistance < 80.f) &&*/ (fDepthDistance > 0))
 	{

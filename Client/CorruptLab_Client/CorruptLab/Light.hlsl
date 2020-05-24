@@ -49,7 +49,7 @@ float3 SchlickFresnel(float3 R0, float3 normal, float3 lightVec)
 float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye)
 {
 	lightVec = -lightVec;
-	const float m = 0.06f * 256.0f;
+	const float m = 0.04f * 256.0f;
 	float3 halfVec = normalize(-toEye + lightVec);
 	float fDiffuseFactor = dot(lightVec, normal);
 
@@ -90,8 +90,8 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 	float4 spec = float4(0, 0, 0, 0);
 	if (fDiffuseFactor > 0.0f)
 	{
-		float roughnessFactor = (m + 3.0f) * pow(max(dot(halfVec, vNormal), 0.0f), m) / 8.0f;
-		float3 fresnelFactor = SchlickFresnel(gLights[nIndex].m_cSpecular.xyz, halfVec, lightVec);
+		float roughnessFactor = (m + 3.0f) * pow(max(dot(halfVec, vNormal), 0.0f), m) /15.0f;
+		float3 fresnelFactor = SchlickFresnel(gLights[nIndex].m_cSpecular.xyz, halfVec, lightVec) / 2.5f;
 		spec = float4 (fresnelFactor * roughnessFactor,1);
 	}
 

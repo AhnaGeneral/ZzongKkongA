@@ -49,7 +49,7 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<
 		float fDistanceToCamera = distance(vCenter, gvCameraPosition);
 
 		fTessFactor = 500.f / fDistanceToCamera * 30;
-		if (fDistanceToCamera > 150.f)
+		if (fDistanceToCamera > 180.f)
 		{
 			fTessFactor = 1000.f / fDistanceToCamera;
 		}

@@ -16,7 +16,7 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
 	float4 cColor = gtxtScene[int2(position.xy)];
 	float4 fLighted = gtxtLight[int2(position.xy)];
-	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
+	float4 cNonLight = max(gtxtNonLightNoise[int2(position.xy)],0.f);
 	float fDepth = gtxtDepth[int2(position.xy)].g;
 
 
@@ -33,11 +33,10 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 			gtxtEmmisive[int2(position.xy) - int2(hstep * offset[i], vstep * offset[i])] * weight[i];
 	}
 	float4 cEmmisive = FragmentColor;
-
-	fLighted = fLighted * 2.6f + 0.3f;
-	cColor = cColor * fLighted;
-
-	cColor += cNonLight + cEmmisive;
+	
+	fLighted = min(fLighted * 2.6f + 0.3f,2);
+	cColor = cColor * fLighted ;
+	cColor += cEmmisive;;
 	return(cColor);
 }
 
