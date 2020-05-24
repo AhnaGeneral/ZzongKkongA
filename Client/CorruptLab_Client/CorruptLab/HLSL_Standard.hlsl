@@ -97,24 +97,21 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 
-	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
-	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
-	
-	cColorAlbedo.rgb = cColorAlbedo.rgb;
 
+	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
+	output.color = cColorAlbedo;
+
+	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
 	float3 normalW;
 	float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
 
 	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] → [-1, 1]
 
 	normalW = normalize(mul(vNormal, TBN));
-
-	//float fdepth = input.vPorjPos.z / 1000.f;
 	output.normal = float4(normalW, 1);
-	output.color = cColorAlbedo;
+
 	output.depth = float4(input.vPorjPos.z/ input.vPorjPos.w, input.vPorjPos.w /500.0f,0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
-	//output.NonLight = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	output.EmmisiveMRT = float4(0, 0, 0, 0);
 
 	if (gnTextureMask & MATERIAL_EMISSION_MAP)
@@ -123,26 +120,23 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 		output.EmmisiveMRT = cColorEmission;
 	}
 
-	//float2 projectTexCoord;
-	//float lightDepthValue;
-	//float depthValue;
-	//float bias = 0.001f;
-	//projectTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
-	//projectTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
 
-	//if ((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
-	//{
-	//	//float DepthWValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).g * 600.0f;
-	//	//depthValue = gtxtShadowCameraViewDepth.Sample(gSamplerClamp, projectTexCoord).r * DepthWValue;
+	return output;
+}
 
-	//	// 빛의 깊이를 계산합니다.
-	//	lightDepthValue = input.LightViewPosition.z / input.LightViewPosition.w;
 
-	//	// lightDepthValue에서 바이어스를 뺍니다.
-	//	lightDepthValue = lightDepthValue - bias;
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTransparent(VS_TEXTURED_LIGHTING_OUTPUT input)
+{
+	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 
-	//	output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
-	//}
+	output.color = float4(1, 1, 1, 0.1f);
+	output.normal = float4(input.normalW, 0.2f);
 
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 500.0f, 0, 1);
+	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
+	
+	float fresnelFator = dot(-gvCameraNoraml,input.normalW);
+	fresnelFator = pow(max(fresnelFator, 0.0f), 2) / 9;
+	output.EmmisiveMRT = float4(0.8f,0.8f, 1, 1 - fresnelFator);
 	return output;
 }

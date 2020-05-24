@@ -12,7 +12,8 @@ struct VS_CB_EYE_CAMERA_PROJECTION
 	XMFLOAT4X4						m_xmf4x4Projection;
 	XMFLOAT4X4						m_xmf4x4InverseView;
 	XMFLOAT4X4						m_xmf4x4InverseProjection;
-	XMFLOAT3						m_xmf3Position;
+	XMFLOAT4						m_xmf3Position;
+	XMFLOAT3						m_xmf3Look;
 };
 class CPlayer;
 

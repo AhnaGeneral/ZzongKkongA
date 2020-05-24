@@ -9,6 +9,7 @@
 #include "Object_UI.h"
 #include "Shader_ObjHP.h"
 #include "Shader_BillBoard.h"
+#include "Shader_Standard.h"
 //#include "Monster_Yangmal.h"
 
 #define MAXSTATICEVEC 100 
@@ -75,9 +76,12 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/ItemBoxes.bin", OBJECT_TYPE_ITEMBOX);
 
 
-	////ItemBox--------------------------------------------
+	////DrugMakers--------------------------------------------
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/DrugMaker.bin", NULL, false);
-
+	CGameObject* Alpha = pDiverObject->FindFrame("cylinderAlpha");
+	CShader* alphaShader = new CTransparentedStandardShader();
+	alphaShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
+	Alpha->SetShader(0, alphaShader);
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/DrugMakers.bin", OBJECT_TYPE_DRUGMAKER);
 
 	/*Monster*/

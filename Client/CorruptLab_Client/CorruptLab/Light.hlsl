@@ -84,9 +84,9 @@ float4 DirectionalLight(int nIndex, float3 vNormal, float3 vToCamera)
 	float3 lightVec = -gLights[nIndex].m_vDirection;
 	const float m = 0.06f * 256.0f;
 	float3 halfVec = normalize(vToCamera + lightVec); 
-	float fDiffuseFactor = dot(lightVec, vNormal) / 1.2f + 0.1f;
+	float fDiffuseFactor = dot(lightVec, vNormal) / 1.2f ;
 
-	float4 diffuse = fDiffuseFactor * gLights[nIndex].m_cDiffuse;
+	float4 diffuse = max(fDiffuseFactor * gLights[nIndex].m_cDiffuse,-0.15f);
 	float4 spec = float4(0, 0, 0, 0);
 	if (fDiffuseFactor > 0.0f)
 	{
@@ -111,7 +111,7 @@ float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera
 		float fDiffuseFactor = dot(vToLight, vNormal);
 		if (fDiffuseFactor > 0.0f)
 		{
-			float3 halfVec = normalize(vToCamera + vToLight);
+			float3 halfVec = normalize(-vToCamera + vToLight);
 			const float m = 0.06f * 256.0f;
 			float roughnessFactor = (m + 3.0f) * pow(max(dot(halfVec, vNormal), 0.0f), m) / 8.0f;
 			fresnelFactor = SchlickFresnel(gLights[nIndex].m_cSpecular.xyz, halfVec, vToLight);

@@ -711,6 +711,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	pd3dCommandList->OMSetStencilRef(1);
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, m_bPipelineStateIndex);
+	if (m_pCObjectWater) m_pCObjectWater->Render(pd3dCommandList, pCamera);
 
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
@@ -760,7 +761,6 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
 
-	if (m_pCObjectWater) m_pCObjectWater->Render(pd3dCommandList, pCamera);
 
 	if (m_pSkyBox)  m_pSkyBox->Render(pd3dCommandList, pCamera);
 

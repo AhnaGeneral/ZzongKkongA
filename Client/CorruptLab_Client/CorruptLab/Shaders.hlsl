@@ -14,6 +14,7 @@ cbuffer cbCameraInfo : register(b1)
 	matrix			gmtxInverseView : packoffset(c8);
 	matrix			gmtxInverseProjection : packoffset(c12);
 	float3		    gvCameraPosition : packoffset(c16);
+	float3			gvCameraNoraml :packoffset(c17);
 };
 
 cbuffer cbGameObjectInfo : register(b2)
