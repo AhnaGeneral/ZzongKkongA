@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="MFC">
+      <UniqueIdentifier>{31bfd5e8-a0ae-4e0f-882c-00e72729a99c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\Resource">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="MFC\MyForm">
+      <UniqueIdentifier>{e37a899d-ff32-4aa3-8108-1361b03f1db0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\MfcEffectToolView">
+      <UniqueIdentifier>{c5643667-6d59-4c3e-a12d-00980612780d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\MfcEffectToolFDoc">
+      <UniqueIdentifier>{932847a1-1fa0-4c09-b985-5a83c3702adf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\MfcEffectTool">
+      <UniqueIdentifier>{aa255f04-cbe7-4c46-a09c-626fc10e7783}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\MainFrm">
+      <UniqueIdentifier>{6dee96d4-0c89-4f39-89b8-c083084624b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\EffectTool">
+      <UniqueIdentifier>{86da726c-9ebe-4b26-bc21-e40fbf79dc79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MFC\efc">
+      <UniqueIdentifier>{0288da78-8706-4680-9366-6d6e48b9193e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client">
+      <UniqueIdentifier>{851f7cbd-b0a6-4dc1-a357-7bae53cf9155}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EffectTool2.h">
+      <Filter>MFC\EffectTool</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectTool.h">
+      <Filter>MFC\EffectTool</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>MFC\MainFrm</Filter>
+    </ClInclude>
+    <ClInclude Include="MfcEffectTool.h">
+      <Filter>MFC\MfcEffectTool</Filter>
+    </ClInclude>
+    <ClInclude Include="MyForm.h">
+      <Filter>MFC\MyForm</Filter>
+    </ClInclude>
+    <ClInclude Include="MfcEffectToolDoc.h">
+      <Filter>MFC\MfcEffectToolFDoc</Filter>
+    </ClInclude>
+    <ClInclude Include="MfcEffectToolView.h">
+      <Filter>MFC\MfcEffectToolView</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>MFC\efc</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>MFC\efc</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>MFC\efc</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>MFC\efc</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader12.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="GameFramework.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Client</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EffectTool.cpp">
+      <Filter>MFC\EffectTool</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectTool2.cpp">
+      <Filter>MFC\EffectTool</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>MFC\MainFrm</Filter>
+    </ClCompile>
+    <ClCompile Include="MfcEffectTool.cpp">
+      <Filter>MFC\MfcEffectTool</Filter>
+    </ClCompile>
+    <ClCompile Include="MyForm.cpp">
+      <Filter>MFC\MyForm</Filter>
+    </ClCompile>
+    <ClCompile Include="MfcEffectToolDoc.cpp">
+      <Filter>MFC\MfcEffectToolFDoc</Filter>
+    </ClCompile>
+    <ClCompile Include="MfcEffectToolView.cpp">
+      <Filter>MFC\MfcEffectToolView</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>MFC\efc</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader12.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFramework.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MfcEffectTool.rc">
+      <Filter>MFC\Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\MfcEffectTool.rc2">
+      <Filter>MFC\Resource</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\MfcEffectToolDoc.ico">
+      <Filter>MFC\Resource</Filter>
+    </Image>
+    <Image Include="res\MfcEffectTool.ico">
+      <Filter>MFC\Resource</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>MFC\Resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders.hlsl">
+      <Filter>Client</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
