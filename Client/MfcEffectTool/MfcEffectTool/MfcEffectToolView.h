@@ -4,7 +4,8 @@
 
 #pragma once
 #include "MfcEffectToolDoc.h"
-#include "stdafx.h"
+#include "GameFramework.h"
+#include "EffectTool.h"
 
 
 class CMfcEffectToolView : public CView
@@ -44,6 +45,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual void OnInitialUpdate();
+	
+public:
+	CGameFramework gGameFramework;
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	EffectTool* m_peffectTool1 = NULL; 
+
+
 };
 
 #ifndef _DEBUG  // MfcEffectToolView.cpp의 디버그 버전

@@ -180,3 +180,15 @@ void CMfcEffectToolApp::OnAppAbout()
 
 // CMfcEffectToolApp 메시지 처리기
 
+
+
+BOOL CMfcEffectToolApp::OnIdle(LONG lCount)
+{
+	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+	CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	CMfcEffectToolView* pToolview = dynamic_cast<CMfcEffectToolView*>(pMainFrame->m_mainSplite.GetPane(0, 1));
+
+	pToolview->gGameFramework.FrameAdvanceStageOutdoor(); 
+
+	return CWinApp::OnIdle(0);
+}

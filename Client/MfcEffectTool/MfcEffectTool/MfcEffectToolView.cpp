@@ -12,13 +12,15 @@
 
 #include "MfcEffectToolDoc.h"
 #include "MfcEffectToolView.h"
-#include "GameFramework.h"
 
+#include "MainFrm.h"
+#include "MyForm.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-CGameFramework gGameFramework; 
+
+
 HWND m_nHnd; 
 HINSTANCE hInst;
 // CMfcEffectToolView
@@ -30,6 +32,7 @@ BEGIN_MESSAGE_MAP(CMfcEffectToolView, CView)
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CView::OnFilePrintPreview)
+	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 // CMfcEffectToolView 생성/소멸
@@ -60,9 +63,7 @@ void CMfcEffectToolView::OnDraw(CDC* /*pDC*/)
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return; 
-	//gGameFramework.OnCreate(hInst,m_nHnd);
-
-	gGameFramework.FrameAdvance();
+	//gGameFramework.FrameAdvance();
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 }
 
@@ -115,8 +116,23 @@ void CMfcEffectToolView::OnInitialUpdate()
 	CView::OnInitialUpdate();
 
 	hInst = AfxGetInstanceHandle();
-
 	m_nHnd = m_hWnd;
 
 	gGameFramework.OnCreate(hInst, m_nHnd);
+
+	CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
+	MyForm* pForm = dynamic_cast<MyForm*>(pMainFrame->m_mainSplite.GetPane(0, 0));
+	m_peffectTool1 = pForm->m_pEffectTool;
+
+}
+
+
+void CMfcEffectToolView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	m_peffectTool1->UpdateData(true);
+	m_peffectTool1->m_CurrentPosX = point.x;
+	m_peffectTool1->m_CurrentPosY = point.y;
+	m_peffectTool1->UpdateData(false);
+	CView::OnLButtonDown(nFlags, point);
 }

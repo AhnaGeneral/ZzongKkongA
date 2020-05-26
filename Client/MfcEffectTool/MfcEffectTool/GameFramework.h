@@ -1,8 +1,18 @@
 #pragma once
 
 #include "Timer.h"
-#include "Player.h"
+#include "Shader_MRT.h"
+#include "Object_Player.h"
 #include "Scene.h"
+#include "Shader_LightMRT.h"
+#include "CShader_ShadowMRT.h"
+
+//Scene State ________________________________ 
+#define SCENE_LOBBY           0  
+#define SCENE_STAGE_OUTDOOR   1 
+#define SCENE_STAGE_INDOOR    2 
+#define SCENE_CLEAR           3
+//____________________________________________
 
 class CGameFramework
 {
@@ -15,19 +25,28 @@ public:
 
 	void CreateSwapChain();
 	void CreateDirect3DDevice();
-	void CreateRtvAndDsvDescriptorHeaps();
-	void CreateRenderTargetViews();
-	void CreateDepthStencilView();
 	void CreateCommandQueueAndList();
 
-	void OnResizeBackBuffers();
+	void CreateRtvAndDsvDescriptorHeaps();
 
-    void BuildObjects();
-    void ReleaseObjects();
+	void CreateSwapChainRenderTargetViews();
+	void CreateDepthStencilView();
+	void CreateShadowDepthStencilView();
 
-    void ProcessInput();
-    void AnimateObjects();
-    void FrameAdvance();
+	void ChangeSwapChainState();
+
+	void CreateOffScreenRenderTargetViews();
+	void CreateLightRenderTargetViews();
+	void CreateShadowRenderTargetViews();
+
+	void BuildObjects();
+	void ReleaseObjects();
+
+	void ProcessInput();
+	void ShadowMapRender();
+	void FrameAdvanceStageOutdoor();
+	void FrameAdvanceLobby();
+	UINT GetSceneState() { return m_nSceneState; }
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
@@ -37,50 +56,85 @@ public:
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 private:
-	HINSTANCE					m_hInstance;
-	HWND						m_hWnd; 
 
-	int							m_nWndClientWidth;
-	int							m_nWndClientHeight;
-        
-	IDXGIFactory4				*m_pdxgiFactory = NULL;
-	IDXGISwapChain3				*m_pdxgiSwapChain = NULL;
-	ID3D12Device				*m_pd3dDevice = NULL;
+	IDXGIFactory4                     * m_pdxgiFactory;
+	IDXGISwapChain3                   * m_pdxgiSwapChain;
+	ID3D12Device                      * m_pd3dDevice;
 
-	bool						m_bMsaa4xEnable = false;
-	UINT						m_nMsaa4xQualityLevels = 0;
+	ID3D12CommandAllocator            * m_pd3dCommandAllocator;
+	ID3D12CommandQueue                * m_pd3dCommandQueue;
+	ID3D12GraphicsCommandList         * m_pd3dCommandList;
 
-	static const UINT			m_nSwapChainBuffers = 2;
-	UINT						m_nSwapChainBufferIndex;
+	int								    m_nWndClientWidth;
+	int								    m_nWndClientHeight;
 
-	ID3D12Resource				*m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
-	ID3D12DescriptorHeap		*m_pd3dRtvDescriptorHeap = NULL;
-	UINT						m_nRtvDescriptorIncrementSize;
+	float								m_fSunTime;
+	HINSTANCE						    m_hInstance;
+	HWND							    m_hWnd;
 
-	ID3D12Resource				*m_pd3dDepthStencilBuffer = NULL;
-	ID3D12DescriptorHeap		*m_pd3dDsvDescriptorHeap = NULL;
-	UINT						m_nDsvDescriptorIncrementSize;
 
-	ID3D12CommandAllocator		*m_pd3dCommandAllocator = NULL;
-	ID3D12CommandQueue			*m_pd3dCommandQueue = NULL;
-	ID3D12GraphicsCommandList	*m_pd3dCommandList = NULL;
+	bool							    m_bMsaa4xEnable;
+	UINT							    m_nMsaa4xQualityLevels;
 
-	ID3D12Fence					*m_pd3dFence = NULL;
-	UINT64						m_nFenceValues[m_nSwapChainBuffers];
-	HANDLE						m_hFenceEvent;
+	// 다중랜더타겟 [ 힙, 핸들, 버퍼 ]________________________________________________________________________
+	ID3D12DescriptorHeap              * m_pd3dRtvDescriptorHeap;
+	static const UINT				    m_nOffScreenRenderTargetBuffers = FINAL_MRT_COUNT;
+	ID3D12Resource                    * m_ppd3dOffScreenRenderTargetBuffers[m_nOffScreenRenderTargetBuffers];
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenRenderTargetBufferCPUHandles[m_nOffScreenRenderTargetBuffers];
+	
+	ID3D12DescriptorHeap			  * m_pd3dLightDescriptorHeap;
+	static const UINT				    m_nOffScreenLightBuffers = 1;
+	ID3D12Resource                    * m_ppd3dLightMapRenderTargetBuffers[m_nOffScreenLightBuffers];
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenLightBufferCPUHandles[m_nOffScreenLightBuffers];
 
-#if defined(_DEBUG)
-	ID3D12Debug					*m_pd3dDebugController;
-#endif
+	ID3D12DescriptorHeap              * m_pd3dShadowDescriptorHeap;
+	static const UINT				    m_nOffScreenShadowBuffers = 1;
+	ID3D12Resource                    * m_ppd3dShadowRenderTargetBuffers[m_nOffScreenShadowBuffers];
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dOffScreenShadowBufferCPUHandles[m_nOffScreenShadowBuffers];
+    // _____________________________________________________________________________________________________
 
-	CGameTimer					m_GameTimer;
+	UINT							    m_nSwapChainBufferIndex;
+	static const UINT				    m_nSwapChainBuffers = 2;
+	ID3D12Resource                    * m_ppd3dSwapChainBackBuffers[m_nSwapChainBuffers];
 
-	CScene						*m_pScene = NULL;
-	CPlayer						*m_pPlayer = NULL;
-	CCamera						*m_pCamera = NULL;
+	UINT							    m_nRtvDescriptorIncrementSize;
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBuffers];
 
-	POINT						m_ptOldCursorPos;
+	ID3D12Resource                    * m_pd3dDepthStencilBuffer;
+	ID3D12DescriptorHeap              * m_pd3dDsvDescriptorHeap;
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_d3dDsvDepthStencilBufferCPUHandle;
 
-	_TCHAR						m_pszFrameRate[50];
+	ID3D12Resource                    * m_pd3dShadowDepthStencilBuffer;
+	ID3D12DescriptorHeap              * m_pd3dShadowDsvDescriptorHeap;
+	D3D12_CPU_DESCRIPTOR_HANDLE		    m_d3dShadowDsvDepthStencilBufferCPUHandle;
+
+
+	HANDLE							    m_hFenceEvent;
+	ID3D12Fence                       * m_pd3dFence;
+	UINT64							    m_nFenceValues[m_nSwapChainBuffers];
+
+	CGameTimer						    m_GameTimer;
+
+	UINT                                m_nSceneState;
+
+     POINT							    m_ptOldCursorPos;
+
+	 _TCHAR							    m_pszFrameRate[50];
+
+public:
+	CTexture                          * m_pFinalTexture;
+	CTexture                          * m_pShadowMap;
+	CTexture                          * m_pDepthTextue; 
+
+private:
+	CPostProcessingShader             * m_pPostProcessingShader;
+	CLightTarget                      * m_pLightProcessingShader; 
+	Shader_ShadowMRT                  * m_pShadowShader; 
+
+	CScene                            * m_pScene[2];
+	//UINT                                m_SceneItemReact;
+
+	CPlayer                           * m_pPlayer ;
+	CCamera                           * m_pCamera ;
 };
 

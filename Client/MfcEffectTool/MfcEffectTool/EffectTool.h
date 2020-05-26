@@ -20,4 +20,11 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
 	DECLARE_MESSAGE_MAP()
+public:
+	//afx_msg void ClickPosUp();
+	virtual BOOL OnInitDialog();
+	afx_msg void OnBnClickedButton45();
+	float m_CurrentPosX;
+	float m_CurrentPosY;
+	float m_CurrentPosZ;
 };

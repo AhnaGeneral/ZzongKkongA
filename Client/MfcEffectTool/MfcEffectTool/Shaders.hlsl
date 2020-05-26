@@ -1,117 +1,133 @@
-cbuffer cbPlayerInfo : register(b0)
+
+struct MATERIAL
 {
-	matrix		gmtxPlayerWorld : packoffset(c0);
+	float4		    m_cAmbient;
+	float4		    m_cDiffuse;
+	float4		    m_cSpecular; //a = power
+	float4		    m_cEmissive;
 };
 
 cbuffer cbCameraInfo : register(b1)
 {
-	matrix		gmtxView : packoffset(c0);
-	matrix		gmtxProjection : packoffset(c4);
+	matrix		    gmtxView : packoffset(c0);
+	matrix		    gmtxProjection : packoffset(c4);
+	matrix			gmtxInverseView : packoffset(c8);
+	matrix			gmtxInverseProjection : packoffset(c12);
+	float3		    gvCameraPosition : packoffset(c16);
+	float3			gvCameraNoraml :packoffset(c17);
 };
 
 cbuffer cbGameObjectInfo : register(b2)
 {
-	matrix		gmtxGameObject : packoffset(c0);
+	matrix		    gmtxGameObject : packoffset(c0); // 16
+	uint            gnObjectID : packoffset (c4); 
+	uint			gnTextureMask : packoffset(c5);
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-struct VS_DIFFUSED_INPUT
+cbuffer cbOrthoInfo : register(b4)
 {
-	float3 position : POSITION;
-	float4 color : COLOR;
+	matrix		    gmtxOrtho: packoffset(c0);
+	matrix		    gmtxOrthoView: packoffset(c4);
 };
 
-struct VS_DIFFUSED_OUTPUT
+cbuffer cbRadiationLevel : register(b11) // 플레이어 위치
 {
-	float4 position : SV_POSITION;
-	float4 color : COLOR;
-};
-
-VS_DIFFUSED_OUTPUT VSPlayer(VS_DIFFUSED_INPUT input)
-{
-	VS_DIFFUSED_OUTPUT output;
-
-	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxPlayerWorld), gmtxView), gmtxProjection);
-	output.color = input.color;
-
-	return(output);
+	uint	 gf3RadiationLevel :packoffset(c0);
 }
 
-float4 PSPlayer(VS_DIFFUSED_OUTPUT input) : SV_TARGET
+cbuffer cbShadowCameraInfo : register(b5) // 그림자 카메라 
 {
-	return(input.color);
+	matrix		    shadowgmtxView : packoffset(c0);
+	matrix		    shadowgmtxProjection : packoffset(c4);
+	matrix			shadowgmtxInverseView : packoffset(c8);
+	matrix			shadowgmtxInverseProjection : packoffset(c12);
+	float3		    shadowgvCameraPosition : packoffset(c16);
+};
+
+
+cbuffer cbPlayerPosition : register(b6) // 플레이어 위치
+{
+	float3			gf3PlayerPos :packoffset(c0);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-Texture2D gtxtTexture : register(t0);
+#include "Light.hlsl"
+
 SamplerState gSamplerState : register(s0);
+SamplerState gSamplerClamp : register(s1);
 
-struct VS_TEXTURED_INPUT
+Texture2D gtxtScene : register(t1);  // 0  
+Texture2D gtxtNormal : register(t2); // 1
+Texture2D gtxtDepth : register(t3);  // 2 
+//Texture2D gtxtT4RenderTarget : register(t4);
+Texture2D gtxtNonLightNoise : register(t5); // 4 
+Texture2D gtxtEmmisive : register(t6); // 4 
+
+
+
+Texture2D gtxtLight : register(t21);
+Texture2D gtxtShadowCameraTexture : register(t22);
+
+Texture2D gtxtAlbedoTexture : register(t7);
+Texture2D gtxtSpecularTexture : register(t8);
+Texture2D gtxtNormalTexture : register(t9);
+Texture2D gtxtMetallicTexture : register(t10);
+Texture2D gtxtEmissionTexture : register(t11);
+
+TextureCube gtxtSkyCubeTexture : register(t12);
+Texture2D gtxCloudTextures : register(t13);
+
+Texture2D gtxtBaseColorNoiseTex : register(t14);
+Texture2D gtxtAlphaNoiseTex : register(t15);
+Texture2D gtxtNoiseTex : register(t16);
+
+Texture2D gtxtFinalAlpha : register(t17);
+Texture2D gtxtAlpha01 : register(t18);
+Texture2D gtxtAlpha02 : register(t19);
+
+Texture2D gtxtWaterNormal : register(t20);
+Texture2D gtxtSceneDepthTexture : register(t23);
+Texture2D gtxtCopySunTex : register(t24); // 썬카메라를 새롭게 리소스 만들었어요
+Texture2D gtxtLobbyTex : register(t25); // 썬카메라를 새롭게 리소스 만들었어요
+
+Texture2D gtxtRootUITexture : register(t26);
+Texture2D gtxtHandLighTexture : register(t27);
+Texture2D gtxtHPKitdTexture : register(t28);
+Texture2D gtxtPillddsTexture : register(t29);
+Texture2D gtxtMinimapFogTexture : register(t30);
+
+
+struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
-	float3 position : POSITION;
-	float2 uv : TEXCOORD;
+	float4 color        : SV_TARGET0;
+	float4 normal       : SV_TARGET1;
+	float4 depth        : SV_TARGET2;
+	float4 ShadowCamera : SV_TARGET3;
+	float4 NonLight		: SV_TARGET4;
+	float4 EmmisiveMRT	: SV_TARGET5;
 };
 
-struct VS_TEXTURED_OUTPUT
+struct PS_MULTIPLE_SPECIAL_FOG
 {
-	float4 position : SV_POSITION;
-	float2 uv : TEXCOORD;
+	float4 color        : SV_TARGET0;
+	float4 normal       : SV_TARGET1;
 };
 
-VS_TEXTURED_OUTPUT VSTextured(VS_TEXTURED_INPUT input)
+struct PS_NONLIGHT_MRT_OUTPUT
 {
-	VS_TEXTURED_OUTPUT output;
-
-	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
-	output.uv = input.uv;
-
-	return(output);
-}
-
-float4 PSTextured(VS_TEXTURED_OUTPUT input) : SV_TARGET
-{
-	float4 cColor = gtxtTexture.Sample(gSamplerState, input.uv);
-
-	return(cColor);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-Texture2D gtxtTerrainBaseTexture : register(t1);
-
-struct VS_TERRAIN_INPUT
-{
-	float3 position : POSITION;
-	float4 color : COLOR;
-	float2 uv : TEXCOORD0;
+	float4 NonLight : SV_TARGET4;
 };
 
-struct VS_TERRAIN_OUTPUT
+struct PS_SHADOW_OUTPUT
 {
-	float4 position : SV_POSITION;
-	float4 color : COLOR;
-	float2 uv : TEXCOORD0;
+	float4 ShadowTex : SV_TARGET0;
 };
 
-VS_TERRAIN_OUTPUT VSTerrain(VS_TERRAIN_INPUT input)
-{
-	VS_TERRAIN_OUTPUT output;
+static int2 gnOffsets[9] = { { -1,-1 },{ 0,-1 },{ 1,-1 },{ -1,0 },{ 0,0 },{ 1,0 },{ -1,1 },{ 0,1 },{ 1,1 } };
 
-	output.position = mul(mul(mul(float4(input.position, 1.0f), gmtxGameObject), gmtxView), gmtxProjection);
-	output.color = input.color;
-	output.uv = input.uv;
-
-	return(output);
-}
-
-float4 PSTerrain(VS_TERRAIN_OUTPUT input) : SV_TARGET
-{
-	float4 cBaseTexColor = gtxtTerrainBaseTexture.Sample(gSamplerState, input.uv);
-	float4 cColor = input.color * cBaseTexColor;
-
-	return(cColor);
-}
-
-
+#define MATERIAL_ALBEDO_MAP			0x01
+#define MATERIAL_SPECULAR_MAP		0x02
+#define MATERIAL_NORMAL_MAP			0x04
+#define MATERIAL_METALLIC_MAP		0x08
+#define MATERIAL_EMISSION_MAP		0x10
+#define MATERIAL_DETAIL_ALBEDO_MAP	0x20
+#define MATERIAL_DETAIL_NORMAL_MAP	0x40

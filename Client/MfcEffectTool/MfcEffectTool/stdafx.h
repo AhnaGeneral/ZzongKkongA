@@ -26,6 +26,8 @@
 #include <DirectXColors.h>
 #include <DirectXCollision.h>
 
+#include <DXGIDebug.h>
+
 #include <Mmsystem.h>
 
 #include <assert.h>
@@ -34,22 +36,41 @@
 #include <wrl.h>
 
 #include <vector>
+#include <list>
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
 using Microsoft::WRL::ComPtr;
 
-#define FRAME_BUFFER_WIDTH		640
-#define FRAME_BUFFER_HEIGHT		480
+#define FRAME_BUFFER_WIDTH		760 //120 * 6 + 40
+#define FRAME_BUFFER_HEIGHT		600 //120 * 5 
+
+#define MAX_LIGHTS				8 
+#define MAX_MATERIALS			8 
+
+#define POINT_LIGHT				1
+#define SPOT_LIGHT				2
+#define DIRECTIONAL_LIGHT		3
+
+#define FINAL_MRT_COUNT         6
 
 //#define _WITH_CB_GAMEOBJECT_32BIT_CONSTANTS
 //#define _WITH_CB_GAMEOBJECT_ROOT_DESCRIPTOR
+
+#ifdef UNICODE
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+#else
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#endif
+
+
 #define _WITH_CB_WORLD_MATRIX_DESCRIPTOR_TABLE
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dxguid.lib")
 
 /*#pragma comment(lib, "DirectXTex.lib") */
 
@@ -59,18 +80,57 @@ extern UINT	gnCbvSrvDescriptorIncrementSize;
 
 extern ID3D12Resource *CreateBufferResource(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, void *pData, UINT nBytes, D3D12_HEAP_TYPE d3dHeapType = D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, ID3D12Resource **ppd3dUploadBuffer = NULL);
 extern ID3D12Resource *CreateTextureResourceFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, wchar_t *pszFileName, ID3D12Resource **ppd3dUploadBuffer, D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+extern ID3D12Resource *CreateTexture2DResource(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, UINT nWidth, UINT nHeight, DXGI_FORMAT dxgiFormat, D3D12_RESOURCE_FLAGS d3dResourceFlags, D3D12_RESOURCE_STATES d3dResourceStates, D3D12_CLEAR_VALUE *pd3dClearValue);
+extern ID3D12Resource* CreateTextureResourceFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, ID3D12Resource** ppd3dUploadBuffer, D3D12_RESOURCE_STATES d3dResourceStates);
 
-#define RANDOM_COLOR	XMFLOAT4(rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX))
+extern void SynchronizeResourceTransition(ID3D12GraphicsCommandList *pd3dCommandList, ID3D12Resource *pd3dResource, D3D12_RESOURCE_STATES d3dStateBefore, D3D12_RESOURCE_STATES d3dStateAfter);
 
-#define EPSILON				1.0e-10f
+extern int ReadIntegerFromFile(FILE* pInFile);
+extern float ReadFloatFromFile(FILE* pInFile);
+extern BYTE ReadStringFromFile(FILE* pInFile, char* pstrToken);
+
+#include "Define.h"
+
+#include <iostream>
 
 inline bool IsZero(float fValue) { return((fabsf(fValue) < EPSILON)); }
 inline bool IsEqual(float fA, float fB) { return(::IsZero(fA - fB)); }
+
+inline bool IsZero(float fValue, float fEpsilon) { return((fabsf(fValue) < fEpsilon)); }
+inline bool IsEqual(float fA, float fB, float fEpsilon) { return(::IsZero(fA - fB, fEpsilon)); }
+
 inline float InverseSqrt(float fValue) { return 1.0f / sqrtf(fValue); }
 inline void Swap(float *pfS, float *pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT = fTemp; }
 
+namespace Vector2
+{
+
+	inline XMFLOAT2 Subtract(XMFLOAT2& xmf3Vector1, XMFLOAT2& xmf3Vector2)
+	{
+		XMFLOAT2 xmf3Result;
+		XMStoreFloat2(&xmf3Result, XMLoadFloat2(&xmf3Vector1) - XMLoadFloat2(&xmf3Vector2));
+		return(xmf3Result);
+	}
+
+	inline float Length(XMFLOAT2& xmf3Vector)
+	{
+		XMFLOAT2 xmf3Result;
+		XMStoreFloat2(&xmf3Result, XMVector3Length(XMLoadFloat2(&xmf3Vector)));
+		return(xmf3Result.x);
+	}
+
+}
 namespace Vector3
 {
+
+	inline XMFLOAT3 Multiply(XMFLOAT3& xmf3Vector1, XMFLOAT3& xmf3Vector2)
+	{
+		XMFLOAT3 xmf3Result;
+		XMStoreFloat3(&xmf3Result, XMLoadFloat3(&xmf3Vector1) * XMLoadFloat3(&xmf3Vector2));
+		return(xmf3Result);
+	}
+
+
 	inline bool IsZero(XMFLOAT3& xmf3Vector)
 	{
 		if (::IsZero(xmf3Vector.x) && ::IsZero(xmf3Vector.y) && ::IsZero(xmf3Vector.z)) return(true);
@@ -108,12 +168,16 @@ namespace Vector3
 		return(xmf3Result);
 	}
 
-	inline XMFLOAT3 Subtract(XMFLOAT3& xmf3Vector1, XMFLOAT3& xmf3Vector2)
+	inline XMFLOAT3 Subtract(XMFLOAT3& xmf3Vector1, XMFLOAT3& xmf3Vector2, bool bNormalize = false)
 	{
 		XMFLOAT3 xmf3Result;
-		XMStoreFloat3(&xmf3Result, XMLoadFloat3(&xmf3Vector1) - XMLoadFloat3(&xmf3Vector2));
+		if (bNormalize)
+			XMStoreFloat3(&xmf3Result, XMVector3Normalize(XMLoadFloat3(&xmf3Vector1) - XMLoadFloat3(&xmf3Vector2)));
+		else
+			XMStoreFloat3(&xmf3Result, XMLoadFloat3(&xmf3Vector1) - XMLoadFloat3(&xmf3Vector2));
 		return(xmf3Result);
 	}
+
 
 	inline float DotProduct(XMFLOAT3& xmf3Vector1, XMFLOAT3& xmf3Vector2)
 	{
@@ -164,6 +228,7 @@ namespace Vector3
 		return(xmf3Result);
 	}
 
+
 	inline XMFLOAT3 TransformCoord(XMFLOAT3& xmf3Vector, XMMATRIX& xmmtxTransform)
 	{
 		XMFLOAT3 xmf3Result;
@@ -199,6 +264,20 @@ namespace Vector4
 		XMStoreFloat4(&xmf4Result, fScalar * XMLoadFloat4(&xmf4Vector));
 		return(xmf4Result);
 	}
+
+	inline XMFLOAT4 MultiflyMATRIX(XMFLOAT4 xmf4Vector, XMFLOAT4X4& xmmtx4x4Matrix2)
+	{
+		XMFLOAT4 xmf4Result;
+		XMStoreFloat4(&xmf4Result, XMVector4Transform(XMLoadFloat4(&xmf4Vector), XMLoadFloat4x4(&xmmtx4x4Matrix2)));
+		return(xmf4Result);
+	}
+	
+	inline XMFLOAT4 Normalize(XMFLOAT4 xmf4Vector)
+	{
+		XMFLOAT4 xmf4Result;
+		XMStoreFloat4(&xmf4Result, XMVector4Normalize(XMLoadFloat4(&xmf4Vector)));
+		return xmf4Result;
+	}
 }
 
 namespace Matrix4x4
@@ -208,6 +287,49 @@ namespace Matrix4x4
 		XMFLOAT4X4 xmmtx4x4Result;
 		XMStoreFloat4x4(&xmmtx4x4Result, XMMatrixIdentity());
 		return(xmmtx4x4Result);
+	}
+
+	inline XMFLOAT4X4 Zero()
+	{
+		XMFLOAT4X4 xmf4x4Result;
+		XMStoreFloat4x4(&xmf4x4Result, XMMatrixSet(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
+		return(xmf4x4Result);
+	}
+
+	inline XMFLOAT4X4 Add(XMFLOAT4X4& xmmtx4x4Matrix1, XMFLOAT4X4& xmmtx4x4Matrix2)
+	{
+		XMFLOAT4X4 xmf4x4Result;
+		XMStoreFloat4x4(&xmf4x4Result, XMLoadFloat4x4(&xmmtx4x4Matrix1) + XMLoadFloat4x4(&xmmtx4x4Matrix2));
+		return(xmf4x4Result);
+	}
+
+	inline XMFLOAT4X4 Scale(XMFLOAT4X4& xmf4x4Matrix, float fScale)
+	{
+		XMFLOAT4X4 xmf4x4Result;
+		XMStoreFloat4x4(&xmf4x4Result, XMLoadFloat4x4(&xmf4x4Matrix) * fScale);
+		/*
+				XMVECTOR S, R, T;
+				XMMatrixDecompose(&S, &R, &T, XMLoadFloat4x4(&xmf4x4Matrix));
+				S = XMVectorScale(S, fScale);
+				T = XMVectorScale(T, fScale);
+				R = XMVectorScale(R, fScale);
+				//R = XMQuaternionMultiply(R, XMVectorSet(0, 0, 0, fScale));
+				XMStoreFloat4x4(&xmf4x4Result, XMMatrixAffineTransformation(S, XMVectorZero(), R, T));
+		*/
+		return(xmf4x4Result);
+	}
+
+	inline XMFLOAT4X4 Interpolate(XMFLOAT4X4& xmf4x4Matrix1, XMFLOAT4X4& xmf4x4Matrix2, float t)
+	{
+		XMFLOAT4X4 xmf4x4Result;
+		XMVECTOR S0, R0, T0, S1, R1, T1;
+		XMMatrixDecompose(&S0, &R0, &T0, XMLoadFloat4x4(&xmf4x4Matrix1));
+		XMMatrixDecompose(&S1, &R1, &T1, XMLoadFloat4x4(&xmf4x4Matrix2));
+		XMVECTOR S = XMVectorLerp(S0, S1, t);
+		XMVECTOR T = XMVectorLerp(T0, T1, t);
+		XMVECTOR R = XMQuaternionSlerp(R0, R1, t);
+		XMStoreFloat4x4(&xmf4x4Result, XMMatrixAffineTransformation(S, XMVectorZero(), R, T));
+		return(xmf4x4Result);
 	}
 
 	inline XMFLOAT4X4 Multiply(XMFLOAT4X4& xmmtx4x4Matrix1, XMFLOAT4X4& xmmtx4x4Matrix2)
@@ -245,10 +367,17 @@ namespace Matrix4x4
 		return(xmmtx4x4Result);
 	}
 
-	inline XMFLOAT4X4 PerspectiveFovLH(float FovAngleY, float AspectRatio, float NearZ, float FarZ)
+	inline XMFLOAT4X4 PerspectiveFovLH(float FovAngleY, float AspectRatio, float NearZ, float FarZ) //원근 투영
 	{
 		XMFLOAT4X4 xmmtx4x4Result;
 		XMStoreFloat4x4(&xmmtx4x4Result, XMMatrixPerspectiveFovLH(FovAngleY, AspectRatio, NearZ, FarZ));
+		return(xmmtx4x4Result);
+	}
+
+	inline XMFLOAT4X4 OrthoLH(float Width, float Height, float NearZ, float FarZ) // 직교투영
+	{
+		XMFLOAT4X4 xmmtx4x4Result;
+		XMStoreFloat4x4(&xmmtx4x4Result, XMMatrixOrthographicLH(Width, Height, NearZ, FarZ));
 		return(xmmtx4x4Result);
 	}
 

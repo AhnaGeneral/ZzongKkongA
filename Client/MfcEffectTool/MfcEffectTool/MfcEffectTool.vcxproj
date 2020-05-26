@@ -183,53 +183,80 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="CShader_ShadowMRT.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DDSTextureLoader12.h" />
+    <ClInclude Include="Define.h" />
     <ClInclude Include="EffectTool.h" />
     <ClInclude Include="EffectTool2.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh_Skinned.h" />
+    <ClInclude Include="Mesh_Terrain.h" />
+    <ClInclude Include="Mesh_Water.h" />
     <ClInclude Include="MfcEffectTool.h" />
     <ClInclude Include="MfcEffectToolDoc.h" />
     <ClInclude Include="MfcEffectToolView.h" />
     <ClInclude Include="MyForm.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Object_Camera.h" />
+    <ClInclude Include="Object_Player.h" />
+    <ClInclude Include="Object_Terrain.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Shader_LightMRT.h" />
+    <ClInclude Include="Shader_MRT.h" />
+    <ClInclude Include="Shader_Noise.h" />
+    <ClInclude Include="Shader_Standard.h" />
+    <ClInclude Include="Shader_Terrain.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="WICTextureLoader12.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="CShader_ShadowMRT.cpp" />
     <ClCompile Include="DDSTextureLoader12.cpp" />
     <ClCompile Include="EffectTool.cpp" />
     <ClCompile Include="EffectTool2.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Mesh_Skinned.cpp" />
+    <ClCompile Include="Mesh_Terrain.cpp" />
     <ClCompile Include="MfcEffectTool.cpp" />
     <ClCompile Include="MfcEffectToolDoc.cpp" />
     <ClCompile Include="MfcEffectToolView.cpp" />
     <ClCompile Include="MyForm.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Object_Camera.cpp" />
+    <ClCompile Include="Object_Player.cpp" />
+    <ClCompile Include="Object_Terrain.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Shader-Terrain.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Shader_LightMRT.cpp" />
+    <ClCompile Include="Shader_MRT.cpp" />
+    <ClCompile Include="Shader_Noise.cpp" />
+    <ClCompile Include="Shader_Standard.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="WICTextureLoader12.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MfcEffectTool.rc" />
@@ -243,8 +270,28 @@
     <Image Include="res\Toolbar.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="HLSL_LightTarget.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="HLSL_MRT.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="HLSL_ShadowStandard.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="HLSL_Standard.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="HLSL_Terrain.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="HLSL_TerrainShadow.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Light.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Shaders.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>

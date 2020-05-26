@@ -32,6 +32,39 @@
     <Filter Include="Client">
       <UniqueIdentifier>{851f7cbd-b0a6-4dc1-a357-7bae53cf9155}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Client\Component">
+      <UniqueIdentifier>{0431f4a7-2f63-4622-a1c7-efcf77d9cb59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Component\00.Object">
+      <UniqueIdentifier>{0314337a-813e-4c03-8409-3d7c94fd7e34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Component\01.Animation">
+      <UniqueIdentifier>{bdb84fcb-4e17-449d-8fff-229e4d8e8c88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Shader">
+      <UniqueIdentifier>{88e7d7a2-b231-4e5d-bd65-c8f87b81d7ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\etc">
+      <UniqueIdentifier>{6db7dcc2-1c81-430b-978c-6cf5ed259e85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\GameFramework">
+      <UniqueIdentifier>{55c3ede4-962a-4270-8a35-e0ae038d7bf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Component\02.Mesh">
+      <UniqueIdentifier>{f326977a-27f6-41d0-b714-d6bb5387f476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Scene">
+      <UniqueIdentifier>{f60c1fcb-42f5-4021-9eeb-18671ce970ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\stdafx">
+      <UniqueIdentifier>{27cfa6fb-d35b-48ff-9f03-8e87cb20b044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Timer">
+      <UniqueIdentifier>{87b538b7-871d-4528-ad17-45098037644f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\Shader\HLSL">
+      <UniqueIdentifier>{2dd1d0db-b8cc-41bf-a006-82cebd8b4535}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool2.h">
@@ -67,38 +100,83 @@
     <ClInclude Include="targetver.h">
       <Filter>MFC\efc</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="Define.h">
       <Filter>Client</Filter>
     </ClInclude>
-    <ClInclude Include="d3dx12.h">
-      <Filter>Client</Filter>
-    </ClInclude>
-    <ClInclude Include="DDSTextureLoader12.h">
-      <Filter>Client</Filter>
-    </ClInclude>
-    <ClInclude Include="GameFramework.h">
-      <Filter>Client</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="Vertex.h">
       <Filter>Client</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>Client</Filter>
+      <Filter>Client\Component\00.Object</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Client</Filter>
+    <ClInclude Include="Object_Terrain.h">
+      <Filter>Client\Component\00.Object</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Client</Filter>
+    <ClInclude Include="Object_Player.h">
+      <Filter>Client\Component\00.Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_Camera.h">
+      <Filter>Client\Component\00.Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Client\Component\01.Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="CShader_ShadowMRT.h">
+      <Filter>Client\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>Client</Filter>
+      <Filter>Client\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader12.h">
+      <Filter>Client\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>Client\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="WICTextureLoader12.h">
+      <Filter>Client\etc</Filter>
+    </ClInclude>
+    <ClInclude Include="GameFramework.h">
+      <Filter>Client\GameFramework</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Client\Component\02.Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Client\Component\02.Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh_Skinned.h">
+      <Filter>Client\Component\02.Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Client\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh_Terrain.h">
+      <Filter>Client\Component\02.Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh_Water.h">
+      <Filter>Client\Component\02.Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader_LightMRT.h">
+      <Filter>Client\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader_MRT.h">
+      <Filter>Client\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader_Noise.h">
+      <Filter>Client\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader_Standard.h">
+      <Filter>Client\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader_Terrain.h">
+      <Filter>Client\Shader</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>Client</Filter>
+      <Filter>Client\stdafx</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Client</Filter>
+      <Filter>Client\Timer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -126,35 +204,71 @@
     <ClCompile Include="pch.cpp">
       <Filter>MFC\efc</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="DDSTextureLoader12.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="GameFramework.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Client</Filter>
-    </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>Client</Filter>
+      <Filter>Client\Component\00.Object</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Client</Filter>
+    <ClCompile Include="Object_Terrain.cpp">
+      <Filter>Client\Component\00.Object</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Client</Filter>
+    <ClCompile Include="Object_Player.cpp">
+      <Filter>Client\Component\00.Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_Camera.cpp">
+      <Filter>Client\Component\00.Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Client\Component\01.Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="CShader_ShadowMRT.cpp">
+      <Filter>Client\Shader</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Client</Filter>
+      <Filter>Client\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader12.cpp">
+      <Filter>Client\etc</Filter>
+    </ClCompile>
+    <ClCompile Include="WICTextureLoader12.cpp">
+      <Filter>Client\etc</Filter>
+    </ClCompile>
+    <ClCompile Include="GameFramework.cpp">
+      <Filter>Client\GameFramework</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Client\Component\02.Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Client\Component\02.Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh_Skinned.cpp">
+      <Filter>Client\Component\02.Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Client\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh_Terrain.cpp">
+      <Filter>Client\Component\02.Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_LightMRT.cpp">
+      <Filter>Client\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_MRT.cpp">
+      <Filter>Client\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_Noise.cpp">
+      <Filter>Client\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_Standard.cpp">
+      <Filter>Client\Shader</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Client</Filter>
+      <Filter>Client\stdafx</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>Client</Filter>
+      <Filter>Client\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader-Terrain.cpp">
+      <Filter>Client\Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,8 +293,29 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="HLSL_LightTarget.hlsl">
+      <Filter>Client\Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_MRT.hlsl">
+      <Filter>Client\Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_ShadowStandard.hlsl">
+      <Filter>Client\Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_Standard.hlsl">
+      <Filter>Client\Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_Terrain.hlsl">
+      <Filter>Client\Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_TerrainShadow.hlsl">
+      <Filter>Client\Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Light.hlsl">
+      <Filter>Client\Shader\HLSL</Filter>
+    </FxCompile>
     <FxCompile Include="Shaders.hlsl">
-      <Filter>Client</Filter>
+      <Filter>Client\Shader\HLSL</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
