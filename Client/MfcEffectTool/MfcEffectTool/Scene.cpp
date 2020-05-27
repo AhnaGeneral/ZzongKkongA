@@ -4,26 +4,53 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include "Object_Terrain.h"
-
+//#include "Mgr_Collision.h"
+//#include "Object_ItemBox.h"
+//#include "Object_DynamicObj.h"
+//#include "Monster_Yangmal.h"
+//#include "Mgr_Item.h"
+//#include "Mgr_Radiation.h"
+//#include "Object_DrugMaker.h"
+#include "Shader_Effect.h"
 
 
 CGameScene::CGameScene()
 {
 	m_pPlayer = NULL;
 	m_pTerrain = NULL;
+	m_pSkyBox = NULL;
+	m_pCObjectWater = NULL;
 
 	WindowCursorPos = { 0L,0L };
 
 	n_ReactItem = 3;
+	//CItemMgr::GetInstance()->SetReactItem(ITEM_NONE);
 
 	itemRange = 0.0f;
 
 	m_bPipelineStateIndex = 0;
 	m_ptOldCursorPos = {0L, 0L};
+
+	//m_nDynamicObjectTypeNum = 0;
+	//m_nStaticObjectTypeNum = 0; 
+	//m_nMonsterTypeNum = 0;
+
+	//m_pStaticObjLists = NULL;
+	//m_pDynamicObjLists = NULL;
+	//m_pMonsterLists = NULL;
+	//m_pSoftParticleShader = NULL;
+	//m_pSpecialFogShader = NULL;
+
+	m_pShadowCamera = NULL;
+
+	m_pShadowMap = NULL;
+	m_pDepthTex = NULL;
 }
 
 CGameScene::~CGameScene()
 {
+	//CItemMgr::GetInstance()->Destroy();
+	//CCollisionMgr::GetInstance()->Destroy();
 }
 
 void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -33,11 +60,32 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	XMFLOAT3 xmf3Scale(2.0f, 0.6f, 2.0f);
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
 
+	m_pShadowCamera = new CSunCamera();
+
+	//m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,
-		_T("Geometry/OneStageTerrain.raw"), 257, 257, 17, 17, xmf3Scale, xmf4Color,nullptr);
+		_T("Geometry/OneStageTerrain.raw"), 257, 257, 17, 17, xmf3Scale, xmf4Color, m_pShadowMap);
+	
+
+	//CRadationMgr::GetInstance()->Initialize();
+	//m_pSoftParticleShader = new CSoftParticleShader();
+	//m_pSoftParticleShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex, m_pTerrain);
+
+	//m_pSpecialFogShader = new CShader_SpecialFog();
+	//m_pSpecialFogShader->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, m_pDepthTex, m_pTerrain);
 
 
+	//m_pCObjectWater = new CObjectWater(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature); //object
 
+	//m_pCObjectWater->SetPosition(XMFLOAT3(256.0f, 25.0f, 256.0f));
+	//m_pCObjectWater->Rotate(90.0f, 0.0f, 0.0f);
+	//m_pCObjectWater->GenerateShaderDistortionBuffer();
+
+	m_pTestEffect = new CShader_Effect(); 
+	m_pTestEffect->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, NULL, m_pTerrain);
+
+	//CItemMgr::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+	//CCollisionMgr::GetInstance()->Initialize();
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -48,16 +96,144 @@ void CGameScene::ReleaseObjects()
 
 	ReleaseShaderVariables();
 
+	//if (m_pSkyBox)
+	//{
+	//	m_pSkyBox->Release();
+	//	m_pSkyBox = NULL;
+	//}
+
 	if (m_pTerrain)
 	{
 		m_pTerrain->Release();
 		m_pTerrain = NULL;
 	}
+
+	if (m_pCObjectWater) 
+	{
+		m_pCObjectWater->ReleaseUploadBuffers();
+		m_pCObjectWater->Release();
+		m_pCObjectWater = NULL;
+	}
+
+	//----------------------------------------------
+	//if (m_pStaticObjLists) // 오브젝트 Release
+	//{
+	//	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pStaticObjLists[i])
+	//		{
+	//			Obj->Release();
+	//		}
+	//		m_pStaticObjLists[i]->clear();
+	//	}
+	//}
+	//delete[] m_pStaticObjLists; 
+	//m_pStaticObjLists = NULL;
+
+	//----------------------------------------------
+	//if (m_pDynamicObjLists) // 오브젝트 Release
+	//{
+	//	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pDynamicObjLists[i])
+	//		{
+	//			Obj->Release();
+	//		}
+	//		m_pDynamicObjLists[i]->clear();
+	//	}
+	//}
+	//delete[] m_pDynamicObjLists; 
+	//m_pDynamicObjLists = NULL;
+
+	//----------------------------------------------
+	//if (m_pMonsterLists) // 오브젝트 Release
+	//{
+	//	for (int i = 0; i < m_nMonsterTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pMonsterLists[i])
+	//		{
+	//			Obj->Release();
+	//		}
+	//		m_pMonsterLists[i]->clear();
+	//	}
+	//}
+	//delete[] m_pMonsterLists;
+	//m_pMonsterLists = NULL;
+
+	////----------------------------------------------
+	//if (m_pSoftParticleShader)
+	//{
+	//	m_pSoftParticleShader->Release();
+	//	m_pSoftParticleShader = NULL;
+	//}
+
+	//if (m_pSpecialFogShader)
+	//{
+	//	m_pSpecialFogShader->Release();
+	//	m_pSpecialFogShader = NULL;
+	//}
+	//----------------------------------------------
+	if (m_pShadowCamera)
+	{
+		m_pShadowCamera->ReleaseShaderVariables();
+		delete m_pShadowCamera;
+	}
+	if (m_pShadowMap)
+	{
+		m_pShadowMap->ReleaseUploadBuffers();
+		m_pShadowMap->Release();
+		m_pShadowMap = NULL;
+	}
+	//if (m_pDepthTex)
+	//{
+	//	m_pDepthTex->ReleaseUploadBuffers();
+	//	//m_pDepthTex->Release(); 다른 곳에서 하나 ..? 
+	//	m_pDepthTex = NULL; 
+	//}
+	//----------------------------------------------
+
 }
 void CGameScene::ReleaseUploadBuffers()
 {
+	//----------------------------------------------
+	//if (m_pSkyBox) m_pSkyBox->ReleaseUploadBuffers();
 	if (m_pTerrain) m_pTerrain->ReleaseUploadBuffers();
 	if (m_pPlayer) m_pPlayer->ReleaseUploadBuffers();
+	//----------------------------------------------
+	//if (m_pStaticObjLists) // 오브젝트 Release
+	//{
+	//	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+	//	{
+	//		if (m_pStaticObjLists[i])
+	//		{
+	//			for(auto & obj: *m_pStaticObjLists[i])
+	//				obj->ReleaseUploadBuffers();
+	//		}
+	//	}
+	//}
+	////----------------------------------------------
+	//if (m_pDynamicObjLists) // 오브젝트 Release
+	//{
+	//	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pDynamicObjLists[i])
+	//		{
+	//			Obj->ReleaseUploadBuffers();
+	//		}
+	//	}
+	//}
+	////----------------------------------------------
+	//if (m_pMonsterLists) // 오브젝트 Release
+	//{
+	//	for (int i = 0; i < m_nMonsterTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pMonsterLists[i])
+	//		{
+	//			Obj->ReleaseUploadBuffers();
+	//		}
+	//	}
+	//}
+	//----------------------------------------------
 }
 
 
@@ -162,8 +338,15 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dSceneDepthTex.RegisterSpace = 0;
 	pd3dSceneDepthTex.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+	D3D12_DESCRIPTOR_RANGE pd3dEffectTex; 
+	pd3dEffectTex.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dEffectTex.NumDescriptors = 1;
+	pd3dEffectTex.BaseShaderRegister = 70;
+	pd3dEffectTex.RegisterSpace = 0;
+	pd3dEffectTex.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[21];
+
+	D3D12_ROOT_PARAMETER pd3dRootParameters[22];
 
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].Descriptor.ShaderRegister = 1; //b1 : Camera
@@ -271,6 +454,11 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dRootParameters[ROOT_PARAMETER_RADIATIONLEVEL].Constants.RegisterSpace = 0;
 	pd3dRootParameters[ROOT_PARAMETER_RADIATIONLEVEL].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
+	pd3dRootParameters[ROOT_PARAMETER_EFFECT].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_EFFECT].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_EFFECT].DescriptorTable.pDescriptorRanges = &pd3dEffectTex;
+	pd3dRootParameters[ROOT_PARAMETER_EFFECT].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
@@ -324,13 +512,13 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 
 void CGameScene::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	//m_pShadowCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_pShadowCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
 void CGameScene::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	//if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
-	//m_pShadowCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_SHADOWCAMERA);
+	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
+	m_pShadowCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_SHADOWCAMERA);
 }
 
 void CGameScene::ReleaseShaderVariables()
@@ -347,8 +535,38 @@ bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 		::GetCursorPos(&m_ptOldCursorPos);
 		WindowCursorPos = m_ptOldCursorPos;
 
+		//ScreenToClient함수 전체화면 기준인 커서의를 해당 클라이언트 윈도우 기준으로 좌표를 변환해주는 함수 이다. 
 		ScreenToClient(hWnd, &WindowCursorPos);
+		//n_ReactItem
 		itemRange = FRAME_BUFFER_HEIGHT / 10.0f; //60
+
+	/*	if (WindowCursorPos.y <= FRAME_BUFFER_HEIGHT && WindowCursorPos.y >= (FRAME_BUFFER_HEIGHT - itemRange))
+		{
+			if ((WindowCursorPos.x >= 0.0f) && (WindowCursorPos.x <= itemRange))
+			{
+				n_ReactItem = ITEM_TYPE_HANDLIGHT;
+				CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_HANDLIGHT);
+				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HANDLIGHT);
+			}
+			if ((WindowCursorPos.x >= itemRange) && (WindowCursorPos.x <= (itemRange * 2)))
+			{
+				n_ReactItem = ITEM_TYPE_HPKIT;
+				CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_HPKIT);
+				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HPKIT);
+			}
+
+			if ((WindowCursorPos.x >= itemRange * 2) && (WindowCursorPos.x <= (itemRange * 3)))
+			{
+				n_ReactItem = ITEM_TYPE_PILL;
+				CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_PILL);
+				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_PILL);
+			}
+		}
+		else
+		{
+			n_ReactItem = ITEM_NONE;
+			CItemMgr::GetInstance()->SetReactItem(ITEM_NONE);
+		}*/
 
 		break;
 	case WM_LBUTTONUP:
@@ -366,7 +584,7 @@ bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 
 bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	//float* m_fShadowPosition = m_pShadowCamera->GetShadowCameraPosition();
+	float* m_fShadowPosition = m_pShadowCamera->GetShadowCameraPosition();
 
 	switch (nMessageID)
 	{
@@ -374,6 +592,7 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 		switch (wParam)
 		{
 		case VK_F1:
+		//	ChangeTerrainPipeline();
 			break;
 		case VK_F3:
 			m_pTerrain->SetHeightFactor();
@@ -383,24 +602,24 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 			PurifyMonster();
 			ItemBoxCheck();
 			break;
-		//case 'A':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
-		//	break;
-		//case 'S':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] -= 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
-		//	break;
-		//case 'D':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] += 10.0f, m_fShadowPosition[2]);
-		//	break;
-		//case 'F':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] -= 10.0f, m_fShadowPosition[2]);
-		//	break;
-		//case 'G':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]+=10.0f);
-		//	break;
-		//case 'H':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]-=10.0f);
-		//	break;
+		case 'A':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
+			break;
+		case 'S':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] -= 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
+			break;
+		case 'D':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] += 10.0f, m_fShadowPosition[2]);
+			break;
+		case 'F':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] -= 10.0f, m_fShadowPosition[2]);
+			break;
+		case 'G':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]+=10.0f);
+			break;
+		case 'H':
+			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]-=10.0f);
+			break;
 		case VK_SPACE:
 			m_pPlayer->SetAttackState();
 			break;
@@ -444,7 +663,7 @@ bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 			if (pKeysBuffer[VK_RBUTTON] & 0xF0)
 			{
 				m_pPlayer->Rotate(cyDelta, 0.0f, -cxDelta);
-			//	m_pShadowCamera->Rotate(cyDelta, 0.0f, -cxDelta);
+				m_pShadowCamera->Rotate(cyDelta, 0.0f, -cxDelta);
 
 			}
 			else
@@ -463,9 +682,38 @@ bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 
 void CGameScene::PurifyMonster()
 {
+	//for (auto pObj : *m_pDynamicObjLists[OBJECT_TYPE_DRUGMAKER])
+	//{
+	//	XMFLOAT3 ObjPos = pObj->GetPosition();
+	//	XMFLOAT3 PlayerPos = m_pPlayer->GetPosition();
+
+	//	float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
+	//	if (Distance < 15)
+	//	{
+	//		CDrugMaker* pMaker = dynamic_cast<CDrugMaker*>(pObj);
+	//		if (pMaker->m_bEnable)
+	//			for (auto pMon : *m_pMonsterLists[pMaker->m_iMonsterType])
+	//			{
+	//				pMaker->m_bEnable = false;
+	//				pMon->GetPurified();
+	//			}
+	//	}
+	//}
 }
 void CGameScene::AnimateObjects(float fTimeElapsed)
 {
+
+	//if (m_pMonsterLists) // 몬스터 Render
+	//{
+	//	for (int i = 0; i < m_nMonsterTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pMonsterLists[i])
+	//		{
+	//			Obj->Animate(fTimeElapsed, NULL);
+	//		}
+	//	}
+	//}
+
 }
 
 void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
@@ -481,20 +729,106 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, m_bPipelineStateIndex);
 	//if (m_pCObjectWater) m_pCObjectWater->Render(pd3dCommandList, pCamera);
 
+	//if (m_pStaticObjLists) // 오브젝트 Render
+	//{
+	//	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+	//	{
+ //           for(auto & obj: *m_pStaticObjLists[i])
+	//		{
+	//			obj->UpdateTransform(NULL);
+	//			obj->Render(pd3dCommandList, pCamera, 0);
+	//		}
+	//	}
+	//}
+
+	//if (m_pDynamicObjLists) // 오브젝트 Render
+	//{
+	//	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pDynamicObjLists[i])
+	//		{
+	//			Obj->Update(m_fElapsedTime);
+	//			Obj->UpdateTransform(NULL);
+	//			Obj->Render(pd3dCommandList, pCamera, 0);
+	//		}
+	//	}
+	//}
+
+
+	//if (m_pMonsterLists) // 몬스터 Render
+	//{
+	//	for (int i = 0; i < m_nMonsterTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pMonsterLists[i])
+	//		{
+	//			XMFLOAT3 monsterpos = Obj->GetPosition();
+	//			XMFLOAT3 playerpos = m_pPlayer->GetPosition();
+	//			float Distance = Vector3::Length(Vector3::Subtract(monsterpos, playerpos));
+	//			Obj->SetDistanceToPlayer(Distance);
+	//			Obj->SetPlayerPosition(playerpos);
+
+	//			Obj->Update(m_fElapsedTime, NULL, m_pTerrain);
+	//			Obj->UpdateTransform(NULL);
+	//			Obj->Render(pd3dCommandList, pCamera, 0);
+	//		}
+	//	}
+	//}
 	CheckCollisions();
 
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
+
+
+	//if (m_pSkyBox)  m_pSkyBox->Render(pd3dCommandList, pCamera);
+
+	//CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
+
+	if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
+	//if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
+	//if (m_pSpecialFogShader) m_pSpecialFogShader->Render(pd3dCommandList, pCamera);
 }
 
 
 void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
-	//m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
+	m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
-	//if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
+	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
 
 	if(m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera, 2);
 
+	//if (m_pStaticObjLists) // 오브젝트 Render
+	//{
+	//	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+	//	{
+	//		for(auto& obj : *m_pStaticObjLists[i])
+	//		{
+	//			obj->UpdateTransform(NULL);
+	//			obj->Render(pd3dCommandList, pCamera, 1);
+	//		}
+	//	}
+	//}
+	//if (m_pDynamicObjLists) // 오브젝트 Render
+	//{
+	//	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pDynamicObjLists[i])
+	//		{
+	//			Obj->UpdateTransform(NULL);
+	//			Obj->Render(pd3dCommandList, pCamera, 1);
+	//		}
+	//	}
+	//}
+	//if (m_pMonsterLists) // 몬스터 Render
+	//{
+	//	for (int i = 0; i < m_nMonsterTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pMonsterLists[i])
+	//		{
+	//			
+	//			Obj->Render(pd3dCommandList, pCamera, 1);
+	//		}
+	//	}
+	//}
 	m_pPlayer->Render(pd3dCommandList, pCamera, 1);
 }
 void CGameScene::Update(float fTimeElapsed)
@@ -503,10 +837,21 @@ void CGameScene::Update(float fTimeElapsed)
 	AnimateObjects(fTimeElapsed);
 
 	m_pPlayer->Animate(fTimeElapsed, NULL);
+	//CItemMgr::GetInstance()->Update(fTimeElapsed);
+	//CRadationMgr::GetInstance()->Update(m_fElapsedTime);
 }
 
 void CGameScene::ItemBoxCheck()
 {
+	/*for (auto pObj : *m_pDynamicObjLists[OBJECT_TYPE_ITEMBOX])
+	{
+		XMFLOAT3 ObjPos = pObj->GetPosition();
+		XMFLOAT3 PlayerPos = m_pPlayer->GetPosition();
+
+		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
+		if (Distance < 10)
+			dynamic_cast<CItemBox*>(pObj)->Open();
+	}*/
 }
 
 CScene::CScene()
@@ -517,4 +862,6 @@ CScene::CScene()
 
 CScene::~CScene()
 {
+	//if (m_pd3dGraphicsRootSignature)
+	//	m_pd3dGraphicsRootSignature->Release();
 }

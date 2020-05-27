@@ -125,6 +125,8 @@ public:
 
 
 // TriangleRect -----------------------------------------------------------------------------------
+
+
 class CTriangleRect : public CMesh
 {
 public:

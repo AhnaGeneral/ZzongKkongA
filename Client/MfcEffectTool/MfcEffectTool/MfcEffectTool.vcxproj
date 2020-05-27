@@ -204,12 +204,14 @@
     <ClInclude Include="MyForm.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Object_Camera.h" />
+    <ClInclude Include="Object_Effect.h" />
     <ClInclude Include="Object_Player.h" />
     <ClInclude Include="Object_Terrain.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Shader_Effect.h" />
     <ClInclude Include="Shader_LightMRT.h" />
     <ClInclude Include="Shader_MRT.h" />
     <ClInclude Include="Shader_Noise.h" />
@@ -239,6 +241,7 @@
     <ClCompile Include="MyForm.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Object_Camera.cpp" />
+    <ClCompile Include="Object_Effect.cpp" />
     <ClCompile Include="Object_Player.cpp" />
     <ClCompile Include="Object_Terrain.cpp" />
     <ClCompile Include="pch.cpp">
@@ -250,6 +253,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader-Terrain.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Shader_Effect.cpp" />
     <ClCompile Include="Shader_LightMRT.cpp" />
     <ClCompile Include="Shader_MRT.cpp" />
     <ClCompile Include="Shader_Noise.cpp" />
@@ -270,6 +274,9 @@
     <Image Include="res\Toolbar.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="HLSL_Effect.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="HLSL_LightTarget.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>

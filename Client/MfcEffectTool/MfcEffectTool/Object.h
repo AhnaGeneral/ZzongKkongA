@@ -32,7 +32,6 @@ public:
 public:
 	bool							m_bRender = true;
 	int								m_nBoundingBoxes;
-	//CCollisionBox                 * m_pBoundingBoxes = NULL;
 
 	char							m_pstrFrameName[64];
 
@@ -132,4 +131,3 @@ public:
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);
 
 };
-

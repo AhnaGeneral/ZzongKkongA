@@ -61,16 +61,16 @@ CHeightMapTerrain::CHeightMapTerrain(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	pTerrainTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Sand_HT.dds", 11);
 
 
-	//m_pShadowMap = (CTexture*)ShadowMap;
+	m_pShadowMap = (CTexture*)ShadowMap;
 
 	UINT ncbElementBytes = ((sizeof(CB_GAMEOBJECT_INFO) + 255) & ~255); //256ÀÇ ¹è¼ö
 	CTerrainShader* pTerrainShader = new CTerrainShader();
 	pTerrainShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	pTerrainShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	pTerrainShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 12);
+	pTerrainShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 13);
 	pTerrainShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTerrainTexture, ROOT_PARAMETER_TERRAIN_TEX, true);
 	pTerrainShader->CreateConstantBufferViews(pd3dDevice, pd3dCommandList, 1, m_pd3dcbGameObjects, ncbElementBytes);
-	//pTerrainShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pShadowMap, ROOT_PARAMETER_SHADOWMAP, 0);
+	pTerrainShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pShadowMap, ROOT_PARAMETER_SHADOWMAP, 0);
 
 
 	SetShader(pTerrainShader);
@@ -121,6 +121,7 @@ void CHeightMapTerrain::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Gr
 
 void CHeightMapTerrain::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	m_pShadowMap->UpdateShaderVariables(pd3dCommandList);
 }
 
 void CHeightMapTerrain::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)

@@ -134,5 +134,6 @@ void CMfcEffectToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	m_peffectTool1->m_CurrentPosX = point.x;
 	m_peffectTool1->m_CurrentPosY = point.y;
 	m_peffectTool1->UpdateData(false);
+
 	CView::OnLButtonDown(nFlags, point);
 }

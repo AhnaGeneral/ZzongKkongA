@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "Object_Player.h"
-////#include "Mgr_Collision.h"
+//#include "Mgr_Collision.h"
 #include "Animation.h"
 #include "Shader.h"
 
@@ -28,8 +28,6 @@ CPlayer::CPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComman
 	m_fRoll = 0.0f;
 	m_fYaw = 0.0f;
 
-	//CCollisionMgr::GetInstance()->SetPlayer(this);
-
 	m_iMaxHP = 100;
 	m_iCurrentHP = 100;
 	m_iAtt = 5;
@@ -52,7 +50,6 @@ CPlayer::~CPlayer()
 void CPlayer::SetAttackState()
 {
 	m_iState = JOHNSON_ANIAMATION_ATTACK;
-	//CCollisionMgr::GetInstance()->MonsterDamageCheck(m_iAtt);
 	//SetAnima
 }
 

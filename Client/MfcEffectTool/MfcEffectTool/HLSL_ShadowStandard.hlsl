@@ -22,7 +22,6 @@ VS_STANDARD_SHADOWOUTPUT VSSkinnedShadow(VS_SKINNED_STANDARD_INPUT input)
 
 	output.positionW = float3(0.0f, 0.0f, 0.0f);
 	matrix mtxVertexToBoneWorld;
-
 	for (int i = 0; i < MAX_VERTEX_INFLUENCES; i++)
 	{
 		mtxVertexToBoneWorld = mul(gpmtxBoneOffsets[input.indices[i]], gpmtxBoneTransforms[input.indices[i]]);

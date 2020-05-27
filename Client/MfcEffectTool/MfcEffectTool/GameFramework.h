@@ -4,6 +4,7 @@
 #include "Shader_MRT.h"
 #include "Object_Player.h"
 #include "Scene.h"
+//#include "LobbyScene.h"
 #include "Shader_LightMRT.h"
 #include "CShader_ShadowMRT.h"
 

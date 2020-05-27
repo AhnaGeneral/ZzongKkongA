@@ -18,6 +18,40 @@ protected:
 	CTexture                     * m_pTexture;
 	CTexture                     * m_pLightTexture;
 	CTexture                     * m_pShadowTexture;
+	CTexture                     * m_pItemTex;
+	CTexture                     * pMinmapFog1;
+	CTexture                     * pMinmapFog2;
+
+	CShader                      * m_pBaseUIShader; 
+	CShader                      * m_pMinimapFog;
+	CShader                      * m_pItemShader;
+	//				            
+	//int                            m_nMRTSwitch;
+	//int                            m_nRenderTargetUI;
+//	CGameObject                 ** m_pRenderTargetUIs ;
+	//CMRTUI                       * pRenderTargetUI;
+	//				            
+	//CUI_Root                     * m_pHP;
+	//CUI_Root                     * m_Radiation;
+
+	//CUI_ITem                     * m_pMapOne;
+	//CUI_ITem                     * m_pMapTwo;
+				            
+	//CUI_MiniMap                  * m_pMinimap;
+
+	//CShader                      * m_pRadiationShader;
+	//CGameObject                 ** m_RadiationLevels;
+	//CUI_RaditaionLevel           * m_RadiationCount;
+	//				            
+	//CUI_Root                     * m_HPBAR;
+					            
+	//CGameObject                 ** m_ppInVentoryBoxs;
+	//CUI_Root                    *  m_pInventoryBox;
+	//				            
+	//CGameObject                 ** m_ppItems;
+	//CUI_ITem                     * m_pItem ;
+	//				            
+	//CUI_HP                       * m_PlayerHP;
 					            
 	UINT                           nIventoryCount;
 

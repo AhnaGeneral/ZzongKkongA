@@ -178,6 +178,12 @@
     <ClInclude Include="Timer.h">
       <Filter>Client\Timer</Filter>
     </ClInclude>
+    <ClInclude Include="Object_Effect.h">
+      <Filter>Client\Component\00.Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader_Effect.h">
+      <Filter>Client\Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -270,6 +276,12 @@
     <ClCompile Include="Shader-Terrain.cpp">
       <Filter>Client\Shader</Filter>
     </ClCompile>
+    <ClCompile Include="Object_Effect.cpp">
+      <Filter>Client\Component\00.Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_Effect.cpp">
+      <Filter>Client\Shader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MfcEffectTool.rc">
@@ -315,6 +327,9 @@
       <Filter>Client\Shader\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="Shaders.hlsl">
+      <Filter>Client\Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_Effect.hlsl">
       <Filter>Client\Shader\HLSL</Filter>
     </FxCompile>
   </ItemGroup>

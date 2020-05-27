@@ -1,4 +1,10 @@
 #include "Shader_MRT.h"
+//#include "Shader_BaseUI.h"
+//#include "Shader_Item.h"
+//#include "Shader_Radiation.h"
+//#include "Mgr_Radiation.h"
+//#include "Mgr_Item.h"
+//#include "Shader_MinmapFog.h"
 
 CPostProcessingShader::CPostProcessingShader()
 {
@@ -8,8 +14,37 @@ CPostProcessingShader::CPostProcessingShader()
 	m_pTexture = NULL;
 	m_pLightTexture = NULL;
 	m_pShadowTexture = NULL;
+	m_pItemTex = NULL;
+	m_pBaseUIShader = NULL;
+	m_pMinimapFog = NULL;
+	m_pItemShader = NULL;
 
-	nIventoryCount = 3;
+	//m_pRenderTargetUIs = NULL;
+	//m_nRenderTargetUI = 0;
+	//pRenderTargetUI = NULL;
+	//m_nMRTSwitch = 1;
+
+	//m_pMinimap = NULL;
+
+	//m_pHP = NULL;
+
+	//m_Radiation = NULL;
+
+	//m_RadiationLevels = NULL;
+ //   m_RadiationCount = NULL;
+
+	//m_pRadiationShader = NULL;
+
+	//m_HPBAR = NULL;
+
+	//m_ppInVentoryBoxs = NULL;
+	//m_pInventoryBox = NULL;
+
+	//m_ppItems = NULL;
+	//m_pItem = NULL;
+	//m_PlayerHP = NULL;
+
+	//nIventoryCount = 3;
 
 	m_pd3dcbvOrthoCamera = NULL;
 	m_pcbMappedOrthoCamera = NULL;
@@ -300,7 +335,176 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 {
 	m_xmf4x4OrthoView =
 		Matrix4x4::LookAtLH(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f));
+	// position이 왜 0 이여야 하지 ? // 모두 수직이여야 하는거 아닌가 ? 
 	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
+
+	// [ 다중랜더타겟 텍스쳐 ] ===============================================================================
+	//CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 5.5f, FRAME_BUFFER_HEIGHT / 5.5f, 0.0f, 1.0f);
+	//m_nRenderTargetUI = 7;
+	//m_pRenderTargetUIs = new CGameObject * [m_nRenderTargetUI];
+	//for (int i = 0; i < m_nRenderTargetUI;)
+	//{
+	//	int remainder = i % 5;
+	//	int tmp = i / 5;
+	//	pRenderTargetUI = new CMRTUI(pd3dDevice, pd3dCommandList);
+	//	pRenderTargetUI->SetMesh(mesh);
+	//	pRenderTargetUI->Set2DPosition(-310.0f + (remainder * 140.0f), 240.0f + (-tmp * 120));
+	//	pRenderTargetUI->SetObjectID(i);
+	//	m_pRenderTargetUIs[i++] = pRenderTargetUI;
+	//}
+
+	////[ 미니맵 ] ============================================================================================
+	//m_pMinimap = new CUI_MiniMap(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//m_pMinimap->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
+	//m_pMinimap->SetMesh(mesh);
+	//m_pMinimap->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
+
+	////[ 체력 ] ==============================================================================================
+	//CTexture* m_pHPTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	//m_pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_3.dds", 0);
+
+	//m_pBaseUIShader = new CShader_BaseUI();
+	//m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 3);
+	//m_pBaseUIShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
+	//m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)m_pHPTexture, ROOT_PARAMETER_HP_TEX, true);
+
+	//m_HPBAR = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//m_HPBAR->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, m_pHPTexture);
+	//mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 250, 200, 0.0f, 1.0f);
+	//m_HPBAR->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
+	//m_HPBAR->SetMesh(mesh);
+
+	////[ 방사능 박스 ] ===========================================================================================
+	//CTexture* pRadiationTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	//pRadiationTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_1.dds", 0);
+
+	//m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pRadiationTex, ROOT_PARAMETER_HP_TEX, true);
+
+	//m_Radiation = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//m_Radiation->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pRadiationTex);
+	//mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 250, 200, 0.0f, 1.0f);
+	//m_Radiation->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
+	//m_Radiation->SetMesh(mesh);
+
+
+	//// ========================================================================================================
+	//m_pMinimapFog = new CShader_MinmapFog();
+	//m_pMinimapFog->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 2);
+	//m_pMinimapFog->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
+
+	//pMinmapFog1 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	//pMinmapFog1->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog1.dds", 0);
+
+	//m_pMinimapFog->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog1, ROOT_PARAMETER_MINIIMAPFOG, true);
+
+	//m_pMapOne = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
+	//m_pMapOne->SetObjectID(0);
+	//m_pMapOne->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
+	//m_pMapOne->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//m_pMapOne->SetMesh(mesh);
+
+ //   pMinmapFog2 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+
+	//pMinmapFog2->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog2.dds", 0);
+
+	//m_pMinimapFog->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog2, ROOT_PARAMETER_MINIIMAPFOG, true);
+
+	//m_pMapTwo = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
+	//m_pMapTwo->SetObjectID(1);
+	//m_pMapTwo->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
+	//m_pMapTwo->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//m_pMapTwo->SetMesh(mesh);
+
+
+
+	////[ 인벤토리 ] ==============================================================================================
+	//m_ppInVentoryBoxs = new CGameObject * [nIventoryCount];
+
+	//float ItemBoxSize = FRAME_BUFFER_HEIGHT / 10.0f;
+
+	//CTexture* pInventoryTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	//pInventoryTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/Inventory.dds", 0);
+
+	//m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pInventoryTex, ROOT_PARAMETER_HP_TEX, true);
+
+	//for (int i = 0; i < (int)nIventoryCount;)
+	//{
+	//	m_pInventoryBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//	m_pInventoryBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pInventoryTex);
+	//	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, ItemBoxSize, ItemBoxSize, 0.0f, 1.0f);
+	//	m_pInventoryBox->SetMesh(mesh);
+	//	m_pInventoryBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
+	//	m_ppInVentoryBoxs[i++] = m_pInventoryBox;
+	//}
+
+	////[ 아이템쓰 ] =============================================================================================
+	//m_ppItems = new CGameObject * [nIventoryCount];
+
+	//m_pItemTex = new CTexture(3, RESOURCE_TEXTURE2D, 0);
+ //   m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HandLight.dds", 0);
+ //   m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HP_Kit.dds", 1);
+ //   m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/Pill.dds", 2);
+
+	////m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pItemTex, ROOT_PARAMETER_HP_TEX, true);
+
+	//m_pItemShader = new CShader_Item();
+	//m_pItemShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 3);
+	//m_pItemShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
+ //   m_pItemShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTex, ROOT_PARAMETER_ITEM_TEX, true);
+
+	//for (int i = 0; i < int(nIventoryCount);)
+	//{
+	//	m_pItem = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//	m_pItem->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL);
+
+	//	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, ItemBoxSize, ItemBoxSize, 0.0f, 1.0f); //60, 60
+	//	m_pItem->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//	m_pItem->SetMesh(mesh);
+	//	m_pItem->SetObjectID(i);
+	//	//UINT unber = 1;
+	//	//m_pItem->SetItemReact(&unber);
+	//	m_pItem->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
+	//	m_ppItems[i++] = m_pItem;
+	//}
+	////[ 체력바 ] =================================================================================================
+	//CTexture* pHPTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	//pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_2.dds", 0);
+
+	//m_PlayerHP = new CUI_HP(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//m_PlayerHP->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pHPTexture);
+	//mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 190, 18, 0.0f, 1.0f);
+	//m_PlayerHP->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//m_PlayerHP->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 150, (-FRAME_BUFFER_HEIGHT / 2) + 90);
+	//m_PlayerHP->SetObjectID(4);
+	//m_PlayerHP->SetMesh(mesh);
+
+	////[ 방사능 수치 카운터 ] ======================================================================================= 
+	//CTexture* pRadiationCountTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	//pRadiationCountTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/RadiationCount.dds", 0);
+
+	//m_pRadiationShader = new CShader_Radiation();
+	//m_pRadiationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 1);
+	//m_pRadiationShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
+	//m_pRadiationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pRadiationCountTexture, ROOT_PARAMETER_HP_TEX, true);
+
+	//m_RadiationLevels = new CGameObject*[2];
+	//for (int i = 0; i < 2;)
+	//{
+	//	m_RadiationCount = new CUI_RaditaionLevel(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//	m_RadiationCount->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pRadiationCountTexture);
+	//	m_RadiationCount->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	//	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 30, 40, 0.0f, 1.0f);
+
+	//	m_RadiationCount->Set2DPosition(float((-FRAME_BUFFER_WIDTH / 2) + 25 *(i+1)), float((-FRAME_BUFFER_HEIGHT / 2) + 105));
+	//	m_RadiationCount->SetMesh(mesh);
+	//	m_RadiationCount->SetRadiationNumber(9);
+	//	m_RadiationLevels[i++] = m_RadiationCount;
+	//}
+	//// =============================================================================================================
 
 	ReleaseUploadBuffers();
 }
@@ -330,6 +534,157 @@ void CPostProcessingShader::ReleaseObjects()
 		m_pShadowTexture = NULL;
 	}
 
+	//if (m_pItemTex)
+	//{
+	//	m_pItemTex->ReleaseShaderVariables();
+	//	m_pItemTex->ReleaseUploadBuffers();
+	//	m_pItemTex->Release();
+	//	m_pItemTex = NULL;
+	//}
+
+	//if (pMinmapFog1)
+	//{
+	//	pMinmapFog1->ReleaseShaderVariables();
+	//	pMinmapFog1->ReleaseUploadBuffers();
+	//	pMinmapFog1->Release();
+	//	pMinmapFog1 = NULL;
+	//}
+	//if (pMinmapFog2)
+	//{
+	//	pMinmapFog2->ReleaseShaderVariables();
+	//	pMinmapFog2->ReleaseUploadBuffers();
+	//	pMinmapFog2->Release();
+	//	pMinmapFog2 = NULL;
+	//}
+
+	//if (m_pBaseUIShader)
+	//{
+	//	m_pBaseUIShader->ReleaseShaderVariables();
+	//	m_pBaseUIShader->ReleaseUploadBuffers();
+	//	m_pBaseUIShader->Release();
+	//	m_pBaseUIShader = NULL;
+	//}
+
+	//if (m_pMinimapFog)
+	//{
+	//	m_pMinimapFog->ReleaseShaderVariables();
+	//	m_pMinimapFog->ReleaseUploadBuffers();
+	//	m_pMinimapFog->Release();
+	//	m_pMinimapFog = NULL;
+	//}
+	//if (m_pItemShader)
+	//{
+	//	m_pItemShader->ReleaseShaderVariables();
+	//	m_pItemShader->ReleaseUploadBuffers();
+	//	m_pItemShader->Release();
+	//	m_pItemShader = NULL;
+	//}
+
+	//if (m_pRenderTargetUIs)
+	//{
+	//	for (int i = 0; i < m_nRenderTargetUI; ++i)
+	//	{
+	//		m_pRenderTargetUIs[i]->ReleaseShaderVariables();
+	//		m_pRenderTargetUIs[i]->ReleaseUploadBuffers();
+	//		m_pRenderTargetUIs[i]->Release();
+	//		m_pRenderTargetUIs[i] = NULL;
+	//	}
+	//	m_pRenderTargetUIs = NULL;
+	//}
+
+	//if (m_pHP)
+	//{
+	//	m_pHP->ReleaseShaderVariables();
+	//	m_pHP->ReleaseUploadBuffers();
+	//	m_pHP->Release();
+	//	m_pHP = NULL;
+	//}
+	//if (m_Radiation)
+	//{
+	//	m_Radiation->ReleaseShaderVariables();
+	//	m_Radiation->ReleaseUploadBuffers();
+	//	m_Radiation->Release();
+	//	m_Radiation = NULL;
+	//}
+
+	//if (m_pMapOne)
+	//{
+	//	m_pMapOne->ReleaseShaderVariables();
+	//	m_pMapOne->ReleaseUploadBuffers();
+	//	m_pMapOne->Release();
+	//	m_pMapOne = NULL;
+	//}
+	//if (m_pMapTwo)
+	//{
+	//	m_pMapTwo->ReleaseShaderVariables();
+	//	m_pMapTwo->ReleaseUploadBuffers();
+	//	m_pMapTwo->Release();
+	//	m_pMapTwo = NULL;
+	//}
+
+	//if (m_pMinimap)
+	//{
+	//	m_pMinimap->ReleaseShaderVariables();
+	//	m_pMinimap->ReleaseUploadBuffers();
+	//	m_pMinimap->Release();
+	//	m_pMinimap = NULL;
+	//}
+	//if (m_pRadiationShader)
+	//{
+	//	m_pRadiationShader->ReleaseShaderVariables();
+	//	m_pRadiationShader->ReleaseUploadBuffers();
+	//	m_pRadiationShader->Release();
+	//	m_pRadiationShader = NULL;
+	//}
+
+	//if (m_RadiationLevels)
+	//{
+	//	for (int i = 0; i < 2; ++i)
+	//	{
+	//		m_RadiationLevels[i]->ReleaseShaderVariables();
+	//		m_RadiationLevels[i]->ReleaseUploadBuffers();
+	//		m_RadiationLevels[i]->Release();
+	//		m_RadiationLevels[i] = NULL;
+	//	}
+	//	m_RadiationLevels = NULL;
+	//}
+
+	//if (m_HPBAR)
+	//{
+	//	m_HPBAR->ReleaseShaderVariables();
+	//	m_HPBAR->ReleaseUploadBuffers();
+	//	m_HPBAR->Release();
+	//	m_HPBAR = NULL;
+	//}
+
+	//if (m_ppInVentoryBoxs)
+	//{
+	//	for (int i = 0; i < 3; ++i)
+	//	{
+	//		m_ppInVentoryBoxs[i]->ReleaseShaderVariables();
+	//		m_ppInVentoryBoxs[i]->ReleaseUploadBuffers();
+	//		m_ppInVentoryBoxs[i]->Release();
+	//		m_ppInVentoryBoxs[i] = NULL; 
+	//	}
+	//}
+
+	//if (m_ppItems)
+	//{
+	//	for (int i = 0; i < nIventoryCount; ++i)
+	//	{
+	//		m_ppItems[i]->ReleaseShaderVariables();
+	//		m_ppItems[i]->ReleaseUploadBuffers();
+	//		m_ppItems[i]->Release();
+	//		m_ppItems[i] = NULL;
+	//	}
+	//}
+	//if (m_PlayerHP)
+	//{
+	//	m_PlayerHP->ReleaseShaderVariables();
+	//	m_PlayerHP->ReleaseUploadBuffers();
+	//	m_PlayerHP->Release();
+	//	m_PlayerHP = NULL;
+	//}
 
 }
 
@@ -361,6 +716,66 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 
 	OnPrepareRender(pd3dCommandList, 1);
 
+	/*if (m_nMRTSwitch)
+	{
+		for (int i = 0; i < m_nRenderTargetUI; i++)
+		{
+			if (m_pRenderTargetUIs[i])
+			{
+				m_pRenderTargetUIs[i]->Render(pd3dCommandList, 0);
+			}
+		}
+	}
+
+	if (m_pMinimap) m_pMinimap->Render(pd3dCommandList, pCamera);
+	if (m_pBaseUIShader)m_pBaseUIShader->Render(pd3dCommandList, pCamera);
+	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
+	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
+
+
+	for (int i = 0; i < int(nIventoryCount); ++i)
+	{
+		m_ppInVentoryBoxs[i]->Render(pd3dCommandList, 0);
+	}
+
+	if (m_pItemShader)m_pItemShader->Render(pd3dCommandList, pCamera);
+	if (m_pItemTex) m_pItemTex->UpdateShaderVariable(pd3dCommandList, 0);
+
+	for (int i = 0; i < int(nIventoryCount); ++i)
+	{
+		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemReact(CItemMgr::GetInstance()->GetReactIten());
+		m_ppItems[i]->Render(pd3dCommandList, 0);
+	}
+
+	if (m_PlayerHP) m_PlayerHP->Render(pd3dCommandList, pCamera);
+	if (m_pRadiationShader) m_pRadiationShader->Render(pd3dCommandList, pCamera);
+	if (m_RadiationLevels)
+	{
+		int number = CRadationMgr::GetInstance()->GetRaditaion();
+		dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[0])->SetRadiationNumber(int(number / 10));
+		dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[1])->SetRadiationNumber(int(number % 10));
+
+		for (int i = 0; i < 2; ++i)
+		{
+			m_RadiationLevels[i]->Render(pd3dCommandList, pCamera);
+		}
+	}
+
+
+	if (m_pMinimapFog)m_pMinimapFog->Render(pd3dCommandList, pCamera);
+	if (pMinmapFog1) pMinmapFog1->UpdateShaderVariable(pd3dCommandList, 0);
+	if (m_pMapOne)
+	{
+		(m_pMapOne)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		m_pMapOne->Render(pd3dCommandList, pCamera);
+	}
+	if (pMinmapFog2) pMinmapFog2->UpdateShaderVariable(pd3dCommandList, 0);
+	if (m_pMapTwo) 
+	{
+	   (m_pMapTwo)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		m_pMapTwo->Render(pd3dCommandList, pCamera);
+	}*/
 }
 
 void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -390,10 +805,40 @@ void CPostProcessingShader::ReleaseShaderVariables()
 		m_pd3dcbvOrthoCamera->Release();
 	}
 	// --------------------------------------------------------------------------------------------
-		
+	
+	//CRadationMgr::GetInstance()->Destroy();
+	
 	if (m_pTexture) m_pTexture->ReleaseShaderVariables();
 	if (m_pLightTexture) m_pLightTexture->ReleaseShaderVariables();
+	//if (m_pMinimap) m_pMinimap->ReleaseShaderVariables();
 	if (m_pShadowTexture) m_pShadowTexture->ReleaseShaderVariables();
+	if (m_pItemTex) m_pItemTex->ReleaseShaderVariables();
+
+	/*if (m_pRenderTargetUIs)
+	{
+		for (int i = 0; i < m_nRenderTargetUI; ++i)
+			m_pRenderTargetUIs[i]->ReleaseShaderVariables();
+	}
+
+	if (m_pHP) m_pHP->ReleaseShaderVariables();
+	if (m_Radiation) m_Radiation->ReleaseShaderVariables();
+	if (m_HPBAR) m_HPBAR->ReleaseShaderVariables();
+
+	if (m_ppInVentoryBoxs)
+	{
+		for (int i = 0; i < 3; ++i)
+			m_ppInVentoryBoxs[i]->ReleaseShaderVariables();
+	}*/
+
+
+	/*if (m_ppItems)
+	{
+		for (int i = 0; i < 3; ++i)
+			m_ppItems[i]->ReleaseShaderVariables();
+	}
+	if (m_PlayerHP) m_PlayerHP->ReleaseShaderVariables();*/
+
+
 }
 
 void CPostProcessingShader::GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance)

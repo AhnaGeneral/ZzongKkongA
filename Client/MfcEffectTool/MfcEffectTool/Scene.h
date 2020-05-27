@@ -4,12 +4,17 @@
 #pragma once
 
 #include "Shader.h"
+//#include "Shader_BillBoard.h"
 #include "Object_Player.h"
+#include "Object_Nosie.h"
+//#include "Shader_SpecialFog.h"
 using namespace std;
 
 
 class CHeightMapTerrain;
-
+class CSkyBox;
+class CItemBox;
+class CShader_Effect; 
 
 class CScene
 {
@@ -43,6 +48,10 @@ protected:
 	float                       m_fElapsedTime;
 };
 
+
+class CMonster;
+class CDynamicObject;
+
 class CGameScene : public CScene
 {
 public:
@@ -50,7 +59,10 @@ public:
 
 	CPlayer                   * m_pPlayer;						      
 	CHeightMapTerrain         * m_pTerrain;
+	CSkyBox                   * m_pSkyBox;
+	CObjectWater              * m_pCObjectWater; 
 
+	CShader_Effect            * m_pTestEffect; 
 	int                         n_ReactItem; 
 	float                       itemRange;
 
@@ -87,7 +99,34 @@ public:
 	void CheckCollisions();
 	void CheckPlayerCollision();
 
+	//void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList);
+	//void PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index);
+	//void PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index);
+	//void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+
+	//void ChangeTerrainPipeline();
+
 private: 
+
 	bool					    m_bPipelineStateIndex;
-	POINT					    m_ptOldCursorPos;					
+	POINT					    m_ptOldCursorPos;
+							    
+	//int						    m_nDynamicObjectTypeNum;
+	//int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
+	//int						    m_nMonsterTypeNum;      // 몬스터 종류 개수
+
+	//vector<CGameObject*> 	   ** m_pStaticObjLists; 
+	//vector<CDynamicObject*>    ** m_pDynamicObjLists;
+	//vector<CMonster*>          ** m_pMonsterLists;
+	//CSoftParticleShader         * m_pSoftParticleShader;
+	//CShader_SpecialFog          * m_pSpecialFogShader;
+	
+
+public:
+	CCamera                   * m_pShadowCamera;
+	CTexture                  * m_pShadowMap;
+	CTexture                  * m_pDepthTex;
+						      
+	
+
 };

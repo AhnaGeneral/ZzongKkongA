@@ -1,9 +1,13 @@
+//-----------------------------------------------------------------------------
+// File: CGameObject.cpp
+//-----------------------------------------------------------------------------
 #include "stdafx.h"
 #include "Object.h"
 #include "Shader.h"
 #include "Material.h"
 #include "Animation.h"
-
+//#include "Shader_CollisionBox.h"
+//#include ""
 
 int ReadIntegerFromFile(FILE* pInFile)
 {
@@ -76,6 +80,21 @@ void CGameObject::Release()
 		delete m_pAnimationController;
 		m_pAnimationController = NULL;
 	}
+
+	//if (m_pCollisionBoxShader)
+	//{
+	//	m_pCollisionBoxShader->Release();
+	//	m_pCollisionBoxShader = NULL;
+	//}
+
+	//if (m_pBoundingBoxes)
+	//{
+	//	for(int i =0; i<m_nBoundingBoxes; i++)
+	//		m_pBoundingBoxes[i].Release();
+	//	delete[] m_pBoundingBoxes;
+	//	m_pBoundingBoxes = NULL;
+	//}
+
 	if (--m_nReferences <= 0) delete this;
 }
 
@@ -266,8 +285,28 @@ void CGameObject::OnPrepareRender() {}
 void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	m_bRender = true;
+	//if (m_pBoundingBoxes && nPipelineState == 0)
+	//{
+	//	int CullCount = 0;
+	//	//m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
+	//	for (int i = 0; i < m_nBoundingBoxes; i++)
+	//	{
+	//		m_pBoundingBoxes[i].Update(&m_xmf4x4World);
+	//		//m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
+	//		if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox))
+	//		{
+	//			
+	//			CullCount++;
+	//		}
+	//	}
+	/*	if (CullCount >= m_nBoundingBoxes)
+		{*/
+			SetParentRenderState(false);
+	//		return;
+	//	}
+	//}
 
-	UpdateTransform(NULL);
+	//UpdateTransform(NULL);
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
@@ -840,3 +879,94 @@ void CGameObject::PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent)
 	if (pGameObject->m_pSibling) CGameObject::PrintFrameInfo(pGameObject->m_pSibling, pParent);
 	if (pGameObject->m_pChild) CGameObject::PrintFrameInfo(pGameObject->m_pChild, pGameObject);
 }
+
+//CCollisionBox::CCollisionBox()
+//{
+//	m_Center = {0.0f, 0.0f, 0.0f};
+//	m_Extents = { 0.0f, 0.0f, 0.0f };
+//	m_Orientation = { 0.0f, 0.0f, 0.0f, 0.0f };
+//	m_iBoneIndex = 0 ;
+//
+//	m_xmf4x4World = Matrix4x4::Identity();;
+//	m_pParent = NULL;
+//
+//	m_pd3dCollisionBuffer = NULL;
+//	m_pd3dCollisionUploadBuffer = NULL;
+//}
+//
+//CCollisionBox::~CCollisionBox()
+//{
+//}
+//
+//void CCollisionBox::Update(XMFLOAT4X4* Parentworld, XMFLOAT4* ParentOrientation, XMFLOAT3* ParentScale)
+//{
+//	XMFLOAT4X4 world;
+//	if (m_pParent)
+//		world = m_pParent->m_xmf4x4World;
+//	else
+//		world = *Parentworld;
+//
+//	XMFLOAT4 Position = XMFLOAT4(m_Center.x, m_Center.y, m_Center.z, 1);
+//	Position = Vector4::MultiflyMATRIX(Position, world);
+//	
+//	XMFLOAT4 orientation = m_Orientation;
+//	
+//	if (ParentOrientation) orientation = *ParentOrientation;
+//	
+//	if (ParentScale) boundingBox.Extents = Vector3::Multiply(m_Extents, *ParentScale);
+//
+//	boundingBox.Orientation = orientation;
+//	
+//	boundingBox.Center = XMFLOAT3(Position.x, Position.y, Position.z);
+//	
+//}
+//
+//void CCollisionBox::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* ParentWorld)
+//{
+//	if (m_pParent)
+//		m_xmf4x4World = m_pParent->m_xmf4x4World;
+//	else
+//		m_xmf4x4World = *ParentWorld;
+//
+//	XMFLOAT4X4 xmf4x4World;
+//	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(&m_xmf4x4World)));
+//
+//	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
+//
+//}
+//
+//void CCollisionBox::BuildBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext)
+//{
+//
+//	GS_COLLISION_BOX_INFO info;
+//	info.m_xmf3Center = m_Center;
+//	info.m_xmf3Extent = boundingBox.Extents = m_Extents;
+//	info.m_xmf4Orientation = m_Orientation;
+//	m_pd3dCollisionBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, &info,
+//		sizeof(GS_COLLISION_BOX_INFO), D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dCollisionUploadBuffer);
+//
+//	m_d3dCollisionBufferView.BufferLocation = m_pd3dCollisionBuffer->GetGPUVirtualAddress();
+//	m_d3dCollisionBufferView.StrideInBytes = sizeof(GS_COLLISION_BOX_INFO);
+//	m_d3dCollisionBufferView.SizeInBytes = sizeof(GS_COLLISION_BOX_INFO);
+//}
+//
+//void CCollisionBox::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, XMFLOAT4X4* ParentWorld)
+//{
+//	UpdateShaderVariables(pd3dCommandList, ParentWorld);
+//
+//	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[1] = { m_d3dCollisionBufferView };
+//	pd3dCommandList->IASetVertexBuffers(0, _countof(pVertexBufferViews), pVertexBufferViews);
+//	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+//	pd3dCommandList->DrawInstanced(1, 1, 0, 0);
+//}
+//
+//void CCollisionBox::Release()
+//{
+//	if (m_pd3dCollisionUploadBuffer) 
+//		m_pd3dCollisionUploadBuffer->Release();
+//
+//	if (m_pd3dCollisionBuffer)
+//		m_pd3dCollisionBuffer->Release();
+//
+//	//if (m_pParent)m_pParent->Release();
+//}

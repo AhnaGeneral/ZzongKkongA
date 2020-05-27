@@ -708,13 +708,14 @@ void CGameFramework::BuildObjects()
 	if (m_pScene[SCENE_LOBBY]) m_pScene[SCENE_LOBBY]->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 	m_pScene[SCENE_STAGE_OUTDOOR] = new CGameScene();
-	//dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pShadowMap = m_pShadowMap;
-	//dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pDepthTex = m_pDepthTextue;
+	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pShadowMap = m_pShadowMap;
+	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pDepthTex = m_pDepthTextue;
 
 	m_pScene[SCENE_STAGE_OUTDOOR]->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 	CMaterial::PrepareShaders(m_pd3dDevice, m_pd3dCommandList, m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature());
 
+	//dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->PlaceObjectsFromFile(m_pd3dDevice, m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), m_pd3dCommandList);
 
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
@@ -726,11 +727,11 @@ void CGameFramework::BuildObjects()
 	
 	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pPlayer = m_pPlayer = pAirplanePlayer;
 	//CRadationMgr::GetInstance()->SetPlayer(m_pPlayer);
-	//m_pPostProcessingShader->GetMinimap()->SetPlayerPosition(m_pPlayer->GetPositionPointer());
-	//m_pPostProcessingShader->GetMinimap()->CreateShaderVariables(m_pd3dDevice, m_pd3dCommandList);
+	/*m_pPostProcessingShader->GetMinimap()->SetPlayerPosition(m_pPlayer->GetPositionPointer());
+	m_pPostProcessingShader->GetMinimap()->CreateShaderVariables(m_pd3dDevice, m_pd3dCommandList);
 
-	//m_pPostProcessingShader->GetPlayerHP()->SetPlayerHP(m_pPlayer->GetPlayerHPPointer());
-	
+	m_pPostProcessingShader->GetPlayerHP()->SetPlayerHP(m_pPlayer->GetPlayerHPPointer());
+	*/
 	m_pCamera = m_pPlayer->GetCamera();
 
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };

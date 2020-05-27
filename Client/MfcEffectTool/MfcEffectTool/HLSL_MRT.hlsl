@@ -15,6 +15,7 @@ float4 VSPostProcessing(uint nVertexID : SV_VertexID) : SV_POSITION
 float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 {
 	float4 cColor = gtxtScene[int2(position.xy)];
+	float4 fLighted = gtxtLight[int2(position.xy)];
 	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
 	float fDepth = gtxtDepth[int2(position.xy)].g;
 
@@ -33,6 +34,14 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	}
 	float4 cEmmisive = FragmentColor;
 	
+	fLighted = min(fLighted * 2.6f + 0.3f, 2);
+	cColor = cColor * fLighted ;
+
+	float fog = length(cNonLight.rgb) * 1.5f - 0.1f;
+	float4 fogColor = clamp(cNonLight*1.2f,0.2f,1.0f);
+	cColor = lerp(cColor, fogColor, clamp(fog, 0.f, 0.9f));
+	cColor += cEmmisive ;
+
 	return(cColor);
 }
 
