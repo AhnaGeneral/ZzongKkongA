@@ -170,6 +170,7 @@ Texture2D gtxtDryStone_HT  : register(t60);
 Texture2D gtxtSand_HT	   : register(t61);
 
 [domain("quad")]
+[earlydepthstencil]
 DS_TERRAIN_TESSELLATION_OUTPUT DSTerrainTessellation(HS_TERRAIN_TESSELLATION_CONSTANT patchConstant, float2 uv : SV_DomainLocation, OutputPatch<HS_TERRAIN_TESSELLATION_OUTPUT, 25> patch)
 {
 	DS_TERRAIN_TESSELLATION_OUTPUT output = (DS_TERRAIN_TESSELLATION_OUTPUT)0;

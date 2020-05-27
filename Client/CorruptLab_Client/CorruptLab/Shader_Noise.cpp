@@ -105,3 +105,4 @@ D3D12_SHADER_BYTECODE Shader_WaterNoise::CreatePixelShader(ID3DBlob** ppd3dShade
 	return(CShader::CompileShaderFromFile(L"HLSL_waters.hlsl", "WaterPixelShader", "ps_5_1", ppd3dShaderBlob));
 
 }
+

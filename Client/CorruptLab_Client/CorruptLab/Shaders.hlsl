@@ -117,6 +117,11 @@ struct PS_NONLIGHT_MRT_OUTPUT
 	float4 NonLight : SV_TARGET4;
 };
 
+struct PS_EMMISIVE_MRT_OUTPUT
+{
+	float4 EmmisiveMRT : SV_TARGET5;
+};
+
 struct PS_SHADOW_OUTPUT
 {
 	float4 ShadowTex : SV_TARGET0;
