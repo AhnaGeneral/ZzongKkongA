@@ -30,7 +30,8 @@
 #define ROOT_PARAMETER_SHADOWMAP	        18
 #define ROOT_PARAMETER_SCENEDEPTHTEX	    19
 
-#define ROOT_PARAMETER_RADIATIONLEVEL      20 // 터레인 테셀레이션 팩터로 재활용
+#define ROOT_PARAMETER_RADIATIONLEVEL       20 // 터레인 테셀레이션 팩터로 재활용
+#define ROOT_PARAMETER_EFFECT               21
 
 
 

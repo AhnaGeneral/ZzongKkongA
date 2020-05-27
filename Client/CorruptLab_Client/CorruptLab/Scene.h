@@ -14,6 +14,7 @@ using namespace std;
 class CHeightMapTerrain;
 class CSkyBox;
 class CItemBox;
+class CShader_Effect; 
 
 class CScene
 {
@@ -61,6 +62,7 @@ public:
 	CSkyBox                   * m_pSkyBox;
 	CObjectWater              * m_pCObjectWater; 
 
+	CShader_Effect            * m_pTestEffect; 
 	int                         n_ReactItem; 
 	float                       itemRange;
 

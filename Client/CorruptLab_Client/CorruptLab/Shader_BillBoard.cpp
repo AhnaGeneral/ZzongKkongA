@@ -65,6 +65,7 @@ D3D12_SHADER_BYTECODE CSkyBoxShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlo
 }
 
 
+//=============================================================================================================
 D3D12_INPUT_LAYOUT_DESC CSoftParticleShader::CreateInputLayout()
 {
 	UINT nInputElementDescs = 1;
