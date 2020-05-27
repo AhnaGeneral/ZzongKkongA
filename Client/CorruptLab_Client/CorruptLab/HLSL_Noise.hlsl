@@ -147,10 +147,10 @@ void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<GS_BILLBOARD_OUTPUT>
 
 }
 
-PS_NONLIGHT_MRT_OUTPUT NoisePixelShader(GS_BILLBOARD_OUTPUT input)
+PS_EMMISIVE_MRT_OUTPUT NoisePixelShader(GS_BILLBOARD_OUTPUT input)
 {
 
-	PS_NONLIGHT_MRT_OUTPUT output;
+	PS_EMMISIVE_MRT_OUTPUT output;
 
 	float4 noise1 = gtxtNoiseTex.Sample(gSamplerState, input.tex1);
 	float4 noise2 = gtxtNoiseTex.Sample(gSamplerState, input.tex2);
@@ -174,7 +174,7 @@ PS_NONLIGHT_MRT_OUTPUT NoisePixelShader(GS_BILLBOARD_OUTPUT input)
 	float4 fireColor = gtxtBaseColorNoiseTex.Sample(gSamplerClamp, noiseCoords.xy);
 	float4 alphaColor = gtxtAlphaNoiseTex.Sample(gSamplerClamp, noiseCoords.xy);
 	fireColor.a = alphaColor;
-	output.NonLight = fireColor;
+	output.EmmisiveMRT = fireColor;
 
 	float2 f2pos = float2(input.posH.x / 380 / 2 - 1, input.posH.y / 300 / 2 - 1);
 
@@ -190,7 +190,7 @@ PS_NONLIGHT_MRT_OUTPUT NoisePixelShader(GS_BILLBOARD_OUTPUT input)
 		fDepthDistance = saturate(1 - (fDepthDistance / myDepth / 10.f)); // 0.7 //0.8 //0.9 
 		//fDepthDistance *= 100; //0.3  //0.2 // 0.1 ..
 		//fDepthDistance/= 
-		output.NonLight.a -= fDepthDistance;
+		output.EmmisiveMRT.a -= fDepthDistance;
 	}
 	
 	

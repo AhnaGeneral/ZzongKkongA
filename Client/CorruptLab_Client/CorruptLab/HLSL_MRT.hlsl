@@ -37,9 +37,12 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	fLighted = min(fLighted * 2.6f + 0.3f, 2);
 	cColor = cColor * fLighted ;
 
-	float fog = length(cNonLight.rgb) * 1.5f - 0.1f;
-	float4 fogColor = clamp(cNonLight*1.2f,0.2f,1.0f);
-	cColor = lerp(cColor, fogColor, clamp(fog, 0.f, 0.9f));
+	float fog = length(cNonLight.rgb) ;
+
+	float4 fogColor = float4(0.6f,0.6f,0.6f,1);
+	if (fog > 0)
+		fogColor.g *= cNonLight.g / cNonLight.r * 0.9f ;
+	cColor = lerp(cColor, fogColor,fog );
 	cColor += cEmmisive ;
 
 	return(cColor);
