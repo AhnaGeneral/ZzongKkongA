@@ -6,6 +6,8 @@ class CShader_Effect : public CShader
 {
 protected :
 	CTexture* m_pEffectTestTexture = NULL; 
+public :
+
 	CObject_Effect* m_pTestEffectObject = NULL;
 
 public :

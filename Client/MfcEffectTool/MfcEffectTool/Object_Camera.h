@@ -136,12 +136,6 @@ public:
 
 	void SetOffset(XMFLOAT3 xmfOffset) { m_xmf3Offset = xmfOffset; }
 	XMFLOAT3& GetOffset() { return m_xmf3Offset; }
-
-	//virtual void CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList);
-	//virtual void ReleaseShaderVariables();
-	//virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList, int RootParameterIndex = ROOT_PARAMETER_CAMERA);
-
-
 	void SetPlayer(CPlayer *pPlayer) { m_pPlayer = pPlayer; }
 	CPlayer *GetPlayer() { return(m_pPlayer); }
 

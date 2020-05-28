@@ -75,7 +75,7 @@ public:
 
 	void PurifyMonster();
 
-
+	void moveEffectTexture(XMFLOAT3 pos); 
 	virtual ID3D12RootSignature* CreateGraphicsRootSignature(ID3D12Device* pd3dDevice);
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
@@ -99,27 +99,11 @@ public:
 	void CheckCollisions();
 	void CheckPlayerCollision();
 
-	//void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList);
-	//void PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index);
-	//void PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index);
-	//void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
-
-	//void ChangeTerrainPipeline();
-
 private: 
 
 	bool					    m_bPipelineStateIndex;
 	POINT					    m_ptOldCursorPos;
 							    
-	//int						    m_nDynamicObjectTypeNum;
-	//int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
-	//int						    m_nMonsterTypeNum;      // 몬스터 종류 개수
-
-	//vector<CGameObject*> 	   ** m_pStaticObjLists; 
-	//vector<CDynamicObject*>    ** m_pDynamicObjLists;
-	//vector<CMonster*>          ** m_pMonsterLists;
-	//CSoftParticleShader         * m_pSoftParticleShader;
-	//CShader_SpecialFog          * m_pSpecialFogShader;
 	
 
 public:

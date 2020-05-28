@@ -17,9 +17,17 @@ struct GS_EFFECT_INPUT
 	float3 positionW : POSITION;
 };
 
+cbuffer cbEffectElementBuffer : register(b20)
+{
+	float3 tranlationPos : packoffset (c0); 
+}
+
 GS_EFFECT_INPUT EffectVertexShader(VS_EFFECT_INPUT input)
 {
 	GS_EFFECT_INPUT output;
+	input.position.x = tranlationPos.x; 
+	input.position.y = tranlationPos.y;
+	input.position.z = tranlationPos.z;
 
 	output.positionW = input.position;
 

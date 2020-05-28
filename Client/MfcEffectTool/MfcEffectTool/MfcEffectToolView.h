@@ -47,9 +47,9 @@ public:
 	virtual void OnInitialUpdate();
 	
 public:
-	CGameFramework gGameFramework;
+	CGameFramework *gGameFramework;
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	EffectTool* m_peffectTool1 = NULL; 
+	EffectTool* m_peffectTool1;
 
 
 };

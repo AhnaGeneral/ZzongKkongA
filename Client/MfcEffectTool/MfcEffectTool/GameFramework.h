@@ -126,13 +126,13 @@ public:
 	CTexture                          * m_pFinalTexture;
 	CTexture                          * m_pShadowMap;
 	CTexture                          * m_pDepthTextue; 
+	CScene                            * m_pScene[2];
 
 private:
 	CPostProcessingShader             * m_pPostProcessingShader;
 	CLightTarget                      * m_pLightProcessingShader; 
 	Shader_ShadowMRT                  * m_pShadowShader; 
 
-	CScene                            * m_pScene[2];
 	//UINT                                m_SceneItemReact;
 
 	CPlayer                           * m_pPlayer ;

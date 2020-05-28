@@ -188,7 +188,7 @@ BOOL CMfcEffectToolApp::OnIdle(LONG lCount)
 	CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CMfcEffectToolView* pToolview = dynamic_cast<CMfcEffectToolView*>(pMainFrame->m_mainSplite.GetPane(0, 1));
 
-	pToolview->gGameFramework.FrameAdvanceStageOutdoor(); 
+	pToolview->gGameFramework->FrameAdvanceStageOutdoor(); 
 
 	return CWinApp::OnIdle(0);
 }

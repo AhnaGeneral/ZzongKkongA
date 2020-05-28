@@ -20,7 +20,9 @@
 #define IDC_EDIT3                       1022
 #define IDC_BUTTON3                     1024
 #define IDC_BUTTON4                     1025
+#define IDC_FristValue_PosX_UP          1025
 #define IDC_BUTTON5                     1028
+#define IDC_FristValue_PosX_Down        1028
 #define IDC_LIST5                       1034
 #define IDC_CHECK4                      1107
 #define IDC_CHECK5                      1116

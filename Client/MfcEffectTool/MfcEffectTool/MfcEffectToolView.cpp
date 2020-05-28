@@ -118,7 +118,8 @@ void CMfcEffectToolView::OnInitialUpdate()
 	hInst = AfxGetInstanceHandle();
 	m_nHnd = m_hWnd;
 
-	gGameFramework.OnCreate(hInst, m_nHnd);
+	gGameFramework = new CGameFramework(); 
+	gGameFramework->OnCreate(hInst, m_nHnd);
 
 	CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	MyForm* pForm = dynamic_cast<MyForm*>(pMainFrame->m_mainSplite.GetPane(0, 0));

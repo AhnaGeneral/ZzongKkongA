@@ -103,7 +103,7 @@ void CShader_Effect::CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 	m_pEffectTestTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0); 
 	m_pEffectTestTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/fire01.dds", 0);
 
-	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pEffectTestTexture, ROOT_PARAMETER_EFFECT, false);
+	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pEffectTestTexture, ROOT_PARAMETER_EFFECT_TEX, false);
 }
 
 void CShader_Effect::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets)
@@ -155,7 +155,7 @@ void CShader_Effect::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1); 
 
 	m_pTestEffectObject = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-		XMFLOAT3(394, 30.0f, 80.0f), this);
+		XMFLOAT3(0,0,0), this);
 
 	CreateTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature); 
 	ReleaseUploadBuffers(); 
@@ -164,8 +164,9 @@ void CShader_Effect::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 void CShader_Effect::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	OnPrepareRender(pd3dCommandList); 
-	m_pEffectTestTexture->UpdateShaderVariable(pd3dCommandList, 0); 
 
+	m_pEffectTestTexture->UpdateShaderVariable(pd3dCommandList, 0); 
+	m_pTestEffectObject->UpdateShaderVariable(pd3dCommandList, nullptr);
 	m_pTestEffectObject->Render(pd3dCommandList, pCamera); 
 }
 

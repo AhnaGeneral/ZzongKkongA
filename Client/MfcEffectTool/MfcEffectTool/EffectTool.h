@@ -1,7 +1,9 @@
 ﻿#pragma once
 
-
 // EffectTool 대화 상자
+
+class CMainFrame; 
+class CMfcEffectToolView; 
 
 class EffectTool : public CDialogEx
 {
@@ -21,10 +23,19 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	//afx_msg void ClickPosUp();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnBnClickedButton45();
+
 	float m_CurrentPosX;
 	float m_CurrentPosY;
 	float m_CurrentPosZ;
+
+	float m_FristValue_PosX;
+	float m_FristValue_PosY;
+	float m_FristValue_PosZ;
+
+	CMainFrame* pMainFrame = nullptr; 
+	CMfcEffectToolView* pForm = nullptr; 
+
+	afx_msg void OnBnClickedFristvaluePosxUp();
+	afx_msg void OnBnClickedFristvaluePosxDown();
 };
