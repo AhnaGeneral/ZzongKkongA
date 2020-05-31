@@ -4,14 +4,9 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include "Object_Terrain.h"
-//#include "Mgr_Collision.h"
-//#include "Object_ItemBox.h"
-//#include "Object_DynamicObj.h"
-//#include "Monster_Yangmal.h"
-//#include "Mgr_Item.h"
-//#include "Mgr_Radiation.h"
-//#include "Object_DrugMaker.h"
 #include "Shader_Effect.h"
+#include "Mgr_TextureEffect.h"
+#include "Mgr_MeshEffect.h"
 
 
 CGameScene::CGameScene()
@@ -25,7 +20,7 @@ CGameScene::CGameScene()
 
 	n_ReactItem = 3;
 	//CItemMgr::GetInstance()->SetReactItem(ITEM_NONE);
-
+	
 	itemRange = 0.0f;
 
 	m_bPipelineStateIndex = 0;
@@ -65,8 +60,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,
 		_T("Geometry/OneStageTerrain.raw"), 257, 257, 17, 17, xmf3Scale, xmf4Color, m_pShadowMap);
 	
-	m_pTestEffect = new CShader_Effect(); 
-	m_pTestEffect->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, NULL, m_pTerrain);
+	CMgr_EffectTex::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
@@ -114,7 +108,7 @@ void CGameScene::CheckPlayerCollision()
 
 void CGameScene::moveEffectTexture(XMFLOAT3 pos)
 {
-	m_pTestEffect->m_pTestEffectObject->TranslationUpdate(pos);
+	CMgr_EffectTex::GetInstance()->SetPosition(); 
 }
 
 ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
@@ -580,7 +574,8 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
 
 	
-	if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
+	//CMgr_EffectTex::GetInstance()->Render(pd3dCommandList, pCamera);
+	CMgr_EffectMesh::GetInstance()->Render(pd3dCommandList, pCamera);
 
 }
 
@@ -603,6 +598,11 @@ void CGameScene::Update(float fTimeElapsed)
 	m_pPlayer->Animate(fTimeElapsed, NULL);
 	//CItemMgr::GetInstance()->Update(fTimeElapsed);
 	//CRadationMgr::GetInstance()->Update(m_fElapsedTime);
+}
+
+void CGameScene::EffectLoader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CMgr_EffectMesh::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 }
 
 void CGameScene::ItemBoxCheck()

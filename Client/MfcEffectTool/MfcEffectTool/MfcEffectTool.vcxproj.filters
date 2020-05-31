@@ -65,6 +65,12 @@
     <Filter Include="Client\Shader\HLSL">
       <UniqueIdentifier>{2dd1d0db-b8cc-41bf-a006-82cebd8b4535}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Client\MgrEffect">
+      <UniqueIdentifier>{01e1bd88-6b6a-4985-8414-00c65488ad1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client\EffectComponent">
+      <UniqueIdentifier>{0980e890-7f1e-4cba-b9dc-50e2a42c3a8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool2.h">
@@ -178,11 +184,17 @@
     <ClInclude Include="Timer.h">
       <Filter>Client\Timer</Filter>
     </ClInclude>
-    <ClInclude Include="Object_Effect.h">
-      <Filter>Client\Component\00.Object</Filter>
-    </ClInclude>
     <ClInclude Include="Shader_Effect.h">
-      <Filter>Client\Shader</Filter>
+      <Filter>Client\EffectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Mgr_TextureEffect.h">
+      <Filter>Client\EffectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_Effect.h">
+      <Filter>Client\EffectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Mgr_MeshEffect.h">
+      <Filter>Client\EffectComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -276,11 +288,17 @@
     <ClCompile Include="Shader-Terrain.cpp">
       <Filter>Client\Shader</Filter>
     </ClCompile>
-    <ClCompile Include="Object_Effect.cpp">
-      <Filter>Client\Component\00.Object</Filter>
+    <ClCompile Include="Mgr_TextureEffect.cpp">
+      <Filter>Client\EffectComponent</Filter>
     </ClCompile>
     <ClCompile Include="Shader_Effect.cpp">
-      <Filter>Client\Shader</Filter>
+      <Filter>Client\EffectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_Effect.cpp">
+      <Filter>Client\EffectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr_MeshEffect.cpp">
+      <Filter>Client\EffectComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -330,7 +348,7 @@
       <Filter>Client\Shader\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL_Effect.hlsl">
-      <Filter>Client\Shader\HLSL</Filter>
+      <Filter>Client\EffectComponent</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

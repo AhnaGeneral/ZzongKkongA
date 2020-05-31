@@ -87,7 +87,7 @@ public:
 	virtual void DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Update(float fTimeElapsed);
-
+	void EffectLoader(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	void ItemBoxCheck();
 
 	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd);

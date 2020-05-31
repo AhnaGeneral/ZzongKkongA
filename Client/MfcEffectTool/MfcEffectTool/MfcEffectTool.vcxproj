@@ -201,6 +201,8 @@
     <ClInclude Include="MfcEffectTool.h" />
     <ClInclude Include="MfcEffectToolDoc.h" />
     <ClInclude Include="MfcEffectToolView.h" />
+    <ClInclude Include="Mgr_MeshEffect.h" />
+    <ClInclude Include="Mgr_TextureEffect.h" />
     <ClInclude Include="MyForm.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Object_Camera.h" />
@@ -238,6 +240,8 @@
     <ClCompile Include="MfcEffectTool.cpp" />
     <ClCompile Include="MfcEffectToolDoc.cpp" />
     <ClCompile Include="MfcEffectToolView.cpp" />
+    <ClCompile Include="Mgr_MeshEffect.cpp" />
+    <ClCompile Include="Mgr_TextureEffect.cpp" />
     <ClCompile Include="MyForm.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Object_Camera.cpp" />

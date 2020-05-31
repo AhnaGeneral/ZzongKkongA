@@ -711,11 +711,14 @@ void CGameFramework::BuildObjects()
 	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pShadowMap = m_pShadowMap;
 	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pDepthTex = m_pDepthTextue;
 
+
 	m_pScene[SCENE_STAGE_OUTDOOR]->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 	CMaterial::PrepareShaders(m_pd3dDevice, m_pd3dCommandList, m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature());
 
+
 	//dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->PlaceObjectsFromFile(m_pd3dDevice, m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), m_pd3dCommandList);
+	static_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->EffectLoader(m_pd3dDevice,  m_pd3dCommandList);
 
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 

@@ -6,8 +6,9 @@ CObject_Effect::CObject_Effect()
 
 CObject_Effect::CObject_Effect(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 position, CShader* pShader)
 {
+	m_TranslationPos = position;
 	m_pd3dPositionBuffer =
-		::CreateBufferResource(pd3dDevice, pd3dCommandList, &position, sizeof(XMFLOAT3),
+		::CreateBufferResource(pd3dDevice, pd3dCommandList, &m_TranslationPos, sizeof(XMFLOAT3),
 			D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dPositionUploadBuffer);
 
 	m_d3dPositionBufferView.BufferLocation = m_pd3dPositionBuffer->GetGPUVirtualAddress();
@@ -55,6 +56,8 @@ void CObject_Effect::ReleaseShaderVariables()
 
 void CObject_Effect::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
 {
+	//m_TranslationPos = m_TranslationPos;
+	//*(m_pcbEffectElementBuffer->TranslationPos) = m_TranslationPos;
 	::memcpy(&m_pcbEffectElementBuffer->TranslationPos, &m_TranslationPos, sizeof(XMFLOAT3));
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dEffectElementBuffer->GetGPUVirtualAddress(); 
@@ -69,7 +72,3 @@ void CObject_Effect::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera*
 	pd3dCommandList->DrawInstanced(1, 1, 0, 0);
 }
 
-void CObject_Effect::TranslationUpdate(XMFLOAT3 pos)
-{
-	m_TranslationPos = pos; 
-}
