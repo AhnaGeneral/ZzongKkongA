@@ -209,6 +209,12 @@ void CMonster::GetPurified()
 	m_bIsPurified = true;
 }
 
+void CMonster::OnInitialize()
+{
+	//m_pAnimationController = new CAnimationController();
+	//*m_pAnimationController = *(m_pChild->m_pAnimationController);
+}
+
 void CMonster::GetDamaage(int iDamage)
 {
 	if (m_bIsPurified) return;

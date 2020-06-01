@@ -5,7 +5,7 @@
 #include "stdafx.h"
 #include "GameFramework.h"
 #include "Mgr_Radiation.h"
-
+#include "Scene_Game2.h"
 CGameFramework::CGameFramework()
 {
 	m_pdxgiFactory = NULL;
@@ -51,7 +51,7 @@ CGameFramework::CGameFramework()
 	for (int i = 0; i < m_nSwapChainBuffers; i++) 
 		m_nFenceValues[i] = 0;
 
-	m_pScene[SCENE_LOBBY] = m_pScene[SCENE_STAGE_OUTDOOR]= NULL;
+	m_pScene[SCENE_LOBBY] = m_pScene[SCENE_STAGE_OUTDOOR]= m_pScene[SCENE_STAGE_INDOOR] = NULL;
 
 	m_nSceneState = 0;
 
@@ -567,7 +567,7 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 
 void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	if (m_pScene[SCENE_STAGE_OUTDOOR])
+	if (m_pScene[SCENE_STAGE_OUTDOOR] && m_nSceneState ==SCENE_STAGE_OUTDOOR)
 		m_pScene[SCENE_STAGE_OUTDOOR]->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	switch (nMessageID)
 	{
@@ -582,6 +582,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				m_nSceneState = SCENE_STAGE_OUTDOOR;
 			break;
 		case VK_F2:
+			if (m_nSceneState == SCENE_STAGE_OUTDOOR)
+				m_nSceneState = SCENE_STAGE_INDOOR;
 			break;
 		case VK_F3:
 			m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
@@ -707,6 +709,8 @@ void CGameFramework::BuildObjects()
 	m_pScene[SCENE_LOBBY] = new CLobbyScene();
 	if (m_pScene[SCENE_LOBBY]) m_pScene[SCENE_LOBBY]->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
+
+	//GameScene1-----------------------------------------------------------------------------------------
 	m_pScene[SCENE_STAGE_OUTDOOR] = new CGameScene();
 	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pShadowMap = m_pShadowMap;
 	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pDepthTex = m_pDepthTextue;
@@ -734,6 +738,17 @@ void CGameFramework::BuildObjects()
 	
 	m_pCamera = m_pPlayer->GetCamera();
 
+
+
+	/// <summary>
+	/// GameScene2--------------------------------------------------------------------------
+	/// </summary>
+
+	m_pScene[SCENE_STAGE_INDOOR] = new CGameScene2();
+	m_pScene[SCENE_STAGE_INDOOR]->SetGraphicsRootSignature(m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature());
+	dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pPlayer = m_pPlayer;
+
+
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandList->Close();
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
@@ -756,6 +771,10 @@ void CGameFramework::ReleaseObjects()
 
 	if (m_pScene[SCENE_STAGE_OUTDOOR]) m_pScene[SCENE_STAGE_OUTDOOR]->ReleaseObjects();
 	if (m_pScene[SCENE_STAGE_OUTDOOR]) delete m_pScene[SCENE_STAGE_OUTDOOR];
+
+
+	if (m_pScene[SCENE_STAGE_INDOOR]) m_pScene[SCENE_STAGE_INDOOR]->ReleaseObjects();
+	if (m_pScene[SCENE_STAGE_INDOOR]) delete m_pScene[SCENE_STAGE_INDOOR];
 
 	if (m_pPostProcessingShader)
 	{
@@ -820,15 +839,110 @@ void CGameFramework::ShadowMapRender()
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenShadowBuffers, m_pd3dOffScreenShadowBufferCPUHandles, TRUE, &m_d3dShadowDsvDepthStencilBufferCPUHandle);
 
 
-		for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
-			m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenShadowBufferCPUHandles[i], pfClearColor, 0, NULL);
-
+	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
+		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenShadowBufferCPUHandles[i], pfClearColor, 0, NULL);
+	
+	if(m_nSceneState == SCENE_STAGE_OUTDOOR)
 		dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->DepthRender(m_pd3dCommandList, m_pCamera);
+	else if(m_nSceneState == SCENE_STAGE_INDOOR)
+		dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_INDOOR])->DepthRender(m_pd3dCommandList, m_pCamera);
+	
+	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 
-		for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
-			::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 
+}
+void CGameFramework::FrameAdvanceStageIndoor()
+{
+	m_GameTimer.Tick(0.0f);
 
+	ProcessInput();
+
+	m_pScene[SCENE_STAGE_INDOOR]->Update(m_GameTimer.GetTimeElapsed());
+
+	HRESULT hResult = m_pd3dCommandAllocator->Reset();
+	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
+
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i],
+			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
+
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
+		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[i], pfClearColor, 0, NULL);
+
+	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+
+	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenRenderTargetBuffers, m_pd3dOffScreenRenderTargetBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
+
+	m_pScene[SCENE_STAGE_INDOOR]->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2s에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
+													// write 용으로 사용하고 있었음
+
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 되? 
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i],
+			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+	//---------------------------------------------------------------------------------------------------------------------
+	ShadowMapRender();
+	//---------------------------------------------------------------------------------------------------------------------
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],
+			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenLightBufferCPUHandles[i], pfClearColor, 0, NULL);
+
+	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenLightBuffers, m_pd3dOffScreenLightBufferCPUHandles, TRUE, NULL);
+
+	m_pLightProcessingShader->Render(m_pd3dCommandList, m_pCamera);
+
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],
+			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+	//---------------------------------------------------------------------------------------------------------------------
+
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	m_pd3dCommandList->ClearRenderTargetView(m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
+	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
+
+	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera); // 화면 좌표계에 해당하는 투영좌표계의 좌표로 인해 사각형을하나 그려서 그림을 복사 해서 그림을 그려라.
+																   // 스크린 좌표계 !! 
+
+#ifdef _WITH_PLAYER_TOP
+	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+#endif
+
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
+	hResult = m_pd3dCommandList->Close();
+
+	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
+	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
+	WaitForGpuComplete();
+
+#ifdef _WITH_PRESENT_PARAMETERS
+	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
+	dxgiPresentParameters.DirtyRectsCount = 0;
+	dxgiPresentParameters.pDirtyRects = NULL;
+	dxgiPresentParameters.pScrollRect = NULL;
+	dxgiPresentParameters.pScrollOffset = NULL;
+	m_pdxgiSwapChain->Present1(1, 0, &dxgiPresentParameters);
+#else
+#ifdef _WITH_SYNCH_SWAPCHAIN
+	m_pdxgiSwapChain->Present(1, 0);
+#else
+	m_pdxgiSwapChain->Present(0, 0);
+	//버퍼두개를 교환하는 것을 present라고한다.
+#endif
+#endif
+
+	MoveToNextFrame();
+
+	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
+	::SetWindowText(m_hWnd, m_pszFrameRate);
 }
 //#define _WITH_PLAYER_TOP
 

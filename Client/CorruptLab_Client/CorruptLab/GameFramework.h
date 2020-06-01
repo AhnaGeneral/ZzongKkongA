@@ -45,6 +45,7 @@ public:
 
 	void ProcessInput();
 	void ShadowMapRender();
+	void FrameAdvanceStageIndoor();
 	void FrameAdvanceStageOutdoor();
 	void FrameAdvanceLobby();
 	UINT GetSceneState() { return m_nSceneState; }
@@ -132,7 +133,7 @@ private:
 	CLightTarget                      * m_pLightProcessingShader; 
 	Shader_ShadowMRT                  * m_pShadowShader; 
 
-	CScene                            * m_pScene[2];
+	CScene                            * m_pScene[3];
 	//UINT                                m_SceneItemReact;
 
 	CPlayer                           * m_pPlayer ;

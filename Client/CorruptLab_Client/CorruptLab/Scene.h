@@ -28,6 +28,7 @@ public:
 
 	virtual ID3D12RootSignature* CreateGraphicsRootSignature(ID3D12Device* pd3dDevice) = 0;
 	ID3D12RootSignature* GetGraphicsRootSignature() { return(m_pd3dGraphicsRootSignature); }
+	void SetGraphicsRootSignature(ID3D12RootSignature* _root) { m_pd3dGraphicsRootSignature = _root; }
 	void SetGraphicsRootSignature(ID3D12GraphicsCommandList* pd3dCommandList) 
 	{ pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature); }
 
@@ -106,17 +107,19 @@ public:
 
 	void ChangeTerrainPipeline();
 
-private: 
+protected:
 
 	bool					    m_bPipelineStateIndex;
 	POINT					    m_ptOldCursorPos;
-							    
 	int						    m_nDynamicObjectTypeNum;
 	int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
-	int						    m_nMonsterTypeNum;      // 몬스터 종류 개수
-
 	vector<CGameObject*> 	   ** m_pStaticObjLists; 
 	vector<CDynamicObject*>    ** m_pDynamicObjLists;
+
+
+private: 
+	int						    m_nMonsterTypeNum;      // 몬스터 종류 개수
+
 	vector<CMonster*>          ** m_pMonsterLists;
 	CSoftParticleShader         * m_pSoftParticleShader;
 	CShader_SpecialFog          * m_pSpecialFogShader;

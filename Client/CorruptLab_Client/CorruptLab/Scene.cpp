@@ -703,16 +703,15 @@ void CGameScene::PurifyMonster()
 void CGameScene::AnimateObjects(float fTimeElapsed)
 {
 
-	if (m_pMonsterLists) // 몬스터 Render
-	{
-		for (int i = 0; i < m_nMonsterTypeNum; i++)
-		{
-			for (auto Obj : *m_pMonsterLists[i])
-			{
-				Obj->Animate(fTimeElapsed, NULL);
-			}
-		}
-	}
+	//if (m_pMonsterLists) // 몬스터 Render
+	//{
+	//	for (int i = 0; i < m_nMonsterTypeNum; i++)
+	//	{
+	//		for (auto Obj : *m_pMonsterLists[i])
+	//		{
+	//		}
+	//	}
+	//}
 
 }
 
@@ -768,6 +767,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 				Obj->SetPlayerPosition(playerpos);
 
 				Obj->Update(m_fElapsedTime, NULL, m_pTerrain);
+				Obj->Animate(m_fElapsedTime, NULL);
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 0);
 			}
@@ -865,3 +865,4 @@ CScene::~CScene()
 	//if (m_pd3dGraphicsRootSignature)
 	//	m_pd3dGraphicsRootSignature->Release();
 }
+

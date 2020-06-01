@@ -54,6 +54,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				gGameFramework.FrameAdvanceStageOutdoor();
 				break;
 			case SCENE_STAGE_INDOOR:
+				gGameFramework.FrameAdvanceStageIndoor();
 				break;
 			case SCENE_CLEAR:
 				break;

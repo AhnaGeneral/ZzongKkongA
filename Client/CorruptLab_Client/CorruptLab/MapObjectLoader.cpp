@@ -252,6 +252,7 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		m_pMonsterLists[index]->emplace_back(pGameObject);
 		//m_pMonsterLists[index]->
 	}
+	//pModel->m_pAnimationController = NULL;
 	if (pInFile) fclose(pInFile);
 }
 

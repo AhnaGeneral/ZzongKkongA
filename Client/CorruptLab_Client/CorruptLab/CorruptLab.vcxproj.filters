@@ -164,13 +164,16 @@
     <Filter Include="04.Shader\11.Shader_Effect">
       <UniqueIdentifier>{fa06a524-f8f1-4fae-b2de-af451786ed32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Scene\00.Scene">
+      <UniqueIdentifier>{f19cc1e0-13b7-4b91-b475-6e5423cf6014}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Scene\01.Scene_Game2">
+      <UniqueIdentifier>{b9ad7e3b-a281-4137-b946-f1027606568a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
       <Filter>01.FrameWork</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>02.Scene</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>00.Basic</Filter>
@@ -343,6 +346,12 @@
     <ClInclude Include="Shader_Effect.h">
       <Filter>04.Shader\11.Shader_Effect</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>02.Scene\00.Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Game2.h">
+      <Filter>02.Scene\01.Scene_Game2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -350,9 +359,6 @@
     </ClCompile>
     <ClCompile Include="GameFramework.cpp">
       <Filter>01.FrameWork</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>02.Scene</Filter>
     </ClCompile>
     <ClCompile Include="CorruptLab.cpp">
       <Filter>00.Basic</Filter>
@@ -506,6 +512,12 @@
     </ClCompile>
     <ClCompile Include="Shader_Effect.cpp">
       <Filter>04.Shader\11.Shader_Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>02.Scene\00.Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Game2.cpp">
+      <Filter>02.Scene\01.Scene_Game2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -863,7 +863,6 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile)
 		{
 			break;
 		}
-
 		if (nAnimations == m_pAnimationController->m_nAnimationSets)
 			break;
 	}

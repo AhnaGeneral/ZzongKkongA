@@ -30,6 +30,7 @@ public:
 protected:
 	//GameContents
 
+	CAnimationController* m_pAnimationController = NULL;
 	int				m_iMaxHP;
 	int				m_iCurrentHP;
 	int				m_iAtt ;
@@ -61,6 +62,7 @@ public:
 	virtual void GoodUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
 	virtual void GetPurified();
 
+	virtual void OnInitialize();
 	void GetDamaage(int iDamage);
 	void GetFullHP() { m_iCurrentHP = m_iMaxHP; }
 	///
