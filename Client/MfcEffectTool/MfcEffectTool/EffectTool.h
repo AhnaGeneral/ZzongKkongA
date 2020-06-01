@@ -33,6 +33,12 @@ public:
 	float m_FristValue_PosX;
 	float m_FristValue_PosY;
 	float m_FristValue_PosZ;
+	float m_FirstValue_RotX;
+	float m_FirstValue_RotY;
+	float m_FirstValue_RotZ;
+	float m_FirstValue_CX;
+	float m_FirstValue_CY;
+	float m_FirstValue_CZ;
 	//final value ---------------------------
 	float m_FinalValue_PosX;
 	float m_FinalValue_PosY;
@@ -43,16 +49,31 @@ public:
 	float m_FinalValue_CX;
 	float m_FinalValue_CY;
 	float m_FinalValue_CZ;
-	//---------------------------------------
+	//-----------------------------------------
+
 	CMainFrame* pMainFrame = nullptr; 
 	CMfcEffectToolView* pForm = nullptr; 
 
+	//-----------------------------------------
 	afx_msg void OnBnClickedFristvaluePosxUp();
 	afx_msg void OnBnClickedFristvaluePosxDown();
 	afx_msg void OnBnClickedFristvaluePosyUp();
 	afx_msg void OnBnClickedFristvaluePosyDown();
 	afx_msg void OnBnClickedFristvaluePoszUp();
 	afx_msg void OnBnClickedFristvaluePoszDown();
+	afx_msg void OnBnClickedFristvalueRotxUp();
+	afx_msg void OnBnClickedFristvalueRotxDown();
+	afx_msg void OnBnClickedFristvalueRotyUp();
+	afx_msg void OnBnClickedFristvalueRotyDown();
+	afx_msg void OnBnClickedFristvalueRotzUp();
+	afx_msg void OnBnClickedFristvalueRotzDown();
+	afx_msg void OnBnClickedFristvalueCxUp();
+	afx_msg void OnBnClickedFristvalueCxDown();
+	afx_msg void OnBnClickedFristvalueCyUp();
+	afx_msg void OnBnClickedFristvalueCyDown();
+	afx_msg void OnBnClickedFristvalueCzUp();
+	afx_msg void OnBnClickedFristvalueCzDowns();
+
 	//----------------------------------------
 	afx_msg void OnBnClickedFinalvaluePosxUp();
 	afx_msg void OnBnClickedFinalvaluePosxDown();
@@ -72,5 +93,7 @@ public:
 	afx_msg void OnBnClickedFinalvalueCyDown();
 	afx_msg void OnBnClickedFinalvalueCzUp();
 	afx_msg void OnBnClickedFinalvalueCzDown();
+
+
 
 };

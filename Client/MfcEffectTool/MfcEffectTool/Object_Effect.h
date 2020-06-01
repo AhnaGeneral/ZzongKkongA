@@ -4,7 +4,8 @@
 struct CB_EFFECT_ELEMENT
 {
 	XMFLOAT3 TranslationPos; 
-
+	float Sizex; 
+	float SizeZ; 
 };
 class CObject_Effect : public CGameObject
 {
@@ -31,4 +32,6 @@ protected:
 
 public:
 	XMFLOAT3                    m_TranslationPos = XMFLOAT3(30.0f, 0.0f ,40.0f); 
+	float                       m_sizeX;
+	float                       m_sizeZ; 
 };

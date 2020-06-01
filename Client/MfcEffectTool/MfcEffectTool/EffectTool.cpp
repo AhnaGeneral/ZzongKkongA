@@ -32,6 +32,12 @@ EffectTool::EffectTool(CWnd* pParent /*=nullptr*/)
 	, m_FinalValue_CX(0)
 	, m_FinalValue_CY(0)
 	, m_FinalValue_CZ(0)
+	, m_FirstValue_RotX(0)
+	, m_FirstValue_RotY(0)
+	, m_FirstValue_RotZ(0)
+	, m_FirstValue_CX(0)
+	, m_FirstValue_CY(0)
+	, m_FirstValue_CZ(0)
 {
 
 }
@@ -58,6 +64,12 @@ void EffectTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT18, m_FinalValue_CX);
 	DDX_Text(pDX, IDC_EDIT19, m_FinalValue_CY);
 	DDX_Text(pDX, IDC_EDIT20, m_FinalValue_CZ);
+	DDX_Text(pDX, IDC_EDIT6, m_FirstValue_RotX);
+	DDX_Text(pDX, IDC_EDIT7, m_FirstValue_RotY);
+	DDX_Text(pDX, IDC_EDIT8, m_FirstValue_RotZ);
+	DDX_Text(pDX, IDC_EDIT9, m_FirstValue_CX);
+	DDX_Text(pDX, IDC_EDIT10, m_FirstValue_CY);
+	DDX_Text(pDX, IDC_EDIT11, m_FirstValue_CZ);
 }
 
 
@@ -86,6 +98,18 @@ BEGIN_MESSAGE_MAP(EffectTool, CDialogEx)
 	ON_BN_CLICKED(IDC_FinalValue_CY_Down, &EffectTool::OnBnClickedFinalvalueCyDown)
 	ON_BN_CLICKED(IDC_FinalValue_CZ_UP, &EffectTool::OnBnClickedFinalvalueCzUp)
 	ON_BN_CLICKED(IDC_FinalValue_CZ_Down, &EffectTool::OnBnClickedFinalvalueCzDown)
+	ON_BN_CLICKED(IDC_FristValue_RotX_UP, &EffectTool::OnBnClickedFristvalueRotxUp)
+	ON_BN_CLICKED(IDC_FristValue_RotX_Down, &EffectTool::OnBnClickedFristvalueRotxDown)
+	ON_BN_CLICKED(IDC_FristValue_RotY_UP, &EffectTool::OnBnClickedFristvalueRotyUp)
+	ON_BN_CLICKED(IDC_FristValue_RotY_Down, &EffectTool::OnBnClickedFristvalueRotyDown)
+	ON_BN_CLICKED(IDC_FristValue_RotZ_UP, &EffectTool::OnBnClickedFristvalueRotzUp)
+	ON_BN_CLICKED(IDC_FristValue_RotZ_Down, &EffectTool::OnBnClickedFristvalueRotzDown)
+	ON_BN_CLICKED(IDC_FristValue_CX_UP, &EffectTool::OnBnClickedFristvalueCxUp)
+	ON_BN_CLICKED(IDC_FristValue_CX_Down, &EffectTool::OnBnClickedFristvalueCxDown)
+	ON_BN_CLICKED(IDC_FristValue_CY_UP, &EffectTool::OnBnClickedFristvalueCyUp)
+	ON_BN_CLICKED(IDC_FristValue_CY_Down, &EffectTool::OnBnClickedFristvalueCyDown)
+	ON_BN_CLICKED(IDC_FristValue_CZ_Up, &EffectTool::OnBnClickedFristvalueCzUp)
+	ON_BN_CLICKED(IDC_FristValue_CZ_Downs, &EffectTool::OnBnClickedFristvalueCzDowns)
 END_MESSAGE_MAP()
 
 
@@ -105,7 +129,7 @@ BOOL EffectTool::OnInitDialog()
 }
 
 
-
+// [ 초기값 컨트롤 함수 ] ========================================================================
 void EffectTool::OnBnClickedFristvaluePosxUp()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
@@ -165,7 +189,83 @@ void EffectTool::OnBnClickedFristvaluePoszDown()
 	UpdateData(false);
 }
 
+
+void EffectTool::OnBnClickedFristvalueRotxUp()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueRotxDown()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueRotyUp()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueRotyDown()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueRotzUp()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueRotzDown()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueCxUp()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueCxDown()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueCyUp()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueCyDown()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueCzUp()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedFristvalueCzDowns()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+
+//=============================================================================================
 // [ 변환값 컨트롤 함수 ] ========================================================================
+//=============================================================================================
 void EffectTool::OnBnClickedFinalvaluePosxUp()
 {
 	UpdateData(true);
@@ -344,3 +444,4 @@ void EffectTool::OnBnClickedFinalvalueCzDown()
 	CMgr_EffectMesh::GetInstance()->SetSize();
 	UpdateData(false);
 }
+

@@ -19,7 +19,9 @@ struct GS_EFFECT_INPUT
 
 cbuffer cbEffectElementBuffer : register(b20)
 {
-	float3 tranlationPos : packoffset (c0); 
+	float3 tranlationPos : packoffset (c0);
+	float  sizeX : packoffset(c0.w);
+	float  sizeZ : packoffset(c1.x);
 }
 
 GS_EFFECT_INPUT EffectVertexShader(VS_EFFECT_INPUT input)

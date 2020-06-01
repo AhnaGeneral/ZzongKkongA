@@ -20,3 +20,8 @@ protected:
 	ID3D12Resource* m_pd3dPositionUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dPositionBufferView;
 };
+
+//class CObject_MeshEffect : public CGameObject
+//{
+//
+//};
