@@ -324,24 +324,26 @@ void CThirdPersonCamera::SetLookAt(XMFLOAT3& xmf3LookAt)
 	m_xmf3Look = XMFLOAT3(mtxLookAt._13, mtxLookAt._23, mtxLookAt._33);
 }
 
-CSunCamera::CSunCamera()
+CSunCamera::CSunCamera(XMFLOAT3 pos, XMFLOAT3 look)
 {
 	//XMFLOAT3 xmf3Look  = Vector3::Normalize(XMFLOAT3(0.25f, -1.0f, 0.2f));
 	//XMFLOAT3 xmf3Right = Vector3::Normalize(XMFLOAT3(0.7f, 0.01f, -0.7f));
 	//XMFLOAT3 xmf3Up    = Vector3::Normalize(XMFLOAT3(0.0f, 0.4f, 0.63f));
 
-	m_xmf3Look = XMFLOAT3(-0.92f, -0.37f, 0.2f);
-	m_xmf3Right = XMFLOAT3(0.12f, 0.02f, 1.0f);
-	m_xmf3Up = XMFLOAT3(-0.38f, 0.94f, 0.01f);
+	XMFLOAT3 vUp = XMFLOAT3(0, 1, 0);
+	XMFLOAT3 vRight = XMFLOAT3(-1, 0, 0);
+	m_xmf3Look = look;
+	m_xmf3Right = Vector3::CrossProduct(vUp, m_xmf3Look);
+	m_xmf3Up = Vector3::CrossProduct(m_xmf3Look, m_xmf3Right);
 
 	//m_xmf3Position = XMFLOAT3(500.0f, 95.0f,130.0f);
-	m_fSunCameraPosition[0] = 550.f; 
-	m_fSunCameraPosition[1] = 150.0f; 
-	m_fSunCameraPosition[2] = 130.0f;
+	m_fSunCameraPosition[0] = pos.x;// 550.f; 
+	m_fSunCameraPosition[1] = pos.y;// 150.0f;
+	m_fSunCameraPosition[2] = pos.z;//130.0f;
 
 	SetViewport(0, 0, FRAME_BUFFER_WIDTH * 4, FRAME_BUFFER_HEIGHT * 4 , 0.0f, 1.0f);
-	GenerateViewMatrix(XMFLOAT3(m_fSunCameraPosition[0], m_fSunCameraPosition[2],m_fSunCameraPosition[1]), m_xmf3Look, m_xmf3Up);
-	GenerateProjectionMatrix(1.f,400.0f, ASPECT_RATIO, 60.0f);
+	GenerateViewMatrix(XMFLOAT3(m_fSunCameraPosition[0], m_fSunCameraPosition[1],m_fSunCameraPosition[2]), m_xmf3Look, m_xmf3Up);
+	GenerateProjectionMatrix(1.f,600.0f, ASPECT_RATIO, 60.0f);
 	SetScissorRect(0, 0, FRAME_BUFFER_WIDTH * 4  , FRAME_BUFFER_HEIGHT * 4 );
 	RegenerateViewMatrix();
 }
@@ -349,7 +351,7 @@ CSunCamera::CSunCamera()
 void CSunCamera::Update(CCamera* PlayerCamera)
 {
 	XMFLOAT3 pos = PlayerCamera->GetPosition();
-	m_xmf3Position = XMFLOAT3(m_fSunCameraPosition[0], m_fSunCameraPosition[2], m_fSunCameraPosition[1]);
+	m_xmf3Position = XMFLOAT3(m_fSunCameraPosition[0], m_fSunCameraPosition[1], m_fSunCameraPosition[2]);
 
 	RegenerateViewMatrix();
 }

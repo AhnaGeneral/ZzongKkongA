@@ -173,6 +173,7 @@
     <ClInclude Include="Object_DrugMaker.h" />
     <ClInclude Include="Object_DynamicObj.h" />
     <ClInclude Include="Object_Effect.h" />
+    <ClInclude Include="Object_Floor.h" />
     <ClInclude Include="Object_ItemBox.h" />
     <ClInclude Include="Object_Nosie.h" />
     <ClInclude Include="Object_RotatingItem.h" />
@@ -186,10 +187,12 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Object_BillBoard.h" />
     <ClInclude Include="Object_UI.h" />
+    <ClInclude Include="Scene_Game2.h" />
     <ClInclude Include="Shader_BaseUI.h" />
     <ClInclude Include="Shader_BillboardUI.h" />
     <ClInclude Include="Shader_CollisionBox.h" />
     <ClInclude Include="Shader_Effect.h" />
+    <ClInclude Include="Shader_Floor.h" />
     <ClInclude Include="Shader_Item.h" />
     <ClInclude Include="Shader_LightMRT.h" />
     <ClInclude Include="Shader_Lobby.h" />
@@ -239,6 +242,7 @@
     <ClCompile Include="Object_DrugMaker.cpp" />
     <ClCompile Include="Object_DynamicObj.cpp" />
     <ClCompile Include="Object_Effect.cpp" />
+    <ClCompile Include="Object_Floor.cpp" />
     <ClCompile Include="Object_ItemBox.cpp" />
     <ClCompile Include="Object_Nosie.cpp" />
     <ClCompile Include="Object_RotatingItem.cpp" />
@@ -251,12 +255,14 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Object_BillBoard.cpp" />
     <ClCompile Include="Object_UI.cpp" />
+    <ClCompile Include="Scene_Game2.cpp" />
     <ClCompile Include="Shader-Terrain.cpp" />
     <ClCompile Include="Shader_BaseUI.cpp" />
     <ClCompile Include="Shader_BillBoard.cpp" />
     <ClCompile Include="Shader_BillboardUI.cpp" />
     <ClCompile Include="Shader_CollisionBox.cpp" />
     <ClCompile Include="Shader_Effect.cpp" />
+    <ClCompile Include="Shader_Floor.cpp" />
     <ClCompile Include="Shader_Item.cpp" />
     <ClCompile Include="Shader_LightMRT.cpp" />
     <ClCompile Include="Shader_Lobby.cpp" />
@@ -294,6 +300,10 @@
     </FxCompile>
     <FxCompile Include="HLSL_Effect.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="HLSL_Floor.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="HLSL_Fog.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

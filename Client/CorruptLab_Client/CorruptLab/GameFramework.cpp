@@ -5,7 +5,9 @@
 #include "stdafx.h"
 #include "GameFramework.h"
 #include "Mgr_Radiation.h"
+#include "Mgr_Collision.h"
 #include "Scene_Game2.h"
+#include "Object_Camera.h"
 CGameFramework::CGameFramework()
 {
 	m_pdxgiFactory = NULL;
@@ -181,11 +183,12 @@ void CGameFramework::CreateDirect3DDevice()
 
 	IDXGIAdapter1* pd3dAdapter = NULL;
 
-	for (UINT i = 1; DXGI_ERROR_NOT_FOUND != m_pdxgiFactory->EnumAdapters1(i, &pd3dAdapter); i++)
+	for (UINT i =1; DXGI_ERROR_NOT_FOUND != m_pdxgiFactory->EnumAdapters1(i, &pd3dAdapter); i++)
 	{
 		DXGI_ADAPTER_DESC1 dxgiAdapterDesc;
 		pd3dAdapter->GetDesc1(&dxgiAdapterDesc);
-		if (dxgiAdapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) continue;
+//		if (dxgiAdapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) continue; 
+//		D3D12CreateDevice(pd3dAdapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), (void**)&m_pd3dDevice);
 		if (SUCCEEDED(D3D12CreateDevice(pd3dAdapter, D3D_FEATURE_LEVEL_12_0, _uuidof(ID3D12Device), (void**)&m_pd3dDevice))) break;
 	}
 
@@ -562,6 +565,7 @@ void CGameFramework::ChangeSwapChainState()
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pScene[SCENE_STAGE_OUTDOOR]) m_pScene[SCENE_STAGE_OUTDOOR]->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+	if (m_pScene[SCENE_STAGE_INDOOR]) m_pScene[SCENE_STAGE_INDOOR]->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 	
 }
 
@@ -569,6 +573,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 {
 	if (m_pScene[SCENE_STAGE_OUTDOOR] && m_nSceneState ==SCENE_STAGE_OUTDOOR)
 		m_pScene[SCENE_STAGE_OUTDOOR]->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	if (m_pScene[SCENE_STAGE_INDOOR] && m_nSceneState == SCENE_STAGE_INDOOR)
+		m_pScene[SCENE_STAGE_INDOOR]->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+
+
 	switch (nMessageID)
 	{
 	case WM_KEYUP:
@@ -583,7 +591,14 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 		case VK_F2:
 			if (m_nSceneState == SCENE_STAGE_OUTDOOR)
+			{
+				m_pPlayer->SetPosition(XMFLOAT3(464.f, 0, 101.f));
+				m_pPlayer->SetPlayerUpdatedContext(NULL);
+				m_pPlayer->SetCameraUpdatedContext(NULL);
+				dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 17.0f, -20.5f));
+				CCollisionMgr::GetInstance()->m_nSceneState = 1;
 				m_nSceneState = SCENE_STAGE_INDOOR;
+			}
 			break;
 		case VK_F3:
 			m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
@@ -747,8 +762,8 @@ void CGameFramework::BuildObjects()
 	m_pScene[SCENE_STAGE_INDOOR] = new CGameScene2();
 	m_pScene[SCENE_STAGE_INDOOR]->SetGraphicsRootSignature(m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature());
 	dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pPlayer = m_pPlayer;
-
-
+	m_pScene[SCENE_STAGE_INDOOR]->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+	//dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pShadowCamera = dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pShadowCamera;
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandList->Close();
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
@@ -795,8 +810,8 @@ void CGameFramework::ProcessInput()
 {
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
-	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene[SCENE_STAGE_OUTDOOR]->ProcessInput(pKeysBuffer, m_hWnd);
-	
+	if (GetKeyboardState(pKeysBuffer) && m_nSceneState == SCENE_STAGE_OUTDOOR) bProcessedByScene = m_pScene[SCENE_STAGE_OUTDOOR]->ProcessInput(pKeysBuffer, m_hWnd);
+	if (GetKeyboardState(pKeysBuffer) && m_nSceneState == SCENE_STAGE_INDOOR) bProcessedByScene = m_pScene[SCENE_STAGE_INDOOR]->ProcessInput(pKeysBuffer, m_hWnd);
 }
 
 //GPU가 끝날 때까지 기다려주는 단계 
@@ -867,7 +882,7 @@ void CGameFramework::FrameAdvanceStageIndoor()
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i],
 			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
+	float pfClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
 		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[i], pfClearColor, 0, NULL);

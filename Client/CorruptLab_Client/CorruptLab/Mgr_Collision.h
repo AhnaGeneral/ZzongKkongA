@@ -45,7 +45,8 @@ public:
 	void MonsterDamageCheck(int iDamage);
 		
 public:
-	vector<BoundingOrientedBox> m_pStaticCollisionlist;
+	int m_nSceneState = 0;
+	vector<BoundingOrientedBox> m_pStaticCollisionlist[2];
 	vector<CMonster*>** m_pMonsterLists;
 	int m_iSceneProgress = PROGRESS_FILED1;
 	BoundingBox m_pFiledCollision1;

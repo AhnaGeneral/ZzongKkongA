@@ -20,14 +20,14 @@ void CCollisionMgr::Initialize(void)
 
 void CCollisionMgr::InsertCollisionBoxes(BoundingOrientedBox box)
 {
-	m_pStaticCollisionlist.push_back(box);
+	m_pStaticCollisionlist[m_nSceneState].push_back(box);
 }
 
 bool CCollisionMgr::StaticCollisionCheck()
 {
 	CCollisionBox* playerBodybox = m_pPlayer->m_pBodyCollision;
 	if (!playerBodybox) return false;
-	for (auto objCol : m_pStaticCollisionlist)
+	for (auto objCol : m_pStaticCollisionlist[m_nSceneState])
 	{
 		if (objCol.Intersects(playerBodybox->boundingBox))
 			return true;

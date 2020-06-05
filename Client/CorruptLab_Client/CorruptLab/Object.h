@@ -153,7 +153,7 @@ public:
 	XMFLOAT4                        m_Orientation;
 	int		                        m_iBoneIndex;
 
-	XMFLOAT4X4						m_xmf4x4World;
+	XMFLOAT4X4						m_xmf4x4World; 
 	CGameObject                   * m_pParent;
 
 	ID3D12Resource                * m_pd3dCollisionBuffer;

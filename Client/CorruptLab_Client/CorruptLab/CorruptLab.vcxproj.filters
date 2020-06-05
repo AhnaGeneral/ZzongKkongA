@@ -170,6 +170,12 @@
     <Filter Include="02.Scene\01.Scene_Game2">
       <UniqueIdentifier>{b9ad7e3b-a281-4137-b946-f1027606568a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Component\GameObject\11.Floor">
+      <UniqueIdentifier>{4dde083c-4701-49d9-898d-e60d30756856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Shader\12.Shader_Floor">
+      <UniqueIdentifier>{fd29288e-4c91-472e-a92b-90aa7dfbc16c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -352,6 +358,12 @@
     <ClInclude Include="Scene_Game2.h">
       <Filter>02.Scene\01.Scene_Game2</Filter>
     </ClInclude>
+    <ClInclude Include="Object_Floor.h">
+      <Filter>05.Component\GameObject\11.Floor</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader_Floor.h">
+      <Filter>04.Shader\12.Shader_Floor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -519,6 +531,12 @@
     <ClCompile Include="Scene_Game2.cpp">
       <Filter>02.Scene\01.Scene_Game2</Filter>
     </ClCompile>
+    <ClCompile Include="Object_Floor.cpp">
+      <Filter>05.Component\GameObject\11.Floor</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_Floor.cpp">
+      <Filter>04.Shader\12.Shader_Floor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">
@@ -587,6 +605,9 @@
     </FxCompile>
     <FxCompile Include="HLSL_Effect.hlsl">
       <Filter>04.Shader\11.Shader_Effect</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL_Floor.hlsl">
+      <Filter>04.Shader\12.Shader_Floor</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

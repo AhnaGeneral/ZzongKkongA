@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 
+class CFloor;
 class CGameScene2 : public CGameScene
 {
 public:
@@ -49,6 +50,7 @@ public:
 
 private:
 
+	CFloor*						m_pFloor;
 	bool					    m_bPipelineStateIndex;
 	POINT					    m_ptOldCursorPos;
 

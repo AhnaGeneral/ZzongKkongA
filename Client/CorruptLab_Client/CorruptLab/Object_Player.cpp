@@ -187,8 +187,9 @@ void CPlayer::Update(float fTimeElapsed)
 			m_iState = JOHNSON_ANIAMATION_IDLE;  
 		else
 			m_iState = JOHNSON_ANIAMATION_WALK;  
-
-		m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Gravity, fTimeElapsed, false));
+		if (m_pPlayerUpdatedContext) {
+			m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Gravity, fTimeElapsed, false));
+		}
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
 		float fMaxVelocityXZ = m_fMaxVelocityXZ * fTimeElapsed;
 		if (fLength >= 2.f)
@@ -197,6 +198,7 @@ void CPlayer::Update(float fTimeElapsed)
 			m_xmf3Velocity.z *= (fMaxVelocityXZ / fLength);
 		}
 		float fMaxVelocityY = m_fMaxVelocityY * fTimeElapsed;
+
 		fLength = sqrtf(m_xmf3Velocity.y * m_xmf3Velocity.y);
 		if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
 
