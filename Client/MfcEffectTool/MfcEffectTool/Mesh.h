@@ -118,9 +118,17 @@ public:
 	virtual ~CStandardMesh();
 public:
 	void LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, FILE* pInFile);
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void ReleaseShaderVariables();
 	virtual void ReleaseUploadBuffers();
-
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet);
+	void SetAlphaControl(float Alphavalue);
+
+public:
+	ID3D12Resource* m_pd3dcbAlphaControlResource = nullptr;
+	float* m_pcbfAlphaControl = nullptr;
+	float  m_fAlphaControl = 1.0f; 
 };
 
 

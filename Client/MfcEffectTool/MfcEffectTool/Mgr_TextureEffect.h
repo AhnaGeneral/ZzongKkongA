@@ -20,6 +20,9 @@ public:
 	void Update(float fElapsedTime);
 	void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera); 
 	XMFLOAT3* SetPosition(); 
+	float* SetSizeX();
+	float* SetSizeZ();
+
 	static CMgr_EffectTex* GetInstance(void)
 	{
 		if (m_pInstance == NULL)

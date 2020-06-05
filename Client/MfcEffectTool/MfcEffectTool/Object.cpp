@@ -39,6 +39,11 @@ CGameObject::CGameObject()
 {
 	m_xmf4x4Transform = Matrix4x4::Identity();
 	m_xmf4x4World = Matrix4x4::Identity();
+
+	m_xmf4x4EffectRotation = Matrix4x4::Identity();
+	m_xmf4x4EffectPosition = Matrix4x4::Identity();
+	m_xmf4x4EffectScale = Matrix4x4::Identity();
+	m_xmf4x4EffectTransform = Matrix4x4::Identity();
 }
 
 CGameObject::~CGameObject()
@@ -134,6 +139,11 @@ void CGameObject::SetMesh(CMesh* pMesh)
 	if (m_pMesh) m_pMesh->AddRef();
 }
 
+void CGameObject::SetMeshEffectAlphaControlValue(float alphaValue)
+{
+	static_cast<CStandardMesh*>(m_pMesh)->SetAlphaControl(alphaValue);
+}
+
 void CGameObject::SetShader(CShader* pShader)
 {
 	m_nMaterials = 1;
@@ -210,6 +220,47 @@ void CGameObject::SetScale(float x, float y, float z)
 	m_xmf4x4Transform = Matrix4x4::Multiply(mtxScale, m_xmf4x4Transform);
 
 	UpdateTransform(NULL);
+}
+
+void CGameObject::SetScaleEffect(float x, float y, float z)
+{
+	m_xmf4x4EffectScale = Matrix4x4::Identity();
+	XMMATRIX mtxEffectScale = XMMatrixScaling(x, y, z);
+	XMStoreFloat4x4(&m_xmf4x4EffectScale, mtxEffectScale);
+
+}
+
+void CGameObject::SetEffectRotate(float fPitch, float fYaw, float fRoll)
+{
+	m_xmf4x4EffectRotation = Matrix4x4::Identity();
+	XMMATRIX mtxEffectRotation = XMMatrixRotationRollPitchYaw(XMConvertToRadians(fPitch),
+		 XMConvertToRadians(fYaw), XMConvertToRadians(fRoll));
+	XMStoreFloat4x4(&m_xmf4x4EffectRotation, mtxEffectRotation);
+}
+
+void CGameObject::SetEffectPosition(XMFLOAT3 xmf3Position)
+{
+	m_xmf4x4EffectPosition = Matrix4x4::Identity();
+	m_xmf4x4EffectPosition._41 = xmf3Position.x;
+	m_xmf4x4EffectPosition._42 = xmf3Position.y;
+	m_xmf4x4EffectPosition._43 = xmf3Position.z;
+}
+
+void CGameObject::EffectUpdateTransform(XMFLOAT4X4 pos, XMFLOAT4X4 rot, XMFLOAT4X4 scale, XMFLOAT4X4* pxmf4x4Parent)
+{
+	m_xmf4x4EffectTransform = Matrix4x4::Identity(); 
+	m_xmf4x4EffectTransform = Matrix4x4::Multiply(scale, m_xmf4x4EffectTransform);
+	m_xmf4x4EffectTransform = Matrix4x4::Multiply(rot, m_xmf4x4EffectTransform);
+	m_xmf4x4EffectTransform._41 = pos._41;
+	m_xmf4x4EffectTransform._42 = pos._42;
+	m_xmf4x4EffectTransform._43 = pos._43;
+
+	//Matrix4x4::Multiply(xmf4x4Transform, pos);
+
+	m_xmf4x4World = (pxmf4x4Parent) ? Matrix4x4::Multiply(m_xmf4x4EffectTransform, *pxmf4x4Parent) : m_xmf4x4EffectTransform ;
+
+	if (m_pSibling) m_pSibling->EffectUpdateTransform( pos,rot, scale,pxmf4x4Parent);
+	if (m_pChild) m_pChild->EffectUpdateTransform(pos, rot, scale ,&m_xmf4x4World);
 }
 
 void CGameObject::SetTexture(CTexture* tex)
@@ -621,6 +672,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile
 			// 애니메이션 있는거는 안들어온다. 
 			CStandardMesh* pMesh = new CStandardMesh(pd3dDevice, pd3dCommandList);
 			pMesh->LoadMeshFromFile(pd3dDevice, pd3dCommandList, pInFile);
+			pMesh->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 			pGameObject->SetMesh(pMesh);
 		}
 		else if (!strcmp(pstrToken, "<SkinningInfo>:"))

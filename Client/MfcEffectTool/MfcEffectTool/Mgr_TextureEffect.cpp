@@ -26,6 +26,16 @@ XMFLOAT3* CMgr_EffectTex::SetPosition()
 	return &(m_pShaderEffect->m_pTestEffectObject->m_TranslationPos);
 }
 
+float* CMgr_EffectTex::SetSizeX()
+{
+	return &(m_pShaderEffect->m_pTestEffectObject->m_sizeX);
+}
+
+float* CMgr_EffectTex::SetSizeZ()
+{
+	return &(m_pShaderEffect->m_pTestEffectObject->m_sizeZ);
+}
+
 void CMgr_EffectTex::Destroy()
 {
 }

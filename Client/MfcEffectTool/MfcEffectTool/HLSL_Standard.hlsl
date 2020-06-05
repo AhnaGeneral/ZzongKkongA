@@ -48,6 +48,11 @@ cbuffer cbBoneTransforms : register(b8)
 	float4x4 gpmtxBoneTransforms[SKINNED_ANIMATION_BONES];
 };
 
+cbuffer cbEffectBuffer : register(b21)
+{
+	float   gtxfAlphaValue : packoffset(c0);
+}
+
 VS_TEXTURED_LIGHTING_OUTPUT VSSkinnedAnimationStandard(VS_SKINNED_STANDARD_INPUT input)
 {
 	VS_TEXTURED_LIGHTING_OUTPUT output;
@@ -99,7 +104,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 
 
 	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
-	output.color = cColorAlbedo;
+	output.color = float4(cColorAlbedo.xyz, gtxfAlphaValue);
 
 	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
 	float3 normalW;

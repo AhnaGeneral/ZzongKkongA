@@ -32,6 +32,6 @@ protected:
 
 public:
 	XMFLOAT3                    m_TranslationPos = XMFLOAT3(30.0f, 0.0f ,40.0f); 
-	float                       m_sizeX;
-	float                       m_sizeZ; 
+	float                       m_sizeX = 1.0f;
+	float                       m_sizeZ = 1.0f; 
 };

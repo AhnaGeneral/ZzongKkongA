@@ -13,6 +13,26 @@
 
 // EffectTool 대화 상자
 
+#define FristPositionDelta 0.1f
+#define FristRotationDelta 0.1f
+#define FristSizeDelta 0.1f
+#define FristAlphaDelta 0.1f
+
+#define FinalPositionDelta 10.0f
+#define FinalRotationDelta 10.0f
+#define FinalSizeDelta 0.1f
+#define FinalAlphaDelta 0.05f
+
+#define PosRotSpeed 0.05f
+#define AlphaSpeed 0.005f
+
+#define MeshEffect 
+#define TextureEffect
+
+
+
+
+
 IMPLEMENT_DYNAMIC(EffectTool, CDialogEx)
 
 EffectTool::EffectTool(CWnd* pParent /*=nullptr*/)
@@ -38,6 +58,19 @@ EffectTool::EffectTool(CWnd* pParent /*=nullptr*/)
 	, m_FirstValue_CX(0)
 	, m_FirstValue_CY(0)
 	, m_FirstValue_CZ(0)
+	, m_AlphaValue(0)
+	, m_FinalValue_alpha(0)
+	, m_SpeedPosX(0)
+	, m_SpeedPosY(0)
+	, m_SpeedPosZ(0)
+	, m_SpeedRotX(0)
+	, m_SpeedRotY(0)
+	, m_SpeedRotZ(0)
+	, m_SpeedSizeX(0)
+	, m_SpeedSizeY(0)
+	, m_SpeedSizeZ(0)
+	, m_SpeedAlpha(0)
+	, m_UpdateTime(0)
 {
 
 }
@@ -70,6 +103,21 @@ void EffectTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT9, m_FirstValue_CX);
 	DDX_Text(pDX, IDC_EDIT10, m_FirstValue_CY);
 	DDX_Text(pDX, IDC_EDIT11, m_FirstValue_CZ);
+	DDX_Control(pDX, IDC_LIST4, m_ListBoxTexture);
+	DDX_Control(pDX, IDC_LIST3, m_ListBoxMesh);
+	DDX_Text(pDX, IDC_EDIT27, m_AlphaValue);
+	DDX_Text(pDX, IDC_EDIT28, m_FinalValue_alpha);
+	DDX_Text(pDX, IDC_EDIT22, m_SpeedPosX);
+	DDX_Text(pDX, IDC_EDIT29, m_SpeedPosY);
+	DDX_Text(pDX, IDC_EDIT30, m_SpeedPosZ);
+	DDX_Text(pDX, IDC_EDIT31, m_SpeedRotX);
+	DDX_Text(pDX, IDC_EDIT32, m_SpeedRotY);
+	DDX_Text(pDX, IDC_EDIT33, m_SpeedRotZ);
+	DDX_Text(pDX, IDC_EDIT34, m_SpeedSizeX);
+	DDX_Text(pDX, IDC_EDIT35, m_SpeedSizeY);
+	DDX_Text(pDX, IDC_EDIT36, m_SpeedSizeZ);
+	DDX_Text(pDX, IDC_EDIT37, m_SpeedAlpha);
+	DDX_Text(pDX, IDC_EDIT43, m_UpdateTime);
 }
 
 
@@ -110,16 +158,69 @@ BEGIN_MESSAGE_MAP(EffectTool, CDialogEx)
 	ON_BN_CLICKED(IDC_FristValue_CY_Down, &EffectTool::OnBnClickedFristvalueCyDown)
 	ON_BN_CLICKED(IDC_FristValue_CZ_Up, &EffectTool::OnBnClickedFristvalueCzUp)
 	ON_BN_CLICKED(IDC_FristValue_CZ_Downs, &EffectTool::OnBnClickedFristvalueCzDowns)
+	ON_BN_CLICKED(IDC_TextureCreate, &EffectTool::OnBnClickedTexturecreate)
+	ON_BN_CLICKED(IDC_MeshCreate, &EffectTool::OnBnClickedMeshcreate)
+	ON_BN_CLICKED(IDC_AnimationPlay, &EffectTool::OnBnClickedAnimationplay)
+	ON_BN_CLICKED(IDC_AnimationStop, &EffectTool::OnBnClickedAnimationstop)
+	ON_BN_CLICKED(IDC_AlphaValue_UP, &EffectTool::OnBnClickedAlphavalueUp)
+	ON_BN_CLICKED(IDC_AlphaValue_Down, &EffectTool::OnBnClickedAlphavalueDown)
+	ON_BN_CLICKED(IDC_AlphaValue_UP2, &EffectTool::OnBnClickedAlphavalueUp2)
+	ON_BN_CLICKED(IDC_AlphaValue_Down2, &EffectTool::OnBnClickedAlphavalueDown2)
+	ON_BN_CLICKED(IDC_BUTTON40, &EffectTool::OnBnClickedButton40)
+	ON_BN_CLICKED(IDC_Speed_PosX_UP, &EffectTool::OnBnClickedSpeedPosxUp)
+	ON_BN_CLICKED(IDC_Speed_PosX_Down, &EffectTool::OnBnClickedSpeedPosxDown)
+	ON_BN_CLICKED(IDC_Speed_PosY_UP, &EffectTool::OnBnClickedSpeedPosyUp)
+	ON_BN_CLICKED(IDC_Speed_PosY_Down, &EffectTool::OnBnClickedSpeedPosyDown)
+	ON_BN_CLICKED(IDC_Speed_PosZ_UP, &EffectTool::OnBnClickedSpeedPoszUp)
+	ON_BN_CLICKED(IDC_Speed_RotX_UP, &EffectTool::OnBnClickedSpeedRotxUp)
+	ON_BN_CLICKED(IDC_Speed_PosZ_Down, &EffectTool::OnBnClickedSpeedPoszDown)
+	ON_BN_CLICKED(IDC_Speed_RotX_Down, &EffectTool::OnBnClickedSpeedRotxDown)
+	ON_BN_CLICKED(IDC_Speed_RotY_UP, &EffectTool::OnBnClickedSpeedRotyUp)
+	ON_BN_CLICKED(IDC_Speed_RotY_Down, &EffectTool::OnBnClickedSpeedRotyDown)
+	ON_BN_CLICKED(IDC_Speed_RotZ_UP, &EffectTool::OnBnClickedSpeedRotzUp)
+	ON_BN_CLICKED(IDC_Speed_RotZ_Down, &EffectTool::OnBnClickedSpeedRotzDown)
+	ON_BN_CLICKED(IDC_Speed_SizeX_UP, &EffectTool::OnBnClickedSpeedSizexUp)
+	ON_BN_CLICKED(IDC_Speed_SizeX_Down, &EffectTool::OnBnClickedSpeedSizexDown)
+	ON_BN_CLICKED(IDC_Speed_SizeY_UP, &EffectTool::OnBnClickedSpeedSizeyUp)
+	ON_BN_CLICKED(IDC_Speed_SizeY_Down, &EffectTool::OnBnClickedSpeedSizeyDown)
+	ON_BN_CLICKED(IDC_Speed_SizeZ_UP, &EffectTool::OnBnClickedSpeedSizezUp)
+	ON_BN_CLICKED(IDC_Speed_SizeZ_Down, &EffectTool::OnBnClickedSpeedSizezDown)
+	ON_BN_CLICKED(IDC_Speed_Alpha_UP, &EffectTool::OnBnClickedSpeedAlphaUp)
+	ON_BN_CLICKED(IDC_Speed_Alpha_Down, &EffectTool::OnBnClickedSpeedAlphaDown)
 END_MESSAGE_MAP()
 
 
 BOOL EffectTool::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+	UpdateData(true);
+	m_FirstValue_CX = 1.0f;
+	m_FirstValue_CZ = 1.0f;
+	m_AlphaValue = 1.0f; 
+	m_FinalValue_alpha = 1.0f; 
+	m_FinalValue_CX = 1.0f; 
+	m_FinalValue_CY = 1.0f; 
+	m_FinalValue_CZ = 1.0f;
 
+	 m_SpeedPosX = 0.1f;
+	 m_SpeedPosY = 0.1f;
+	 m_SpeedPosZ = 0.1f;
+	 m_SpeedRotX = 0.1f;
+	 m_SpeedRotY = 0.1f;
+	 m_SpeedRotZ = 0.1f;
+	 m_SpeedSizeX= 0.05f;
+	 m_SpeedSizeY= 0.05f;
+	 m_SpeedSizeZ= 0.05f;
+	 m_SpeedAlpha = 0.001f;
+	 m_UpdateTime = 0.0f; 
+
+
+	UpdateData(false);
 	//m_ListBox.InsertString(0, L"PosX");
 	//m_ListBox.InsertString(1, L"PosY");
 	//m_ListBox.SetCurSel(-1);
+	m_ListBoxTexture.InsertString(0, L"TestTexture"); 
+
 	// TODO:  여기에 추가 초기화 작업을 추가합니다.
 	pMainFrame = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	pForm = dynamic_cast<CMfcEffectToolView*>(pMainFrame->m_mainSplite.GetPane(0, 1));
@@ -128,28 +229,45 @@ BOOL EffectTool::OnInitDialog()
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
 }
 
-
-// [ 초기값 컨트롤 함수 ] ========================================================================
-void EffectTool::OnBnClickedFristvaluePosxUp()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	UpdateData(true); 
-	m_FristValue_PosX += 1.0f; 
 	//pForm->gGameFramework
 	//static_cast <CGameScene*>(pForm->gGameFramework->m_pScene[SCENE_STAGE_OUTDOOR])
 	//	->moveEffectTexture(XMFLOAT3(m_FristValue_PosX,0,0));
 
+// [ 초기값 컨트롤 함수 ] ========================================================================
+void EffectTool::OnBnClickedFristvaluePosxUp()
+{
+	UpdateData(true); 
+
+	m_FristValue_PosX += FristPositionDelta;
+
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_PositionPoint()->x = m_FristValue_PosX; 
+	CMgr_EffectMesh::GetInstance()->Get_Current_PositionPoint()->x = m_FristValue_PosX;
+
+#endif 
+
+#ifdef TextureEffect
 	CMgr_EffectTex::GetInstance()->SetPosition()->x = m_FristValue_PosX;
+#endif 
+
+
 	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvaluePosxDown()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	UpdateData(true);
-	m_FristValue_PosX -= 1.0f;
+
+	m_FristValue_PosX -= FristPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_PositionPoint()->x = m_FristValue_PosX;
+	CMgr_EffectMesh::GetInstance()->Get_Current_PositionPoint()->x = m_FristValue_PosX;
+
+#endif 
+
 	CMgr_EffectTex::GetInstance()->SetPosition()->x = m_FristValue_PosX;
+
 	UpdateData(false);
 }
 
@@ -157,7 +275,13 @@ void EffectTool::OnBnClickedFristvaluePosxDown()
 void EffectTool::OnBnClickedFristvaluePosyUp()
 {
 	UpdateData(true);
-	m_FristValue_PosY += 1.0f;
+	m_FristValue_PosY += FristPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_PositionPoint()->y = m_FristValue_PosY;
+	CMgr_EffectMesh::GetInstance()->Get_Current_PositionPoint()->y = m_FristValue_PosY;
+
+#endif
+
 	CMgr_EffectTex::GetInstance()->SetPosition()->y = m_FristValue_PosY;
 	UpdateData(false);
 }
@@ -166,7 +290,13 @@ void EffectTool::OnBnClickedFristvaluePosyUp()
 void EffectTool::OnBnClickedFristvaluePosyDown()
 {
 	UpdateData(true);
-	m_FristValue_PosY -= 1.0f;
+	m_FristValue_PosY -= FristPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_PositionPoint()->y = m_FristValue_PosY;
+	CMgr_EffectMesh::GetInstance()->Get_Current_PositionPoint()->y = m_FristValue_PosY;
+
+#endif 
+
 	CMgr_EffectTex::GetInstance()->SetPosition()->y = m_FristValue_PosY;
 	UpdateData(false);
 }
@@ -175,7 +305,13 @@ void EffectTool::OnBnClickedFristvaluePosyDown()
 void EffectTool::OnBnClickedFristvaluePoszUp()
 {
 	UpdateData(true);
-	m_FristValue_PosZ += 1.0f;
+	m_FristValue_PosZ += FristPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_PositionPoint()->z = m_FristValue_PosZ;
+	CMgr_EffectMesh::GetInstance()->Get_Current_PositionPoint()->z = m_FristValue_PosY;
+
+#endif
+
 	CMgr_EffectTex::GetInstance()->SetPosition()->z = m_FristValue_PosZ;
 	UpdateData(false);
 }
@@ -184,7 +320,13 @@ void EffectTool::OnBnClickedFristvaluePoszUp()
 void EffectTool::OnBnClickedFristvaluePoszDown()
 {
 	UpdateData(true);
-	m_FristValue_PosZ -= 1.0f;
+	m_FristValue_PosZ -= FristPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_PositionPoint()->z = m_FristValue_PosZ;
+	CMgr_EffectMesh::GetInstance()->Get_Current_PositionPoint()->z = m_FristValue_PosY;
+
+#endif 
+
 	CMgr_EffectTex::GetInstance()->SetPosition()->z = m_FristValue_PosZ;
 	UpdateData(false);
 }
@@ -192,73 +334,175 @@ void EffectTool::OnBnClickedFristvaluePoszDown()
 
 void EffectTool::OnBnClickedFristvalueRotxUp()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_FirstValue_RotX += FristRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_RotationPoint()->x = m_FirstValue_RotX;
+	CMgr_EffectMesh::GetInstance()->Get_Current_RotationPoint()->x = m_FirstValue_RotX;
+
+#endif 
+
+	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvalueRotxDown()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_FirstValue_RotX -= FristRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_RotationPoint()->x = m_FirstValue_RotX;
+	CMgr_EffectMesh::GetInstance()->Get_Current_RotationPoint()->x = m_FirstValue_RotX;
+
+#endif
+
+	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvalueRotyUp()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_FirstValue_RotY += FristRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_RotationPoint()->y = m_FirstValue_RotY;
+	CMgr_EffectMesh::GetInstance()->Get_Current_RotationPoint()->y = m_FirstValue_RotY;
+
+#endif 
+
+	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvalueRotyDown()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_FirstValue_RotY -= FristRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_RotationPoint()->y = m_FirstValue_RotY;
+	CMgr_EffectMesh::GetInstance()->Get_Current_RotationPoint()->y = m_FirstValue_RotY;
+
+#endif 
+
+	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvalueRotzUp()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_FirstValue_RotZ += FristRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_RotationPoint()->z = m_FirstValue_RotZ;
+	CMgr_EffectMesh::GetInstance()->Get_Current_RotationPoint()->z = m_FirstValue_RotZ;
+
+#endif 
+
+	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvalueRotzDown()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_FirstValue_RotZ -= FristRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_RotationPoint()->z = m_FirstValue_RotZ;
+	CMgr_EffectMesh::GetInstance()->Get_Current_RotationPoint()->z = m_FirstValue_RotZ;
+
+#endif 
+
+	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvalueCxUp()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_FirstValue_CX += FristSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_SizePoint()->x = m_FirstValue_CX;
+	CMgr_EffectMesh::GetInstance()->Get_Current_SizePoint()->x = m_FirstValue_CX;
+
+#endif 
+
+	*(CMgr_EffectTex::GetInstance()->SetSizeX())+= m_FirstValue_CX;
+	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvalueCxDown()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_FirstValue_CX -= FristSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_SizePoint()->x = m_FirstValue_CX;
+	CMgr_EffectMesh::GetInstance()->Get_Current_SizePoint()->x = m_FirstValue_CX;
+
+#endif 
+
+	*(CMgr_EffectTex::GetInstance()->SetSizeX()) -= m_FirstValue_CX;
+	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvalueCyUp()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_FirstValue_CY -= FristSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_SizePoint()->y = m_FirstValue_CY;
+	CMgr_EffectMesh::GetInstance()->Get_Current_SizePoint()->y = m_FirstValue_CY;
+
+#endif 
+
+	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvalueCyDown()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+	m_FirstValue_CY -= FristSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_SizePoint()->y = m_FirstValue_CY;
+	CMgr_EffectMesh::GetInstance()->Get_Current_SizePoint()->y = m_FirstValue_CY;
+
+#endif 
+
+	UpdateData(false);
 }
 
 
 void EffectTool::OnBnClickedFristvalueCzUp()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-}
+	UpdateData(true);
+	m_FirstValue_CZ += FristSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_SizePoint()->z = m_FirstValue_CY;
+	CMgr_EffectMesh::GetInstance()->Get_Current_SizePoint()->z = m_FirstValue_CZ;
 
+#endif 
+
+
+	*(CMgr_EffectTex::GetInstance()->SetSizeZ())+= m_FirstValue_CZ;
+	UpdateData(false);
+}
 
 void EffectTool::OnBnClickedFristvalueCzDowns()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(true);
+
+	m_FirstValue_CZ -= FristSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Default_SizePoint()->z = m_FirstValue_CZ;
+	CMgr_EffectMesh::GetInstance()->Get_Current_SizePoint()->z = m_FirstValue_CZ;
+
+#endif
+
+
+	*(CMgr_EffectTex::GetInstance()->SetSizeZ())-= m_FirstValue_CZ;
+	UpdateData(false);
 }
 
 
@@ -266,12 +510,17 @@ void EffectTool::OnBnClickedFristvalueCzDowns()
 //=============================================================================================
 // [ 변환값 컨트롤 함수 ] ========================================================================
 //=============================================================================================
+
+
 void EffectTool::OnBnClickedFinalvaluePosxUp()
 {
 	UpdateData(true);
-	m_FinalValue_PosX += 1.0f; 
-	CMgr_EffectMesh::GetInstance()->GetPositionPoint()->x += 1.0f; 
-	CMgr_EffectMesh::GetInstance()->SetPosition();
+	m_FinalValue_PosX += FinalPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_PositionPoint()->x = m_FinalValue_PosX;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetPosition();
 	UpdateData(false);
 }
 
@@ -279,9 +528,12 @@ void EffectTool::OnBnClickedFinalvaluePosxUp()
 void EffectTool::OnBnClickedFinalvaluePosxDown()
 {
 	UpdateData(true);
-	m_FinalValue_PosX -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetPositionPoint()->x -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetPosition();
+	m_FinalValue_PosX -= FinalPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_PositionPoint()->x = m_FinalValue_PosX;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetPosition();
 	UpdateData(false);
 }
 
@@ -289,9 +541,12 @@ void EffectTool::OnBnClickedFinalvaluePosxDown()
 void EffectTool::OnBnClickedFinalvaluePosyUp()
 {
 	UpdateData(true);
-	m_FinalValue_PosY += 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetPositionPoint()->y += 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetPosition();
+	m_FinalValue_PosY += FinalPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_PositionPoint()->y = m_FinalValue_PosY;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetPosition();
 	UpdateData(false);
 }
 
@@ -299,9 +554,12 @@ void EffectTool::OnBnClickedFinalvaluePosyUp()
 void EffectTool::OnBnClickedFinalvaluePosyDown()
 {
 	UpdateData(true);
-	m_FinalValue_PosY -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetPositionPoint()->y -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetPosition();
+	m_FinalValue_PosY -= FinalPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_PositionPoint()->y = m_FinalValue_PosY;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetPosition();
 	UpdateData(false);
 }
 
@@ -309,9 +567,12 @@ void EffectTool::OnBnClickedFinalvaluePosyDown()
 void EffectTool::OnBnClickedFinalvaluePoszUp()
 {
 	UpdateData(true);
-	m_FinalValue_PosZ += 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetPositionPoint()->z += 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetPosition();
+	m_FinalValue_PosZ += FinalPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_PositionPoint()->z = m_FinalValue_PosZ;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetPosition();
 	UpdateData(false);
 }
 
@@ -319,9 +580,12 @@ void EffectTool::OnBnClickedFinalvaluePoszUp()
 void EffectTool::OnBnClickedFinalvaluePoszDown()
 {
 	UpdateData(true);
-	m_FinalValue_PosZ -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetPositionPoint()->z -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetPosition();
+	m_FinalValue_PosZ -= FinalPositionDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_PositionPoint()->z = m_FinalValue_PosZ;
+#endif
+
+	//CMgr_EffectMesh::GetInstance()->SetPosition();
 	UpdateData(false);
 }
 
@@ -329,9 +593,12 @@ void EffectTool::OnBnClickedFinalvaluePoszDown()
 void EffectTool::OnBnClickedFinalvalueRotxUp()
 {
 	UpdateData(true);
-	m_FinalValue_RotX += 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetRotationPoint()->x += 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetRotation();
+	m_FinalValue_RotX += FinalRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_RotationPoint()->x = m_FinalValue_RotX;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetRotation();
 	UpdateData(false);
 }
 
@@ -339,9 +606,12 @@ void EffectTool::OnBnClickedFinalvalueRotxUp()
 void EffectTool::OnBnClickedFinalvalueRotxDown()
 {
 	UpdateData(true);
-	m_FinalValue_RotX -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetRotationPoint()->x -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetRotation();
+	m_FinalValue_RotX -= FinalRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_RotationPoint()->x = m_FinalValue_RotX;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetRotation();
 	UpdateData(false);
 }
 
@@ -349,9 +619,12 @@ void EffectTool::OnBnClickedFinalvalueRotxDown()
 void EffectTool::OnBnClickedFinalvalueRotyUp()
 {
 	UpdateData(true);
-	m_FinalValue_RotY += 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetRotationPoint()->y += 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetRotation();
+	m_FinalValue_RotY += FinalRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_RotationPoint()->y = m_FinalValue_RotY;
+#endif
+
+	//CMgr_EffectMesh::GetInstance()->SetRotation();
 	UpdateData(false);
 }
 
@@ -359,9 +632,12 @@ void EffectTool::OnBnClickedFinalvalueRotyUp()
 void EffectTool::OnBnClickedFinalvalueRotyDown()
 {
 	UpdateData(true);
-	m_FinalValue_RotY -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetRotationPoint()->y -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetRotation();
+	m_FinalValue_RotY -= FinalRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_RotationPoint()->y = m_FinalValue_RotY;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetRotation();
 	UpdateData(false);
 }
 
@@ -369,9 +645,12 @@ void EffectTool::OnBnClickedFinalvalueRotyDown()
 void EffectTool::OnBnClickedFinalvalueRotzUp()
 {
 	UpdateData(true);
-	m_FinalValue_RotZ += 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetRotationPoint()->z += 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetRotation();
+	m_FinalValue_RotZ += FinalRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_RotationPoint()->z = m_FinalValue_RotZ;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetRotation();
 	UpdateData(false);
 }
 
@@ -379,9 +658,12 @@ void EffectTool::OnBnClickedFinalvalueRotzUp()
 void EffectTool::OnBnClickedFinalvalueRotzDown()
 {
 	UpdateData(true);
-	m_FinalValue_RotZ -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetRotationPoint()->z -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetRotation();
+	m_FinalValue_RotZ -= FinalRotationDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_RotationPoint()->z = m_FinalValue_RotZ;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetRotation();
 	UpdateData(false);
 }
 
@@ -389,9 +671,12 @@ void EffectTool::OnBnClickedFinalvalueRotzDown()
 void EffectTool::OnBnClickedFinalvalueCxUp()
 {
     UpdateData(true);
-	m_FinalValue_CX += 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetSizePoint()->x += 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetSize();
+	m_FinalValue_CX += FinalSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_SizePoint()->x = m_FinalValue_CX;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetSize();
 	UpdateData(false);
 }
 
@@ -399,9 +684,12 @@ void EffectTool::OnBnClickedFinalvalueCxUp()
 void EffectTool::OnBnClickedFinalvalueCxDown()
 {
 	UpdateData(true);
-	m_FinalValue_CX -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetSizePoint()->x -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetSize();
+	m_FinalValue_CX -= FinalSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_SizePoint()->x = m_FinalValue_CX;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetSize();
 	UpdateData(false);
 }
 
@@ -409,9 +697,12 @@ void EffectTool::OnBnClickedFinalvalueCxDown()
 void EffectTool::OnBnClickedFinalvalueCyUp()
 {
 	UpdateData(true);
-	m_FinalValue_CY += 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetSizePoint()->y += 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetSize();
+	m_FinalValue_CY += FinalSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_SizePoint()->y = m_FinalValue_CY;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetSize();
 	UpdateData(false);
 }
 
@@ -419,9 +710,12 @@ void EffectTool::OnBnClickedFinalvalueCyUp()
 void EffectTool::OnBnClickedFinalvalueCyDown()
 {
 	UpdateData(true);
-	m_FinalValue_CY -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetSizePoint()->y -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetSize();
+	m_FinalValue_CY -= FinalSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_SizePoint()->y = m_FinalValue_CY;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetSize();
 	UpdateData(false);
 }
 
@@ -429,9 +723,12 @@ void EffectTool::OnBnClickedFinalvalueCyDown()
 void EffectTool::OnBnClickedFinalvalueCzUp()
 {
 	UpdateData(true);
-	m_FinalValue_CZ += 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetSizePoint()->z += 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetSize();
+	m_FinalValue_CZ += FinalSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_SizePoint()->z = m_FinalValue_CZ;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetSize();
 	UpdateData(false);
 }
 
@@ -439,9 +736,325 @@ void EffectTool::OnBnClickedFinalvalueCzUp()
 void EffectTool::OnBnClickedFinalvalueCzDown()
 {
 	UpdateData(true);
-	m_FinalValue_CZ -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->GetSizePoint()->z -= 1.0f;
-	CMgr_EffectMesh::GetInstance()->SetSize();
+	m_FinalValue_CZ -= FinalSizeDelta;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Conversion_SizePoint()->z = m_FinalValue_CZ;
+#endif 
+
+	//CMgr_EffectMesh::GetInstance()->SetSize();
 	UpdateData(false);
 }
 
+
+
+void EffectTool::OnBnClickedTexturecreate()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedMeshcreate()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void EffectTool::OnBnClickedAnimationplay()
+{
+#ifdef MeshEffect
+	if(CMgr_EffectMesh::GetInstance()->GetBoolControl())
+	*(CMgr_EffectMesh::GetInstance()->GetBoolControl()) = true;
+	//UpdateData(true);
+	//m_UpdateTime = CMgr_EffectMesh::GetInstance()->GetCount();
+	//UpdateData(false);
+#endif 
+
+}
+
+
+void EffectTool::OnBnClickedAnimationstop()
+{
+#ifdef MeshEffect
+	if (CMgr_EffectMesh::GetInstance()->GetBoolControl())
+	*(CMgr_EffectMesh::GetInstance()->GetBoolControl()) = false;
+#endif 
+
+}
+
+
+void EffectTool::OnBnClickedAlphavalueUp()
+{
+	UpdateData(true); 
+	m_AlphaValue += FristAlphaDelta;
+#ifdef MeshEffect
+	*(CMgr_EffectMesh::GetInstance()->Get_Default_Alpha()) = m_AlphaValue; 
+	*(CMgr_EffectMesh::GetInstance()->Get_Current_Alpha()) = m_AlphaValue;
+
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedAlphavalueDown()
+{
+	UpdateData(true);
+	m_AlphaValue -= FristAlphaDelta;
+#ifdef MeshEffect
+	*(CMgr_EffectMesh::GetInstance()->Get_Default_Alpha()) = m_AlphaValue;
+	*(CMgr_EffectMesh::GetInstance()->Get_Current_Alpha()) = m_AlphaValue;
+
+#endif 
+
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedAlphavalueUp2()
+{
+	UpdateData(true);
+	m_FinalValue_alpha += FinalAlphaDelta;
+#ifdef MeshEffect
+	*(CMgr_EffectMesh::GetInstance()->Get_Conversion_Alpha()) = m_FinalValue_alpha;
+#endif 
+
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedAlphavalueDown2()
+{
+	UpdateData(true);
+	m_FinalValue_alpha -= FinalAlphaDelta;
+#ifdef MeshEffect
+	*(CMgr_EffectMesh::GetInstance()->Get_Conversion_Alpha()) = m_FinalValue_alpha;
+#endif 
+
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedButton40()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+// [Speed] =========================================================================================
+void EffectTool::OnBnClickedSpeedPosxUp()
+{
+	UpdateData(true);
+	m_SpeedPosX += PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_PositionPoint()->x = m_SpeedPosX;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedPosxDown()
+{
+	UpdateData(true);
+	m_SpeedPosX -= PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_PositionPoint()->x = m_SpeedPosX;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedPosyUp()
+{
+	UpdateData(true);
+	m_SpeedPosY += PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_PositionPoint()->y = m_SpeedPosY;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedPosyDown()
+{
+	UpdateData(true);
+	m_SpeedPosY -= PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_PositionPoint()->y = m_SpeedPosY;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedPoszUp()
+{
+	UpdateData(true);
+	m_SpeedPosZ += PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_PositionPoint()->z = m_SpeedPosZ;
+#endif 
+	UpdateData(false);
+}
+
+void EffectTool::OnBnClickedSpeedPoszDown()
+{
+	UpdateData(true);
+	m_SpeedPosZ -= PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_PositionPoint()->z = m_SpeedPosZ;
+#endif 
+	UpdateData(false);
+}
+
+void EffectTool::OnBnClickedSpeedRotxUp()
+{
+	UpdateData(true);
+	m_SpeedRotX += PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_RotationPoint()->x = m_SpeedRotX;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedRotxDown()
+{
+	UpdateData(true);
+	m_SpeedRotX -= PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_RotationPoint()->x = m_SpeedRotX;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedRotyUp()
+{
+	UpdateData(true);
+	m_SpeedRotY += PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_RotationPoint()->y = m_SpeedRotY;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedRotyDown()
+{
+	UpdateData(true);
+	m_SpeedRotY -= PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_RotationPoint()->y= m_SpeedRotY;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedRotzUp()
+{
+	UpdateData(true);
+	m_SpeedRotZ += PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_RotationPoint()->z = m_SpeedRotZ;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedRotzDown()
+{
+	UpdateData(true);
+	m_SpeedRotZ -= PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_RotationPoint()->z = m_SpeedRotZ;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedSizexUp()
+{
+	UpdateData(true);
+	m_SpeedSizeX += PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_SizePoint()->x = m_SpeedSizeX;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedSizexDown()
+{
+	UpdateData(true);
+	m_SpeedSizeX -= PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_SizePoint()->x = m_SpeedSizeX;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedSizeyUp()
+{
+	UpdateData(true);
+	m_SpeedSizeY += PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_SizePoint()->y = m_SpeedSizeY;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedSizeyDown()
+{
+	UpdateData(true);
+	m_SpeedSizeY -= PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_SizePoint()->y = m_SpeedSizeY;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedSizezUp()
+{
+	UpdateData(true);
+	m_SpeedSizeZ += PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_SizePoint()->z = m_SpeedSizeZ;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedSizezDown()
+{
+	UpdateData(true);
+	m_SpeedSizeZ -= PosRotSpeed;
+#ifdef MeshEffect
+	CMgr_EffectMesh::GetInstance()->Get_Speed_SizePoint()->z = m_SpeedSizeZ;
+#endif 
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedAlphaUp()
+{
+	UpdateData(true);
+	m_SpeedAlpha += AlphaSpeed;
+#ifdef MeshEffect
+	* (CMgr_EffectMesh::GetInstance()->Get_Speed_Alpha()) = m_SpeedAlpha;
+#endif 
+
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedSpeedAlphaDown()
+{
+	UpdateData(true);
+	m_SpeedAlpha -= AlphaSpeed;
+#ifdef MeshEffect
+	* (CMgr_EffectMesh::GetInstance()->Get_Speed_Alpha()) = m_SpeedAlpha;
+#endif 
+
+	UpdateData(false);
+}

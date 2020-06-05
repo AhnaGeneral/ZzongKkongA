@@ -282,8 +282,37 @@ void CStandardMesh::LoadMeshFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 	}
 }
 
+void CStandardMesh::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	UINT ncbElementBytes = ((sizeof(float) + 255) & ~255); //256ÀÇ ¹è¼ö
+	m_pd3dcbAlphaControlResource = ::CreateBufferResource(pd3dDevice, pd3dCommandList,
+		NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
+	m_pd3dcbAlphaControlResource->Map(0, NULL, (void**)&m_pcbfAlphaControl);
+	*m_pcbfAlphaControl = m_fAlphaControl;
+}
+
+void CStandardMesh::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	//m_pcbfAlphaControl = &m_fAlphaControl;
+	*m_pcbfAlphaControl = m_fAlphaControl;
+	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbAlphaControlResource->GetGPUVirtualAddress();
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_STARDARD_BUFFER, d3dGpuVirtualAddress);
+}
+
+void CStandardMesh::ReleaseShaderVariables()
+{
+	if (m_pd3dcbAlphaControlResource)
+	{
+		m_pd3dcbAlphaControlResource->Unmap(0, NULL);
+		m_pd3dcbAlphaControlResource->Release();
+	}
+}
+
 void CStandardMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet)
 {
+	UpdateShaderVariables(pd3dCommandList);
 	const int ViewNum = 5;
 	pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
 	D3D12_VERTEX_BUFFER_VIEW pVertexBufferViews[ViewNum] =
@@ -299,6 +328,11 @@ void CStandardMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubS
 	{
 		pd3dCommandList->DrawInstanced(m_nVertices, 1, m_nOffset, 0);
 	}
+}
+
+void CStandardMesh::SetAlphaControl(float Alphavalue)
+{
+	m_fAlphaControl = Alphavalue; 
 }
 
 

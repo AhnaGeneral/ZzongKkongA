@@ -43,6 +43,11 @@ public:
 	XMFLOAT4X4						m_xmf4x4Transform;
 	XMFLOAT4X4						m_xmf4x4World;
 
+	XMFLOAT4X4                      m_xmf4x4EffectRotation;
+	XMFLOAT4X4                      m_xmf4x4EffectPosition;
+	XMFLOAT4X4                      m_xmf4x4EffectScale;
+	XMFLOAT4X4                      m_xmf4x4EffectTransform;
+
 	XMFLOAT3						m_xmf3Scale = XMFLOAT3(0.0f,0.0f,0.0f);
 	XMFLOAT4						m_xmf4Rotation = XMFLOAT4(0.0f,0.0f,0.0f,0.0f);
 
@@ -59,7 +64,8 @@ public:
 	//CCollisionBox* GetCollisionBoxes();
 	XMFLOAT4 GetRotateQuaternion(float Scale, XMFLOAT4X4& world);
 	void SetMesh(CMesh* pMesh);
-	void SetShader(CShader* pShader);
+	void SetMeshEffectAlphaControlValue(float alphaValue);
+	void SetShader(CShader* pShader); 
 	void CreateMaterial();
 	void SetShader(int nMaterial, CShader* pShader);
 	void SetMaterial(int nMaterial, CMaterial* pMaterial);
@@ -93,6 +99,11 @@ public:
 	void SetPosition(float x, float y, float z);
 	void SetPosition(XMFLOAT3 xmf3Position);
 	void SetScale(float x, float y, float z);
+	void SetScaleEffect(float x, float y, float z); 
+	void SetEffectRotate(float fPitch = 10.0f, float fYaw = 10.0f, float fRoll = 10.0f);
+	void SetEffectPosition(XMFLOAT3 xmf3Position);
+	void EffectUpdateTransform(XMFLOAT4X4 pos, XMFLOAT4X4 rot, XMFLOAT4X4 scale, XMFLOAT4X4* pxmf4x4Parent = NULL);
+
 
 	void MoveStrafe(float fDistance = 1.0f);
 	void MoveUp(float fDistance = 1.0f);

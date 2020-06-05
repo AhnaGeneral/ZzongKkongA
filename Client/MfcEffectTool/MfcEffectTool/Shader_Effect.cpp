@@ -102,7 +102,7 @@ void CShader_Effect::CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 {
 	m_pEffectTestTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0); 
 	m_pEffectTestTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/fire01.dds", 0);
-
+	
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pEffectTestTexture, ROOT_PARAMETER_EFFECT_TEX, false);
 }
 

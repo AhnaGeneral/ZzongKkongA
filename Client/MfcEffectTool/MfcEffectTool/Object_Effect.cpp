@@ -56,9 +56,10 @@ void CObject_Effect::ReleaseShaderVariables()
 
 void CObject_Effect::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
 {
-	//m_TranslationPos = m_TranslationPos;
-	//*(m_pcbEffectElementBuffer->TranslationPos) = m_TranslationPos;
+
 	::memcpy(&m_pcbEffectElementBuffer->TranslationPos, &m_TranslationPos, sizeof(XMFLOAT3));
+	::memcpy(&m_pcbEffectElementBuffer->Sizex, &m_sizeX, sizeof(float)); 
+	::memcpy(&m_pcbEffectElementBuffer->SizeZ, &m_sizeZ, sizeof(float));
 
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dEffectElementBuffer->GetGPUVirtualAddress(); 
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_EFFECT_ELEMENT_BUFFER, d3dGpuVirtualAddress); 

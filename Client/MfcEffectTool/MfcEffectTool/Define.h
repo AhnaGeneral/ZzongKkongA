@@ -33,6 +33,8 @@
 #define ROOT_PARAMETER_RADIATIONLEVEL          20 // 터레인 테셀레이션 팩터로 재활용
 #define ROOT_PARAMETER_EFFECT_TEX              21
 #define ROOT_PARAMETER_EFFECT_ELEMENT_BUFFER   22
+#define ROOT_PARAMETER_STARDARD_BUFFER         23
+
 
 
 

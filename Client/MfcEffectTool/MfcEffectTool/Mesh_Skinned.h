@@ -40,6 +40,8 @@ public:
 	ID3D12Resource                 * m_pd3dcbBoneTransforms;
 	XMFLOAT4X4                     * m_pcbxmf4x4BoneTransforms;
 
+
+
 public:
 
 	void PrepareSkinning(CGameObject* pModelRootObject);

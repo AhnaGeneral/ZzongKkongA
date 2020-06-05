@@ -45,8 +45,8 @@ void EffectGS(point GS_EFFECT_INPUT input[1], inout TriangleStream<GS_EFFECT_OUT
 	vLook = normalize(vLook);
 	float3 vRight = cross(vUP, vLook);
 
-	float fHalfW = 50 * 0.5f;
-	float fHalfH = 50 * 0.5f;
+	float fHalfW = 1 * sizeX;
+	float fHalfH = 1 * sizeZ;
 
 	float4 pVertices[4];
 	pVertices[0] = float4(input[0].positionW + fHalfW * vRight - fHalfH * vUP, 1.0f);

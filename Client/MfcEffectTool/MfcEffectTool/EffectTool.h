@@ -25,6 +25,9 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 
+	CListBox m_ListBoxTexture;
+	CListBox m_ListBoxMesh;
+
 	float m_CurrentPosX;
 	float m_CurrentPosY;
 	float m_CurrentPosZ;
@@ -95,5 +98,48 @@ public:
 	afx_msg void OnBnClickedFinalvalueCzDown();
 
 
+	afx_msg void OnBnClickedTexturecreate();
+	afx_msg void OnBnClickedMeshcreate();
+	afx_msg void OnBnClickedAnimationplay();
+	afx_msg void OnBnClickedAnimationstop();
 
+	//==================================================
+	float m_AlphaValue;
+	afx_msg void OnBnClickedAlphavalueUp();
+	afx_msg void OnBnClickedAlphavalueDown();
+	afx_msg void OnBnClickedAlphavalueUp2();
+	afx_msg void OnBnClickedAlphavalueDown2();
+	float m_FinalValue_alpha;
+	afx_msg void OnBnClickedButton40();
+	float m_SpeedPosX;
+	float m_SpeedPosY;
+	float m_SpeedPosZ;
+	float m_SpeedRotX;
+	float m_SpeedRotY;
+	float m_SpeedRotZ;
+	float m_SpeedSizeX;
+	float m_SpeedSizeY;
+	float m_SpeedSizeZ;
+	float m_SpeedAlpha;
+	afx_msg void OnBnClickedSpeedPosxUp();
+	afx_msg void OnBnClickedSpeedPosxDown();
+	afx_msg void OnBnClickedSpeedPosyUp();
+	afx_msg void OnBnClickedSpeedPosyDown();
+	afx_msg void OnBnClickedSpeedPoszUp();
+	afx_msg void OnBnClickedSpeedRotxUp();
+	afx_msg void OnBnClickedSpeedPoszDown();
+	afx_msg void OnBnClickedSpeedRotxDown();
+	afx_msg void OnBnClickedSpeedRotyUp();
+	afx_msg void OnBnClickedSpeedRotyDown();
+	afx_msg void OnBnClickedSpeedRotzUp();
+	afx_msg void OnBnClickedSpeedRotzDown();
+	afx_msg void OnBnClickedSpeedSizexUp();
+	afx_msg void OnBnClickedSpeedSizexDown();
+	afx_msg void OnBnClickedSpeedSizeyUp();
+	afx_msg void OnBnClickedSpeedSizeyDown();
+	afx_msg void OnBnClickedSpeedSizezUp();
+	afx_msg void OnBnClickedSpeedSizezDown();
+	afx_msg void OnBnClickedSpeedAlphaUp();
+	afx_msg void OnBnClickedSpeedAlphaDown();
+	float m_UpdateTime;
 };

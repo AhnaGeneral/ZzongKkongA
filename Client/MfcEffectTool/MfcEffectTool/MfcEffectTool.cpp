@@ -11,6 +11,10 @@
 
 #include "MfcEffectToolDoc.h"
 #include "MfcEffectToolView.h"
+#include "MyForm.h"
+#include "EffectTool.h"
+#include "Mgr_MeshEffect.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -187,8 +191,13 @@ BOOL CMfcEffectToolApp::OnIdle(LONG lCount)
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	CMainFrame* pMainFrame = dynamic_cast<CMainFrame*>(AfxGetApp()->GetMainWnd());
 	CMfcEffectToolView* pToolview = dynamic_cast<CMfcEffectToolView*>(pMainFrame->m_mainSplite.GetPane(0, 1));
+	MyForm* pForm = static_cast<MyForm*>(pMainFrame->m_mainSplite.GetPane(0, 0));
 
+	
 	pToolview->gGameFramework->FrameAdvanceStageOutdoor(); 
+	pForm->m_pEffectTool->UpdateData(true);
+	pForm->m_pEffectTool->m_UpdateTime = CMgr_EffectMesh::GetInstance()->GetCount();
+	pForm->m_pEffectTool->UpdateData(false);
 
 	return CWinApp::OnIdle(0);
 }
