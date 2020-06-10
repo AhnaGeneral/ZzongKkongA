@@ -294,16 +294,15 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 			m_pBoundingBoxes[i].Update(&m_xmf4x4World);
 			//m_pBoundingBoxes[i].Render(pd3dCommandList, pCamera, &m_xmf4x4World);
 			if (!pCamera->m_boundingFrustum.Intersects(m_pBoundingBoxes[i].boundingBox))
-			{
-				
+			{	
 				CullCount++;
 			}
-		}
+		}/*
 		if (CullCount >= m_nBoundingBoxes)
 		{
 			SetParentRenderState(false);
 			return;
-		}
+		}*/
 	}
 
 	//UpdateTransform(NULL);

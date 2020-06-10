@@ -76,6 +76,7 @@
 #define OBJECT_TYPE_BONE				3
 #define OBJECT_TYPE_HOUSE				4
 #define OBJECT_TYPE_TREE				5
+#define OBJECT_TYPE_BRIDGE				6
 
 /*Monster*/
 //---------------------------------------------------
@@ -112,5 +113,14 @@
 #define PROGRESS_FILED2					2
 #define PROGRESS_FILED3					3
 //-------------------------------------------------
+
+
+//Scene State ________________________________ 
+#define SCENE_LOBBY           0  
+#define SCENE_STAGE_OUTDOOR   1 
+#define SCENE_STAGE_INDOOR    2 
+#define SCENE_CLEAR           3
+//____________________________________________
+
 
 #define EPSILON						1.0e-10f

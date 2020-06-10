@@ -727,55 +727,7 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 		}
 	}
 
-	if (m_pMinimap) m_pMinimap->Render(pd3dCommandList, pCamera);
-	if (m_pBaseUIShader)m_pBaseUIShader->Render(pd3dCommandList, pCamera);
-	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
-	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
-
-
-	for (int i = 0; i < int(nIventoryCount); ++i)
-	{
-		m_ppInVentoryBoxs[i]->Render(pd3dCommandList, 0);
-	}
-
-	if (m_pItemShader)m_pItemShader->Render(pd3dCommandList, pCamera);
-	if (m_pItemTex) m_pItemTex->UpdateShaderVariable(pd3dCommandList, 0);
-
-	for (int i = 0; i < int(nIventoryCount); ++i)
-	{
-		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
-		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemReact(CItemMgr::GetInstance()->GetReactIten());
-		m_ppItems[i]->Render(pd3dCommandList, 0);
-	}
-
-	if (m_PlayerHP) m_PlayerHP->Render(pd3dCommandList, pCamera);
-	if (m_pRadiationShader) m_pRadiationShader->Render(pd3dCommandList, pCamera);
-	if (m_RadiationLevels)
-	{
-		int number = CRadationMgr::GetInstance()->GetRaditaion();
-		dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[0])->SetRadiationNumber(int(number / 10));
-		dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[1])->SetRadiationNumber(int(number % 10));
-
-		for (int i = 0; i < 2; ++i)
-		{
-			m_RadiationLevels[i]->Render(pd3dCommandList, pCamera);
-		}
-	}
-
-
-	if (m_pMinimapFog)m_pMinimapFog->Render(pd3dCommandList, pCamera);
-	if (pMinmapFog1) pMinmapFog1->UpdateShaderVariable(pd3dCommandList, 0);
-	if (m_pMapOne)
-	{
-		(m_pMapOne)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
-		m_pMapOne->Render(pd3dCommandList, pCamera);
-	}
-	if (pMinmapFog2) pMinmapFog2->UpdateShaderVariable(pd3dCommandList, 0);
-	if (m_pMapTwo) 
-	{
-	   (m_pMapTwo)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
-		m_pMapTwo->Render(pd3dCommandList, pCamera);
-	}
+	//UIRender(pd3dCommandList, pCamera);
 }
 
 void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -839,6 +791,59 @@ void CPostProcessingShader::ReleaseShaderVariables()
 	if (m_PlayerHP) m_PlayerHP->ReleaseShaderVariables();
 
 
+}
+
+void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+{
+	if (m_pMinimap) m_pMinimap->Render(pd3dCommandList, pCamera);
+	if (m_pBaseUIShader)m_pBaseUIShader->Render(pd3dCommandList, pCamera);
+	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
+	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
+
+
+	for (int i = 0; i < int(nIventoryCount); ++i)
+	{
+		m_ppInVentoryBoxs[i]->Render(pd3dCommandList, 0);
+	}
+
+	if (m_pItemShader)m_pItemShader->Render(pd3dCommandList, pCamera);
+	if (m_pItemTex) m_pItemTex->UpdateShaderVariable(pd3dCommandList, 0);
+
+	for (int i = 0; i < int(nIventoryCount); ++i)
+	{
+		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemReact(CItemMgr::GetInstance()->GetReactIten());
+		m_ppItems[i]->Render(pd3dCommandList, 0);
+	}
+
+	if (m_PlayerHP) m_PlayerHP->Render(pd3dCommandList, pCamera);
+	if (m_pRadiationShader) m_pRadiationShader->Render(pd3dCommandList, pCamera);
+	if (m_RadiationLevels)
+	{
+		int number = CRadationMgr::GetInstance()->GetRaditaion();
+		dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[0])->SetRadiationNumber(int(number / 10));
+		dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[1])->SetRadiationNumber(int(number % 10));
+
+		for (int i = 0; i < 2; ++i)
+		{
+			m_RadiationLevels[i]->Render(pd3dCommandList, pCamera);
+		}
+	}
+
+
+	if (m_pMinimapFog)m_pMinimapFog->Render(pd3dCommandList, pCamera);
+	if (pMinmapFog1) pMinmapFog1->UpdateShaderVariable(pd3dCommandList, 0);
+	if (m_pMapOne)
+	{
+		(m_pMapOne)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		m_pMapOne->Render(pd3dCommandList, pCamera);
+	}
+	if (pMinmapFog2) pMinmapFog2->UpdateShaderVariable(pd3dCommandList, 0);
+	if (m_pMapTwo)
+	{
+		(m_pMapTwo)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		m_pMapTwo->Render(pd3dCommandList, pCamera);
+	}
 }
 
 void CPostProcessingShader::GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance)

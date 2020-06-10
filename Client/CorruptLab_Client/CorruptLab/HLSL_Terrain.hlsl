@@ -121,12 +121,32 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 		vCenter = vCenter / 25.f;
 	
 		float fDistanceToCamera = distance(vCenter, gvCameraPosition);
-
-		fTessFactor = 500.f / fDistanceToCamera * 30;
-		if (fDistanceToCamera > 180.f)
+		fTessFactor = round(fDistanceToCamera / 100);
+		switch (fTessFactor)
 		{
-			fTessFactor = 1000.f / fDistanceToCamera;
+		case 0:
+		case 1:
+			fTessFactor = 60;
+			break;
+		case 2:
+			fTessFactor = 40;
+			break;
+		case 3:
+			fTessFactor = 20;
+			break;
+		case 4:
+		case 5:
+			fTessFactor = 2;
+			break;
+
 		}
+
+		//if (fDistanceToCamera > 100.f)
+		//{
+		//	fTessFactor = 1000.f / fDistanceToCamera;
+		//	if(fDistanceToCamera > 200.f)
+		//		fTessFactor = 1000.f / fDistanceToCamera;
+		//}
 
 	}
 	HS_TERRAIN_TESSELLATION_CONSTANT output;

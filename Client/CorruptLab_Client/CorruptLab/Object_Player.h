@@ -123,7 +123,7 @@ public:
 	virtual void OnPrepareRender();
 	virtual void OnCameraUpdateCallback(float fTimeElapsed);
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
-
+	bool CheckBridge(XMFLOAT3 xmf3PlayerPosition);
 	virtual void Update(float fTimeElapsed);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 

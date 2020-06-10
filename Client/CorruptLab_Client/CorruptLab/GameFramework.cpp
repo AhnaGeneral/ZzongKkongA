@@ -7,6 +7,7 @@
 #include "Mgr_Radiation.h"
 #include "Mgr_Collision.h"
 #include "Scene_Game2.h"
+#include "Mgr_Scene.h"
 #include "Object_Camera.h"
 CGameFramework::CGameFramework()
 {
@@ -590,15 +591,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				m_nSceneState = SCENE_STAGE_OUTDOOR;
 			break;
 		case VK_F2:
-			if (m_nSceneState == SCENE_STAGE_OUTDOOR)
-			{
-				m_pPlayer->SetPosition(XMFLOAT3(464.f, 0, 101.f));
-				m_pPlayer->SetPlayerUpdatedContext(NULL);
-				m_pPlayer->SetCameraUpdatedContext(NULL);
-				dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 17.0f, -20.5f));
-				CCollisionMgr::GetInstance()->m_nSceneState = 1;
-				m_nSceneState = SCENE_STAGE_INDOOR;
-			}
+			TurnToIndoorState();
 			break;
 		case VK_F3:
 			m_pCamera = m_pPlayer->ChangeCamera((DWORD)(wParam - VK_F1 + 1), m_GameTimer.GetTimeElapsed());
@@ -741,8 +734,8 @@ void CGameFramework::BuildObjects()
 
 	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList,
 		        m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pTerrain);
-	//pAirplanePlayer->SetPosition(XMFLOAT3(437.0f, 15.0f, 366.0f));
-	pAirplanePlayer->SetPosition(XMFLOAT3(394, 15.0f, 88.0f));
+	pAirplanePlayer->SetPosition(XMFLOAT3(77.0f, 15.0f, 444.0f));
+	//pAirplanePlayer->SetPosition(XMFLOAT3(394, 15.0f, 88.0f));
 	
 	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pPlayer = m_pPlayer = pAirplanePlayer;
 	CRadationMgr::GetInstance()->SetPlayer(m_pPlayer);
@@ -774,6 +767,9 @@ void CGameFramework::BuildObjects()
 	{
 		m_pPlayer->ReleaseUploadBuffers();
 	}
+
+	CSceneMgr::GetInstance()->Initialize(this);
+	CSceneMgr::GetInstance()->SetSceneStatePointer(&m_nSceneState);
 	m_GameTimer.Reset();
 }
 
@@ -1096,5 +1092,18 @@ void CGameFramework::FrameAdvanceLobby()
 
 	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
 	::SetWindowText(m_hWnd, m_pszFrameRate);
+}
+
+void CGameFramework::TurnToIndoorState()
+{
+	if (m_nSceneState == SCENE_STAGE_OUTDOOR)
+	{
+		m_pPlayer->SetPosition(XMFLOAT3(464.f, 0, 101.f));
+		m_pPlayer->SetPlayerUpdatedContext(NULL);
+		m_pPlayer->SetCameraUpdatedContext(NULL);
+		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 17.0f, -20.5f));
+		CCollisionMgr::GetInstance()->m_nSceneState = 1;
+		m_nSceneState = SCENE_STAGE_INDOOR;
+	}
 }
 

@@ -45,6 +45,8 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	cColor = lerp(cColor, fogColor,fog );
 	cColor += cEmmisive ;
 
+	//cColor = lerp(cColor,fLighted,0.6f);
+
 	return(cColor);
 }
 

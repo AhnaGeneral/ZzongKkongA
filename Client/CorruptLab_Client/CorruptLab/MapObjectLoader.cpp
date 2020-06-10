@@ -18,7 +18,7 @@
 
 void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_nStaticObjectTypeNum = 6;
+	m_nStaticObjectTypeNum = 7;
 	m_pStaticObjLists = new vector<CGameObject*>*[m_nStaticObjectTypeNum];
 
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -68,6 +68,9 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Tree1.bin", NULL, false);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Trees.bin", OBJECT_TYPE_TREE);
 
+	//Bridges------------------------------------------
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Bridge.bin", NULL, false);
+	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Bridges.bin", OBJECT_TYPE_BRIDGE);
 
 	/*Dynamic*/
 	//ItemBox--------------------------------------------

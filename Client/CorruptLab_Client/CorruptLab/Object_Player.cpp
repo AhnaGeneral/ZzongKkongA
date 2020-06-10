@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Object_Player.h"
+#include "Mgr_Scene.h"
 #include "Mgr_Collision.h"
 #include "Animation.h"
 #include "Shader.h"
@@ -378,6 +379,9 @@ void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 
 	int z = (int)(xmf3PlayerPosition.z / xmf3Scale.z);
 	bool bReverseQuad = ((z % 2) != 0);
+
+	if(CheckBridge(xmf3PlayerPosition) == false) return;
+	
 	float fHeight = pTerrain->GetHeight(xmf3PlayerPosition.x, xmf3PlayerPosition.z, bReverseQuad);
 	if (xmf3PlayerPosition.y < fHeight)
 	{
@@ -388,6 +392,49 @@ void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 		SetPosition(xmf3PlayerPosition);
 		//m_xmf3Position = xmf3PlayerPosition;
 	}
+}
+
+bool CMainPlayer::CheckBridge(XMFLOAT3 xmf3PlayerPosition)
+{
+	if (xmf3PlayerPosition.x < 73)
+	{
+		if (xmf3PlayerPosition.z > 400)
+		{
+			if (xmf3PlayerPosition.x > 63) return true;
+			if (xmf3PlayerPosition.x < -120)
+			{
+				SetVelocity(XMFLOAT3(0, 0, 0));
+				CSceneMgr::GetInstance()->ChanegeSceneState(SCENE_STAGE_INDOOR);
+				return false;
+			}
+			if (xmf3PlayerPosition.z > 455) xmf3PlayerPosition.z = 455;
+			else if (xmf3PlayerPosition.z < 432) xmf3PlayerPosition.z = 432;
+
+			float fY = xmf3PlayerPosition.x - (-120) - 90;
+			fY = 30 + fY * fY * 0.003;
+			xmf3PlayerPosition.y = fY;
+		}
+		else if (xmf3PlayerPosition.z < 210)
+		{
+			if (xmf3PlayerPosition.x < -5)
+			{
+				xmf3PlayerPosition.x = -5;
+			
+			}
+			if (xmf3PlayerPosition.z > 196) xmf3PlayerPosition.z = 196;
+			else if (xmf3PlayerPosition.z < 173) xmf3PlayerPosition.z = 173;
+
+			float fY = xmf3PlayerPosition.x - (-50) - 50;
+			fY = 30 + fY * fY * 0.004;
+			xmf3PlayerPosition.y = fY;
+		}
+		XMFLOAT3 xmf3PlayerVelocity = GetVelocity();
+		xmf3PlayerVelocity.y = 0.0f;
+		SetVelocity(xmf3PlayerVelocity);
+		SetPosition(xmf3PlayerPosition);
+		return false;
+	}
+	return true;
 }
 
 void CMainPlayer::Update(float fTimeElapsed)

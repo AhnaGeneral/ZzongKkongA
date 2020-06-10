@@ -8,12 +8,6 @@
 #include "Shader_LightMRT.h"
 #include "CShader_ShadowMRT.h"
 
-//Scene State ________________________________ 
-#define SCENE_LOBBY           0  
-#define SCENE_STAGE_OUTDOOR   1 
-#define SCENE_STAGE_INDOOR    2 
-#define SCENE_CLEAR           3
-//____________________________________________
 
 class CGameFramework
 {
@@ -42,13 +36,13 @@ public:
 
 	void BuildObjects();
 	void ReleaseObjects();
-
 	void ProcessInput();
 	void ShadowMapRender();
 	void FrameAdvanceStageIndoor();
 	void FrameAdvanceStageOutdoor();
 	void FrameAdvanceLobby();
 	UINT GetSceneState() { return m_nSceneState; }
+	void TurnToIndoorState();
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();

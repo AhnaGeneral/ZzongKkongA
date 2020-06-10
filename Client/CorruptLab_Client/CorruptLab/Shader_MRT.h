@@ -90,6 +90,7 @@ public:
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
+	void UIRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 	void GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance);
 	int GetMRTSwitch() { return m_nMRTSwitch; }
 	void SetMRTSwitch(int iunder) { m_nMRTSwitch = iunder; }
