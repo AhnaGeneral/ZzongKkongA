@@ -727,7 +727,7 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 		}
 	}
 
-	//UIRender(pd3dCommandList, pCamera);
+	UIRender(pd3dCommandList, pCamera);
 }
 
 void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)

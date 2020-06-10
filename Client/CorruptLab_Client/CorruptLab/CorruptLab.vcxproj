@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Mgr_Scene.h" />
     <ClInclude Include="CShader_ParticleClass.h" />
     <ClInclude Include="CSystem_Particle.h" />
     <ClInclude Include="Mgr_Item.h" />
@@ -219,6 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Mgr_Scene.cpp" />
     <ClCompile Include="CShader_ParticleClass.cpp" />
     <ClCompile Include="CSystem_Particle.cpp" />
     <ClCompile Include="Mgr_Item.cpp" />
