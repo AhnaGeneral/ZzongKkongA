@@ -11,6 +11,8 @@
 
 class CGameObject; 
 class CSkinnedMesh; 
+class CMesh;
+class CStandardMesh;
 
 struct CALLBACKKEY
 {
@@ -95,7 +97,7 @@ public:
 class CAnimationController
 {
 public:
-	CAnimationController(int nAnimationTracks = 1);
+	CAnimationController(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, CGameObject* LoadGameobject , int nAnimationTracks = 1);
 	~CAnimationController();
 
 public:
@@ -108,13 +110,19 @@ public:
 
 	int								m_nAnimationBoneFrames = 0;
 	CGameObject                  ** m_ppAnimationBoneFrameCaches = NULL;
-
 	int 							m_nAnimationTracks = 0;
 	CAnimationTrack               * m_pAnimationTracks = NULL;
+
+	CMesh                        * m_pMesh = NULL;
+	CSkinnedMesh                 * m_ppSkinnedMeshes = NULL;
+	ID3D12Resource               * m_ppd3dcbSkinningBoneTransforms = NULL; //[SkinnedMeshes]
+	XMFLOAT4X4                   * m_ppcbxmf4x4MappedSkinningBoneTransforms = NULL;
+
 
 	int  				 			m_nAnimationTrack = 0;
 
 public:
+	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	void SetAnimationSet(int nAnimationSet);
 
 	void SetCallbackKeys(int nAnimationSet, int nCallbackKeys);

@@ -71,6 +71,7 @@ EffectTool::EffectTool(CWnd* pParent /*=nullptr*/)
 	, m_SpeedSizeZ(0)
 	, m_SpeedAlpha(0)
 	, m_UpdateTime(0)
+	, m_LifeTime(0)
 {
 
 }
@@ -118,6 +119,7 @@ void EffectTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT36, m_SpeedSizeZ);
 	DDX_Text(pDX, IDC_EDIT37, m_SpeedAlpha);
 	DDX_Text(pDX, IDC_EDIT43, m_UpdateTime);
+	DDX_Text(pDX, IDC_EDIT23, m_LifeTime);
 }
 
 
@@ -187,6 +189,9 @@ BEGIN_MESSAGE_MAP(EffectTool, CDialogEx)
 	ON_BN_CLICKED(IDC_Speed_SizeZ_Down, &EffectTool::OnBnClickedSpeedSizezDown)
 	ON_BN_CLICKED(IDC_Speed_Alpha_UP, &EffectTool::OnBnClickedSpeedAlphaUp)
 	ON_BN_CLICKED(IDC_Speed_Alpha_Down, &EffectTool::OnBnClickedSpeedAlphaDown)
+	ON_BN_CLICKED(IDC_LifeTime_Down, &EffectTool::OnBnClickedLifetimeDown)
+	ON_BN_CLICKED(IDC_LifeTime_UP2, &EffectTool::OnBnClickedLifetimeUp2)
+	ON_BN_CLICKED(IDC_StoreButton, &EffectTool::OnBnClickedStorebutton)
 END_MESSAGE_MAP()
 
 
@@ -1057,4 +1062,29 @@ void EffectTool::OnBnClickedSpeedAlphaDown()
 #endif 
 
 	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedLifetimeDown()
+{
+	UpdateData(true);
+	m_LifeTime -= 1.0f;
+	CMgr_EffectMesh::GetInstance()->Set_LifeTime(m_LifeTime); 
+
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedLifetimeUp2()
+{
+	UpdateData(true);
+	m_LifeTime += 1.0f;
+	CMgr_EffectMesh::GetInstance()->Set_LifeTime(m_LifeTime);
+	UpdateData(false);
+}
+
+
+void EffectTool::OnBnClickedStorebutton()
+{
+	CMgr_EffectMesh::GetInstance()->FileSave(); 
 }

@@ -40,6 +40,8 @@ class CMgr_EffectMesh
 {
 private:
 	static CMgr_EffectMesh* m_pInstance;
+	CGameObject** m_ppMeshEffect = nullptr; 
+
 	CGameObject* m_pMeshEffect = nullptr;
 
 public:
@@ -62,6 +64,8 @@ public:
 	XMFLOAT3* Get_Default_SizePoint();
 	float* Get_Default_Alpha();
 
+	void Set_LifeTime(float LifeTime); 
+	
 	float  GetCount() { return m_CountTime; }
 
 	XMFLOAT3* Get_Current_RotationPoint();
@@ -76,6 +80,7 @@ public:
 	float*    Get_Speed_Alpha();
 
 	bool*     GetBoolControl(); 
+	void      FileSave(); 
 
 	void SetAlpha(float);
 	void Update(float fTimeElapsed); 

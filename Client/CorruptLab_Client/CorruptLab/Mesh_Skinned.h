@@ -27,15 +27,17 @@ protected:
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dBoneWeightBufferView;
 
 public:
-	int								m_nSkinningBones;
+	int								 m_nSkinningBones;
 
-	char(*m_ppstrSkinningBoneNames)[64]; 
+	char                           (*m_ppstrSkinningBoneNames)[64]; 
 	XMFLOAT4X4                     * m_pxmf4x4BindPoseBoneOffsets;
 								 
 	CGameObject                   ** m_ppSkinningBoneFrameCaches;//
 								 
-	ID3D12Resource                 * m_pd3dcbBoneOffsets;
-	XMFLOAT4X4                     * m_pcbxmf4x4BoneOffsets;
+	ID3D12Resource                 * m_pd3dcbBindPoseBoneOffsets = NULL;
+	XMFLOAT4X4                     * m_pcbxmf4x4MappedBindPoseBoneOffsets = NULL; 
+	
+	
 								 
 	ID3D12Resource                 * m_pd3dcbBoneTransforms;
 	XMFLOAT4X4                     * m_pcbxmf4x4BoneTransforms;

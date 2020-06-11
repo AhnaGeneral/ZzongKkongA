@@ -134,6 +134,17 @@ void CGameObject::SetMesh(CMesh* pMesh)
 	if (m_pMesh) m_pMesh->AddRef();
 }
 
+CMesh* CGameObject::GetMesh()
+{
+	if (m_pMesh)
+		return m_pMesh;
+
+	if (m_pChild) m_pChild->GetMesh();
+	if (m_pSibling) m_pSibling->GetMesh();
+
+	//return m_pMesh;
+}
+
 void CGameObject::SetShader(CShader* pShader)
 {
 	m_nMaterials = 1;
@@ -284,6 +295,9 @@ void CGameObject::OnPrepareRender() {}
 
 void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
+	if (m_pAnimationController)
+		m_pAnimationController->UpdateShaderVariables(pd3dCommandList);
+
 	m_bRender = true;
 	if (m_pBoundingBoxes && nPipelineState == 0)
 	{
@@ -515,7 +529,7 @@ CGameObject* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDev
 
 	if (bHasAnimation)
 	{
-		pGameObject->m_pAnimationController = new CAnimationController(1);
+		pGameObject->m_pAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, pGameObject, 1);
 		pGameObject->LoadAnimationFromFile(pInFile);
 		pGameObject->m_pAnimationController->SetAnimationSet(0);
 	}

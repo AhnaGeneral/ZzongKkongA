@@ -62,6 +62,7 @@ public:
 	CCollisionBox* GetCollisionBoxes();
 	XMFLOAT4 GetRotateQuaternion(float Scale, XMFLOAT4X4& world);
 	void SetMesh(CMesh* pMesh);
+	CMesh* GetMesh(); 
 	void SetShader(CShader* pShader);
 	void CreateMaterial();
 	void SetShader(int nMaterial, CShader* pShader);

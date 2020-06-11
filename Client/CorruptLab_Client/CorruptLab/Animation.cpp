@@ -7,6 +7,7 @@
 #include "Shader_Standard.h"
 #include "Scene.h"
 #include "Object.h"
+#include "Mesh.h"
 
 CAnimationSet::CAnimationSet()
 {
@@ -139,10 +140,21 @@ void CAnimationSet::SetCallbackKey(int nKeyIndex, float fKeyTime, void* pData)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-CAnimationController::CAnimationController(int nAnimationTracks)
+CAnimationController::CAnimationController(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,  CGameObject* LoadGameobject, int nAnimationTracks)
 {
 	m_nAnimationTracks = nAnimationTracks;
 	m_pAnimationTracks = new CAnimationTrack[nAnimationTracks];
+
+	//m_ppd3dcbSkinningBoneTransforms = new ID3D12Resource;
+	//m_ppcbxmf4x4MappedSkinningBoneTransforms = new XMFLOAT4X4 * [m_nSkinnedMeshes];
+	m_ppSkinnedMeshes = static_cast<CSkinnedMesh*>(LoadGameobject->GetMesh());
+	m_pMesh = (LoadGameobject->GetMesh());
+	UINT ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256ÀÇ ¹è¼ö
+
+	m_ppd3dcbSkinningBoneTransforms = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, 
+		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	m_ppd3dcbSkinningBoneTransforms->Map(0, NULL, (void**)&m_ppcbxmf4x4MappedSkinningBoneTransforms);
+	
 }
 
 CAnimationController::~CAnimationController()
@@ -162,6 +174,15 @@ void CAnimationController::SetCallbackKey(int nAnimationSet, int nKeyIndex, floa
 {
 	m_pAnimationSets[nAnimationSet].m_pCallbackKeys[nKeyIndex].m_fTime = fKeyTime;
 	m_pAnimationSets[nAnimationSet].m_pCallbackKeys[nKeyIndex].m_pCallbackData = pData;
+}
+
+void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	if (m_ppSkinnedMeshes)
+	{
+          (m_ppSkinnedMeshes)->m_pcbxmf4x4BoneTransforms = m_ppcbxmf4x4MappedSkinningBoneTransforms;
+          (m_ppSkinnedMeshes)->m_pd3dcbBoneTransforms = m_ppd3dcbSkinningBoneTransforms;
+	}
 }
 
 void CAnimationController::SetAnimationSet(int nAnimationSet)

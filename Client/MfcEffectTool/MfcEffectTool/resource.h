@@ -19,6 +19,7 @@
 #define IDC_CHECK2                      1021
 #define IDC_EDIT3                       1022
 #define IDC_BUTTON3                     1024
+#define IDC_StoreButton                 1024
 #define IDC_BUTTON4                     1025
 #define IDC_FristValue_PosX_UP          1025
 #define IDC_AnimationStop               1027
@@ -32,6 +33,7 @@
 #define IDC_CHECK5                      1116
 #define IDC_BUTTON40                    1118
 #define IDC_BUTTON41                    1119
+#define IDC_LifeTime_Down               1119
 #define IDC_EDIT4                       1120
 #define IDC_BUTTON6                     1121
 #define IDC_FristValue_PosY_UP          1121
@@ -177,6 +179,7 @@
 #define IDC_EDIT40                      1225
 #define IDC_EDIT41                      1226
 #define IDC_EDIT42                      1227
+#define IDC_LifeTime_UP2                1228
 #define IDC_AlphaValue_UP3              1229
 #define IDC_AlphaValue_Down3            1230
 #define IDC_AlphaValue_UP4              1233

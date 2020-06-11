@@ -142,4 +142,8 @@ public:
 	afx_msg void OnBnClickedSpeedAlphaUp();
 	afx_msg void OnBnClickedSpeedAlphaDown();
 	float m_UpdateTime;
+	float m_LifeTime;
+	afx_msg void OnBnClickedLifetimeDown();
+	afx_msg void OnBnClickedLifetimeUp2();
+	afx_msg void OnBnClickedStorebutton();
 };
