@@ -43,8 +43,8 @@ CGameScene2::~CGameScene2()
 void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	m_pFloor = new CFloor(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-	m_pFloor->SetPosition(XMFLOAT3(400, 0, 400));
-	m_pShadowCamera = new CSunCamera(XMFLOAT3(400.f, 80.f, -30.f),Vector3::Normalize( XMFLOAT3(0,-1,1.f)));
+	m_pFloor->SetPosition(XMFLOAT3(250, 0, 250));
+	m_pShadowCamera = new CSunCamera(XMFLOAT3(300.f, 100.f, -80.f),Vector3::Normalize( XMFLOAT3(0,-1,1.5f)));
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 

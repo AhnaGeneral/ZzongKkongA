@@ -174,7 +174,7 @@ void CPlayer::Update(float fTimeElapsed)
 {
 	if (m_iState == JOHNSON_ANIAMATION_ATTACK)
 	{
-		SetAnimationSet(m_iState);
+		SetAnimationSet(m_iState, m_iTrackNumber);
 		if (m_pChild->m_pAnimationController->m_pAnimationTracks->m_pAnimationSet->m_fPosition >= 0.7f)
 		{
 			m_iState = JOHNSON_ANIAMATION_IDLE;
@@ -207,7 +207,7 @@ void CPlayer::Update(float fTimeElapsed)
 
 		if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 
-			SetAnimationSet(m_iState);
+			SetAnimationSet(m_iState, m_iTrackNumber);
 	}
 
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();
@@ -305,11 +305,11 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 
 	CGameObject* pGameObject =
 		CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
-			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson_Attack.bin", NULL, true);
+			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson.bin", NULL, 1);
 
 
 	m_pSword = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
-			pd3dGraphicsRootSignature, "Model/Sword.bin", NULL, false);
+			pd3dGraphicsRootSignature, "Model/Sword.bin", NULL, 0);
 
 	//SetPosition(0.0f, 0.0f, 0.0f);
 

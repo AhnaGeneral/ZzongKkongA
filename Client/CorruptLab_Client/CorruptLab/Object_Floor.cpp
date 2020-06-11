@@ -3,7 +3,7 @@
 
 CFloor::CFloor(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
-	CTriangleRect* pNoise = new CTriangleRect(pd3dDevice, pd3dCommandList, 800.0f, 800.0f, 1.0f, 1.0f);
+	CTriangleRect* pNoise = new CTriangleRect(pd3dDevice, pd3dCommandList, 500.0f, 500.0f, 1.0f, 1.0f);
 	SetMesh(pNoise);
 
 	CShader* pShader = new CFloorShader();

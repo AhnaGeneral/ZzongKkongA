@@ -32,6 +32,7 @@ public:
 	virtual ~CGameObject();
 
 public:
+	int								m_iTrackNumber = 0;
 	bool							m_bRender = true;
 	int								m_nBoundingBoxes;
 	CCollisionBox                 * m_pBoundingBoxes = NULL;
@@ -74,7 +75,7 @@ public:
 	virtual void BuildMaterials(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) { }
 
 	virtual void OnInitialize()  { }
-	virtual void Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL);
+	virtual void Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, int iNum = 0);
 
 	virtual void OnPrepareRender();
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
@@ -121,7 +122,7 @@ public:
 
 	CGameObject* GetRootSkinnedGameObject();
 
-	void SetAnimationSet(int nAnimationSet);
+	void SetAnimationSet(int nAnimationSet, int iNum = 0);
 
 	void CacheSkinningBoneFrames(CGameObject* pRootFrame);
 
@@ -131,7 +132,7 @@ public:
 
 
 	static CGameObject* LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pParent, FILE* pInFile, CShader* pShader);
-	static CGameObject* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader, bool bHasAnimation);
+	static CGameObject* LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader, int iHasAnimations = 0);
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);
 
 };

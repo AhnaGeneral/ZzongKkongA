@@ -12,7 +12,7 @@ void CItemBox::Update(float fElapsedTime)
 {
 	if (m_bAnimating)
 	{
-		SetAnimationSet(0);
+		SetAnimationSet(0, m_iTrackNumber);
 		Animate(fElapsedTime);
 		if (m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_fPosition >= 0.4f)
 		{

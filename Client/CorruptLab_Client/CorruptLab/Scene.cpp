@@ -753,7 +753,6 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 		}
 	}
 
-
 	if (m_pMonsterLists) // ∏ÛΩ∫≈Õ Render
 	{
 		for (int i = 0; i < m_nMonsterTypeNum; i++)
@@ -767,7 +766,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 				Obj->SetPlayerPosition(playerpos);
 
 				Obj->Update(m_fElapsedTime, NULL, m_pTerrain);
-				Obj->Animate(m_fElapsedTime, NULL);
+				Obj->Animate(m_fElapsedTime, NULL, Obj->m_iTrackNumber);
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 0);
 			}
@@ -775,7 +774,9 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	}
 	CheckCollisions();
 
+
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
+
 
 
 	if (m_pSkyBox)  m_pSkyBox->Render(pd3dCommandList, pCamera);
@@ -783,8 +784,8 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
 
 	//if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
-	//if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
-	//if (m_pSpecialFogShader) m_pSpecialFogShader->Render(pd3dCommandList, pCamera);
+	if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
+	if (m_pSpecialFogShader) m_pSpecialFogShader->Render(pd3dCommandList, pCamera);
 }
 
 

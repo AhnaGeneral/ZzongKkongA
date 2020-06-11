@@ -123,10 +123,10 @@ public:
 
 public:
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
-	void SetAnimationSet(int nAnimationSet);
+	void SetAnimationSet(int nAnimationSet, int iNum = 0);
 
 	void SetCallbackKeys(int nAnimationSet, int nCallbackKeys);
 	void SetCallbackKey(int nAnimationSet, int nKeyIndex, float fTime, void* pData);
 
-	void AdvanceTime(float fElapsedTime, CAnimationCallbackHandler* pCallbackHandler);
+	void AdvanceTime(float fElapsedTime, CAnimationCallbackHandler* pCallbackHandler, int iTrackNum = 0);
 };

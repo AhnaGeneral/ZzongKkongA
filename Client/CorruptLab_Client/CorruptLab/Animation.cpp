@@ -147,7 +147,7 @@ CAnimationController::CAnimationController(ID3D12Device* pd3dDevice, ID3D12Graph
 
 	//m_ppd3dcbSkinningBoneTransforms = new ID3D12Resource;
 	//m_ppcbxmf4x4MappedSkinningBoneTransforms = new XMFLOAT4X4 * [m_nSkinnedMeshes];
-	m_ppSkinnedMeshes = static_cast<CSkinnedMesh*>(LoadGameobject->GetMesh());
+	m_ppSkinnedMeshes = (CSkinnedMesh*)(LoadGameobject->GetMesh());
 	m_pMesh = (LoadGameobject->GetMesh());
 	UINT ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256ÀÇ ¹è¼ö
 
@@ -185,54 +185,51 @@ void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3d
 	}
 }
 
-void CAnimationController::SetAnimationSet(int nAnimationSet)
+void CAnimationController::SetAnimationSet(int nAnimationSet, int iNum)
 {
 	if (m_pAnimationSets && (nAnimationSet < m_nAnimationSets))
 	{
 		m_nAnimationSet = nAnimationSet;
-		m_pAnimationTracks[m_nAnimationTrack].m_pAnimationSet = &m_pAnimationSets[m_nAnimationSet];
+		m_pAnimationTracks[iNum].m_pAnimationSet = &m_pAnimationSets[m_nAnimationSet];
 	}
 }
 
-void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHandler* pCallbackHandler)
+void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHandler* pCallbackHandler, int iTrackNum )
 {
 	m_fTime += fTimeElapsed;
 
 	if (m_pAnimationSets)
 	{
-		for (int i = 0; i < m_nAnimationTracks; i++)
+			if (m_pAnimationTracks[iTrackNum].m_bEnable)
 		{
-			if (m_pAnimationTracks[i].m_bEnable)
+			m_pAnimationTracks[iTrackNum].m_fPosition += (fTimeElapsed * m_pAnimationTracks[iTrackNum].m_fSpeed);
+
+			CAnimationSet* pAnimationSet = m_pAnimationTracks[iTrackNum].m_pAnimationSet;
+			pAnimationSet->m_fPosition += (fTimeElapsed * pAnimationSet->m_fSpeed);
+
+			if (pCallbackHandler)
 			{
-				m_pAnimationTracks[i].m_fPosition += (fTimeElapsed * m_pAnimationTracks[i].m_fSpeed);
+				void* pCallbackData = pAnimationSet->GetCallback(pAnimationSet->m_fPosition);
+				if (pCallbackData) pCallbackHandler->HandleCallback(pCallbackData);
+			}
 
-				CAnimationSet* pAnimationSet = m_pAnimationTracks[i].m_pAnimationSet;
-				pAnimationSet->m_fPosition += (fTimeElapsed * pAnimationSet->m_fSpeed);
+			float fPositon = pAnimationSet->GetPosition(pAnimationSet->m_fPosition);
 
-				if (pCallbackHandler)
+			if (pAnimationSet->m_nType == ANIMATION_TYPE_ONCE && fPositon >= pAnimationSet->m_fLength-0.1f)
+			{
+				for (int j = 0; j < m_nAnimationBoneFrames; j++)
 				{
-					void* pCallbackData = pAnimationSet->GetCallback(pAnimationSet->m_fPosition);
-					if (pCallbackData) pCallbackHandler->HandleCallback(pCallbackData);
-				}
-
-				float fPositon = pAnimationSet->GetPosition(pAnimationSet->m_fPosition);
-
-				if (pAnimationSet->m_nType == ANIMATION_TYPE_ONCE && fPositon >= pAnimationSet->m_fLength-0.1f)
-				{
-					for (int i = 0; i < m_nAnimationBoneFrames; i++)
-					{
-						m_ppAnimationBoneFrameCaches[i]->m_xmf4x4Transform = pAnimationSet->GetSRTSimple(i, pAnimationSet->m_nKeyFrameTransforms - 1);
-					}
-				}
-				else
-				{
-					for (int i = 0; i < m_nAnimationBoneFrames; i++)
-					{
-						m_ppAnimationBoneFrameCaches[i]->m_xmf4x4Transform = pAnimationSet->GetSRT(i, fPositon);
-					}
-
+					m_ppAnimationBoneFrameCaches[j]->m_xmf4x4Transform = pAnimationSet->GetSRTSimple(j, pAnimationSet->m_nKeyFrameTransforms - 1);
 				}
 			}
+			else
+			{
+				for (int j = 0; j < m_nAnimationBoneFrames; j++)
+				{
+					m_ppAnimationBoneFrameCaches[j]->m_xmf4x4Transform = pAnimationSet->GetSRT(j, fPositon);
+				}
+
+				}
 		}
 	}
 }

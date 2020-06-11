@@ -139,9 +139,10 @@ CMesh* CGameObject::GetMesh()
 	if (m_pMesh)
 		return m_pMesh;
 
-	if (m_pChild) m_pChild->GetMesh();
-	if (m_pSibling) m_pSibling->GetMesh();
+	if (m_pChild) return m_pChild->GetMesh();
+	if (m_pSibling) return m_pSibling->GetMesh();
 
+	return NULL;
 	//return m_pMesh;
 }
 
@@ -271,13 +272,14 @@ void CGameObject::Rotate(XMFLOAT3* pxmf3Axis, float fAngle)
 	m_xmf4x4World = Matrix4x4::Multiply(mtxRotate, m_xmf4x4World);
 }
 
-void CGameObject::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
+void CGameObject::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, int iNum)
 {
 	OnPrepareRender();
 
-	if (m_pAnimationController) m_pAnimationController->AdvanceTime(fTimeElapsed, NULL);
-	if (m_pSibling) m_pSibling->Animate(fTimeElapsed, pxmf4x4Parent);
-	if (m_pChild) m_pChild->Animate(fTimeElapsed, &m_xmf4x4World);
+	if (m_pAnimationController) 
+		m_pAnimationController->AdvanceTime(fTimeElapsed, NULL, iNum);
+	if (m_pSibling) m_pSibling->Animate(fTimeElapsed, pxmf4x4Parent, iNum);
+	if (m_pChild) m_pChild->Animate(fTimeElapsed, &m_xmf4x4World, iNum);
 }
 
 CGameObject* CGameObject::FindFrame(char* pstrFrameName)
@@ -491,12 +493,12 @@ void CGameObject::CacheSkinningBoneFrames(CGameObject* pRootFrame)
 	if (m_pChild) m_pChild->CacheSkinningBoneFrames(pRootFrame);
 }
 
-void CGameObject::SetAnimationSet(int nAnimationSet)
+void CGameObject::SetAnimationSet(int nAnimationSet, int iNum)
 {
-	if (m_pAnimationController) m_pAnimationController->SetAnimationSet(nAnimationSet);
+	if (m_pAnimationController) m_pAnimationController->SetAnimationSet(nAnimationSet, iNum);
 
-	if (m_pSibling) m_pSibling->SetAnimationSet(nAnimationSet);
-	if (m_pChild) m_pChild->SetAnimationSet(nAnimationSet);
+	if (m_pSibling) m_pSibling->SetAnimationSet(nAnimationSet, iNum);
+	if (m_pChild) m_pChild->SetAnimationSet(nAnimationSet, iNum);
 }
 
 void CGameObject::UpdateTransform(XMFLOAT4X4* pxmf4x4Parent)
@@ -508,7 +510,7 @@ void CGameObject::UpdateTransform(XMFLOAT4X4* pxmf4x4Parent)
 }
 
 //#define _WITH_DEBUG_FRAME_HIERARCHY
-CGameObject* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader, bool bHasAnimation)
+CGameObject* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader, int iHasAnimations)
 {
 	FILE* pInFile = NULL;
 	::fopen_s(&pInFile, pstrFileName, "rb");
@@ -527,9 +529,9 @@ CGameObject* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDev
 	CGameObject::PrintFrameInfo(pGameObject, NULL);
 #endif
 
-	if (bHasAnimation)
+	if (iHasAnimations>0)
 	{
-		pGameObject->m_pAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, pGameObject, 1);
+		pGameObject->m_pAnimationController = new CAnimationController(pd3dDevice, pd3dCommandList, pGameObject, iHasAnimations);
 		pGameObject->LoadAnimationFromFile(pInFile);
 		pGameObject->m_pAnimationController->SetAnimationSet(0);
 	}
@@ -876,7 +878,7 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile)
 		{
 			break;
 		}
-		if (nAnimations == m_pAnimationController->m_nAnimationSets)
+		if (nAnimations == m_pAnimationController->m_nAnimationSets )
 			break;
 	}
 }
