@@ -51,6 +51,7 @@ void CMonster::MoveToTarget(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHei
 
 void CMonster::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
+	UpdateTrackNumber(m_iTrackNumber);
 	CGameObject::Render(pd3dCommandList, pCamera, nPipelineState);
 	m_HPUI->UpdateTransform(&m_xmf4x4World);
 	m_HPUI->Render(pd3dCommandList, pCamera);
@@ -70,6 +71,7 @@ void CMonster::Update(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pCont
 		GoodUpdate(fTimeElapsed, pxmf4x4Parent, pContext);
 	else
 		BadUpdate(fTimeElapsed, pxmf4x4Parent, pContext);
+
 }
 
 void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pContext)

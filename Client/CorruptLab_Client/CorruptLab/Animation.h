@@ -76,7 +76,8 @@ public:
 class CAnimationTrack
 {
 public:
-	CAnimationTrack() { }
+	CAnimationTrack() {}
+	void CreateBuffers(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	~CAnimationTrack();
 
 public:
@@ -84,6 +85,9 @@ public:
 	float 							m_fSpeed = 1.0f;
 	float 							m_fPosition = 0.0f;
 	float 							m_fWeight = 1.0f;
+
+	ID3D12Resource*					m_ppd3dcbSkinningBoneTransforms = NULL; //[SkinnedMeshes]
+	XMFLOAT4X4*						m_ppcbxmf4x4MappedSkinningBoneTransforms = NULL;
 
 	CAnimationSet                  * m_pAnimationSet = NULL;
 };
@@ -115,14 +119,11 @@ public:
 
 	CMesh                        * m_pMesh = NULL;
 	CSkinnedMesh                 * m_ppSkinnedMeshes = NULL;
-	ID3D12Resource               * m_ppd3dcbSkinningBoneTransforms = NULL; //[SkinnedMeshes]
-	XMFLOAT4X4                   * m_ppcbxmf4x4MappedSkinningBoneTransforms = NULL;
-
 
 	int  				 			m_nAnimationTrack = 0;
 
 public:
-	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
+	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, int iNum);
 	void SetAnimationSet(int nAnimationSet, int iNum = 0);
 
 	void SetCallbackKeys(int nAnimationSet, int nCallbackKeys);

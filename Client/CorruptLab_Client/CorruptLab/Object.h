@@ -116,7 +116,7 @@ public:
 	UINT GetMeshType() { return((m_pMesh) ? m_pMesh->GetType() : 0); }
 	virtual UINT GetObjectID() { return 0; }
 	CTexture* FindReplicatedTexture(_TCHAR* pstrTextureName);
-
+	void UpdateTrackNumber(int iNum);
 public:
 	CAnimationController* m_pAnimationController = NULL;
 

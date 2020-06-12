@@ -297,8 +297,6 @@ void CGameObject::OnPrepareRender() {}
 
 void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
-	if (m_pAnimationController)
-		m_pAnimationController->UpdateShaderVariables(pd3dCommandList);
 
 	m_bRender = true;
 	if (m_pBoundingBoxes && nPipelineState == 0)
@@ -321,10 +319,11 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 		}*/
 	}
 
-	//UpdateTransform(NULL);
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
+	if (m_pAnimationController)
+		m_pAnimationController->UpdateShaderVariables(pd3dCommandList,m_iTrackNumber);
 	if (m_nMaterials > 0)
 	{
 		for (int i = 0; i < m_nMaterials; i++)
@@ -338,7 +337,6 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 					m_ppMaterials[i]->UpdateShaderVariable(pd3dCommandList);
 
 			}
-
 			if (m_pMesh)
 				m_pMesh->Render(pd3dCommandList, i);
 		}
@@ -376,6 +374,13 @@ CTexture* CGameObject::FindReplicatedTexture(_TCHAR* pstrTextureName)
 	if (m_pChild) if (pTexture = m_pChild->FindReplicatedTexture(pstrTextureName)) return(pTexture);
 
 	return(NULL);
+}
+
+void CGameObject::UpdateTrackNumber(int iNum)
+{
+	m_iTrackNumber = iNum;
+	if (m_pSibling)	m_pSibling->UpdateTrackNumber(iNum);
+	if (m_pChild)	m_pChild->UpdateTrackNumber(iNum);
 }
 
 //=========================================================================================================================

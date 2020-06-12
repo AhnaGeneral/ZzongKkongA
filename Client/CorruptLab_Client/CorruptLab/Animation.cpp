@@ -144,17 +144,13 @@ CAnimationController::CAnimationController(ID3D12Device* pd3dDevice, ID3D12Graph
 {
 	m_nAnimationTracks = nAnimationTracks;
 	m_pAnimationTracks = new CAnimationTrack[nAnimationTracks];
-
+	for (int i = 0; i < m_nAnimationTracks; i++)
+		m_pAnimationTracks[i].CreateBuffers(pd3dDevice, pd3dCommandList);
 	//m_ppd3dcbSkinningBoneTransforms = new ID3D12Resource;
 	//m_ppcbxmf4x4MappedSkinningBoneTransforms = new XMFLOAT4X4 * [m_nSkinnedMeshes];
 	m_ppSkinnedMeshes = (CSkinnedMesh*)(LoadGameobject->GetMesh());
 	m_pMesh = (LoadGameobject->GetMesh());
-	UINT ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES) + 255) & ~255); //256의 배수
 
-	m_ppd3dcbSkinningBoneTransforms = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, 
-		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
-	m_ppd3dcbSkinningBoneTransforms->Map(0, NULL, (void**)&m_ppcbxmf4x4MappedSkinningBoneTransforms);
-	
 }
 
 CAnimationController::~CAnimationController()
@@ -176,12 +172,16 @@ void CAnimationController::SetCallbackKey(int nAnimationSet, int nKeyIndex, floa
 	m_pAnimationSets[nAnimationSet].m_pCallbackKeys[nKeyIndex].m_pCallbackData = pData;
 }
 
-void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
+void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, int iNum)
 {
-	if (m_ppSkinnedMeshes)
+	D3D12_GPU_VIRTUAL_ADDRESS d3dcbBoneTransformsGpuVirtualAddress = m_pAnimationTracks[iNum].m_ppd3dcbSkinningBoneTransforms->GetGPUVirtualAddress();
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_BONE_TRANSFORMS, d3dcbBoneTransformsGpuVirtualAddress);
+
+	if (iNum == 0) return;
+	for (int i = 0; i < m_ppSkinnedMeshes->m_nSkinningBones; i++)
 	{
-          (m_ppSkinnedMeshes)->m_pcbxmf4x4BoneTransforms = m_ppcbxmf4x4MappedSkinningBoneTransforms;
-          (m_ppSkinnedMeshes)->m_pd3dcbBoneTransforms = m_ppd3dcbSkinningBoneTransforms;
+		//XMStoreFloat4x4(&m_pcbxmf4x4BoneOffsets[i], XMMatrixTranspose(XMLoadFloat4x4(&m_pxmf4x4BindPoseBoneOffsets[i])));
+		XMStoreFloat4x4(&m_pAnimationTracks[iNum].m_ppcbxmf4x4MappedSkinningBoneTransforms[i], XMMatrixTranspose(XMLoadFloat4x4(&m_ppSkinnedMeshes->m_ppSkinningBoneFrameCaches[i]->m_xmf4x4World)));
 	}
 }
 
@@ -229,9 +229,17 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHan
 					m_ppAnimationBoneFrameCaches[j]->m_xmf4x4Transform = pAnimationSet->GetSRT(j, fPositon);
 				}
 
-				}
+			}
 		}
 	}
+}
+
+void CAnimationTrack::CreateBuffers(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	UINT ncbElementBytes = (((sizeof(XMFLOAT4X4) * SKINNED_ANIMATION_BONES)) ); //256의 배수
+	m_ppd3dcbSkinningBoneTransforms = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes,
+		D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	m_ppd3dcbSkinningBoneTransforms->Map(0, NULL, (void**)&m_ppcbxmf4x4MappedSkinningBoneTransforms);
 }
 
 CAnimationTrack::~CAnimationTrack()
