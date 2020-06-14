@@ -68,15 +68,15 @@
 #define OBJECT_TYPE_ROCK				0
 #define OBJECT_TYPE_FENCE				1
 #define OBJECT_TYPE_TRMTOWER			2
-
-// Dynamic
-#define OBJECT_TYPE_ITEMBOX				0
-#define OBJECT_TYPE_DRUGMAKER			1
-#define OBJECT_TYPE_TRMTOWER			2
 #define OBJECT_TYPE_BONE				3
 #define OBJECT_TYPE_HOUSE				4
 #define OBJECT_TYPE_TREE				5
 #define OBJECT_TYPE_BRIDGE				6
+
+// Dynamic
+#define OBJECT_TYPE_ITEMBOX				0
+#define OBJECT_TYPE_DRUGMAKER			1
+#define OBJECT_TYPE_RESEARCHER			2
 
 /*Monster*/
 //---------------------------------------------------

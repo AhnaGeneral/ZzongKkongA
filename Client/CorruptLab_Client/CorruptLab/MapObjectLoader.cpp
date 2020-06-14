@@ -4,6 +4,7 @@
 #include "Object_StaticObj.h"
 #include "Monster_Yangmal.h"
 #include "Object_ItemBox.h"
+#include "Object_Researcher.h"
 #include "Object_DrugMaker.h"
 #include "Mgr_Collision.h"
 #include "Object_UI.h"
@@ -25,7 +26,7 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 		m_pStaticObjLists[i] = new vector<CGameObject*> ();
 
 	//------------------------------------------------------------
-	m_nDynamicObjectTypeNum = 2;
+	m_nDynamicObjectTypeNum = 3;
 	m_pDynamicObjLists = new vector<CDynamicObject*> * [m_nDynamicObjectTypeNum];
 
 	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
@@ -86,6 +87,15 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	alphaShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	Alpha->SetShader(0, alphaShader);
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/DrugMakers.bin", OBJECT_TYPE_DRUGMAKER);
+
+
+	//Researcher------------------------------------------------------
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Researcher.bin", NULL, 1);
+
+	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Researchers.bin", OBJECT_TYPE_RESEARCHER);
+
+
+
 
 	/*Monster*/
 	//Yangmal-------------------------------------------------
@@ -174,6 +184,9 @@ void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int i
 			break;
 		case OBJECT_TYPE_DRUGMAKER:
 			pGameObject = new CDrugMaker(i);
+			break;
+		case OBJECT_TYPE_RESEARCHER:
+			pGameObject = new CResearcher(i);
 			break;
 		default:
 			pGameObject = new CDynamicObject();

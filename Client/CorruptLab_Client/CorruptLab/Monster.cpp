@@ -165,6 +165,11 @@ void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 
 		if (m_fDistanceToPlayer > 70 || fDistanceToFiled > 100)
 		{
+			XMFLOAT3 randompos;
+			randompos.x = float(rand() % 60) - 30.f;
+			randompos.y = 0.0f;
+			randompos.z = float(rand() % 60) - 30.f;
+			m_xmf3RandomMoveDest = Vector3::Add(randompos, m_xmf3FiledCenter);
 			m_iState = MONSTER_STATE_RETURNING;
 			m_bNotice = false;
 		}

@@ -149,7 +149,7 @@ CAnimationController::CAnimationController(ID3D12Device* pd3dDevice, ID3D12Graph
 	//m_ppd3dcbSkinningBoneTransforms = new ID3D12Resource;
 	//m_ppcbxmf4x4MappedSkinningBoneTransforms = new XMFLOAT4X4 * [m_nSkinnedMeshes];
 	m_ppSkinnedMeshes = (CSkinnedMesh*)(LoadGameobject->GetMesh());
-	m_pMesh = (LoadGameobject->GetMesh());
+	//m_pMesh = (LoadGameobject->GetMesh());
 
 }
 
@@ -175,14 +175,14 @@ void CAnimationController::SetCallbackKey(int nAnimationSet, int nKeyIndex, floa
 void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, int iNum)
 {
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbBoneTransformsGpuVirtualAddress = m_pAnimationTracks[iNum].m_ppd3dcbSkinningBoneTransforms->GetGPUVirtualAddress();
-	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_BONE_TRANSFORMS, d3dcbBoneTransformsGpuVirtualAddress);
 
-	if (iNum == 0) return;
 	for (int i = 0; i < m_ppSkinnedMeshes->m_nSkinningBones; i++)
 	{
 		//XMStoreFloat4x4(&m_pcbxmf4x4BoneOffsets[i], XMMatrixTranspose(XMLoadFloat4x4(&m_pxmf4x4BindPoseBoneOffsets[i])));
-		XMStoreFloat4x4(&m_pAnimationTracks[iNum].m_ppcbxmf4x4MappedSkinningBoneTransforms[i], XMMatrixTranspose(XMLoadFloat4x4(&m_ppSkinnedMeshes->m_ppSkinningBoneFrameCaches[i]->m_xmf4x4World)));
+		XMStoreFloat4x4(&m_pAnimationTracks[iNum].m_ppcbxmf4x4MappedSkinningBoneTransforms[i],
+			XMMatrixTranspose(XMLoadFloat4x4(&m_ppSkinnedMeshes->m_ppSkinningBoneFrameCaches[i]->m_xmf4x4World)));
 	}
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_BONE_TRANSFORMS, d3dcbBoneTransformsGpuVirtualAddress);
 }
 
 void CAnimationController::SetAnimationSet(int nAnimationSet, int iNum)

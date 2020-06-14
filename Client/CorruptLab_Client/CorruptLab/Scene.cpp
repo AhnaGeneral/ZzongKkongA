@@ -776,9 +776,6 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
-
-
-
 	if (m_pSkyBox)  m_pSkyBox->Render(pd3dCommandList, pCamera);
 
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);

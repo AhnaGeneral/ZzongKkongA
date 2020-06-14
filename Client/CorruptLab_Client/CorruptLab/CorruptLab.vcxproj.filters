@@ -116,12 +116,6 @@
     <Filter Include="04.Shader\10.Shader_Lobby">
       <UniqueIdentifier>{b7190c54-b327-4ade-9ea6-0a5c63f36ca2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05.Component\GameObject\00.Object\01.ItemBox">
-      <UniqueIdentifier>{f4c23d3f-ec6e-48b4-9a38-5e71a05c472d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05.Component\GameObject\00.Object\02.DynamicObject">
-      <UniqueIdentifier>{e279bafe-410c-472d-b962-d853e4d82997}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05.Component\GameObject\09.RotatingItem">
       <UniqueIdentifier>{0fdf038a-fa3a-46ee-9718-707ee30e8557}</UniqueIdentifier>
     </Filter>
@@ -178,6 +172,21 @@
     </Filter>
     <Filter Include="09.GameManager\03.Mgr_Scene">
       <UniqueIdentifier>{8cdbbb28-d90d-482f-a098-2f36fec5ee33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\00.Object\01.DynamicObject">
+      <UniqueIdentifier>{e279bafe-410c-472d-b962-d853e4d82997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\00.Object\01.DynamicObject\00.Object_DynamicObj">
+      <UniqueIdentifier>{894e9a34-13dc-4459-991b-bd08d44c5b00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\00.Object\01.DynamicObject\01.Object_Researcher">
+      <UniqueIdentifier>{a76bdb3d-260a-4702-8dc1-c92261ae60e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\00.Object\01.DynamicObject\03.Object_DrugMaker">
+      <UniqueIdentifier>{e23eff63-20b3-4929-ab8e-50cb3f58d6ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\00.Object\01.DynamicObject\02.Object_ItemBox">
+      <UniqueIdentifier>{c7c18673-9461-4984-ad8e-a2c7bd2999f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -301,12 +310,6 @@
     <ClInclude Include="LobbyScene.h">
       <Filter>02.Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Object_ItemBox.h">
-      <Filter>05.Component\GameObject\00.Object\01.ItemBox</Filter>
-    </ClInclude>
-    <ClInclude Include="Object_DynamicObj.h">
-      <Filter>05.Component\GameObject\00.Object\02.DynamicObject</Filter>
-    </ClInclude>
     <ClInclude Include="Mgr_Collision.h">
       <Filter>09.GameManager\00.Mgr_Collision</Filter>
     </ClInclude>
@@ -343,9 +346,6 @@
     <ClInclude Include="CSystem_Particle.h">
       <Filter>04.Shader\10. ParticleSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Object_DrugMaker.h">
-      <Filter>05.Component\GameObject\00.Object</Filter>
-    </ClInclude>
     <ClInclude Include="CShader_ParticleClass.h">
       <Filter>04.Shader\10. ParticleSystem</Filter>
     </ClInclude>
@@ -369,6 +369,18 @@
     </ClInclude>
     <ClInclude Include="Mgr_Scene.h">
       <Filter>09.GameManager\03.Mgr_Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_DynamicObj.h">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\00.Object_DynamicObj</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_Researcher.h">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\01.Object_Researcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_ItemBox.h">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\02.Object_ItemBox</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_DrugMaker.h">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\03.Object_DrugMaker</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -477,12 +489,6 @@
     <ClCompile Include="LobbyScene.cpp">
       <Filter>02.Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Object_ItemBox.cpp">
-      <Filter>05.Component\GameObject\00.Object\01.ItemBox</Filter>
-    </ClCompile>
-    <ClCompile Include="Object_DynamicObj.cpp">
-      <Filter>05.Component\GameObject\00.Object\02.DynamicObject</Filter>
-    </ClCompile>
     <ClCompile Include="Mgr_Collision.cpp">
       <Filter>09.GameManager\00.Mgr_Collision</Filter>
     </ClCompile>
@@ -519,9 +525,6 @@
     <ClCompile Include="CSystem_Particle.cpp">
       <Filter>04.Shader\10. ParticleSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Object_DrugMaker.cpp">
-      <Filter>05.Component\GameObject\00.Object</Filter>
-    </ClCompile>
     <ClCompile Include="CShader_ParticleClass.cpp">
       <Filter>04.Shader\10. ParticleSystem</Filter>
     </ClCompile>
@@ -545,6 +548,18 @@
     </ClCompile>
     <ClCompile Include="Mgr_Scene.cpp">
       <Filter>09.GameManager\03.Mgr_Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_DynamicObj.cpp">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\00.Object_DynamicObj</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_Researcher.cpp">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\01.Object_Researcher</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_ItemBox.cpp">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\02.Object_ItemBox</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_DrugMaker.cpp">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\03.Object_DrugMaker</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

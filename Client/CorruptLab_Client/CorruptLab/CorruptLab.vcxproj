@@ -177,6 +177,7 @@
     <ClInclude Include="Object_Floor.h" />
     <ClInclude Include="Object_ItemBox.h" />
     <ClInclude Include="Object_Nosie.h" />
+    <ClInclude Include="Object_Researcher.h" />
     <ClInclude Include="Object_RotatingItem.h" />
     <ClInclude Include="Object_StaticObj.h" />
     <ClInclude Include="Object_Terrain.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="Object_Floor.cpp" />
     <ClCompile Include="Object_ItemBox.cpp" />
     <ClCompile Include="Object_Nosie.cpp" />
+    <ClCompile Include="Object_Researcher.cpp" />
     <ClCompile Include="Object_RotatingItem.cpp" />
     <ClCompile Include="Object_StaticObj.cpp" />
     <ClCompile Include="Object_Terrain.cpp" />
