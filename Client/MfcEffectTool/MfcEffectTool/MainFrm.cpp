@@ -56,8 +56,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 		return FALSE;
 	// TODO: CREATESTRUCT cs를 수정하여 여기에서
 	//  Window 클래스 또는 스타일을 수정합니다.
-	cs.cx = 1280; 
-	cs.cy = 768;
+	cs.cx = 1600; 
+	cs.cy = 900;
 
 	return TRUE;
 }
@@ -86,8 +86,8 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	m_mainSplite.CreateStatic(this, 1, 2); 
 	
-	m_mainSplite.CreateView(0, 0, RUNTIME_CLASS(MyForm), CSize(400, 768), pContext);
-	m_mainSplite.CreateView(0, 1, RUNTIME_CLASS(CMfcEffectToolView), CSize(1280, 768), pContext);
+	m_mainSplite.CreateView(0, 0, RUNTIME_CLASS(MyForm), CSize(600, 1000), pContext);
+	m_mainSplite.CreateView(0, 1, RUNTIME_CLASS(CMfcEffectToolView), CSize(1600, 900), pContext);
 
 	return true;
 }

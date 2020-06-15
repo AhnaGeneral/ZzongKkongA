@@ -132,6 +132,7 @@
 #define IDC_BUTTON44                    1178
 #define IDC_LIST6                       1179
 #define IDC_BUTTON45                    1180
+#define IDC_FileUpdateButton            1180
 #define IDC_BUTTON46                    1181
 #define IDC_BUTTON47                    1182
 #define IDC_EDIT27                      1183
@@ -182,6 +183,8 @@
 #define IDC_LifeTime_UP2                1228
 #define IDC_AlphaValue_UP3              1229
 #define IDC_AlphaValue_Down3            1230
+#define IDC_BUTTON53                    1231
+#define IDC_Test                        1231
 #define IDC_AlphaValue_UP4              1233
 #define IDC_AlphaValue_Down4            1234
 #define IDC_AlphaValue_UP5              1235
@@ -198,7 +201,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        313
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1036
+#define _APS_NEXT_CONTROL_VALUE         1037
 #define _APS_NEXT_SYMED_VALUE           314
 #endif
 #endif

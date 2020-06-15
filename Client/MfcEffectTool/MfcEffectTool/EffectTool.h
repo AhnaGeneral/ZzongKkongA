@@ -146,4 +146,8 @@ public:
 	afx_msg void OnBnClickedLifetimeDown();
 	afx_msg void OnBnClickedLifetimeUp2();
 	afx_msg void OnBnClickedStorebutton();
+	CEdit m_FileNameEdit;
+	CListBox m_ListboxFilename;
+	afx_msg void OnBnClickedFileupdatebutton();
+	afx_msg void OnBnClickedTest();
 };

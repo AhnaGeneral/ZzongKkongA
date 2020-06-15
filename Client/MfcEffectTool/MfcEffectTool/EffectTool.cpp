@@ -120,6 +120,8 @@ void EffectTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT37, m_SpeedAlpha);
 	DDX_Text(pDX, IDC_EDIT43, m_UpdateTime);
 	DDX_Text(pDX, IDC_EDIT23, m_LifeTime);
+	DDX_Control(pDX, IDC_EDIT21, m_FileNameEdit);
+	DDX_Control(pDX, IDC_LIST6, m_ListboxFilename);
 }
 
 
@@ -192,6 +194,8 @@ BEGIN_MESSAGE_MAP(EffectTool, CDialogEx)
 	ON_BN_CLICKED(IDC_LifeTime_Down, &EffectTool::OnBnClickedLifetimeDown)
 	ON_BN_CLICKED(IDC_LifeTime_UP2, &EffectTool::OnBnClickedLifetimeUp2)
 	ON_BN_CLICKED(IDC_StoreButton, &EffectTool::OnBnClickedStorebutton)
+	ON_BN_CLICKED(IDC_FileUpdateButton, &EffectTool::OnBnClickedFileupdatebutton)
+	ON_BN_CLICKED(IDC_Test, &EffectTool::OnBnClickedTest)
 END_MESSAGE_MAP()
 
 
@@ -1086,5 +1090,48 @@ void EffectTool::OnBnClickedLifetimeUp2()
 
 void EffectTool::OnBnClickedStorebutton()
 {
-	CMgr_EffectMesh::GetInstance()->FileSave(); 
+	CString strText = _T(""); // Editin에 입력되는 문자열을 저장하기 위한 변수 선언
+	
+	m_FileNameEdit.GetWindowTextW(strText);
+
+	string str = CT2CA(strText); // CString -> string으로 형변환
+
+	CMgr_EffectMesh::GetInstance()->FileSave(str);
+
+}
+
+
+
+void EffectTool::OnBnClickedFileupdatebutton()
+{
+	CString fileName;
+	CString path = _T("*.*");
+
+	CFileFind finder;
+
+	BOOL bol = finder.FindFile(path);
+
+	int i = 0; 
+		if (bol == 1)
+		{
+			while (bol) 
+			{
+
+				bol = finder.FindNextFile();
+				if (bol == 1)
+				{
+					// 이동한 파일의 이름 출력
+					fileName.Format(_T("%s"), finder.GetFileName());
+					m_ListboxFilename.AddString(fileName);
+					i++; 
+				}
+			}
+		}
+	
+}
+
+
+void EffectTool::OnBnClickedTest()
+{
+	CMgr_EffectMesh::GetInstance()->EffectFileLoad(); 
 }

@@ -80,9 +80,10 @@ public:
 	float*    Get_Speed_Alpha();
 
 	bool*     GetBoolControl(); 
-	void      FileSave(); 
+	void      FileSave(string FileName); 
 
 	void SetAlpha(float);
+	void EffectFileLoad(); 
 	void Update(float fTimeElapsed); 
 	void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 

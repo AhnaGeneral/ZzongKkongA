@@ -8,7 +8,8 @@ void CMgr_EffectMesh::Initialize(ID3D12Device* pd3dDevice, ID3D12GraphicsCommand
 	m_ppMeshEffect = new CGameObject * [3]; 
 	m_pMeshEffect = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
 		pd3dGraphicsRootSignature, "Model/HouseAll.bin", NULL, false);
-	m_pMeshEffect->SetPosition(m_EffectTransform.xmf3Default_Position);
+	m_pMeshEffect->SetPosition(m_EffectTransform.xmf3Default_Position); // 30 .30, 30 
+
 	m_ppMeshEffect[0] = m_pMeshEffect; 
 
 	m_pMeshEffect = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
@@ -113,70 +114,179 @@ bool* CMgr_EffectMesh::GetBoolControl()
 	return &m_BoolControl; 
 }
 
-void CMgr_EffectMesh::FileSave()
+void CMgr_EffectMesh::FileSave(string FileName)
 {
-	ofstream out("HouseAll.txt");
+	ofstream out(FileName+".txt");
 
-	out << "<Conversion>:" << endl; 
-	out << "<Position>:"
-		<< m_EffectTransform.xmf3Conversion_Position.x
-		<< m_EffectTransform.xmf3Conversion_Position.y
-		<< m_EffectTransform.xmf3Conversion_Position.z << endl; 
-	out << "<Rotation>:"
-		<< m_EffectTransform.xmf3Conversion_Rotation.x
-		<< m_EffectTransform.xmf3Conversion_Rotation.y
-		<< m_EffectTransform.xmf3Conversion_Rotation.z << endl;
-	out << "<Size>:"
-		<< m_EffectTransform.xmf3Conversion_Size.x
-		<< m_EffectTransform.xmf3Conversion_Size.y
-		<< m_EffectTransform.xmf3Conversion_Size.z << endl;
-	out << "<Alpha>:"
-		<< m_EffectTransform.fConversion_Alpha << endl;
-	out << "</Conversion>" << endl; 
+	//out << "<Conversion>:" << endl; 
+	//out << "<Position>:"
+	out << m_EffectTransform.xmf3Conversion_Position.x << " "
+		<< m_EffectTransform.xmf3Conversion_Position.y << " "
+		<< m_EffectTransform.xmf3Conversion_Position.z << " "
 
-	out << "<Default>:" << endl;
-	out << "<Position>:"
-		<< m_EffectTransform.xmf3Default_Position.x
-		<< m_EffectTransform.xmf3Default_Position.y
-		<< m_EffectTransform.xmf3Default_Position.z << endl;
-	out << "<Rotation>:"
-		<< m_EffectTransform.xmf3Default_Rotation.x
-		<< m_EffectTransform.xmf3Default_Rotation.y
-		<< m_EffectTransform.xmf3Default_Rotation.z << endl;
-	out << "<Size>:"
-		<< m_EffectTransform.xmf3Default_Size.x
-		<< m_EffectTransform.xmf3Default_Size.y
-		<< m_EffectTransform.xmf3Default_Size.z << endl;
-	out << "<Alpha>:"
-		<< m_EffectTransform.fDefault_Alpha << endl;
-	out << "</Default>" << endl;
+	//out << "<Rotation>:"
+		<< m_EffectTransform.xmf3Conversion_Rotation.x << " "
+		<< m_EffectTransform.xmf3Conversion_Rotation.y << " "
+		<< m_EffectTransform.xmf3Conversion_Rotation.z << " "
+	//out << "<Size>:"
+		<< m_EffectTransform.xmf3Conversion_Size.x << " "
+		<< m_EffectTransform.xmf3Conversion_Size.y << " "
+		<< m_EffectTransform.xmf3Conversion_Size.z << " "
+	//out << "<Alpha>:"
+		<< m_EffectTransform.fConversion_Alpha << " "
+	//out << "</Conversion>" << endl; 
 
-	out << "<Speed>:" << endl;
-	out << "<Position>:"
-		<< m_EffectTransform.xmf3Speed_Position.x
-		<< m_EffectTransform.xmf3Speed_Position.y
-		<< m_EffectTransform.xmf3Speed_Position.z << endl;
-	out << "<Rotation>:"
-		<< m_EffectTransform.xmf3Speed_Rotation.x
-		<< m_EffectTransform.xmf3Speed_Rotation.y
-		<< m_EffectTransform.xmf3Speed_Rotation.z << endl;
-	out << "<Size>:"
-		<< m_EffectTransform.xmf3Speed_Size.x
-		<< m_EffectTransform.xmf3Speed_Size.y
-		<< m_EffectTransform.xmf3Speed_Size.z << endl;
-	out << "<Alpha>:"
-		<< m_EffectTransform.fSpeed_Alpha << endl;
-	out << "</Speed>" << endl;
+	//out << "<Default>:" << endl;
+	//out << "<Position>:"
+		<< m_EffectTransform.xmf3Default_Position.x << " "
+		<< m_EffectTransform.xmf3Default_Position.y << " "
+		<< m_EffectTransform.xmf3Default_Position.z << " "
+	//out << "<Rotation>:"
+		<< m_EffectTransform.xmf3Default_Rotation.x << " "
+		<< m_EffectTransform.xmf3Default_Rotation.y << " "
+		<< m_EffectTransform.xmf3Default_Rotation.z << " "
+	//out << "<Size>:"
+		<< m_EffectTransform.xmf3Default_Size.x << " "
+		<< m_EffectTransform.xmf3Default_Size.y << " "
+		<< m_EffectTransform.xmf3Default_Size.z << " "
+	//out << "<Alpha>:"
+		<< m_EffectTransform.fDefault_Alpha << " "
+	//out << "</Default>" << endl;
 
-	out << "<LifeTime>:" << m_EffectTransform.fLifeTime; 
+	//out << "<Speed>:" << endl;
+	//out << "<Position>:"
+		<< m_EffectTransform.xmf3Speed_Position.x << " "
+		<< m_EffectTransform.xmf3Speed_Position.y << " "
+		<< m_EffectTransform.xmf3Speed_Position.z << " "
+	//out << "<Rotation>:"
+		<< m_EffectTransform.xmf3Speed_Rotation.x << " "
+		<< m_EffectTransform.xmf3Speed_Rotation.y << " "
+		<< m_EffectTransform.xmf3Speed_Rotation.z << " "
+	//out << "<Size>:"
+		<< m_EffectTransform.xmf3Speed_Size.x << " "
+		<< m_EffectTransform.xmf3Speed_Size.y << " "
+		<< m_EffectTransform.xmf3Speed_Size.z << " "
+	//out << "<Alpha>:"
+		<< m_EffectTransform.fSpeed_Alpha << " "
+	//out << "</Speed>" << endl;
+
+	<< m_EffectTransform.fLifeTime; 
 
 	out.close(); 
 }
+
 
 void CMgr_EffectMesh::SetAlpha(float alphaValue)
 {
 	m_ppMeshEffect[0]->SetMeshEffectAlphaControlValue(alphaValue); 
 }
+
+void CMgr_EffectMesh::EffectFileLoad()
+{
+	ifstream in("file.txt"); 
+
+	if (in.is_open())
+	{
+		std::cout << "파일을 열었습니다" << endl; 
+		in >> m_EffectTransform.xmf3Conversion_Position.x
+         >> m_EffectTransform.xmf3Conversion_Position.y
+         >> m_EffectTransform.xmf3Conversion_Position.z
+        
+         >> m_EffectTransform.xmf3Conversion_Rotation.x
+         >> m_EffectTransform.xmf3Conversion_Rotation.y
+         >> m_EffectTransform.xmf3Conversion_Rotation.z
+        
+         >> m_EffectTransform.xmf3Conversion_Size.x
+         >> m_EffectTransform.xmf3Conversion_Size.y
+         >> m_EffectTransform.xmf3Conversion_Size.z
+        
+         >> m_EffectTransform.fConversion_Alpha
+        
+         >> m_EffectTransform.xmf3Default_Position.x
+         >> m_EffectTransform.xmf3Default_Position.y
+         >> m_EffectTransform.xmf3Default_Position.z
+        
+         >> m_EffectTransform.xmf3Default_Rotation.x
+         >> m_EffectTransform.xmf3Default_Rotation.y
+         >> m_EffectTransform.xmf3Default_Rotation.z
+        
+         >> m_EffectTransform.xmf3Default_Size.x
+         >> m_EffectTransform.xmf3Default_Size.y
+         >> m_EffectTransform.xmf3Default_Size.z
+        
+         >> m_EffectTransform.fDefault_Alpha
+        
+         >> m_EffectTransform.xmf3Speed_Position.x
+         >> m_EffectTransform.xmf3Speed_Position.y
+         >> m_EffectTransform.xmf3Speed_Position.z
+        
+         >> m_EffectTransform.xmf3Speed_Rotation.x
+         >> m_EffectTransform.xmf3Speed_Rotation.y
+         >> m_EffectTransform.xmf3Speed_Rotation.z
+        
+         >> m_EffectTransform.xmf3Speed_Size.x
+         >> m_EffectTransform.xmf3Speed_Size.y
+         >> m_EffectTransform.xmf3Speed_Size.z
+        
+         >> m_EffectTransform.fSpeed_Alpha
+        
+         >> m_EffectTransform.fLifeTime;
+	}
+
+	std::cout << m_EffectTransform.xmf3Conversion_Position.x << " "
+		<< m_EffectTransform.xmf3Conversion_Position.y << " "
+		<< m_EffectTransform.xmf3Conversion_Position.z << " "
+
+		//out << "<Rotation>:"
+		<< m_EffectTransform.xmf3Conversion_Rotation.x << " "
+		<< m_EffectTransform.xmf3Conversion_Rotation.y << " "
+		<< m_EffectTransform.xmf3Conversion_Rotation.z << " "
+		//out << "<Size>:"
+		<< m_EffectTransform.xmf3Conversion_Size.x << " "
+		<< m_EffectTransform.xmf3Conversion_Size.y << " "
+		<< m_EffectTransform.xmf3Conversion_Size.z << " "
+		//out << "<Alpha>:"
+		<< m_EffectTransform.fConversion_Alpha << " "
+		//out << "</Conversion>" << endl; 
+
+		//out << "<Default>:" << endl;
+		//out << "<Position>:"
+		<< m_EffectTransform.xmf3Default_Position.x << " "
+		<< m_EffectTransform.xmf3Default_Position.y << " "
+		<< m_EffectTransform.xmf3Default_Position.z << " "
+		//out << "<Rotation>:"
+		<< m_EffectTransform.xmf3Default_Rotation.x << " "
+		<< m_EffectTransform.xmf3Default_Rotation.y << " "
+		<< m_EffectTransform.xmf3Default_Rotation.z << " "
+		//out << "<Size>:"
+		<< m_EffectTransform.xmf3Default_Size.x << " "
+		<< m_EffectTransform.xmf3Default_Size.y << " "
+		<< m_EffectTransform.xmf3Default_Size.z << " "
+		//out << "<Alpha>:"
+		<< m_EffectTransform.fDefault_Alpha << " "
+		//out << "</Default>" << endl;
+
+		//out << "<Speed>:" << endl;
+		//out << "<Position>:"
+		<< m_EffectTransform.xmf3Speed_Position.x << " "
+		<< m_EffectTransform.xmf3Speed_Position.y << " "
+		<< m_EffectTransform.xmf3Speed_Position.z << " "
+		//out << "<Rotation>:"
+		<< m_EffectTransform.xmf3Speed_Rotation.x << " "
+		<< m_EffectTransform.xmf3Speed_Rotation.y << " "
+		<< m_EffectTransform.xmf3Speed_Rotation.z << " "
+		//out << "<Size>:"
+		<< m_EffectTransform.xmf3Speed_Size.x << " "
+		<< m_EffectTransform.xmf3Speed_Size.y << " "
+		<< m_EffectTransform.xmf3Speed_Size.z << " "
+		//out << "<Alpha>:"
+		<< m_EffectTransform.fSpeed_Alpha << " "
+		//out << "</Speed>" << endl;
+
+		<< m_EffectTransform.fLifeTime;
+
+}
+
 
 void CMgr_EffectMesh::Update(float fTimeElapsed)
 {
