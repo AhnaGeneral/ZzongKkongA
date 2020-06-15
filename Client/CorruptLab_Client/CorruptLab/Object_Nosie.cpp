@@ -277,7 +277,8 @@ CObjectWater::~CObjectWater()
 	//ReleaseShaderVariables();
 }
 
-void CObjectWater::NoiseSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+void CObjectWater::NoiseSetTexture(ID3D12Device* pd3dDevice, 
+	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
 	CTexture* pNoiseTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Water/Water_NM.dds", 0);

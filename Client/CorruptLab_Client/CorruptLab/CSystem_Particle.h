@@ -1,70 +1,67 @@
-//#pragma once
-//#include "Mesh.h"
-//#include "Material.h"
-//class System_Particle //ParticleSystemClass 
-//{
-//private:
-//	struct ParticleType
-//	{
-//		float positionX, positionY, positionZ;
-//		float red, green, blue;
-//		float velocity;
-//		bool active;
-//	};
-//	struct  VertexType
-//	{
-//		XMFLOAT3 position; 
-//		XMFLOAT2 texture; 
-//		XMFLOAT4 color; 
-//	};
-//
-//private:
-//	float m_particleDeviationX; //∆ƒ∆º≈¨ ¿œ≈ª 
-//	float m_particleDeviationY; //∆ƒ∆º≈¨ ¿œ≈ª 
-//	float m_particleDeviationZ; //∆ƒ∆º≈¨ ¿œ≈ª 
-//	float m_particleVelocityVariation = 0; 
-//	float m_particleSize = 0; 
-//	float m_particlesPerSecond = 0; 
-//	int   m_maxParticles = 0; 
-//
-//	int   m_currentParticleCount = 0; 
-//	float m_accumulatedTime = 0; 
-//
-//	int m_vertexCount = 0; 
-//	int m_indexCount = 0; 
-//
-//	CTexture* m_Texture = NULL; 
-//	ParticleType* m_particleList = NULL;
-//	VertexType* m_vertices = NULL; 
-//	// buffer init value ..
-//	
-//
-//public:
-//	System_Particle(); 
-//	System_Particle(const System_Particle& constSystemParticle);
-//	~System_Particle();
-//
-//	bool Initialize(ID3D12Device* pd3dDevice, void* Texture);
-//	void Shutdown(); 
-//	bool Frame(float framTime, ID3D12GraphicsCommandList* pd3dCommandList);
-//	void Render(ID3D12GraphicsCommandList* pd3dCommandList); 
-//
-//	ID3D12Resource* GetTexture(); 
-//	int GetIndexCount(); 
-//	
-//	void ReleaseTexture();
-//
-//	bool InitializeParticleSystem();
-//	void ShutdownParticleSystem();
-//
-//	bool InitializeBuffers(ID3D12Device* pd3dDevice);
-//	void ShutdownBuffers();
-//
-//	void EmitParticles(float);
-//	void UpdateParticles(float);
-//	void KillParticles();
-//
-//	bool UpdateBuffers(ID3D12GraphicsCommandList* pd3dCommandList);
-//	void RenderBuffers(ID3D12GraphicsCommandList* pd3dCommandList);
-//};
-//
+#pragma once
+#include "Object.h"
+
+struct ParticleType
+{
+	float posX, posY, PosZ; 
+	float red, green, blue; 
+	float velocity; 
+	bool active; 
+};
+
+struct VertexType
+{
+	XMFLOAT3 pos; 
+	XMFLOAT2 tex; 
+	XMFLOAT4 color; 
+};
+
+class ParticleSystemObject : public CGameObject
+{
+private:
+	D3D12_PRIMITIVE_TOPOLOGY m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	float m_particleDeviationX = 0; //Deviation ¿œ≈ª, ∆Ì¬˜
+	float m_particleDeviationY = 0;
+	float m_particleDeviationZ = 0;
+	float m_ParticleVelocity = 0; 
+	float m_ParticleVelocityVariation = 0; //Variation ∫Ø»≠
+	float m_ParticleSize = 0;
+	float m_ParticlePerSecond = 0; 
+	float m_maxParticles = 0; 
+
+	int m_CurrentParticleCount = 0; 
+	float m_accumulatedTime = 0; //accumulate √‡√¥
+
+	CTexture* m_Texture = nullptr; 
+	ParticleType* m_ParticleList = nullptr; 
+	int m_vertexCount = 0; 
+	int m_indexCount = 0;
+	VertexType* m_Vertices = nullptr; 
+
+	ID3D12Resource          * m_pd3dcbVertexBuffer = nullptr;
+	ID3D12Resource          * m_pd3dVertexUploadBuffer = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW  m_d3dVertexBufferView;
+	VertexType*     m_pd3dVertices = nullptr;
+
+	ID3D12Resource* m_indexBuffer = nullptr;
+
+public:
+	ParticleSystemObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
+		ID3D12RootSignature* pd3dGraphicsRootSignature);
+	virtual ~ParticleSystemObject();
+
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void UpdateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void ReleaseShaderVariables();
+     void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
+
+private:
+	bool InitializeParticleSystem(); 
+	void EmitParticles(float frameTime); 
+	void UpdateParticles(float frameTime);
+	void KillParticles();
+	void ParticleSetTexture(ID3D12Device* pd3dDevice,
+		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
+
+};
