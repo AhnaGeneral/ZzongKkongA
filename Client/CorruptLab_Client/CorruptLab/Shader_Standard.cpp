@@ -167,6 +167,12 @@ D3D12_INPUT_LAYOUT_DESC CSkinnedAnimationShader::CreateInputLayout()
 	return(d3dInputLayoutDesc);
 }
 
+D3D12_SHADER_BYTECODE CSkinnedAnimationShader::CreateDissolvePixelShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Standard.hlsl", "PSDissolveForSkinned", "ps_5_1", ppd3dShaderBlob));
+
+}
+
 D3D12_SHADER_BYTECODE CSkinnedAnimationShader::CreateShadowVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(L"HLSL_ShadowStandard.hlsl", "VSSkinnedShadow", "vs_5_1", ppd3dShaderBlob));
@@ -176,6 +182,79 @@ D3D12_SHADER_BYTECODE CSkinnedAnimationShader::CreateShadowVertexShader(ID3DBlob
 D3D12_SHADER_BYTECODE CSkinnedAnimationShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(L"HLSL_Standard.hlsl", "VSSkinnedAnimationStandard", "vs_5_1", ppd3dShaderBlob));
+}
+
+void CSkinnedAnimationShader::ReleaseShaderVariables()
+{
+	CShader::ReleaseShaderVariables();
+	m_pDissolveTexture->Release();
+}
+
+void CSkinnedAnimationShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets)
+{
+	m_nPipelineStates = 3;
+	m_ppd3dPipelineStates = new ID3D12PipelineState * [m_nPipelineStates];
+	ID3DBlob* pd3dVertexShaderBlob = NULL, * pd3dPixelShaderBlob = NULL;
+
+	::ZeroMemory(&m_d3dPipelineStateDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	m_d3dPipelineStateDesc.pRootSignature = pd3dGraphicsRootSignature;
+	m_d3dPipelineStateDesc.VS = CreateVertexShader(&pd3dVertexShaderBlob);
+	m_d3dPipelineStateDesc.PS = CreatePixelShader(&pd3dPixelShaderBlob);
+	m_d3dPipelineStateDesc.RasterizerState = CreateRasterizerState();
+	m_d3dPipelineStateDesc.BlendState = CreateBlendState();
+	m_d3dPipelineStateDesc.DepthStencilState = CreateDepthStencilState();
+	m_d3dPipelineStateDesc.InputLayout = CreateInputLayout();
+	m_d3dPipelineStateDesc.SampleMask = UINT_MAX;
+	m_d3dPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	m_d3dPipelineStateDesc.NumRenderTargets = nRenderTargets;
+
+	for (UINT i = 0; i < nRenderTargets; i++)
+		m_d3dPipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	m_d3dPipelineStateDesc.RTVFormats[2] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+	m_d3dPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	m_d3dPipelineStateDesc.SampleDesc.Count = 1;
+	m_d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pDesc = m_d3dPipelineStateDesc;
+
+	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[0]);
+
+	CreateBoundingBoxState(pd3dDevice, pd3dGraphicsRootSignature, nRenderTargets);
+
+	//----------------------------------------------------------ShadowState
+
+	m_d3dPipelineStateDesc.NumRenderTargets = 1;
+
+	for (UINT i = 0; i < nRenderTargets; i++)
+		m_d3dPipelineStateDesc.RTVFormats[i] = DXGI_FORMAT_UNKNOWN;
+
+	m_d3dPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+	m_d3dPipelineStateDesc.VS = CreateShadowVertexShader(&pd3dVertexShaderBlob);
+	m_d3dPipelineStateDesc.PS = CreateShadowPixelShader(&pd3dPixelShaderBlob);
+	m_d3dPipelineStateDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+
+	hResult = pd3dDevice->CreateGraphicsPipelineState(&m_d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[1]);
+
+	//-----------------------------------------------------------DissolveState
+
+	pDesc.PS = CreateDissolvePixelShader(&pd3dPixelShaderBlob);
+	hResult = pd3dDevice->CreateGraphicsPipelineState(&pDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[2]);
+
+
+	if (m_pd3dVertexShaderBlob) m_pd3dVertexShaderBlob->Release();
+	if (m_pd3dVertexShaderBlob) m_pd3dVertexShaderBlob->Release();
+
+	if (m_d3dPipelineStateDesc.InputLayout.pInputElementDescs)
+		delete[] m_d3dPipelineStateDesc.InputLayout.pInputElementDescs;
+}
+
+void CSkinnedAnimationShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+{
+	OnPrepareRender(pd3dCommandList, nPipelineState);
+	if (nPipelineState == 2) m_pDissolveTexture->UpdateShaderVariables(pd3dCommandList);
 }
 
 D3D12_SHADER_BYTECODE CTransparentedStandardShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)

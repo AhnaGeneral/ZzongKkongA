@@ -141,3 +141,50 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTransparent(VS_TEXTURED_LIGHTING_OUTPUT inpu
 	output.EmmisiveMRT = float4(0.8f,0.8f, 1, 1 - fresnelFator);
 	return output;
 }
+
+
+
+
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSDissolveForSkinned(VS_TEXTURED_LIGHTING_OUTPUT input)
+{
+	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+
+	float fDissolveTime = 0.3f;
+	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
+	
+
+	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
+	float3 normalW;
+	float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
+
+	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] ¡æ [-1, 1]
+
+	normalW = normalize(mul(vNormal, TBN));
+	output.normal = float4(normalW / 2.f + 0.5f, 1);
+
+	float cColorDissolve = gtxtDissolveTexture.Sample(gSamplerState, input.uv);
+	if (cColorDissolve <= fDissolveTime) {
+
+		cColorAlbedo = float4(1,1,1,1);
+		output.normal = float4(1, 1, 1, 1);
+	}
+	else if (cColorDissolve <= fDissolveTime + 0.05f) {
+
+		cColorAlbedo = float4(0, 1, 1, 1);
+		output.normal = float4(1, 1, 1, 1);
+	}
+
+	output.color = cColorAlbedo;
+
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 500.0f, 0, 1);
+	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
+	output.EmmisiveMRT = float4(0, 0, 0, 0);
+
+	if (gnTextureMask & MATERIAL_EMISSION_MAP)
+	{
+		float4 cColorEmission = gtxtEmissionTexture.Sample(gSamplerState, input.uv);
+		output.EmmisiveMRT = cColorEmission;
+	}
+
+	return output;
+}

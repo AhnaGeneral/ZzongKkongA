@@ -3,7 +3,7 @@
 
 class CStandardShader : public CShader
 {
-private:
+protected:
 	ID3DBlob* m_pd3dVertexShaderBlob;
 	ID3DBlob* m_pd3dPixelShaderBlob;
 
@@ -26,14 +26,25 @@ public:
 
 class CSkinnedAnimationShader : public CStandardShader
 {
+protected:
+	CTexture* m_pDissolveTexture = NULL;
+
 public:
 	CSkinnedAnimationShader();
+	
+	void SetDissolveTexture(CTexture* pTexture) { m_pDissolveTexture = pTexture; }
 	virtual ~CSkinnedAnimationShader();
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
+	
+	virtual D3D12_SHADER_BYTECODE CreateDissolvePixelShader(ID3DBlob** ppd3dShaderBlob);
 
 	virtual D3D12_SHADER_BYTECODE CreateShadowVertexShader(ID3DBlob** ppd3dShaderBlob);
-	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
+	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob); 
+	virtual void ReleaseShaderVariables();
+	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets = 1);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState = 0);
+
 };
 
 class CTransparentedStandardShader : public CStandardShader

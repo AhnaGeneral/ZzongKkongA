@@ -345,8 +345,14 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dEffectTex.RegisterSpace = 0;
 	pd3dEffectTex.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
+	D3D12_DESCRIPTOR_RANGE pd3dDissolveTexRanges;  // ( 69 ) firenosie 
+	pd3dDissolveTexRanges.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dDissolveTexRanges.NumDescriptors = 1;
+	pd3dDissolveTexRanges.BaseShaderRegister = 69;
+	pd3dDissolveTexRanges.RegisterSpace = 0;
+	pd3dDissolveTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[22];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[23];
 
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].Descriptor.ShaderRegister = 1; //b1 : Camera
@@ -459,6 +465,10 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dRootParameters[ROOT_PARAMETER_EFFECT].DescriptorTable.pDescriptorRanges = &pd3dEffectTex;
 	pd3dRootParameters[ROOT_PARAMETER_EFFECT].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE].DescriptorTable.pDescriptorRanges = &pd3dDissolveTexRanges;
+	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
@@ -502,6 +512,10 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	ID3DBlob* pd3dErrorBlob = NULL;
 	D3D12SerializeRootSignature(&d3dRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pd3dSignatureBlob, &pd3dErrorBlob);
 
+	char* pErrorString = NULL;
+	if (pd3dErrorBlob)
+		pErrorString = (char*)pd3dErrorBlob->GetBufferPointer();
+	
 	pd3dDevice->CreateRootSignature(0, pd3dSignatureBlob->GetBufferPointer(), pd3dSignatureBlob->GetBufferSize(), __uuidof(ID3D12RootSignature), (void**)&pd3dGraphicsRootSignature);
 	if (pd3dSignatureBlob) pd3dSignatureBlob->Release();
 	if (pd3dErrorBlob) pd3dErrorBlob->Release();
@@ -768,7 +782,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 				Obj->Update(m_fElapsedTime, NULL, m_pTerrain);
 				Obj->Animate(m_fElapsedTime, NULL, Obj->m_iTrackNumber);
 				Obj->UpdateTransform(NULL);
-				Obj->Render(pd3dCommandList, pCamera, 0);
+				Obj->Render(pd3dCommandList, pCamera, 2);
 			}
 		}
 	}
