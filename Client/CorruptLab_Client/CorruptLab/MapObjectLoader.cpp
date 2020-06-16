@@ -245,7 +245,7 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		XMFLOAT4X4 xmmtxWorld;
 		(UINT)::fread_s(&xmmtxWorld, sizeof(XMFLOAT4X4), sizeof(XMFLOAT4X4), 1, pInFile);
 		pGameObject = new CYangmal();
-
+		pGameObject->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		CUI_MonsterHP* hp = new CUI_MonsterHP();
 	
 		hp->SetShader(pShder);

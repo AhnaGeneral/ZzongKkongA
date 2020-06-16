@@ -9,16 +9,6 @@ cbuffer DistortionBuffer : register(b10)
 	float distortionBias : packoffset(c1.w);
 };
 
-cbuffer cbNoiseBuffer : register(b9)
-{
-	float    frameTime : packoffset(c0);
-	float3   scrollSpeeds : packoffset(c0.y);
-	float3   scales : packoffset (c1);
-	float    padding : packoffset (c1.w);
-	float3	 angle : packoffset(c2);
-	float    fogTime : packoffset(c2.w);
-};
-
 struct VS_NOISE_INPUT
 {
 	float3 position : POSITION;

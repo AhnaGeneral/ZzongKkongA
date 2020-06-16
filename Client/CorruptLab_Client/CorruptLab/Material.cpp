@@ -169,7 +169,7 @@ void CMaterial::PrepareShaders(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	CTexture* dissolveTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 
 	dissolveTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/dissolve.dds", 0);
-	m_pSkinnedAnimationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, dissolveTex, ROOT_PARAMETER_DISSOLVE, 0);
+	m_pSkinnedAnimationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, dissolveTex, ROOT_PARAMETER_DISSOLVE_MAP, 0);
 	dynamic_cast<CSkinnedAnimationShader*>(m_pSkinnedAnimationShader)->SetDissolveTexture(dissolveTex);
 	//m_pCollisionShader = new Shader_CollisionBox(); 
 	//m_pCollisionShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, 3); 

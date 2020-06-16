@@ -150,12 +150,13 @@ void CGameScene2::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamer
 
 void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
+	
 	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	pCamera->UpdateShaderVariables(pd3dCommandList);
-	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera);
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
+	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera);
 }
 
 void CGameScene2::Update(float fTimeElapsed)

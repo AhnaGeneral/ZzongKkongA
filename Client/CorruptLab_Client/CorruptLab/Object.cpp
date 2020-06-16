@@ -146,11 +146,11 @@ CMesh* CGameObject::GetMesh()
 	//return m_pMesh;
 }
 
-void CGameObject::SetShader(CShader* pShader)
+void CGameObject::SetShader(CShader* pShader, int nTextures)
 {
 	m_nMaterials = 1;
 	m_ppMaterials = new CMaterial * [m_nMaterials];
-	m_ppMaterials[0] = new CMaterial(1);
+	m_ppMaterials[0] = new CMaterial(nTextures);
 	m_ppMaterials[0]->SetShader(pShader);
 }
 

@@ -50,6 +50,17 @@ cbuffer cbPlayerPosition : register(b6) // 플레이어 위치
 	float3			gf3PlayerPos :packoffset(c0);
 }
 
+cbuffer cbNoiseBuffer : register(b9)
+{
+	float    frameTime : packoffset(c0);
+	float3   scrollSpeeds : packoffset(c0.y);
+	float3   scales : packoffset (c1);
+	float    padding : packoffset (c1.w);
+	float3	 angle : packoffset(c2);
+	float    fogTime : packoffset(c2.w);
+};
+
+
 #include "Light.hlsl"
 
 SamplerState gSamplerState : register(s0);

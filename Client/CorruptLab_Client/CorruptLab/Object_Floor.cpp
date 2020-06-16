@@ -8,7 +8,20 @@ CFloor::CFloor(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandL
 
 	CShader* pShader = new CFloorShader();
 	pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
-	SetShader(pShader);
+	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 0, 2);
+	SetShader(pShader,2);
+
+	CTexture* pTileTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pTileTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Tiles_BC.dds", 0);
+	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTileTexture, ROOT_PARAMETER_ALBEDO_TEX, true);
+
+	m_ppMaterials[0]->SetTexture(pTileTexture,0);
+
+	pTileTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pTileTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Terrain/Tiles_NM.dds", 0);
+	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTileTexture, ROOT_PARAMETER_NORMAL_TEX, true);
+
+	m_ppMaterials[0]->SetTexture(pTileTexture, 1);
 	Rotate(90, 0, 0);
 }
 

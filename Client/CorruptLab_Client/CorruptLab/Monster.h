@@ -1,5 +1,6 @@
 #pragma once
 #include "Object_StaticObj.h"
+#include "Object_Nosie.h"
 
 class CUI_MonsterHP;
 class CHeightMapTerrain;
@@ -29,6 +30,12 @@ public:
 
 protected:
 	//GameContents
+
+	CB_NOISEBUFFERTYPE* m_pcbMappedNoiseBuffers = NULL;
+	float			m_fDissolveTime = 0;
+	ID3D12Resource* m_pd3dDissolveTime = NULL;
+	float			m_fFurifyingTime = 0;
+
 
 	CAnimationController* m_pAnimationController = NULL;
 	int				m_iMaxHP;
@@ -60,7 +67,13 @@ public:
 	virtual void Update(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
 	virtual void BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
 	virtual void GoodUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
+	virtual void PurifyingUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
+
 	virtual void GetPurified();
+
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
+
 
 	virtual void OnInitialize();
 	void GetDamaage(int iDamage);

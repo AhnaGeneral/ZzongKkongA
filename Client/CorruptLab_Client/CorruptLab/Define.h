@@ -33,7 +33,8 @@
 #define ROOT_PARAMETER_RADIATIONLEVEL       20 // 터레인 테셀레이션 팩터로 재활용
 #define ROOT_PARAMETER_EFFECT               21
 
-#define ROOT_PARAMETER_DISSOLVE				22
+#define ROOT_PARAMETER_DISSOLVE_MAP			22
+
 
 
 
@@ -90,6 +91,7 @@
 #define MONSTER_STATE_STUN				3
 #define MONSTER_STATE_DAMAGEING			4
 #define MONSTER_STATE_RETURNING			5
+#define MONSTER_STATE_PURIFYING			6
 
 /*JohnsonAnimation*/
 //---------------------------------------------------

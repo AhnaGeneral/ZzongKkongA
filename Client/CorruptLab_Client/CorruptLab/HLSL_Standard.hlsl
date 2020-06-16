@@ -149,7 +149,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSDissolveForSkinned(VS_TEXTURED_LIGHTING_OUTP
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 
-	float fDissolveTime = 0.3f;
+	float fDissolveTime = frameTime;
 	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
 	
 

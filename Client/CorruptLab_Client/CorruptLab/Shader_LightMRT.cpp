@@ -134,6 +134,8 @@ void CLightTarget::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* p
 	d3dPipelineStateDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
 	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[0]);
+	//-----------------------------------------------------------------------
+
 	if (pd3dVertexShaderBlob) pd3dVertexShaderBlob->Release();
 	if (pd3dPixelShaderBlob) pd3dPixelShaderBlob->Release();
 
@@ -189,11 +191,11 @@ void CLightTarget::ReleaseShaderVariables()
 
 }
 
-void CLightTarget::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+void CLightTarget::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
-	CShader::Render(pd3dCommandList, pCamera);
+	CShader::Render(pd3dCommandList, pCamera, nPipelineState);
 
 	UpdateShaderVariables(pd3dCommandList);
 
@@ -209,6 +211,11 @@ void CLightTarget::ReleaseObjects()
 {
 	if (m_pMaterials)  delete m_pMaterials;
 	if (m_pLights)  delete m_pLights;
+}
+
+void CLightTarget::ChangeLights()
+{
+	m_pLights->m_xmf4GlobalAmbient = XMFLOAT4(0.2f, 0.2f, 0.25f, 1.0f);
 }
 
 void CLightTarget::BuildLightsAndMaterials()

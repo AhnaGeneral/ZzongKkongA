@@ -20,6 +20,7 @@ CMonster::CMonster()
 
 CMonster::~CMonster()
 {
+	m_pd3dDissolveTime->Release();
 	m_HPUI->ReleaseShaderVariables();
 	m_HPUI->Release();
 }
@@ -27,7 +28,6 @@ CMonster::~CMonster()
 
 void CMonster::MoveToTarget(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHeightMapTerrain* pTerrain)
 {
-
 	XMFLOAT3 xmf3Position = GetPosition();
 	
 	XMFLOAT3 xmf3Look = GetLook();
@@ -39,19 +39,21 @@ void CMonster::MoveToTarget(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHei
 	if (isnan(RotateYaw))
 		RotateYaw = 0;
 	Rotate(0.0f, RotateYaw, 0.0f);
-	if (m_fDistanceToPlayer > 12.f)
-	{
-		XMFLOAT3 MovePos = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Look, Speed * fTimeElapsed));
-		if (pTerrain)
-			MovePos.y = pTerrain->GetHeight(MovePos.x, MovePos.z);
 
-		SetPosition(MovePos);
-	}
+	if (m_fDistanceToPlayer < 12.f && m_iState == MONSTER_STATE_ATTACK) return;
+
+	XMFLOAT3 MovePos = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Look, Speed * fTimeElapsed));
+	if (pTerrain)
+		MovePos.y = pTerrain->GetHeight(MovePos.x, MovePos.z);
+
+	SetPosition(MovePos);
 }
 
 void CMonster::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	UpdateTrackNumber(m_iTrackNumber);
+	if (m_iState == MONSTER_STATE_PURIFYING && nPipelineState == 0)
+		nPipelineState = 2;
 	CGameObject::Render(pd3dCommandList, pCamera, nPipelineState);
 	m_HPUI->UpdateTransform(&m_xmf4x4World);
 	m_HPUI->Render(pd3dCommandList, pCamera);
@@ -70,13 +72,17 @@ void CMonster::Update(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pCont
 	if (m_bIsPurified)
 		GoodUpdate(fTimeElapsed, pxmf4x4Parent, pContext);
 	else
-		BadUpdate(fTimeElapsed, pxmf4x4Parent, pContext);
+	{
+		if (m_iState != MONSTER_STATE_PURIFYING)
+			BadUpdate(fTimeElapsed, pxmf4x4Parent, pContext);
+		else
+			PurifyingUpdate(fTimeElapsed, pxmf4x4Parent, pContext);
+	}
 
 }
 
 void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pContext)
 {
-
 	if (m_iState == MONSTER_STATE_STUN)
 	{
 		return;
@@ -209,11 +215,46 @@ void CMonster::GoodUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* p
 	}
 }
 
+void CMonster::PurifyingUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pContext)
+{
+	if (m_fFurifyingTime < 4)
+		m_fDissolveTime += fTimeElapsed / 4;
+	else
+		m_fDissolveTime -= fTimeElapsed / 4;
+
+	m_fFurifyingTime += fTimeElapsed;
+	if (m_fFurifyingTime > 8.f)
+	{
+		m_iState = MONSTER_STATE_IDLE;
+		m_iCurrentHP = 100;
+		m_bIsPurified = true;
+	}
+}
+
 void CMonster::GetPurified()
 {
-	m_iState = MONSTER_STATE_IDLE;
-	m_iCurrentHP = 100;
-	m_bIsPurified = true;
+	m_iState = MONSTER_STATE_PURIFYING;
+}
+
+void CMonster::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CGameObject::CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	UINT ncbElementBytes = ((sizeof(CB_NOISEBUFFERTYPE) + 255) & ~255);
+	m_pd3dDissolveTime = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+
+	m_pd3dDissolveTime->Map(0, NULL, (void**)&m_pcbMappedNoiseBuffers);
+}
+
+void CMonster::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
+{
+	CGameObject::UpdateShaderVariable(pd3dCommandList, pxmf4x4World);
+	::memcpy(&m_pcbMappedNoiseBuffers->frameTime, &m_fDissolveTime, sizeof(float));
+
+	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dDissolveTime->GetGPUVirtualAddress();
+	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_NOISEBUFFER, d3dGpuVirtualAddress);
+
 }
 
 void CMonster::OnInitialize()

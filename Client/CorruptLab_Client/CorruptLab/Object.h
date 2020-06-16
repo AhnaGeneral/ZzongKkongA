@@ -64,7 +64,7 @@ public:
 	XMFLOAT4 GetRotateQuaternion(float Scale, XMFLOAT4X4& world);
 	void SetMesh(CMesh* pMesh);
 	CMesh* GetMesh(); 
-	void SetShader(CShader* pShader);
+	void SetShader(CShader* pShader, int nTextures = 1);
 	void CreateMaterial();
 	void SetShader(int nMaterial, CShader* pShader);
 	void SetMaterial(int nMaterial, CMaterial* pMaterial);

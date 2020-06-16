@@ -34,7 +34,7 @@ PS_FLOOR_INPUT FloorVS(VS_FLOOR_INPUT input)
 	float4 pos = mul(float4(input.position, 1.0f), gmtxGameObject);
 	output.positionW = pos.xyz;
 	output.position = mul(mul(pos, gmtxView), gmtxProjection);
-	output.tex = input.tex;
+	output.tex = input.tex * 20;
 
 	output.normal = float3(0.0f, 1.0f, 0.0f);
 	output.tangent = float3 (0.0f, 0.0f, 1.0f);
@@ -54,9 +54,14 @@ PS_FLOOR_INPUT FloorVS(VS_FLOOR_INPUT input)
 PS_MULTIPLE_RENDER_TARGETS_OUTPUT FloorPS(PS_FLOOR_INPUT input) : SV_TARGET
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
-	output.color = float4(1, 1, 1, 1);
+	output.color = gtxtAlbedoTexture.Sample(gSamplerState, input.tex);
 	output.depth = float4(input.posj.z / input.posj.w, input.posj.w / 500.0f, 0, 1);
-	output.normal = float4(input.normal, 1) /2;
+	float3x3 TBN = float3x3(float3(1,0,0), float3(0,0,1), float3(0,1,0));
+	
+	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.tex);
+	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f);
+	vNormal = normalize(mul(vNormal, TBN));
+	output.normal = float4(vNormal / 2.5f + 0.5f, 1);
 
 	//[±×¸²ÀÚ]============================================================================
 	float2 projectTexCoord;

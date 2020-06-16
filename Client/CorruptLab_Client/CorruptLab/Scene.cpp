@@ -465,10 +465,11 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dRootParameters[ROOT_PARAMETER_EFFECT].DescriptorTable.pDescriptorRanges = &pd3dEffectTex;
 	pd3dRootParameters[ROOT_PARAMETER_EFFECT].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
-	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE].DescriptorTable.NumDescriptorRanges = 1;
-	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE].DescriptorTable.pDescriptorRanges = &pd3dDissolveTexRanges;
-	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE_MAP].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE_MAP].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE_MAP].DescriptorTable.pDescriptorRanges = &pd3dDissolveTexRanges;
+	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE_MAP].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
@@ -782,7 +783,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 				Obj->Update(m_fElapsedTime, NULL, m_pTerrain);
 				Obj->Animate(m_fElapsedTime, NULL, Obj->m_iTrackNumber);
 				Obj->UpdateTransform(NULL);
-				Obj->Render(pd3dCommandList, pCamera, 2);
+				Obj->Render(pd3dCommandList, pCamera, 0);
 			}
 		}
 	}

@@ -11,6 +11,7 @@ public:
 	CPlayer* m_pPlayer;
 	CSkyBox* m_pSkyBox;
 	CObjectWater* m_pCObjectWater;
+	CFloor		* m_pFloor;
 
 	CShader_Effect* m_pTestEffect;
 	int                         n_ReactItem;
@@ -50,7 +51,6 @@ public:
 
 private:
 
-	CFloor*						m_pFloor;
 	bool					    m_bPipelineStateIndex;
 	POINT					    m_ptOldCursorPos;
 
