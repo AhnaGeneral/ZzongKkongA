@@ -19,7 +19,9 @@ struct VertexType
 class ParticleSystemObject : public CGameObject
 {
 private:
-	D3D12_PRIMITIVE_TOPOLOGY m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	D3D12_PRIMITIVE_TOPOLOGY m_d3dPrimitiveTopology 
+		             = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
 	float m_particleDeviationX = 0; //Deviation ÀÏÅ», ÆíÂ÷
 	float m_particleDeviationY = 0;
 	float m_particleDeviationZ = 0;
@@ -38,8 +40,8 @@ private:
 	int m_indexCount = 0;
 	VertexType* m_Vertices = nullptr; 
 
-	ID3D12Resource          * m_pd3dcbVertexBuffer = nullptr;
-	ID3D12Resource          * m_pd3dVertexUploadBuffer = nullptr;
+	ID3D12Resource  * m_pd3dcbVertexBuffer = nullptr;
+	ID3D12Resource  * m_pd3dVertexUploadBuffer = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW  m_d3dVertexBufferView;
 	VertexType*     m_pd3dVertices = nullptr;
 
@@ -53,14 +55,17 @@ public:
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
+	virtual void ReleaseUploadBuffers();
      void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 
-private:
+public:
+	void InitializeBuffer(ID3D12Device* pd3dDevice); 
 	bool InitializeParticleSystem(); 
 	void EmitParticles(float frameTime); 
 	void UpdateParticles(float frameTime);
 	void KillParticles();
-	void ParticleSetTexture(ID3D12Device* pd3dDevice,
+	void DisconnectList(); 
+	void CreateParticleShaderTexture(ID3D12Device* pd3dDevice,
 		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 

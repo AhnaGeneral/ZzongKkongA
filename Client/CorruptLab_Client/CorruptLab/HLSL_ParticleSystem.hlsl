@@ -23,25 +23,26 @@ PixelInputType particleVertexShader(vertexInputType input)
 	output.position = mul(output.position, gmtxView); 
 	output.position = mul(output.position, gmtxProjection);
 
-	output.tex = intput.tex; 
+	output.tex = input.tex;
 	
 	output.color = input.color; 
 
 	return output; 
 }
-//
-//샘플러 
-//텍스처
 
-Texture2D gtxtParticleTexture;
 
-float4 ParticlePixelShader(PixelInputType input)
+//  gtxtEffectTexture register 31 Texture 
+//ParticlePixelShader
+PS_NONLIGHT_MRT_OUTPUT ParticlePixelShader(PixelInputType input)
 {
+	PS_NONLIGHT_MRT_OUTPUT output; 
+
 	float4 textureColor; 
 	float4 finalColor; 
 
-	textureColor = gtxtParticleTexture.Sample(gSamplerState, input.tex);
+	textureColor = gtxtEffectTexture.Sample(gSamplerState, input.tex);
 	finalColor = textureColor * input.color; 
 
-	return finalColor; 
+	output.NonLight = finalColor; 
+	return output;
 }

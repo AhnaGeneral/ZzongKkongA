@@ -8,6 +8,7 @@
 #include "Object_Player.h"
 #include "Object_Nosie.h"
 #include "Shader_SpecialFog.h"
+
 using namespace std;
 
 
@@ -52,6 +53,7 @@ protected:
 
 class CMonster;
 class CDynamicObject;
+class ParticleSystemObject; 
 
 class CGameScene : public CScene
 {
@@ -64,9 +66,10 @@ public:
 	CObjectWater              * m_pCObjectWater; 
 
 	CShader_Effect            * m_pTestEffect; 
+	ParticleSystemObject      * m_ParticleSystemObject; 
 	int                         n_ReactItem; 
 	float                       itemRange;
-
+	ID3D12Device              * m_pDevice; 
 public:
 	CGameScene();
 	virtual ~CGameScene();

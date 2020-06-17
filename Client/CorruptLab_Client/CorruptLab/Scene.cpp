@@ -352,7 +352,15 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dDissolveTexRanges.RegisterSpace = 0;
 	pd3dDissolveTexRanges.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[23];
+	D3D12_DESCRIPTOR_RANGE pd3dParticleTexture;  // ( 31 ) particleTexture
+	pd3dParticleTexture.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	pd3dParticleTexture.NumDescriptors = 1;
+	pd3dParticleTexture.BaseShaderRegister = 31;
+	pd3dParticleTexture.RegisterSpace = 0;
+	pd3dParticleTexture.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+
+	D3D12_ROOT_PARAMETER pd3dRootParameters[24];
 
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].Descriptor.ShaderRegister = 1; //b1 : Camera
@@ -470,6 +478,10 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE_MAP].DescriptorTable.pDescriptorRanges = &pd3dDissolveTexRanges;
 	pd3dRootParameters[ROOT_PARAMETER_DISSOLVE_MAP].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
+	pd3dRootParameters[ROOT_PARAMETER_PARTICLE].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	pd3dRootParameters[ROOT_PARAMETER_PARTICLE].DescriptorTable.NumDescriptorRanges = 1;
+	pd3dRootParameters[ROOT_PARAMETER_PARTICLE].DescriptorTable.pDescriptorRanges = &pd3dParticleTexture;
+	pd3dRootParameters[ROOT_PARAMETER_PARTICLE].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));

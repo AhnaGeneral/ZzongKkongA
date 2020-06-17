@@ -1,7 +1,9 @@
 #include "CSystem_Particle.h"
 #include "CShader_ParticleClass.h"
 
-ParticleSystemObject::ParticleSystemObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+ParticleSystemObject::ParticleSystemObject(ID3D12Device* pd3dDevice, 
+	                                       ID3D12GraphicsCommandList* pd3dCommandList, 
+	                                       ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
 }
 
@@ -68,7 +70,8 @@ void ParticleSystemObject::UpdateShaderVariables(ID3D12Device* pd3dDevice, ID3D1
 		index++;
 	}
 
-	m_pd3dcbVertexBuffer = CreateBufferResource(pd3dDevice, pd3dCommandList, m_Vertices, m_nStride * m_vertexCount, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer);
+	m_pd3dcbVertexBuffer = CreateBufferResource(pd3dDevice, pd3dCommandList, m_Vertices, 
+		m_nStride * m_vertexCount, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer);
 
 	m_d3dVertexBufferView.BufferLocation = m_pd3dcbVertexBuffer->GetGPUVirtualAddress();
 	m_d3dVertexBufferView.StrideInBytes = m_nStride;
@@ -77,6 +80,12 @@ void ParticleSystemObject::UpdateShaderVariables(ID3D12Device* pd3dDevice, ID3D1
 
 void ParticleSystemObject::ReleaseShaderVariables()
 {
+	if (m_pd3dcbVertexBuffer) m_pd3dcbVertexBuffer->Release();
+}
+
+void ParticleSystemObject::ReleaseUploadBuffers()
+{
+	if (m_pd3dVertexUploadBuffer) m_pd3dVertexUploadBuffer->Release();
 }
 
 void ParticleSystemObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
@@ -88,6 +97,14 @@ void ParticleSystemObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dC
 
 	UINT getobjectID = 0;
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
+}
+
+void ParticleSystemObject::InitializeBuffer(ID3D12Device* pd3dDevice)
+{
+	m_vertexCount = m_maxParticles * 6;
+	m_Vertices = new VertexType[m_vertexCount];
+	memset(m_Vertices, 0, (sizeof(VertexType) * m_vertexCount));
+
 }
 
 bool ParticleSystemObject::InitializeParticleSystem()
@@ -102,13 +119,13 @@ bool ParticleSystemObject::InitializeParticleSystem()
 	m_ParticleVelocityVariation = 0.2f;
 
 	// 파티클의 물리적 크기를 설정합니다.
-	m_ParticleSize = 0.2f;
+	m_ParticleSize = 0.05f;
 
 	// 초당 방출 할 파티클 수를 설정합니다.
 	m_ParticlePerSecond = 250.0f;
 
 	// 파티클 시스템에 허용되는 최대 파티클 수를 설정합니다.
-	m_maxParticles = 5000;
+	m_maxParticles = 500;
 
 	// 파티클 리스트를 생성합니다.
 	m_ParticleList = new ParticleType[m_maxParticles];
@@ -139,7 +156,7 @@ void ParticleSystemObject::EmitParticles(float frameTime)
 
 	bool emitParticle = false;
 
-	if (m_accumulatedTime >= (1000.0f / m_ParticlePerSecond))
+	if (m_accumulatedTime >= (100.0f / m_ParticlePerSecond))
 	{
 		m_accumulatedTime = 0.0f;
 		emitParticle = true;
@@ -246,7 +263,16 @@ void ParticleSystemObject::KillParticles()
 	}
 }
 
-void ParticleSystemObject::ParticleSetTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+void ParticleSystemObject::DisconnectList()
+{
+	if (m_ParticleList)
+	{
+		delete[] m_ParticleList;
+		m_ParticleList = nullptr;
+	}
+}
+
+void ParticleSystemObject::CreateParticleShaderTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
 	CTexture* pNoiseTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Water/Water_NM.dds", 0);
@@ -255,7 +281,7 @@ void ParticleSystemObject::ParticleSetTexture(ID3D12Device* pd3dDevice, ID3D12Gr
 	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	pNosieShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	pNosieShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1); // 힙이 달라서... OnPrepareRender
-	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARMAMETER_WATER_NORMAL_TEX, false);
+	pNosieShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pNoiseTexture, ROOT_PARAMETER_PARTICLE, false);
 	SetShader(pNosieShader);
 	m_ppMaterials[0]->SetTexture(pNoiseTexture);
 }

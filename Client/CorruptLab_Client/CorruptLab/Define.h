@@ -34,6 +34,7 @@
 #define ROOT_PARAMETER_EFFECT               21
 
 #define ROOT_PARAMETER_DISSOLVE_MAP			22
+#define ROOT_PARAMETER_PARTICLE				23 
 
 
 

@@ -28,10 +28,27 @@ D3D12_INPUT_LAYOUT_DESC Shader_ParticleClass::CreateInputLayout()
 	return d3dInputLayoutDesc;
 }
 
-//D3D12_DEPTH_STENCIL_DESC Shader_ParticleClass::CreateDepthStencilState()
-//{
-//	return D3D12_DEPTH_STENCIL_DESC();
-//}
+D3D12_DEPTH_STENCIL_DESC Shader_ParticleClass::CreateDepthStencilState()
+{
+	D3D12_DEPTH_STENCIL_DESC d3dDepthStencilDesc;
+	::ZeroMemory(&d3dDepthStencilDesc, sizeof(D3D12_DEPTH_STENCIL_DESC));
+	d3dDepthStencilDesc.DepthEnable = TRUE;
+	d3dDepthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	d3dDepthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+	d3dDepthStencilDesc.StencilEnable = TRUE;
+	d3dDepthStencilDesc.StencilReadMask = 0xff;
+	d3dDepthStencilDesc.StencilWriteMask = 0xff;
+	d3dDepthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	d3dDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	d3dDepthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_REPLACE;
+	d3dDepthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	d3dDepthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	d3dDepthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	d3dDepthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_REPLACE;
+	d3dDepthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+
+	return(d3dDepthStencilDesc);
+}
 
 D3D12_SHADER_BYTECODE Shader_ParticleClass::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
 {
@@ -40,7 +57,7 @@ D3D12_SHADER_BYTECODE Shader_ParticleClass::CreateVertexShader(ID3DBlob** ppd3dS
 
 D3D12_SHADER_BYTECODE Shader_ParticleClass::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
 {
-	return(CShader::CompileShaderFromFile(L"HLSL_ParticleSystem.hlsl", "ParticlePixelShader", "vs_5_1", ppd3dShaderBlob));
+	return(CShader::CompileShaderFromFile(L"HLSL_ParticleSystem.hlsl", "ParticlePixelShader", "ps_5_1", ppd3dShaderBlob));
 }
 
 D3D12_BLEND_DESC Shader_ParticleClass::CreateBlendState()

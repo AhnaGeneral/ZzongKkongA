@@ -106,8 +106,10 @@ Texture2D gtxtHPKitdTexture : register(t28);
 Texture2D gtxtPillddsTexture : register(t29);
 Texture2D gtxtMinimapFogTexture : register(t30);
 
+
+Texture2D gtxtEffectTexture : register(t31);
 Texture2D gtxtDissolveTexture : register(t69);
-Texture2D gtxtEffectTexture : register(t70);
+//Texture2D gtxtEffectTexture : register(t70);
 
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
