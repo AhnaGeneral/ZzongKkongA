@@ -1,9 +1,7 @@
-#include"Scene_Game2.h"
 #include "stdafx.h"
+#include "Scene_Game2.h"
 #include "Mgr_Collision.h"
 #include "Object_Floor.h"
-
-
 
 //Scene2-----------------------------------------------------------------------------
 CGameScene2::CGameScene2()

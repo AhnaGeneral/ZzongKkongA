@@ -146,9 +146,9 @@ PS_EMMISIVE_MRT_OUTPUT NoisePixelShader(GS_BILLBOARD_OUTPUT input)
 	float4 noise2 = gtxtNoiseTex.Sample(gSamplerState, input.tex2);
 	float4 noise3 = gtxtNoiseTex.Sample(gSamplerState, input.tex3);
 
-	noise1 = (noise1 - 0.5f) * 2.0f;
-	noise2 = (noise2 - 0.5f) * 2.0f;
-	noise3 = (noise3 - 0.5f) * 2.0f;
+	noise1 = (noise1 - 0.5f) * 6.0f;
+	noise2 = (noise2 - 0.5f) * 6.0f;
+	noise3 = (noise3 - 0.5f) * 6.0f;
 
 	noise1.xy = noise1.xy * distortion1.xy;
 	noise2.xy = noise2.xy * distortion2.xy;

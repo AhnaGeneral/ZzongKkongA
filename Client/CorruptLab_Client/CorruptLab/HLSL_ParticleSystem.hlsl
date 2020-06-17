@@ -20,10 +20,10 @@ PixelInputType particleVertexShader(vertexInputType input)
 	input.position.w = 1.0f; 
 
 	//output.position
-	//output.position = mul(input.position, gmtxGameObject);
-	//output.position = mul(output.position, gmtxView); 
-	//output.position = mul(output.position, gmtxProjection);
-	output.position = input.position; 
+	output.position = mul(input.position, gmtxGameObject);
+	output.position = mul(output.position, gmtxView); 
+	output.position = mul(output.position, gmtxProjection);
+	//output.position = input.position; 
 	output.tex = input.tex;
 	
 	output.color = input.color; 

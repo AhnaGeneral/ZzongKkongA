@@ -145,16 +145,16 @@ void ParticleSystemObject::InitializeBuffer(ID3D12Device* pd3dDevice, ID3D12Grap
 bool ParticleSystemObject::InitializeParticleSystem()
 {
 	// 방출 될 때 파티클이 위치 할 수 있는 임의의 편차를 설정합니다.
-	m_particleDeviationX = 0.5f;
-	m_particleDeviationY = 0.1f;
-	m_particleDeviationZ = 2.0f;
+	m_particleDeviationX = 5.0f;
+	m_particleDeviationY = 0.3f;
+	m_particleDeviationZ = 3.5f;
 
 	// 파티클의 속도와 속도 변화를 설정합니다.
 	m_ParticleVelocity = 1.0f;
 	m_ParticleVelocityVariation = 0.2f;
 
 	// 파티클의 물리적 크기를 설정합니다.
-	m_ParticleSize = 5.0f ;
+	m_ParticleSize = 0.3f ;
 
 	// 초당 방출 할 파티클 수를 설정합니다.
 	m_ParticlePerSecond = 250.0f;
@@ -191,7 +191,7 @@ void ParticleSystemObject::EmitParticles(float frameTime)
 
 	bool emitParticle = false;
 
-	if (m_accumulatedTime >= (2.0f / m_ParticlePerSecond))
+	if (m_accumulatedTime >= (50.0f / m_ParticlePerSecond))
 	{
 		m_accumulatedTime = 0.0f;
 		emitParticle = true;
@@ -204,7 +204,7 @@ void ParticleSystemObject::EmitParticles(float frameTime)
 		// 이제 임의 화 된 파티클 속성을 생성합니다.
 		//(XMFLOAT3(394, 15.0f, 88.0f));
 		float positionX = 394.0f  + (((float)rand() - (float)rand()) / RAND_MAX) * m_particleDeviationX;
-		float positionY = 15.0f + (((float)rand() - (float)rand()) / RAND_MAX) * m_particleDeviationY;
+		float positionY = 40.0f + (((float)rand() - (float)rand()) / RAND_MAX) * m_particleDeviationY;
 		float positionZ = 88.0f + (((float)rand() - (float)rand()) / RAND_MAX) * m_particleDeviationZ;
 
 		float velocity = m_ParticleVelocity +
@@ -269,7 +269,7 @@ void ParticleSystemObject::UpdateParticles(float frameTime)
 	// 각 프레임은 위치, 속도 및 프레임 시간을 사용하여 아래쪽으로 이동하여 모든 파티클을 업데이트합니다.
 	for (int i = 0; i < m_CurrentParticleCount; i++)
 	{
-		m_ParticleList[i].posY = m_ParticleList[i].posY - (m_ParticleList[i].velocity * frameTime );
+		m_ParticleList[i].posY = m_ParticleList[i].posY + (m_ParticleList[i].velocity * frameTime );
 	}
 }
 
@@ -308,10 +308,11 @@ void ParticleSystemObject::DisconnectList()
 	}
 }
 
-void ParticleSystemObject::CreateParticleShaderTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+void ParticleSystemObject::CreateParticleShaderTexture(ID3D12Device* pd3dDevice, 
+	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
 	CTexture* pNoiseTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Water/Water_NM.dds", 0);
+	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Particle/star.dds", 0);
 
 	Shader_ParticleClass* pNosieShader = new Shader_ParticleClass();
 	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
@@ -325,7 +326,7 @@ void ParticleSystemObject::CreateParticleShaderTexture(ID3D12Device* pd3dDevice,
 void ParticleSystemObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	OnPrepareRender();
-	//UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
+	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 
 	if (m_nMaterials > 0)
 	{
@@ -355,17 +356,17 @@ void ParticleSystemObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CC
 
 void ParticleSystemObject::Shutdown()
 {
-	if (m_pd3dcbVertexBuffer)
-	{
-		m_pd3dcbVertexBuffer->Release();
-		m_pd3dcbVertexBuffer = nullptr; 
-	}
+	//if (m_pd3dcbVertexBuffer)
+	//{
+	//	m_pd3dcbVertexBuffer->Release();
+	//	m_pd3dcbVertexBuffer = nullptr; 
+	//}
 
-	if (m_pd3dcbIndexBuffer)
-	{
-		m_pd3dcbIndexBuffer->Release();
-		m_pd3dcbIndexBuffer = nullptr;
-	}
+	//if (m_pd3dcbIndexBuffer)
+	//{
+	//	m_pd3dcbIndexBuffer->Release();
+	//	m_pd3dcbIndexBuffer = nullptr;
+	//}
 }
 
 void ParticleSystemObject::Frame(ID3D12Device* pd3dDevice, 
@@ -380,5 +381,4 @@ void ParticleSystemObject::Frame(ID3D12Device* pd3dDevice,
 	UpdateShaderVariables(pd3dDevice, pd3dCommandList);
 
 	Render(pd3dCommandList, pCamera, 0);
-
 }

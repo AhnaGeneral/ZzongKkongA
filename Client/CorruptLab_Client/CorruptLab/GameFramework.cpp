@@ -236,7 +236,9 @@ void CGameFramework::CreateCommandQueueAndList()
 
 	hResult = m_pd3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, __uuidof(ID3D12CommandAllocator), (void**)&m_pd3dCommandAllocator);
 
-	hResult = m_pd3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_pd3dCommandAllocator, NULL, __uuidof(ID3D12GraphicsCommandList), (void**)&m_pd3dCommandList);
+	hResult = m_pd3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, 
+		m_pd3dCommandAllocator, NULL, __uuidof(ID3D12GraphicsCommandList), (void**)&m_pd3dCommandList);
+
 	hResult = m_pd3dCommandList->Close();
 }
 
@@ -727,7 +729,8 @@ void CGameFramework::BuildObjects()
 
 	CMaterial::PrepareShaders(m_pd3dDevice, m_pd3dCommandList, m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature());
 
-	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->PlaceObjectsFromFile(m_pd3dDevice, m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), m_pd3dCommandList);
+	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->PlaceObjectsFromFile
+	(m_pd3dDevice, m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), m_pd3dCommandList);
 
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
@@ -808,8 +811,12 @@ void CGameFramework::ProcessInput()
 {
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
-	if (GetKeyboardState(pKeysBuffer) && m_nSceneState == SCENE_STAGE_OUTDOOR) bProcessedByScene = m_pScene[SCENE_STAGE_OUTDOOR]->ProcessInput(pKeysBuffer, m_hWnd);
-	if (GetKeyboardState(pKeysBuffer) && m_nSceneState == SCENE_STAGE_INDOOR) bProcessedByScene = m_pScene[SCENE_STAGE_INDOOR]->ProcessInput(pKeysBuffer, m_hWnd);
+
+	if (GetKeyboardState(pKeysBuffer) && m_nSceneState == SCENE_STAGE_OUTDOOR)
+		bProcessedByScene = m_pScene[SCENE_STAGE_OUTDOOR]->ProcessInput(pKeysBuffer, m_hWnd);
+
+	if (GetKeyboardState(pKeysBuffer) && m_nSceneState == SCENE_STAGE_INDOOR)
+		bProcessedByScene = m_pScene[SCENE_STAGE_INDOOR]->ProcessInput(pKeysBuffer, m_hWnd);
 }
 
 //GPU가 끝날 때까지 기다려주는 단계 
@@ -861,7 +868,8 @@ void CGameFramework::ShadowMapRender()
 		dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_INDOOR])->DepthRender(m_pd3dCommandList, m_pCamera);
 	
 	for (int i = 0; i < m_nOffScreenShadowBuffers; i++)
-		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dShadowRenderTargetBuffers[i], 
+			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 
 }
@@ -916,7 +924,8 @@ void CGameFramework::FrameAdvanceStageIndoor()
 
 	//---------------------------------------------------------------------------------------------------------------------
 
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex],
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	m_pd3dCommandList->ClearRenderTargetView(m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
 	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
@@ -928,7 +937,8 @@ void CGameFramework::FrameAdvanceStageIndoor()
 	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 #endif
 
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex],
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	hResult = m_pd3dCommandList->Close();
 
@@ -1010,7 +1020,8 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 
 	//---------------------------------------------------------------------------------------------------------------------
 
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex],
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	m_pd3dCommandList->ClearRenderTargetView(m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
 	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
@@ -1022,7 +1033,8 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 #endif
 
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], 
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	hResult = m_pd3dCommandList->Close();
 
@@ -1067,14 +1079,16 @@ void CGameFramework::FrameAdvanceLobby()
 
 	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex],
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	m_pd3dCommandList->ClearRenderTargetView(m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
 	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
 	m_pScene[SCENE_LOBBY]->Render(m_pd3dCommandList, m_pCamera);
 
-	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex],
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	hResult = m_pd3dCommandList->Close();
 
@@ -1100,7 +1114,7 @@ void CGameFramework::TurnToIndoorState()
 {
 	if (m_nSceneState == SCENE_STAGE_OUTDOOR)
 	{
-		m_pPlayer->SetPosition(XMFLOAT3(464.f, 0, 101.f));
+		m_pPlayer->SetPosition(XMFLOAT3(260.f, 0.0f, 120.f));
 		m_pPlayer->SetPlayerUpdatedContext(NULL);
 		m_pPlayer->SetCameraUpdatedContext(NULL);
 		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 5.5f, -10.5f));
