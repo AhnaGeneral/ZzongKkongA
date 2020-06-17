@@ -254,6 +254,7 @@ void CSkinnedAnimationShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootS
 void CSkinnedAnimationShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	OnPrepareRender(pd3dCommandList, nPipelineState);
+
 	if (nPipelineState == 2) m_pDissolveTexture->UpdateShaderVariables(pd3dCommandList);
 }
 

@@ -34,18 +34,26 @@ private:
 	int m_CurrentParticleCount = 0; 
 	float m_accumulatedTime = 0; //accumulate รเรด
 
+
 	CTexture* m_Texture = nullptr; 
-	ParticleType* m_ParticleList = nullptr; 
-	int m_vertexCount = 0; 
-	int m_indexCount = 0;
+
+	ParticleType* m_ParticleList = nullptr;
+
+
 	VertexType* m_Vertices = nullptr; 
 
+	// ==================================================
+	int m_vertexCount = 0; 
 	ID3D12Resource  * m_pd3dcbVertexBuffer = nullptr;
 	ID3D12Resource  * m_pd3dVertexUploadBuffer = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW  m_d3dVertexBufferView;
 	VertexType*     m_pd3dVertices = nullptr;
 
-	ID3D12Resource* m_indexBuffer = nullptr;
+	int m_indexCount = 0;
+	ID3D12Resource  * m_pd3dcbIndexBuffer = nullptr;
+	ID3D12Resource  * m_pd3dIndexUploadBuffer = nullptr;
+	D3D12_INDEX_BUFFER_VIEW m_d3dIndexBufferView; 
+	// ==================================================
 
 public:
 	ParticleSystemObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
@@ -59,7 +67,7 @@ public:
      void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 
 public:
-	void InitializeBuffer(ID3D12Device* pd3dDevice); 
+	void InitializeBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	bool InitializeParticleSystem(); 
 	void EmitParticles(float frameTime); 
 	void UpdateParticles(float frameTime);
@@ -68,5 +76,8 @@ public:
 	void CreateParticleShaderTexture(ID3D12Device* pd3dDevice,
 		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
+
+	void Shutdown(); 
+	void Frame(ID3D12Device* pd3dDevice, float frameTime, ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 
 };

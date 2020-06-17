@@ -12,6 +12,7 @@
 #include "Mgr_Radiation.h"
 #include "Object_DrugMaker.h"
 #include "Shader_Effect.h"
+#include "CSystem_Particle.h"
 
 
 CGameScene::CGameScene()
@@ -40,6 +41,7 @@ CGameScene::CGameScene()
 	m_pMonsterLists = NULL;
 	m_pSoftParticleShader = NULL;
 	m_pSpecialFogShader = NULL;
+	m_ParticleSystemObject = NULL; 
 
 	m_pShadowCamera = NULL;
 
@@ -51,6 +53,8 @@ CGameScene::~CGameScene()
 {
 	CItemMgr::GetInstance()->Destroy();
 	CCollisionMgr::GetInstance()->Destroy();
+	if (m_ParticleSystemObject)m_ParticleSystemObject->Shutdown(); 
+
 }
 
 void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -87,6 +91,12 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	CItemMgr::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	CCollisionMgr::GetInstance()->Initialize();
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	m_ParticleSystemObject = new ParticleSystemObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature); 
+	m_ParticleSystemObject->InitializeParticleSystem();
+	m_ParticleSystemObject->InitializeBuffer(pd3dDevice, pd3dCommandList);
+	m_ParticleSystemObject->CreateParticleShaderTexture(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+
 }
 
 void CGameScene::ReleaseObjects()
@@ -190,6 +200,11 @@ void CGameScene::ReleaseObjects()
 	//	//m_pDepthTex->Release(); 다른 곳에서 하나 ..? 
 	//	m_pDepthTex = NULL; 
 	//}
+	if (m_ParticleSystemObject)
+	{
+		m_ParticleSystemObject->DisconnectList();
+		m_ParticleSystemObject->Release();
+	}
 	//----------------------------------------------
 
 }
@@ -540,16 +555,26 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 void CGameScene::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	m_pShadowCamera->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//if (m_ParticleSystemObject)m_ParticleSystemObject->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_pDevice = pd3dDevice;
+
 }
 
 void CGameScene::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
 	m_pShadowCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_SHADOWCAMERA);
+
+//	if (m_ParticleSystemObject)m_ParticleSystemObject->UpdateShaderVariables(m_pDevice, pd3dCommandList);
+
 }
 
 void CGameScene::ReleaseShaderVariables()
 {
+	if (m_ParticleSystemObject)
+	{
+		m_ParticleSystemObject->ReleaseShaderVariables();
+	}
 }
 
 bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -803,7 +828,9 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
-	if (m_pSkyBox)  m_pSkyBox->Render(pd3dCommandList, pCamera);
+    if (m_pSkyBox)  m_pSkyBox->Render(pd3dCommandList, pCamera);
+	if (m_ParticleSystemObject)
+		m_ParticleSystemObject->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
 
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
 
@@ -887,7 +914,5 @@ CScene::CScene()
 
 CScene::~CScene()
 {
-	//if (m_pd3dGraphicsRootSignature)
-	//	m_pd3dGraphicsRootSignature->Release();
 }
 

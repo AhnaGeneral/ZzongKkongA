@@ -14,20 +14,50 @@ ParticleSystemObject::~ParticleSystemObject()
 
 void ParticleSystemObject::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	UINT ncbElementBytes = ((sizeof(VertexType) + 255) & ~255); //256의 배수
-	m_pd3dcbVertexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD,
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
+	//UINT ncbElementBytes = ((sizeof(VertexType) + 255) & ~255); //256의 배수
+	//m_pd3dVertices = new m_p; 
+	m_pd3dcbVertexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, m_pd3dVertices, 
+		sizeof(VertexType) * m_vertexCount, D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer);
 
 	m_pd3dcbVertexBuffer->Map(0, NULL, (void**)&m_pd3dVertices);
+
+	m_d3dVertexBufferView.BufferLocation = m_pd3dcbVertexBuffer->GetGPUVirtualAddress();
+	m_d3dVertexBufferView.StrideInBytes = sizeof(VertexType);
+	m_d3dVertexBufferView.SizeInBytes = sizeof(VertexType) * m_vertexCount;
+
+	// indexBuffer =================================================================
+	UINT* indices = new  UINT[m_indexCount];
+	
+	for (int i = 0; i<m_indexCount; i++)
+	{
+		indices[i] = i;
+	}
+
+	m_pd3dcbIndexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, indices,
+		sizeof(UINT) * m_indexCount, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER,
+		&m_pd3dIndexUploadBuffer);
+
+	//m_pd3dcbIndexBuffer->Map(0, NULL, (void**)&indices);
+
+	m_d3dIndexBufferView.BufferLocation = m_pd3dcbIndexBuffer->GetGPUVirtualAddress();
+	m_d3dIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
+	m_d3dIndexBufferView.SizeInBytes = sizeof(UINT) * m_indexCount;
+
+	delete[] indices;
+	indices = 0;
+
 }
 
 void ParticleSystemObject::UpdateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-		// UpdateBuffer ==================================
+	// UpdateBuffer ==================================
 	VertexType* verticesPtr; 
 	UINT m_nStride = sizeof(VertexType); 
 	m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	//memset(m_Vertices, 0, (sizeof(VertexType) * m_vertexCount)); 
+
+	memset(m_Vertices, 0, (sizeof(VertexType) * m_vertexCount)); 
+
 	// 이제 파티클 목록 배열에서 정점 배열을 만듭니다. 각 파티클은 두 개의 삼각형으로 만들어진 쿼드입니다.
 	int index = 0;
 
@@ -70,12 +100,13 @@ void ParticleSystemObject::UpdateShaderVariables(ID3D12Device* pd3dDevice, ID3D1
 		index++;
 	}
 
-	m_pd3dcbVertexBuffer = CreateBufferResource(pd3dDevice, pd3dCommandList, m_Vertices, 
-		m_nStride * m_vertexCount, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer);
+	memcpy(m_pd3dVertices, (void*)m_Vertices, (sizeof(VertexType) * m_vertexCount));
+	//m_pd3dcbVertexBuffer = CreateBufferResource(pd3dDevice, pd3dCommandList, m_Vertices, 
+	//	m_nStride * m_vertexCount, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer);
 
-	m_d3dVertexBufferView.BufferLocation = m_pd3dcbVertexBuffer->GetGPUVirtualAddress();
-	m_d3dVertexBufferView.StrideInBytes = m_nStride;
-	m_d3dVertexBufferView.SizeInBytes = m_nStride * m_vertexCount;
+	//m_d3dVertexBufferView.BufferLocation = m_pd3dcbVertexBuffer->GetGPUVirtualAddress();
+	//m_d3dVertexBufferView.StrideInBytes = m_nStride;
+	//m_d3dVertexBufferView.SizeInBytes = m_nStride * m_vertexCount;
 }
 
 void ParticleSystemObject::ReleaseShaderVariables()
@@ -99,11 +130,15 @@ void ParticleSystemObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dC
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
 }
 
-void ParticleSystemObject::InitializeBuffer(ID3D12Device* pd3dDevice)
+void ParticleSystemObject::InitializeBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_vertexCount = m_maxParticles * 6;
+	m_indexCount = m_vertexCount = m_maxParticles * 6;
+
 	m_Vertices = new VertexType[m_vertexCount];
+
 	memset(m_Vertices, 0, (sizeof(VertexType) * m_vertexCount));
+
+	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
 }
 
@@ -119,7 +154,7 @@ bool ParticleSystemObject::InitializeParticleSystem()
 	m_ParticleVelocityVariation = 0.2f;
 
 	// 파티클의 물리적 크기를 설정합니다.
-	m_ParticleSize = 0.05f;
+	m_ParticleSize = 5.0f ;
 
 	// 초당 방출 할 파티클 수를 설정합니다.
 	m_ParticlePerSecond = 250.0f;
@@ -156,7 +191,7 @@ void ParticleSystemObject::EmitParticles(float frameTime)
 
 	bool emitParticle = false;
 
-	if (m_accumulatedTime >= (100.0f / m_ParticlePerSecond))
+	if (m_accumulatedTime >= (2.0f / m_ParticlePerSecond))
 	{
 		m_accumulatedTime = 0.0f;
 		emitParticle = true;
@@ -167,9 +202,10 @@ void ParticleSystemObject::EmitParticles(float frameTime)
 		m_CurrentParticleCount++; 
 
 		// 이제 임의 화 된 파티클 속성을 생성합니다.
-		float positionX = (((float)rand() - (float)rand()) / RAND_MAX) * m_particleDeviationX;
-		float positionY = (((float)rand() - (float)rand()) / RAND_MAX) * m_particleDeviationY;
-		float positionZ = (((float)rand() - (float)rand()) / RAND_MAX) * m_particleDeviationZ;
+		//(XMFLOAT3(394, 15.0f, 88.0f));
+		float positionX = 394.0f  + (((float)rand() - (float)rand()) / RAND_MAX) * m_particleDeviationX;
+		float positionY = 15.0f + (((float)rand() - (float)rand()) / RAND_MAX) * m_particleDeviationY;
+		float positionZ = 88.0f + (((float)rand() - (float)rand()) / RAND_MAX) * m_particleDeviationZ;
 
 		float velocity = m_ParticleVelocity +
 			(((float)rand() - (float)rand()) / RAND_MAX) * m_ParticleVelocityVariation;
@@ -233,7 +269,7 @@ void ParticleSystemObject::UpdateParticles(float frameTime)
 	// 각 프레임은 위치, 속도 및 프레임 시간을 사용하여 아래쪽으로 이동하여 모든 파티클을 업데이트합니다.
 	for (int i = 0; i < m_CurrentParticleCount; i++)
 	{
-		m_ParticleList[i].posY = m_ParticleList[i].posY - (m_ParticleList[i].velocity * frameTime * 0.001f);
+		m_ParticleList[i].posY = m_ParticleList[i].posY - (m_ParticleList[i].velocity * frameTime );
 	}
 }
 
@@ -304,10 +340,45 @@ void ParticleSystemObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CC
 					m_ppMaterials[i]->UpdateShaderVariable(pd3dCommandList);
 
 			}
-	          pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
-	          pd3dCommandList->IASetVertexBuffers(0, 1, &m_d3dVertexBufferView);
-	          pd3dCommandList->DrawInstanced(6, 1, 0, 0);
+
+			pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
+			
+		
+			pd3dCommandList->IASetVertexBuffers(0, 1, &m_d3dVertexBufferView);
 	
+			pd3dCommandList->IASetIndexBuffer(&m_d3dIndexBufferView);
+			pd3dCommandList->DrawIndexedInstanced(m_indexCount, m_indexCount, 0, 0, 0);
+			
 		}
 	}
+}
+
+void ParticleSystemObject::Shutdown()
+{
+	if (m_pd3dcbVertexBuffer)
+	{
+		m_pd3dcbVertexBuffer->Release();
+		m_pd3dcbVertexBuffer = nullptr; 
+	}
+
+	if (m_pd3dcbIndexBuffer)
+	{
+		m_pd3dcbIndexBuffer->Release();
+		m_pd3dcbIndexBuffer = nullptr;
+	}
+}
+
+void ParticleSystemObject::Frame(ID3D12Device* pd3dDevice, 
+	float frameTime, ID3D12GraphicsCommandList * pd3dCommandList, CCamera* pCamera)
+{
+	KillParticles();
+
+	EmitParticles(frameTime);
+
+	UpdateParticles(frameTime); 
+
+	UpdateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	Render(pd3dCommandList, pCamera, 0);
+
 }
