@@ -7,28 +7,18 @@ ModelImporter:
     100002: Box002
     100004: //RootNode
     100006: Object001
-    100008: Object002
     400000: Box001
     400002: Box002
     400004: //RootNode
     400006: Object001
-    400008: Object002
     2100000: 01 - Default
-    2100002: 02 - Default
-    2100004: 03 - Default
-    2100006: No Name
+    2100002: No Name
     2300000: Box001
     2300002: Box002
-    2300004: Object001
-    2300006: Object002
     3300000: Box001
     3300002: Box002
-    3300004: Object001
-    3300006: Object002
     4300000: Box001
-    4300002: Object001
-    4300004: Object002
-    4300006: Box002
+    4300002: Box002
   externalObjects: {}
   materials:
     importMaterials: 1
