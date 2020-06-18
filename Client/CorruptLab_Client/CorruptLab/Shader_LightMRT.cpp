@@ -1,5 +1,5 @@
 #include "Shader_LightMRT.h"
-
+#include "Object_Player.h"
 CLightTarget::CLightTarget()
 {
 	m_pTextures = NULL;
@@ -12,6 +12,8 @@ CLightTarget::CLightTarget()
 
 	m_pd3dcbMaterials = NULL;
 	m_pcbMappedMaterials = NULL;
+
+	m_pPlayer = NULL; 
 }
 
 CLightTarget::~CLightTarget()
@@ -191,12 +193,29 @@ void CLightTarget::ReleaseShaderVariables()
 
 }
 
-void CLightTarget::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+void CLightTarget::OutdoorRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
 	CShader::Render(pd3dCommandList, pCamera, nPipelineState);
 
+
+	UpdateShaderVariables(pd3dCommandList);
+
+	pCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_CAMERA2);
+
+	if (m_pTextures) m_pTextures->UpdateShaderVariables(pd3dCommandList);
+
+	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
+}
+
+void CLightTarget::IndoorRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
+{
+	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
+
+	CShader::Render(pd3dCommandList, pCamera, nPipelineState);
+	
 	UpdateShaderVariables(pd3dCommandList);
 
 	pCamera->UpdateShaderVariables(pd3dCommandList, ROOT_PARAMETER_CAMERA2);
@@ -236,6 +255,21 @@ void CLightTarget::ChangeLights()
 	m_pLights->m_pLights[1].m_fRange = 20;
 	m_pLights->m_pLights[1].m_xmf3Attenuation = XMFLOAT3(1.0f, 0.01f, 0.001f);
 	m_pLights->m_pLights[1].m_xmf3Position = XMFLOAT3(260.f, 10.0f, 120.f);
+
+	m_pLights->m_pLights[2].m_nType = SPOT_LIGHT;
+	m_pLights->m_pLights[2].m_bEnable = true;
+	m_pLights->m_pLights[2].m_fRange = 60.0f;
+	m_pLights->m_pLights[2].m_xmf4Ambient = XMFLOAT4(0.1f, 0.1f, 0.2f, 1.0f);
+	m_pLights->m_pLights[2].m_xmf4Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0);
+	m_pLights->m_pLights[2].m_xmf4Specular = XMFLOAT4(0.05f, 0.15f, 0.15f, 0.0f);
+	m_pLights->m_pLights[2].m_xmf3Position = XMFLOAT3(-50.0f, 20.0f, -5.0f);
+	m_pLights->m_pLights[2].m_xmf3Direction = XMFLOAT3(0.0f, 0.0f, 1.0f);
+	m_pLights->m_pLights[2].m_xmf3Attenuation = XMFLOAT3(1.0f, 0.01f, 0.00003f);
+	m_pLights->m_pLights[2].m_fFalloff = 4.0f;
+	m_pLights->m_pLights[2].m_fPhi = (float)cos(XMConvertToRadians(50.0f));
+	m_pLights->m_pLights[2].m_fTheta = (float)cos(XMConvertToRadians(20.0f));
+
+	
 }
 
 void CLightTarget::BuildLightsAndMaterials()
@@ -264,7 +298,6 @@ void CLightTarget::BuildLightsAndMaterials()
 
 
 
-
 	m_pMaterials = new MATERIALS;
 	::ZeroMemory(m_pMaterials, sizeof(MATERIALS));
 
@@ -289,4 +322,13 @@ D3D12_SHADER_BYTECODE CLightTarget::CreateVertexShader(ID3DBlob** ppd3dShaderBlo
 D3D12_SHADER_BYTECODE CLightTarget::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(L"HLSL_LightTarget.hlsl", "PSLightTargeet", "ps_5_1", ppd3dShaderBlob));
+}
+
+void CLightTarget::AnimateObjects(float fTimeElapsed)
+{
+	if (m_pLights)
+	{
+		m_pLights->m_pLights[2].m_xmf3Position = XMFLOAT3 (m_pPlayer->GetPosition().x, m_pPlayer->GetPosition().y + 3.0f , m_pPlayer->GetPosition().z );
+		m_pLights->m_pLights[2].m_xmf3Direction = m_pPlayer->GetLookVector();
+	}
 }

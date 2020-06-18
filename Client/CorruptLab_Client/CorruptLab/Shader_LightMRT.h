@@ -52,21 +52,25 @@ public:
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pContext = NULL);
 
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
+
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
-
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState = 0);
+	virtual void AnimateObjects(float fTimeElapsed);
 	virtual void ReleaseObjects();
 
+	void OutdoorRender(ID3D12GraphicsCommandList* pd3dCommandList,CCamera* pCamera, int nPipelineState = 0);
+    void IndoorRender(ID3D12GraphicsCommandList* pd3dCommandList,CCamera* pCamera, int nPipelineState = 0);
+	void SetPlayer(CPlayer* Player) { m_pPlayer = Player; }
 	void ChangeLights();
 	void BuildLightsAndMaterials();
 
 protected:
-	CTexture            * m_pTextures;
 
+	CTexture            * m_pTextures;
+	CPlayer             * m_pPlayer; 
 	MATERIALS           * m_pMaterials;
 	LIGHTS              * m_pLights;
 

@@ -8,7 +8,6 @@
 #include "Shader_LightMRT.h"
 #include "CShader_ShadowMRT.h"
 
-
 class CGameFramework
 {
 public:
@@ -67,7 +66,6 @@ private:
 	float								m_fSunTime;
 	HINSTANCE						    m_hInstance;
 	HWND							    m_hWnd;
-
 
 	bool							    m_bMsaa4xEnable;
 	UINT							    m_nMsaa4xQualityLevels;

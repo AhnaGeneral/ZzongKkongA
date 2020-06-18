@@ -739,6 +739,7 @@ void CGameFramework::BuildObjects()
 		        m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pTerrain);
 	//pAirplanePlayer->SetPosition(XMFLOAT3(77.0f, 15.0f, 444.0f));
 	pAirplanePlayer->SetPosition(XMFLOAT3(394, 15.0f, 88.0f));
+	m_pLightProcessingShader->SetPlayer(m_pPlayer);
 	//pAirplanePlayer->SetPosition(XMFLOAT3(0.0f , 0.0f, 0.0f));
 
 	
@@ -751,8 +752,6 @@ void CGameFramework::BuildObjects()
 	
 	m_pCamera = m_pPlayer->GetCamera();
 
-
-
 	/// <summary>
 	/// GameScene2--------------------------------------------------------------------------
 	/// </summary>
@@ -760,6 +759,7 @@ void CGameFramework::BuildObjects()
 	m_pScene[SCENE_STAGE_INDOOR] = new CGameScene2();
 	m_pScene[SCENE_STAGE_INDOOR]->SetGraphicsRootSignature(m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature());
 	dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pPlayer = m_pPlayer;
+	m_pLightProcessingShader->SetPlayer(m_pPlayer);
 	m_pScene[SCENE_STAGE_INDOOR]->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 	//dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pShadowCamera = dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pShadowCamera;
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
@@ -846,6 +846,7 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
+
 void CGameFramework::ShadowMapRender()
 {
 	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
@@ -915,8 +916,9 @@ void CGameFramework::FrameAdvanceStageIndoor()
 		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenLightBufferCPUHandles[i], pfClearColor, 0, NULL);
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenLightBuffers, m_pd3dOffScreenLightBufferCPUHandles, TRUE, NULL);
-
-	m_pLightProcessingShader->Render(m_pd3dCommandList, m_pCamera);
+	
+	m_pLightProcessingShader->AnimateObjects(m_GameTimer.GetTimeElapsed());
+	m_pLightProcessingShader->IndoorRender(m_pd3dCommandList, m_pCamera);
 
 	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],
@@ -974,7 +976,6 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 	m_GameTimer.Tick(0.0f);
 
 	ProcessInput();
-
 	m_pScene[SCENE_STAGE_OUTDOOR]->Update(m_GameTimer.GetTimeElapsed());
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
@@ -1011,8 +1012,9 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 	m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenLightBufferCPUHandles[i], pfClearColor, 0, NULL);
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenLightBuffers, m_pd3dOffScreenLightBufferCPUHandles, TRUE, NULL);
-
-	m_pLightProcessingShader->Render(m_pd3dCommandList, m_pCamera);
+	
+	m_pLightProcessingShader->AnimateObjects(m_GameTimer.GetTimeElapsed());
+	m_pLightProcessingShader->OutdoorRender(m_pd3dCommandList, m_pCamera);
 
 	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
 	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i], 
