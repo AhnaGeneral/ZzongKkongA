@@ -50,6 +50,44 @@ float4 PSPostProcessing(float4 position : SV_POSITION) : SV_Target
 	return(cColor);
 }
 
+float4 PSIndoorPostProcessing(float4 position : SV_POSITION) : SV_Target
+{
+	float4 cColor = gtxtScene[int2(position.xy)];
+	float4 fLighted = gtxtLight[int2(position.xy)];
+	float4 cNonLight = gtxtNonLightNoise[int2(position.xy)];
+	float fDepth = gtxtDepth[int2(position.xy)].g;
+
+
+	int2 dir = int2(1, 1);
+	const int offset[] = { 0, 1, 2, 3, 4, 5 };
+	const float weight[] = { 0.3270270270, 0.2945945946, 0.1216216216, 0.0540540541, 0.0162162162 };
+	float4 FragmentColor = float4(0, 0, 0, 0);
+
+	int hstep = dir.x;
+	int vstep = dir.y;
+
+	for (int i = 1; i < 5; i++) {
+		FragmentColor += gtxtEmmisive[int2(position.xy) + int2(hstep * offset[i], vstep * offset[i])] * weight[i] +
+			gtxtEmmisive[int2(position.xy) - int2(hstep * offset[i], vstep * offset[i])] * weight[i];
+	}
+	float4 cEmmisive = FragmentColor;
+
+	fLighted = min(fLighted * 2.6f, 2);
+	cColor = cColor * fLighted;
+
+	float fog = length(cNonLight.rgb);
+
+	float4 fogColor = float4(0.6f,0.6f,0.6f,1);
+	if (fog > 0)
+		fogColor.g *= cNonLight.g / cNonLight.r * 0.9f;
+	cColor = lerp(cColor, fogColor,fog);
+	cColor += cEmmisive;
+
+	//cColor = lerp(cColor,fLighted,0.6f);
+
+	return(cColor);
+}
+
 static float gfLaplacians[9] = { -1.0f, -1.0f, -1.0f, -1.0f, 8.0f, -1.0f, -1.0f, -1.0f, -1.0f };
 
 float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Target //backbufferm

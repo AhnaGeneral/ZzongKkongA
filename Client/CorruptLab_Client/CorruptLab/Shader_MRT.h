@@ -47,7 +47,8 @@ protected:
 					            
 	CGameObject                 ** m_ppInVentoryBoxs;
 	CUI_Root                    *  m_pInventoryBox;
-					            
+	CUI_Root                    * m_IndoorGreeting; 
+	float                         m_Alpha = 1;
 	CGameObject                 ** m_ppItems;
 	CUI_ITem                     * m_pItem ;
 					            
@@ -71,6 +72,8 @@ public:
 
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+	virtual D3D12_SHADER_BYTECODE CreateIndoorPixelShader(ID3DBlob** ppd3dShaderBlob);
+
 
 	virtual void CreateGraphicsRootSignature(ID3D12Device* pd3dDevice);
 
@@ -84,13 +87,13 @@ public:
 	virtual void ReleaseObjects();
 	virtual void ReleaseUploadBuffers();
 
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int npipelinestate =0);
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
-	void UIRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+	void UIRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera,  int npipelinestate = 0);
 	void GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance);
 	int GetMRTSwitch() { return m_nMRTSwitch; }
 	void SetMRTSwitch(int iunder) { m_nMRTSwitch = iunder; }

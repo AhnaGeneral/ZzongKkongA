@@ -2,11 +2,6 @@
 
 
 //[PSHP]================================================================================
-float4 PSHP(VS_TEXTURED_OUTPUT input ): SV_TARGET
-{
-	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, input.uv);
-	return float4(cColor);
-}
 cbuffer cbItemReaction : register(b7) // 플레이어 위치
 {
 	float4     gf4ItemCount    : packoffset(c0);
@@ -17,7 +12,13 @@ cbuffer cbItemReaction : register(b7) // 플레이어 위치
 
 cbuffer cbPlayerHPRemaining : register(b8) // 플레이어
 {
-	uint          gfremainingHP :packoffset(c0);
+	float          gfremainingHP :packoffset(c0);
+}
+
+float4 PSHP(VS_TEXTURED_OUTPUT input ): SV_TARGET
+{
+	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, input.uv);
+	return float4(cColor.xyz, cColor.a * gfremainingHP);
 }
 //[ITEM]================================================================================
 float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
@@ -164,7 +165,7 @@ float4 PSRadiationLevel(VS_TEXTURED_OUTPUT input) : SV_TARGET
 {
 	float2 uv = input.uv;
 	uv.x /= 11.f;
-	uv.x += (1.f / 11.f) * (gfremainingHP);
+	uv.x += (1.f / 11.f) * uint(gfremainingHP);
 	
 	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, uv);
 

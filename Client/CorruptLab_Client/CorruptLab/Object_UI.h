@@ -65,11 +65,16 @@ public:
 	virtual void InterLinkShaderTexture(ID3D12Device* pd3dDevice,
 		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pShader = NULL, void* pTexture = NULL);
 
+	void SetAlpha(float* AlphaDegree) { m_Alpha = AlphaDegree; }
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void ReleaseShaderVariables();
 
+private:
+	ID3D12Resource* m_pd3dcbAlpha = NULL;
+	float               * m_Alpha = NULL;
+	float            * m_pcbAlpha = NULL;
 };
 
 struct CB_ITEM
@@ -133,7 +138,7 @@ public:
 	virtual void ReleaseShaderVariables();
 
 
-	void SetPlayerHP(int* playerHPRemaining) { m_PlayerHP = playerHPRemaining; }
+	void SetPlayerHP(float* playerHPRemaining) { m_PlayerHP = playerHPRemaining; }
 	void SetObjectID(UINT objectID) { m_nobjectID = objectID; }
 	virtual UINT GetObjectID() { return m_nobjectID; }
 	 
@@ -141,8 +146,8 @@ private:
 	UINT m_nobjectID = 0 ;
 
 	ID3D12Resource* m_pd3dcbPlayerHP = NULL;
-	int* m_PlayerHP = NULL;
-	int* m_pcbPlayerHP = NULL;
+	float* m_PlayerHP = NULL;
+	float* m_pcbPlayerHP = NULL;
 
 };
 
@@ -160,12 +165,12 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void ReleaseShaderVariables();
-	void SetRadiationNumber(int num);
+	void SetRadiationNumber(float num);
 
 private:
 	ID3D12Resource* m_pd3dcbRadiationLevel = NULL;
-	int m_RadiationNumber = 0 ;
-	int* m_pcbRadiationNum = NULL;
+	float m_RadiationNumber = 0 ;
+	float* m_pcbRadiationNum = NULL;
 };
 
 class CUI_MonsterHP : public CMRTUI

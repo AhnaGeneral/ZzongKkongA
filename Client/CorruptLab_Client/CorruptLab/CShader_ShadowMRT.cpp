@@ -48,7 +48,10 @@ void Shader_ShadowMRT::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 	d3dSamplerDesc.RegisterSpace = 0;
 	d3dSamplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
-	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+	D3D12_ROOT_SIGNATURE_FLAGS d3dRootSignatureFlags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT 
+		| D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+		| D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
+
 	D3D12_ROOT_SIGNATURE_DESC d3dRootSignatureDesc;
 	::ZeroMemory(&d3dRootSignatureDesc, sizeof(D3D12_ROOT_SIGNATURE_DESC));
 	d3dRootSignatureDesc.NumParameters = 0;
@@ -59,8 +62,11 @@ void Shader_ShadowMRT::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
 
 	ID3DBlob* pd3dSignatureBlob = NULL;
 	ID3DBlob* pd3dErrorBlob = NULL;
+
 	D3D12SerializeRootSignature(&d3dRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &pd3dSignatureBlob, &pd3dErrorBlob);
-	pd3dDevice->CreateRootSignature(0, pd3dSignatureBlob->GetBufferPointer(), pd3dSignatureBlob->GetBufferSize(), __uuidof(ID3D12RootSignature), (void**)&m_pd3dGraphicsRootSignature);
+	pd3dDevice->CreateRootSignature(0, pd3dSignatureBlob->GetBufferPointer(), 
+		pd3dSignatureBlob->GetBufferSize(), __uuidof(ID3D12RootSignature), (void**)&m_pd3dGraphicsRootSignature);
+
 	if (pd3dSignatureBlob) pd3dSignatureBlob->Release();
 	if (pd3dErrorBlob) pd3dErrorBlob->Release();
 }

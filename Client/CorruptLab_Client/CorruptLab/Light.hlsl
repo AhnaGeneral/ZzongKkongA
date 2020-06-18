@@ -150,7 +150,8 @@ float4 SpotLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera)
 		float fSpotFactor = pow(max(((fAlpha - gLights[nIndex].m_fPhi) /
 			(gLights[nIndex].m_fTheta - gLights[nIndex].m_fPhi)), 0.0f), gLights[nIndex].m_fFalloff);
 
-		float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
+		float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation,
+			                            float3(1.0f, fDistance, fDistance * fDistance));
 
 		float4 LightColor = (gLights[nIndex].m_cDiffuse * fDiffuseFactor + gLights[nIndex].m_cSpecular * fresnelFactor);
 
