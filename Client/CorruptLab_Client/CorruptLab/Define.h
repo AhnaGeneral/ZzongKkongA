@@ -93,6 +93,7 @@
 #define MONSTER_STATE_DAMAGEING			4
 #define MONSTER_STATE_RETURNING			5
 #define MONSTER_STATE_PURIFYING			6
+#define MONSTER_STATE_BACK				7
 
 /*JohnsonAnimation*/
 //---------------------------------------------------

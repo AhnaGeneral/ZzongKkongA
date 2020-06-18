@@ -112,7 +112,7 @@ public:
 	void UpdateTransform(XMFLOAT4X4* pxmf4x4Parent = NULL);
 	CGameObject* FindFrame(char* pstrFrameName);
 
-
+	void SetAnimatationSpeed(int iSet, float fSpeed);
 	UINT GetMeshType() { return((m_pMesh) ? m_pMesh->GetType() : 0); }
 	virtual UINT GetObjectID() { return 0; }
 	CTexture* FindReplicatedTexture(_TCHAR* pstrTextureName);

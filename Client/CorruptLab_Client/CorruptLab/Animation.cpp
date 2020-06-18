@@ -175,12 +175,11 @@ void CAnimationController::SetCallbackKey(int nAnimationSet, int nKeyIndex, floa
 void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, int iNum)
 {
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbBoneTransformsGpuVirtualAddress = m_pAnimationTracks[iNum].m_ppd3dcbSkinningBoneTransforms->GetGPUVirtualAddress();
-
+	
 	for (int i = 0; i < m_ppSkinnedMeshes->m_nSkinningBones; i++)
 	{
-		//XMStoreFloat4x4(&m_pcbxmf4x4BoneOffsets[i], XMMatrixTranspose(XMLoadFloat4x4(&m_pxmf4x4BindPoseBoneOffsets[i])));
-		XMStoreFloat4x4(&m_pAnimationTracks[iNum].m_ppcbxmf4x4MappedSkinningBoneTransforms[i],
-			XMMatrixTranspose(XMLoadFloat4x4(&m_ppSkinnedMeshes->m_ppSkinningBoneFrameCaches[i]->m_xmf4x4World)));
+		XMMATRIX transpose = XMMatrixTranspose(XMLoadFloat4x4(&m_ppSkinnedMeshes->m_ppSkinningBoneFrameCaches[i]->m_xmf4x4World));
+		XMStoreFloat4x4(&m_pAnimationTracks[iNum].m_ppcbxmf4x4MappedSkinningBoneTransforms[i],transpose);
 	}
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_BONE_TRANSFORMS, d3dcbBoneTransformsGpuVirtualAddress);
 }
@@ -200,13 +199,12 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHan
 
 	if (m_pAnimationSets)
 	{
-			if (m_pAnimationTracks[iTrackNum].m_bEnable)
+		CAnimationSet* pAnimationSet = m_pAnimationTracks[iTrackNum].m_pAnimationSet;
+		if (m_pAnimationTracks[iTrackNum].m_bEnable)
 		{
-			m_pAnimationTracks[iTrackNum].m_fPosition += (fTimeElapsed * m_pAnimationTracks[iTrackNum].m_fSpeed);
-
-			CAnimationSet* pAnimationSet = m_pAnimationTracks[iTrackNum].m_pAnimationSet;
+			m_pAnimationTracks[iTrackNum].m_fPosition += (fTimeElapsed * pAnimationSet->m_fSpeed);
 			pAnimationSet->m_fPosition += (fTimeElapsed * pAnimationSet->m_fSpeed);
-
+		}
 			if (pCallbackHandler)
 			{
 				void* pCallbackData = pAnimationSet->GetCallback(pAnimationSet->m_fPosition);
@@ -230,7 +228,7 @@ void CAnimationController::AdvanceTime(float fTimeElapsed, CAnimationCallbackHan
 				}
 
 			}
-		}
+		
 	}
 }
 

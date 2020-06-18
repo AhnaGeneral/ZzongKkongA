@@ -293,6 +293,12 @@ CGameObject* CGameObject::FindFrame(char* pstrFrameName)
 	return(NULL);
 }
 
+void CGameObject::SetAnimatationSpeed(int iSet, float fSpeed)
+{
+	if (m_pAnimationController)
+		m_pAnimationController->m_pAnimationSets[iSet].m_fSpeed = fSpeed;
+}
+
 void CGameObject::OnPrepareRender() {}
 
 void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)

@@ -817,8 +817,11 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 				Obj->SetDistanceToPlayer(Distance);
 				Obj->SetPlayerPosition(playerpos);
 
+				Obj->UpdateTrackNumber(Obj->m_iTrackNumber);
 				Obj->Update(m_fElapsedTime, NULL, m_pTerrain);
+
 				Obj->Animate(m_fElapsedTime, NULL, Obj->m_iTrackNumber);
+			//	if (Obj->m_iTrackNumber == 1) continue;
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 0);
 			}

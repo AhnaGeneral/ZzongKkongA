@@ -737,8 +737,8 @@ void CGameFramework::BuildObjects()
 
 	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList,
 		        m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pTerrain);
-	//pAirplanePlayer->SetPosition(XMFLOAT3(77.0f, 15.0f, 444.0f));
-	pAirplanePlayer->SetPosition(XMFLOAT3(394, 15.0f, 88.0f));
+	pAirplanePlayer->SetPosition(XMFLOAT3(430.0f, 15.0f, 359.0f));
+	//pAirplanePlayer->SetPosition(XMFLOAT3(394, 15.0f, 88.0f));
 	m_pLightProcessingShader->SetPlayer(m_pPlayer);
 	//pAirplanePlayer->SetPosition(XMFLOAT3(0.0f , 0.0f, 0.0f));
 

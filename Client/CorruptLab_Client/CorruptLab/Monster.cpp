@@ -25,8 +25,7 @@ CMonster::~CMonster()
 	m_HPUI->Release();
 }
 
-
-void CMonster::MoveToTarget(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHeightMapTerrain* pTerrain)
+float CMonster::MoveToTarget(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHeightMapTerrain* pTerrain)
 {
 	XMFLOAT3 xmf3Position = GetPosition();
 	
@@ -40,18 +39,18 @@ void CMonster::MoveToTarget(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHei
 		RotateYaw = 0;
 	Rotate(0.0f, RotateYaw, 0.0f);
 
-	if (m_fDistanceToPlayer < 12.f && m_iState == MONSTER_STATE_ATTACK) return;
+	if (m_fDistanceToPlayer < 12.f && m_iState == MONSTER_STATE_ATTACK) return 0;
 
 	XMFLOAT3 MovePos = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Look, Speed * fTimeElapsed));
 	if (pTerrain)
 		MovePos.y = pTerrain->GetHeight(MovePos.x, MovePos.z);
 
 	SetPosition(MovePos);
+	return RotateYaw;
 }
 
 void CMonster::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
-	UpdateTrackNumber(m_iTrackNumber);
 	if (m_iState == MONSTER_STATE_PURIFYING && nPipelineState == 0)
 		nPipelineState = 2;
 	CGameObject::Render(pd3dCommandList, pCamera, nPipelineState);
@@ -96,7 +95,7 @@ void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 		{
 			SetAnimationSet(0, m_iTrackNumber); // idle
 			m_fIdleTick += fTimeElapsed;
-			if (m_fIdleTick >= 2)
+			if (m_fIdleTick >= 3)
 			{
 				m_fIdleTick = 0;
 				m_iState = MONSTER_STATE_WALK;
@@ -128,29 +127,37 @@ void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 	}
 	else
 	{
-
+		float yaw;
 		switch (m_iState)
 		{
 		case MONSTER_STATE_WALK:
-			MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed / 0.7f, pTerrain);
-
+			 yaw = MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed * 0.4f, pTerrain);
 			SetAnimationSet(3, m_iTrackNumber); // walk
-			if (m_fDistanceToPlayer < 40)
+			if (abs(yaw) < 0.15f) {
+				m_iState = MONSTER_STATE_BACK;
+				m_fIdleTick = 0;
+			}
+			break;
+		case MONSTER_STATE_BACK:
+			m_fIdleTick += fTimeElapsed; 
+			MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed * -0.7, pTerrain);
+			SetAnimationSet(3, m_iTrackNumber); // walk
+			if (m_fIdleTick > 1.f)
 			{
+				m_fIdleTick = 0;
 				m_iState = MONSTER_STATE_ATTACK;
 			}
 			break;
 		case MONSTER_STATE_ATTACK:
-			MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed, pTerrain);
-
+			Rush(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed * 1.1 , pTerrain);
+			m_fIdleTick += fTimeElapsed;
 			SetAnimationSet(2, m_iTrackNumber); // run
-			if (m_fDistanceToPlayer > 40)
+			if (m_fIdleTick > 3.f)
 			{
+				m_fIdleTick = 0;
 				m_iState = MONSTER_STATE_WALK;
 			}
 			XMFLOAT4 Rotation = GetRotateQuaternion(m_xmf3Scale.x, m_pAttCollision->m_pParent->m_xmf4x4World);
-			//XMMATRIX RotateMat = XMLoadFloat4x4(&m_xmf4x4World) * XMLoadFloat4x4(&inverse);
-			//XMQuaternionRotationMatrix(RotateMat)
 			UpdateCollisionBoxes(pxmf4x4Parent, &Rotation, &m_xmf3Scale);
 			m_pAttCollision->Update(pxmf4x4Parent, &Rotation, &m_xmf3Scale);
 			CCollisionMgr::GetInstance()->MonsterAttackCheck(m_iAtt, *m_pAttCollision, fTimeElapsed);
@@ -169,7 +176,7 @@ void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 
 		float fDistanceToFiled = Vector3::Length(Vector3::Subtract(m_xmf3FiledCenter, GetPosition()));
 
-		if (m_fDistanceToPlayer > 70 || fDistanceToFiled > 100)
+		if (m_fDistanceToPlayer > 60 || fDistanceToFiled > 80)
 		{
 			XMFLOAT3 randompos;
 			randompos.x = float(rand() % 60) - 30.f;
@@ -225,6 +232,7 @@ void CMonster::PurifyingUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, vo
 	m_fFurifyingTime += fTimeElapsed;
 	if (m_fFurifyingTime > 8.f)
 	{
+		m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_bEnable = true;
 		m_iState = MONSTER_STATE_IDLE;
 		m_iCurrentHP = 100;
 		m_bIsPurified = true;
@@ -235,6 +243,20 @@ void CMonster::GetPurified()
 {
 	m_iState = MONSTER_STATE_PURIFYING;
 }
+
+void CMonster::Rush(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHeightMapTerrain* pTerrain)
+{
+	XMFLOAT3 xmf3Position = GetPosition();
+
+	if (m_fDistanceToPlayer < 5.f && m_iState == MONSTER_STATE_ATTACK) return ;
+
+	XMFLOAT3 MovePos = Vector3::Add(xmf3Position, Vector3::ScalarProduct(GetLook(), Speed * fTimeElapsed));
+	if (pTerrain)
+		MovePos.y = pTerrain->GetHeight(MovePos.x, MovePos.z);
+
+	SetPosition(MovePos);
+}
+
 
 void CMonster::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
