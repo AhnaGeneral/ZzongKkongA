@@ -879,7 +879,7 @@ void CGameObject::LoadAnimationFromFile(FILE* pInFile)
 			for (int i = 0; i < pAnimationSet->m_nKeyFrameTranslations; i++) pAnimationSet->m_ppxmf3KeyFrameTranslations[i] = new XMFLOAT3[m_pAnimationController->m_nAnimationBoneFrames];
 #endif
 		}
-		else if (!strcmp(pstrToken, "</AnimationSets>"))
+		else
 		{
 			break;
 		}

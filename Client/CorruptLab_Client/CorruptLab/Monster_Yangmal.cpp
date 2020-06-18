@@ -12,16 +12,16 @@ void CYangmal::OnInitialize()
 
 }
 
-void CYangmal::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent)
+void CYangmal::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, int iNum)
 {
 	//SetAnimationSet(1);
 	switch (m_iState)
 	{
 	case MONSTER_STATE_STUN:
-		if (m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_fPosition >= m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_fLength)
+		if (m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_pAnimationSet->m_fPosition >= m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_pAnimationSet->m_fLength)
 			return;
 	default:
-		CGameObject::Animate(fTimeElapsed, NULL);
+		CGameObject::Animate(fTimeElapsed, NULL,iNum);
 		break;
 	}
 }

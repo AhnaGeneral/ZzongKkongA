@@ -111,7 +111,7 @@ void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 		}
 		else if (m_iState == MONSTER_STATE_WALK || m_iState == MONSTER_STATE_RETURNING)
 		{
-			SetAnimationSet(1, m_iTrackNumber); // WALK
+			SetAnimationSet(3, m_iTrackNumber); // WALK
 			MoveToTarget(m_xmf3RandomMoveDest, fTimeElapsed, m_fSpeed / 2.f, pTerrain);
 			if (Vector3::Length(Vector3::Subtract(m_xmf3RandomMoveDest, GetPosition())) < 3.f)
 			{
@@ -134,7 +134,7 @@ void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 		case MONSTER_STATE_WALK:
 			MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed / 0.7f, pTerrain);
 
-			SetAnimationSet(1, m_iTrackNumber); // walk
+			SetAnimationSet(3, m_iTrackNumber); // walk
 			if (m_fDistanceToPlayer < 40)
 			{
 				m_iState = MONSTER_STATE_ATTACK;
@@ -143,7 +143,7 @@ void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 		case MONSTER_STATE_ATTACK:
 			MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed, pTerrain);
 
-			SetAnimationSet(3, m_iTrackNumber); // run
+			SetAnimationSet(2, m_iTrackNumber); // run
 			if (m_fDistanceToPlayer > 40)
 			{
 				m_iState = MONSTER_STATE_WALK;
@@ -157,9 +157,9 @@ void CMonster::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 			break;
 		case MONSTER_STATE_DAMAGEING:
 			SetAnimationSet(4, m_iTrackNumber);
-			if (m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_fPosition >= 0.75f)
+			if (m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_pAnimationSet->m_fPosition >= 0.75f)
 			{
-				m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_fPosition = 0;
+				m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_pAnimationSet->m_fPosition = 0;
 				m_iState = MONSTER_STATE_WALK;
 			}
 			break;
@@ -204,7 +204,7 @@ void CMonster::GoodUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* p
 	}
 	else if (m_iState == MONSTER_STATE_WALK || m_iState == MONSTER_STATE_RETURNING)
 	{
-		SetAnimationSet(1, m_iTrackNumber); // WALK
+		SetAnimationSet(3, m_iTrackNumber); // WALK
 		MoveToTarget(m_xmf3RandomMoveDest, fTimeElapsed, m_fSpeed / 2.f, pTerrain);
 		if (Vector3::Length(Vector3::Subtract(m_xmf3RandomMoveDest, GetPosition())) < 3.f)
 		{
@@ -272,7 +272,7 @@ void CMonster::GetDamaage(int iDamage)
 	{
 		if (m_iState == MONSTER_STATE_RETURNING)
 			m_bNotice = true;
-		SetAnimationSet(2, m_iTrackNumber);
+		SetAnimationSet(1, m_iTrackNumber);
 		m_iState = MONSTER_STATE_STUN;
 		m_iCurrentHP = 20;
 		m_pChild->m_pAnimationController->m_pAnimationSets[2].m_nType = ANIMATION_TYPE_ONCE;

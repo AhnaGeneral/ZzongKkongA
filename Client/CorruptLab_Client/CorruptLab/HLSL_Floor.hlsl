@@ -61,7 +61,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT FloorPS(PS_FLOOR_INPUT input) : SV_TARGET
 	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.tex);
 	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f);
 	vNormal = normalize(mul(vNormal, TBN));
-	output.normal = float4(vNormal / 2.5f + 0.5f, 1);
+	output.normal =float4(vNormal / 2.f + 0.5f, 1);
 
 	//[±×¸²ÀÚ]============================================================================
 	float2 projectTexCoord;

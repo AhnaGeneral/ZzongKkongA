@@ -444,7 +444,6 @@ void CMainPlayer::Update(float fTimeElapsed)
 	UpdateCollisionBoxes();
 	if (CCollisionMgr::GetInstance()->StaticCollisionCheck() )
 		m_xmf3Position = m_xmf3PrePosition;
-
 	m_xmf3PrePosition = m_xmf3Position;
 
 	if (m_pSword && m_pDummy)

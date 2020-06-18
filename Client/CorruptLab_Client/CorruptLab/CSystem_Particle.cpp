@@ -146,11 +146,11 @@ bool ParticleSystemObject::InitializeParticleSystem()
 {
 	// 방출 될 때 파티클이 위치 할 수 있는 임의의 편차를 설정합니다.
 	m_particleDeviationX = 5.0f;
-	m_particleDeviationY = 0.3f;
+	m_particleDeviationY = 0.01f;
 	m_particleDeviationZ = 3.5f;
 
 	// 파티클의 속도와 속도 변화를 설정합니다.
-	m_ParticleVelocity = 1.0f;
+	m_ParticleVelocity = 6.0f;
 	m_ParticleVelocityVariation = 0.2f;
 
 	// 파티클의 물리적 크기를 설정합니다.
