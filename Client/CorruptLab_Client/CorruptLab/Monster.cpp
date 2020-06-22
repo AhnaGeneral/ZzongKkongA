@@ -290,6 +290,7 @@ void CMonster::GetDamaage(int iDamage)
 	if (m_bIsPurified) return;
 	m_iState = MONSTER_STATE_DAMAGEING;
 	m_iCurrentHP -= iDamage;
+	m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_fPosition = 0;
 	if (m_iCurrentHP <= 20) 
 	{
 		if (m_iState == MONSTER_STATE_RETURNING)
@@ -297,6 +298,5 @@ void CMonster::GetDamaage(int iDamage)
 		SetAnimationSet(1, m_iTrackNumber);
 		m_iState = MONSTER_STATE_STUN;
 		m_iCurrentHP = 20;
-		m_pChild->m_pAnimationController->m_pAnimationSets[2].m_nType = ANIMATION_TYPE_ONCE;
 	}
 }

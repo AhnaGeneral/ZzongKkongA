@@ -56,6 +56,7 @@ protected:
 	///
 public:
 
+	bool		IsPurified() { return m_bIsPurified; }
 	int				m_iState = MONSTER_STATE_IDLE;
 	//GameContents
 	virtual float MoveToTarget(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHeightMapTerrain* pTerrain = NULL);

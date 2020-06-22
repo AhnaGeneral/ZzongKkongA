@@ -14,10 +14,11 @@ void CItemBox::Update(float fElapsedTime)
 	{
 		SetAnimationSet(0, m_iTrackNumber);
 		Animate(fElapsedTime);
-		if (m_pChild->m_pAnimationController->m_pAnimationTracks[0].m_pAnimationSet->m_fPosition >= 0.4f)
+		if (m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_fPosition >= 0.4f)
 		{
+			m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_bEnable = false;
 			m_bAnimating = false;
-			CItemMgr::GetInstance()->GetItem(rand() % 4, GetPosition());
+			CItemMgr::GetInstance()->GetItem(rand() % 3, GetPosition());
 		}
 	}
 }

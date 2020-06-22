@@ -360,7 +360,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		int tmp = i / 5;
 		pRenderTargetUI = new CMRTUI(pd3dDevice, pd3dCommandList);
 		pRenderTargetUI->SetMesh(mesh);
-		pRenderTargetUI->Set2DPosition(-310.0f + (remainder * 140.0f), 240.0f + (-tmp * 120));
+		pRenderTargetUI->Set2DPosition(-450.0f + (remainder * 220.0f), 320.0f + (-tmp * 150));
 		pRenderTargetUI->SetObjectID(i);
 		m_pRenderTargetUIs[i++] = pRenderTargetUI;
 	}

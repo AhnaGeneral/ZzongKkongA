@@ -53,6 +53,7 @@ CPlayer::~CPlayer()
 void CPlayer::SetAttackState()
 {
 	m_iState = JOHNSON_ANIAMATION_ATTACK;
+	m_pChild->m_pAnimationController->m_pAnimationTracks->m_fPosition = 0;
 	CCollisionMgr::GetInstance()->MonsterDamageCheck(m_iAtt);
 	//SetAnima
 }
@@ -175,7 +176,8 @@ void CPlayer::Update(float fTimeElapsed)
 	if (m_iState == JOHNSON_ANIAMATION_ATTACK)
 	{
 		SetAnimationSet(m_iState, m_iTrackNumber);
-		if (m_pChild->m_pAnimationController->m_pAnimationTracks->m_pAnimationSet->m_fPosition >= 0.7f)
+		if (m_pChild->m_pAnimationController->m_pAnimationTracks->m_fPosition 
+			>= m_pChild->m_pAnimationController->m_pAnimationTracks->m_pAnimationSet->m_fLength - 0.1f)
 		{
 			m_iState = JOHNSON_ANIAMATION_IDLE;
 			m_pChild->m_pAnimationController->m_pAnimationTracks->m_pAnimationSet->m_fPosition = 0;

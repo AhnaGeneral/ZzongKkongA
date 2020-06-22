@@ -744,11 +744,19 @@ void CGameScene::PurifyMonster()
 		{
 			CDrugMaker* pMaker = dynamic_cast<CDrugMaker*>(pObj);
 			if (pMaker->m_bEnable)
+			{
+				for (auto pMon : *m_pMonsterLists[pMaker->m_iMonsterType])
+				{
+					if (pMon->m_iState != MONSTER_STATE_STUN) return;
+				}
 				for (auto pMon : *m_pMonsterLists[pMaker->m_iMonsterType])
 				{
 					pMaker->m_bEnable = false;
 					pMon->GetPurified();
 				}
+
+			}
+				
 		}
 	}
 }
@@ -832,8 +840,8 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
     if (m_pSkyBox)  m_pSkyBox->Render(pd3dCommandList, pCamera);
-	if (m_ParticleSystemObject)
-		m_ParticleSystemObject->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
+//if (m_ParticleSystemObject)
+//		m_ParticleSystemObject->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
 
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
 
@@ -904,8 +912,32 @@ void CGameScene::ItemBoxCheck()
 		XMFLOAT3 PlayerPos = m_pPlayer->GetPosition();
 
 		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
-		if (Distance < 10)
+		if (Distance < 8)
+		{
+			int filed = CCollisionMgr::GetInstance()->m_iSceneProgress;
+			for (auto pMon : *m_pMonsterLists[filed - 1])
+				if (!pMon->IsPurified()) return;
+
 			dynamic_cast<CItemBox*>(pObj)->Open();
+
+		}
+	}
+	for (auto pObj : *m_pDynamicObjLists[OBJECT_TYPE_RESEARCHER])
+	{
+		XMFLOAT3 ObjPos = pObj->GetPosition();
+		XMFLOAT3 PlayerPos = m_pPlayer->GetPosition();
+
+		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
+		if (Distance < 8)
+		{
+
+			int filed = CCollisionMgr::GetInstance()->m_iSceneProgress;
+			for (auto pMon : *m_pMonsterLists[filed - 1])
+				if (!pMon->IsPurified()) return;
+			ObjPos.y += 5.f;
+			CItemMgr::GetInstance()->GetItem(ITEM_TYPE_MAPSEGMENT, ObjPos);
+
+		}
 	}
 }
 

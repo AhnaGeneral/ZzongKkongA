@@ -18,7 +18,7 @@ void CYangmal::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, int iNum)
 	switch (m_iState)
 	{
 	case MONSTER_STATE_STUN:
-		if (m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_pAnimationSet->m_fPosition >= m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_pAnimationSet->m_fLength - 0.1)
+		if (m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_fPosition >= m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_pAnimationSet->m_fLength - 0.1)
 			m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_bEnable = false;
 	default:
 		CGameObject::Animate(fTimeElapsed, NULL,iNum);

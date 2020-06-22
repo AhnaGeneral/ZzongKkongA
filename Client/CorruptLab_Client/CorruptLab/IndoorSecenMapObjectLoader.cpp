@@ -151,9 +151,9 @@ void CGameScene2::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int 
 		//case OBJECT_TYPE_ITEMBOX:
 		//	//pGameObject = new CItemBox();
 		//	break;
-		case OBJECT_TYPE_LABORATOR:
-			pGameObject = new CDrugMaker(i);
-			break;
+		//case OBJECT_TYPE_LABORATOR:
+			//pGameObject = new CDrugMaker(i);
+			//break;
 		case OBJECT_TYPE_RESEARCHER:
 			//pGameObject = new CResearcher(i);
 			break;
