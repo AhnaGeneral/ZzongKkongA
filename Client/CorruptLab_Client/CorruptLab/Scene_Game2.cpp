@@ -2,6 +2,9 @@
 #include "Scene_Game2.h"
 #include "Mgr_Collision.h"
 #include "Object_Floor.h"
+#include "Object_DynamicObj.h"
+
+
 
 //Scene2-----------------------------------------------------------------------------
 CGameScene2::CGameScene2()
@@ -32,6 +35,9 @@ CGameScene2::CGameScene2()
 
 	m_pShadowMap = NULL;
 	m_pDepthTex = NULL;
+
+	m_AnimationTime = 0.0f; 
+	m_AnimationControl = true;
 }
 
 CGameScene2::~CGameScene2()
@@ -41,8 +47,15 @@ CGameScene2::~CGameScene2()
 void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	m_pFloor = new CFloor(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-	m_pFloor->SetPosition(XMFLOAT3(250, 0, 250));
+	m_pFloor->SetPosition(XMFLOAT3(0, 0, 0));
 	m_pShadowCamera = new CSunCamera(XMFLOAT3(250, 200.f, 250.f),Vector3::Normalize( XMFLOAT3(0,-1,0.01f)));
+
+	//m_IndoorWall = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
+	//	pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/IndoorWall.bin", NULL, 0);
+	//m_IndoorWall->SetPosition(0, 2, 0);
+	//m_IndoorWall->SetScale(120, 120, 120);
+
+	PlaceObjectsFromFile(pd3dDevice, m_pd3dGraphicsRootSignature, pd3dCommandList);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -148,13 +161,36 @@ void CGameScene2::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamer
 
 void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
-	
 	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
-
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
 	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera);
+	//if (m_IndoorWall)m_IndoorWall->Render(pd3dCommandList, pCamera); 
+
+	if (m_pStaticObjLists) // 오브젝트 Render
+	{
+		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+		{
+			for (auto& obj : *m_pStaticObjLists[i])
+			{
+				obj->UpdateTransform(NULL);
+				obj->Render(pd3dCommandList, pCamera, 0);
+			}
+		}
+	}
+	if (m_pDynamicObjLists) // 오브젝트 Render
+	{
+		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pDynamicObjLists[i])
+			{
+				Obj->Update(m_fElapsedTime);
+				Obj->UpdateTransform(NULL);
+				Obj->Render(pd3dCommandList, pCamera, 0);
+			}
+		}
+	}
 }
 
 void CGameScene2::Update(float fTimeElapsed)
@@ -214,24 +250,71 @@ bool CGameScene2::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 
 void CGameScene2::AnimateObjects(float fTimeElapsed)
 {
+	float fTime = fTimeElapsed;
+
+	m_AnimationTime += fTimeElapsed;
+
+	if (m_AnimationTime > 2.5f)
+	{
+		m_AnimationTime = 0.0f;
+		
+		if (m_AnimationControl)
+		{
+			m_AnimationControl = false;
+		}
+		else
+		{
+			m_AnimationControl = true;
+		}
+	}
+
+	if (m_AnimationControl)
+	{
+		fTime = (-(fTime - 0.002f));
+	}
+	else
+	{
+		fTime = (+(fTime - 0.002f));
+	}
+
+	if (m_pStaticObjLists)
+	{
+		for (int i = 1 ; i < m_nStaticObjectTypeNum; i++)
+		{
+			if (m_pStaticObjLists[i])
+			{
+				for (auto& obj : *m_pStaticObjLists[i])
+				{
+					XMFLOAT3 TmpPosition = obj->GetPosition();
+					obj->SetPosition(TmpPosition.x, TmpPosition.y + fTime, TmpPosition.z);
+				}
+			}
+		}
+	}
 }
 
 void CGameScene2::ReleaseUploadBuffers()
 {
-}
-
-void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
-{
-}
-
-void CGameScene2::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index)
-{
-}
-
-void CGameScene2::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index)
-{
-}
-
-void CGameScene2::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
-{
+	if (m_pStaticObjLists) // 오브젝트 Release
+	{
+		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+		{
+			if (m_pStaticObjLists[i])
+			{
+				for (auto& obj : *m_pStaticObjLists[i])
+					obj->ReleaseUploadBuffers();
+			}
+		}
+	}
+	//----------------------------------------------
+	if (m_pDynamicObjLists) // 오브젝트 Release
+	{
+		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pDynamicObjLists[i])
+			{
+				Obj->ReleaseUploadBuffers();
+			}
+		}
+	}
 }

@@ -36,6 +36,7 @@ public:
 	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) = 0;
 	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) = 0;
 	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd) = 0;
+	virtual void AnimateObjects(float fTimeElapsed) = 0;
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) = 0;
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList) = 0;
@@ -96,7 +97,7 @@ public:
 
 	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd);
 
-	void AnimateObjects(float fTimeElapsed);
+	virtual void AnimateObjects(float fTimeElapsed);
 
 	virtual void ReleaseUploadBuffers();
 

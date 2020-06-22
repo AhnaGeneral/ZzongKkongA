@@ -561,6 +561,9 @@
     <ClCompile Include="Object_DrugMaker.cpp">
       <Filter>05.Component\GameObject\00.Object\01.DynamicObject\03.Object_DrugMaker</Filter>
     </ClCompile>
+    <ClCompile Include="IndoorSecenMapObjectLoader.cpp">
+      <Filter>05.Component\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CorruptLab.rc">

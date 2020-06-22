@@ -121,6 +121,10 @@ bool CLobbyScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 	return false;
 }
 
+void CLobbyScene::AnimateObjects(float fTimeElapsed)
+{
+}
+
 bool CLobbyScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 {
 	return false;

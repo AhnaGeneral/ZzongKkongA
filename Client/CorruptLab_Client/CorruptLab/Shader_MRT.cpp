@@ -310,9 +310,6 @@ void CPostProcessingShader::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSig
 
 	hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc, __uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[2]);
 
-
-
-
 	if (pd3dVertexShaderBlob) pd3dVertexShaderBlob->Release();
 	if (pd3dPixelShaderBlob) pd3dPixelShaderBlob->Release();
 
@@ -838,12 +835,13 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 	
 	if (m_pBaseUIShader)m_pBaseUIShader->Render(pd3dCommandList, pCamera);
 
+	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
+
 	if ((npipelinestate == 1))
 	{
-		if (m_IndoorGreeting) m_IndoorGreeting->Render(pd3dCommandList, pCamera);
+		//if (m_IndoorGreeting) m_IndoorGreeting->Render(pd3dCommandList, pCamera);
 	}
 
-	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
 
 	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
 

@@ -31,9 +31,9 @@ CPlayer::CPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComman
 
 	CCollisionMgr::GetInstance()->SetPlayer(this);
 
-	m_iMaxHP = 100;
-	m_iCurrentHP = 100;
-	m_iAtt = 5;
+	m_iMaxHP = 100.0f;
+	m_iCurrentHP = 100.0f;
+	m_iAtt = 5.0f;
 
 }
 

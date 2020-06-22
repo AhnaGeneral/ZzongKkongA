@@ -221,6 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="IndoorSecenMapObjectLoader.cpp" />
     <ClCompile Include="Mgr_Scene.cpp" />
     <ClCompile Include="CShader_ParticleClass.cpp" />
     <ClCompile Include="CSystem_Particle.cpp" />

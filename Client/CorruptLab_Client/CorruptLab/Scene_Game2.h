@@ -6,17 +6,20 @@ class CFloor;
 class CGameScene2 : public CGameScene
 {
 public:
-	POINT                       WindowCursorPos;
+	POINT WindowCursorPos;
 
 	CPlayer* m_pPlayer;
 	CSkyBox* m_pSkyBox;
 	CObjectWater* m_pCObjectWater;
-	CFloor		* m_pFloor;
+	CFloor * m_pFloor;
 
 	CShader_Effect* m_pTestEffect;
-	int                         n_ReactItem;
-	float                       itemRange;
+	CGameObject* m_IndoorWall = NULL;
+	int  n_ReactItem;
+	float itemRange;
 
+	float m_AnimationTime;
+	bool m_AnimationControl; 
 public:
 	CGameScene2();
 	virtual ~CGameScene2();
@@ -39,7 +42,7 @@ public:
 
 	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd);
 
-	void AnimateObjects(float fTimeElapsed);
+	virtual void AnimateObjects(float fTimeElapsed);
 
 	virtual void ReleaseUploadBuffers();
 
@@ -58,12 +61,11 @@ private:
 	int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
 	int						    m_nMonsterTypeNum;      // 몬스터 종류 개수
 
-	vector<CGameObject*>** m_pStaticObjLists;
-	vector<CDynamicObject*>** m_pDynamicObjLists;
-	vector<CMonster*>** m_pMonsterLists;
-	CSoftParticleShader* m_pSoftParticleShader;
-	CShader_SpecialFog* m_pSpecialFogShader;
-
+	vector<CGameObject*>     ** m_pStaticObjLists;
+	vector<CDynamicObject*>  ** m_pDynamicObjLists;
+	vector<CMonster*>        ** m_pMonsterLists;
+	CSoftParticleShader       * m_pSoftParticleShader;
+	CShader_SpecialFog        * m_pSpecialFogShader;
 
 public:
 	CCamera* m_pShadowCamera;

@@ -25,7 +25,7 @@ public:
 
 	virtual bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	virtual bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
-
+	virtual void AnimateObjects(float fTimeElapsed);
 	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd);
 
 	virtual void ReleaseShaderVariables();

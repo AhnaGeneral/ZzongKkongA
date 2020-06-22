@@ -76,11 +76,29 @@
 #define OBJECT_TYPE_HOUSE				4
 #define OBJECT_TYPE_TREE				5
 #define OBJECT_TYPE_BRIDGE				6
+#define OBJECT_TYPE_INDOORWALL			7 // Indoor Scene
+
 
 // Dynamic
 #define OBJECT_TYPE_ITEMBOX				0
 #define OBJECT_TYPE_DRUGMAKER			1
 #define OBJECT_TYPE_RESEARCHER			2
+
+
+
+//[IndoorScene] =======================================
+#define OBJECT_INDOOR_TYPE_DESK         0
+#define OBJECT_INDOOR_TYPE_DOGGY        1
+#define OBJECT_INDOOR_TYPE_DUGGY        2
+#define OBJECT_INDOOR_TYPE_MOUSE        3
+#define OBJECT_INDOOR_TYPE_CAT          4
+
+
+#define OBJECT_TYPE_LABORATOR			0
+
+
+
+
 
 /*Monster*/
 //---------------------------------------------------

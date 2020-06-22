@@ -130,14 +130,14 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTransparent(VS_TEXTURED_LIGHTING_OUTPUT inpu
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 
-	output.color = float4(1, 1, 1, 0.1f);
+	output.color = float4(1.f, 1.f, 1.f, 0.1f);
 	output.normal = float4(input.normalW, 0.2f);
 
 	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 500.0f, 0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	
 	float fresnelFator = dot(-gvCameraNoraml,input.normalW);
-	fresnelFator = pow(max(fresnelFator, 0.0f), 2) / 9;
+	fresnelFator = pow(max(fresnelFator, 0.0f), 1.5f) / 7;
 	output.EmmisiveMRT = float4(0.8f,0.8f, 1, 1 - fresnelFator);
 	return output;
 }

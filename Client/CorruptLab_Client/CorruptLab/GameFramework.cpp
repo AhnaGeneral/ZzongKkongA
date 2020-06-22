@@ -767,7 +767,11 @@ void CGameFramework::BuildObjects()
 	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
 	WaitForGpuComplete();
 
-	if (m_pScene) m_pScene[SCENE_STAGE_OUTDOOR]->ReleaseUploadBuffers();
+	if (m_pScene)
+	{
+		m_pScene[SCENE_STAGE_OUTDOOR]->ReleaseUploadBuffers();
+		m_pScene[SCENE_STAGE_INDOOR]->ReleaseUploadBuffers();
+	}
 	if (m_pPlayer)
 	{
 		m_pPlayer->ReleaseUploadBuffers();
@@ -898,8 +902,9 @@ void CGameFramework::FrameAdvanceStageIndoor()
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenRenderTargetBuffers, m_pd3dOffScreenRenderTargetBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
+	m_pScene[SCENE_STAGE_INDOOR]->AnimateObjects(m_GameTimer.GetTimeElapsed());			
+	
 	m_pScene[SCENE_STAGE_INDOOR]->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2s에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
-													// write 용으로 사용하고 있었음
 
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 되? 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i],
@@ -1116,7 +1121,7 @@ void CGameFramework::TurnToIndoorState()
 {
 	if (m_nSceneState == SCENE_STAGE_OUTDOOR)
 	{
-		m_pPlayer->SetPosition(XMFLOAT3(260.f, 0.0f, 120.f));
+		m_pPlayer->SetPosition(XMFLOAT3(0.f, 0.0f, 0.f));
 		m_pPlayer->SetPlayerUpdatedContext(NULL);
 		m_pPlayer->SetCameraUpdatedContext(NULL);
 		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 5.5f, -10.5f));

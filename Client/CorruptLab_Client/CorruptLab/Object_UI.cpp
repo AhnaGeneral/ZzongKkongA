@@ -184,7 +184,7 @@ void CUI_Root::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, 
 	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
 
-	std::cout << *m_Alpha << std::endl; 
+	//std::cout << *m_Alpha << std::endl; 
 	memcpy(m_pcbAlpha, m_Alpha, sizeof(float));
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbAlpha->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_PLAYER_HP, d3dGpuVirtualAddress);
@@ -336,7 +336,7 @@ void CUI_HP::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XM
 	XMFLOAT4X4 xmf4x4World;
 	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
-	//std::cout << *m_PlayerHP << std::endl;
+	std::cout << *m_PlayerHP << std::endl;
 
 	memcpy(m_pcbPlayerHP, m_PlayerHP, sizeof(float));
 	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dcbPlayerHP->GetGPUVirtualAddress();
