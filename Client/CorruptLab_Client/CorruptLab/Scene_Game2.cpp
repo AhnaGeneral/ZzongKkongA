@@ -50,10 +50,10 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pFloor->SetPosition(XMFLOAT3(0, 0, 0));
 	m_pShadowCamera = new CSunCamera(XMFLOAT3(250, 200.f, 250.f),Vector3::Normalize( XMFLOAT3(0,-1,0.01f)));
 
-	//m_IndoorWall = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
-	//	pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/IndoorWall.bin", NULL, 0);
-	//m_IndoorWall->SetPosition(0, 2, 0);
-	//m_IndoorWall->SetScale(120, 120, 120);
+	m_IndoorWall = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
+		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/IndoorWall.bin", NULL, 0);
+	m_IndoorWall->SetPosition(0.f, 0.0f, 0.f);
+	m_IndoorWall->SetScale(63.53762f, 21.115f, 77.93047f);
 
 	PlaceObjectsFromFile(pd3dDevice, m_pd3dGraphicsRootSignature, pd3dCommandList);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -166,7 +166,8 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	pCamera->UpdateShaderVariables(pd3dCommandList);
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
 	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera);
-	//if (m_IndoorWall)m_IndoorWall->Render(pd3dCommandList, pCamera); 
+
+	if (m_IndoorWall)m_IndoorWall->Render(pd3dCommandList, pCamera); 
 
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
@@ -279,7 +280,7 @@ void CGameScene2::AnimateObjects(float fTimeElapsed)
 
 	if (m_pStaticObjLists)
 	{
-		for (int i = 1 ; i < m_nStaticObjectTypeNum; i++)
+		for (int i = 1 ; i < 5; i++)
 		{
 			if (m_pStaticObjLists[i])
 			{

@@ -92,6 +92,10 @@
 #define OBJECT_INDOOR_TYPE_DUGGY        2
 #define OBJECT_INDOOR_TYPE_MOUSE        3
 #define OBJECT_INDOOR_TYPE_CAT          4
+#define OBJECT_INDOOR_TYPE_CHAIR        5
+#define OBJECT_INDOOR_TYPE_BOARD        6
+#define OBJECT_INDOOR_TYPE_DOOR         7
+
 
 
 #define OBJECT_TYPE_LABORATOR			0

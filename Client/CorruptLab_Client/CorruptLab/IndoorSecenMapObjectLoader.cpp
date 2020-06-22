@@ -14,7 +14,7 @@
 void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_nStaticObjectTypeNum = 5;
+	m_nStaticObjectTypeNum = 7;
 	m_pStaticObjLists = new vector<CGameObject*> * [m_nStaticObjectTypeNum];
 
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -54,6 +54,17 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Cat.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/CatT.bin", OBJECT_INDOOR_TYPE_CAT);
 
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ Chair ] 
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Chair.bin", NULL, 0);
+	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Chairs.bin", OBJECT_INDOOR_TYPE_CHAIR);
+
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ board ] 
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Board.bin", NULL, 0);
+	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Boards.bin", OBJECT_INDOOR_TYPE_BOARD);
+
+	//pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ door ] 
+	//(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Door.bin", NULL, 0);
+	//PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Doors.bin", OBJECT_INDOOR_TYPE_DOOR);
 
 	// Dynamic ================================================================================
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
@@ -63,7 +74,6 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	alphaShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	Alpha->SetShader(0, alphaShader);
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Laboratorys.bin", OBJECT_TYPE_LABORATOR);
-
 }
 
 void CGameScene2::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index)
