@@ -304,3 +304,14 @@ D3D12_DEPTH_STENCIL_DESC CTransparentedStandardShader::CreateDepthStencilState()
 
 	return(d3dDepthStencilDesc);
 }
+
+D3D12_SHADER_BYTECODE CTexcoordStandardShader::CreateVertexShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Standard.hlsl", "VSTexcoord", "vs_5_1", ppd3dShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CTexcoordStandardShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Standard.hlsl", "PSTexCoordToMultipleRTs", "ps_5_1", ppd3dShaderBlob));
+}
+

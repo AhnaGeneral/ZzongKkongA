@@ -521,7 +521,8 @@ void CGameObject::UpdateTransform(XMFLOAT4X4* pxmf4x4Parent)
 }
 
 //#define _WITH_DEBUG_FRAME_HIERARCHY
-CGameObject* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader, int iHasAnimations)
+CGameObject* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDevice, 
+	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, char* pstrFileName, CShader* pShader, int iHasAnimations)
 {
 	FILE* pInFile = NULL;
 	::fopen_s(&pInFile, pstrFileName, "rb");
@@ -692,7 +693,8 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile
 	return(pGameObject);
 }
 
-void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, CGameObject* pParent, FILE* pInFile, CShader* pShader)
+void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
+	CGameObject* pParent, FILE* pInFile, CShader* pShader)
 {
 	char pstrToken[64] = { '\0' };
 
@@ -736,8 +738,12 @@ void CGameObject::LoadMaterialsFromFile(ID3D12Device* pd3dDevice, ID3D12Graphics
 						pMaterial->SetStandardShader();
 					}
 				}
-
 			}
+			else
+			{
+				pMaterial->SetShader(pShader);
+			}
+
 			SetMaterial(nMaterial, pMaterial);
 		}
 		else if (!strcmp(pstrToken, "<AlbedoColor>:"))

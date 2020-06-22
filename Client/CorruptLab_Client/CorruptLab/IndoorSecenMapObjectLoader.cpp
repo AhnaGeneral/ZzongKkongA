@@ -14,7 +14,7 @@
 void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_nStaticObjectTypeNum = 7;
+	m_nStaticObjectTypeNum = 8;
 	m_pStaticObjLists = new vector<CGameObject*> * [m_nStaticObjectTypeNum];
 
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -62,9 +62,9 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Board.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Boards.bin", OBJECT_INDOOR_TYPE_BOARD);
 
-	//pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ door ] 
-	//(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Door.bin", NULL, 0);
-	//PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Doors.bin", OBJECT_INDOOR_TYPE_DOOR);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ door ] 
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Door.bin", NULL, 0);
+	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Doors.bin", OBJECT_INDOOR_TYPE_DOOR);
 
 	// Dynamic ================================================================================
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile

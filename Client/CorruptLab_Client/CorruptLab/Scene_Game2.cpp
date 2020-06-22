@@ -3,6 +3,8 @@
 #include "Mgr_Collision.h"
 #include "Object_Floor.h"
 #include "Object_DynamicObj.h"
+#include "Shader_Standard.h"
+
 
 
 
@@ -48,12 +50,18 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 {
 	m_pFloor = new CFloor(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pFloor->SetPosition(XMFLOAT3(0, 0, 0));
-	m_pShadowCamera = new CSunCamera(XMFLOAT3(250, 200.f, 250.f),Vector3::Normalize( XMFLOAT3(0,-1,0.01f)));
+	m_pShadowCamera = new CSunCamera(XMFLOAT3(-20.f, 150.f, 0),Vector3::Normalize( XMFLOAT3(0,-1,0.01f)));
+
+	CShader* TexcoordShader = new CTexcoordStandardShader();
+	TexcoordShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
+	TexcoordShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	TexcoordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16
 
 	m_IndoorWall = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
-		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/IndoorWall.bin", NULL, 0);
+		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/IndoorWall.bin", TexcoordShader, 0);
 	m_IndoorWall->SetPosition(0.f, 0.0f, 0.f);
 	m_IndoorWall->SetScale(63.53762f, 21.115f, 77.93047f);
+	//m_IndoorWall->SetShader(0, TexcoordShader);
 
 	PlaceObjectsFromFile(pd3dDevice, m_pd3dGraphicsRootSignature, pd3dCommandList);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -61,6 +69,46 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 void CGameScene2::ReleaseObjects()
 {
+	if (m_pFloor)
+	{
+		m_pFloor->ReleaseUploadBuffers();
+		m_pFloor->Release();
+		m_pFloor = nullptr; 
+	}
+	if (m_IndoorWall)
+	{
+		m_IndoorWall->ReleaseUploadBuffers();
+		m_IndoorWall->Release();
+		m_IndoorWall = nullptr;
+	}
+	if (m_pStaticObjLists) // 오브젝트 Release
+	{
+		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pStaticObjLists[i])
+			{
+				Obj->Release();
+			}
+			m_pStaticObjLists[i]->clear();
+		}
+	}
+	delete[] m_pStaticObjLists;
+	m_pStaticObjLists = NULL;
+
+	//----------------------------------------------
+	if (m_pDynamicObjLists) // 오브젝트 Release
+	{
+		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pDynamicObjLists[i])
+			{
+				Obj->Release();
+			}
+			m_pDynamicObjLists[i]->clear();
+		}
+	}
+	delete[] m_pDynamicObjLists;
+	m_pDynamicObjLists = NULL;
 }
 
 ID3D12RootSignature* CGameScene2::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
@@ -151,9 +199,34 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 void CGameScene2::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	//if (m_pPlayer) m_pShadowCamera->Update(m_pPlayer->GetCamera());
+
 	m_pShadowCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	m_pShadowCamera->Update(m_pPlayer->GetCamera());
+
 	if (m_pShadowCamera) m_pShadowCamera->UpdateShaderVariables(pd3dCommandList,ROOT_PARAMETER_SHADOWCAMERA);
+
+	if (m_pStaticObjLists) // 오브젝트 Render
+	{
+		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
+		{
+			for (auto& obj : *m_pStaticObjLists[i])
+			{
+				obj->UpdateTransform(NULL);
+				obj->Render(pd3dCommandList, pCamera, 1);
+			}
+		}
+	}
+	if (m_pDynamicObjLists) // 오브젝트 Render
+	{
+		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
+		{
+			for (auto Obj : *m_pDynamicObjLists[i])
+			{
+				Obj->UpdateTransform(NULL);
+				Obj->Render(pd3dCommandList, pCamera, 1);
+			}
+		}
+	}
 
 	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera, 1);
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera, 1);
@@ -164,10 +237,13 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	pCamera->UpdateShaderVariables(pd3dCommandList);
+	
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
+	
 	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera);
 
-	if (m_IndoorWall)m_IndoorWall->Render(pd3dCommandList, pCamera); 
+	if (m_IndoorWall)
+		m_IndoorWall->Render(pd3dCommandList, pCamera); 
 
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
