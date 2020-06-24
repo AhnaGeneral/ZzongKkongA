@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Monster_Tosm.h" />
     <ClInclude Include="Mgr_Scene.h" />
     <ClInclude Include="CShader_ParticleClass.h" />
     <ClInclude Include="CSystem_Particle.h" />
@@ -221,6 +222,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="Monster_Tosm.cpp" />
     <ClCompile Include="IndoorSecenMapObjectLoader.cpp" />
     <ClCompile Include="Mgr_Scene.cpp" />
     <ClCompile Include="CShader_ParticleClass.cpp" />

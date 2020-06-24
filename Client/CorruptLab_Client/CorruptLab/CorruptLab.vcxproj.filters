@@ -188,6 +188,9 @@
     <Filter Include="05.Component\GameObject\00.Object\01.DynamicObject\02.Object_ItemBox">
       <UniqueIdentifier>{c7c18673-9461-4984-ad8e-a2c7bd2999f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Component\GameObject\08.Monster\01.Tosm">
+      <UniqueIdentifier>{45a39bb1-e401-4422-a3b8-6bd29a821a3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -382,6 +385,9 @@
     <ClInclude Include="Object_DrugMaker.h">
       <Filter>05.Component\GameObject\00.Object\01.DynamicObject\03.Object_DrugMaker</Filter>
     </ClInclude>
+    <ClInclude Include="Monster_Tosm.h">
+      <Filter>05.Component\GameObject\08.Monster\01.Tosm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -563,6 +569,9 @@
     </ClCompile>
     <ClCompile Include="IndoorSecenMapObjectLoader.cpp">
       <Filter>05.Component\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Tosm.cpp">
+      <Filter>05.Component\GameObject\08.Monster\01.Tosm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

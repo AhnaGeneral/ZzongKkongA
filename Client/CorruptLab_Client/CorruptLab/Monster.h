@@ -56,6 +56,7 @@ protected:
 	///
 public:
 
+	void Initialize(XMFLOAT3 FiledPos, int iAtt);
 	bool		IsPurified() { return m_bIsPurified; }
 	int				m_iState = MONSTER_STATE_IDLE;
 	//GameContents
@@ -71,8 +72,7 @@ public:
 	virtual void PurifyingUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
 
 	virtual void GetPurified();
-	virtual void Rush(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHeightMapTerrain* pTerrain);
-
+	
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 

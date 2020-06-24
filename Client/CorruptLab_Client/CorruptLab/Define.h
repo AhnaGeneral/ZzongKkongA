@@ -114,6 +114,7 @@
 /*Monster*/
 //---------------------------------------------------
 #define MONSTER_TYPE_YANGMAL			0
+#define MONSTER_TYPE_TOSM				1
 
 #define MONSTER_STATE_IDLE				0
 #define MONSTER_STATE_WALK				1

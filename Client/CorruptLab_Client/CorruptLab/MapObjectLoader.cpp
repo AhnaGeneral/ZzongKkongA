@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Object_StaticObj.h"
 #include "Monster_Yangmal.h"
+#include "Monster_Tosm.h"
 #include "Object_ItemBox.h"
 #include "Object_Researcher.h"
 #include "Object_DrugMaker.h"
@@ -33,7 +34,7 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 		m_pDynamicObjLists[i] = new vector<CDynamicObject*> ();
 
 	//------------------------------------------------------------
-	m_nMonsterTypeNum = 1;
+	m_nMonsterTypeNum = 2;
 	m_pMonsterLists = new vector<CMonster*> * [m_nMonsterTypeNum];
 
 	for (int i = 0; i < m_nMonsterTypeNum; i++) // ÃÊ±âÈ­
@@ -75,7 +76,7 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 
 	/*Dynamic*/
 	//ItemBox--------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Box_Opening.bin", NULL, 1);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Box_Opening.bin", NULL, 2);
 
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/ItemBoxes.bin", OBJECT_TYPE_ITEMBOX);
 
@@ -90,7 +91,7 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 
 
 	//Researcher------------------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Researcher.bin", NULL, 1);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Researcher.bin", NULL, 2);
 
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Researchers.bin", OBJECT_TYPE_RESEARCHER);
 
@@ -104,7 +105,17 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	//pDiverObject->SetAnimatationSpeed(3, 0.5f);
 	PlaceMonsterFromFile(pDiverObject, "ObjectsData/Yangmals.bin", MONSTER_TYPE_YANGMAL, pd3dDevice,pd3dCommandList);
 
+	//Tosm-------------------------------------------------
+
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Tosm.bin", NULL, 4);
+	//pDiverObject->SetAnimatationSpeed(3, 0.5f);
+	PlaceMonsterFromFile(pDiverObject, "ObjectsData/Tosms.bin", MONSTER_TYPE_TOSM, pd3dDevice, pd3dCommandList);
+
+
+
+
 	CCollisionMgr::GetInstance()->m_pMonsterLists = m_pMonsterLists;
+
 }
 
 void CGameScene::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index)
@@ -245,7 +256,21 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 
 		XMFLOAT4X4 xmmtxWorld;
 		(UINT)::fread_s(&xmmtxWorld, sizeof(XMFLOAT4X4), sizeof(XMFLOAT4X4), 1, pInFile);
-		pGameObject = new CYangmal();
+
+		switch (index)
+		{
+		case MONSTER_TYPE_YANGMAL:
+			pGameObject = new CYangmal();
+			pGameObject->Initialize(XMFLOAT3(377, 39, 118), 5);
+			break;
+		case MONSTER_TYPE_TOSM:
+			pGameObject = new CTosm();
+			pGameObject->Initialize(XMFLOAT3(199, 83, 165), 5);
+			break;
+		default:
+			pGameObject = new CMonster();
+			break;
+		}
 		pGameObject->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		CUI_MonsterHP* hp = new CUI_MonsterHP();
 	
