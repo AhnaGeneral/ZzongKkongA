@@ -356,7 +356,7 @@ void CGameScene2::AnimateObjects(float fTimeElapsed)
 
 	if (m_pStaticObjLists)
 	{
-		for (int i = 1 ; i < 5; i++)
+		for (int i = 1 ; i < 7; i++)
 		{
 			if (m_pStaticObjLists[i])
 			{

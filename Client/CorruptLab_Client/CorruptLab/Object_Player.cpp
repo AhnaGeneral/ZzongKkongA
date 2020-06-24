@@ -189,8 +189,10 @@ void CPlayer::Update(float fTimeElapsed)
 		if (::IsZero(m_fVelocityXZ))
 			m_iState = JOHNSON_ANIAMATION_IDLE;  
 		else
-			m_iState = JOHNSON_ANIAMATION_WALK;  
-		if (m_pPlayerUpdatedContext) {
+			m_iState = JOHNSON_ANIAMATION_WALK;
+
+		if (m_pPlayerUpdatedContext) 
+		{
 			m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Gravity, fTimeElapsed, false));
 		}
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
@@ -307,7 +309,7 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 
 	CGameObject* pGameObject =
 		CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
-			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson.bin", NULL, 1);
+			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson_Idle2_(1).bin", NULL, 1);
 
 
 	m_pSword = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,

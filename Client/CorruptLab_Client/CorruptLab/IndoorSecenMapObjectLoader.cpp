@@ -14,7 +14,7 @@
 void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_nStaticObjectTypeNum = 8;
+	m_nStaticObjectTypeNum = 11;
 	m_pStaticObjLists = new vector<CGameObject*> * [m_nStaticObjectTypeNum];
 
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -54,6 +54,18 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Cat.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/CatT.bin", OBJECT_INDOOR_TYPE_CAT);
 
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ Granny ] 
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/granny.bin", NULL, 0);
+	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/GrannyT.bin", OBJECT_INDOOR_TYPE_GRANNY);
+
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ Tosm ] 
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Tosm.bin", NULL, 0);
+	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/TosmT.bin", OBJECT_INDOOR_TYPE_TOSM);
+
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ Yangmal ] 
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/YangmalIndoor.bin", NULL, 0);
+	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/YangmalTF.bin", OBJECT_INDOOR_TYPE_YANGMAL);
+
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ Chair ] 
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Chair.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Chairs.bin", OBJECT_INDOOR_TYPE_CHAIR);
@@ -65,6 +77,7 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ door ] 
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Door.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Doors.bin", OBJECT_INDOOR_TYPE_DOOR);
+
 
 	// Dynamic ================================================================================
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile

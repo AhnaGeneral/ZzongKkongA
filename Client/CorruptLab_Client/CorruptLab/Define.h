@@ -88,13 +88,20 @@
 
 //[IndoorScene] =======================================
 #define OBJECT_INDOOR_TYPE_DESK         0
+
 #define OBJECT_INDOOR_TYPE_DOGGY        1
 #define OBJECT_INDOOR_TYPE_DUGGY        2
 #define OBJECT_INDOOR_TYPE_MOUSE        3
 #define OBJECT_INDOOR_TYPE_CAT          4
-#define OBJECT_INDOOR_TYPE_CHAIR        5
-#define OBJECT_INDOOR_TYPE_BOARD        6
-#define OBJECT_INDOOR_TYPE_DOOR         7
+#define OBJECT_INDOOR_TYPE_GRANNY       5
+#define OBJECT_INDOOR_TYPE_TOSM         6
+#define OBJECT_INDOOR_TYPE_YANGMAL      7
+
+#define OBJECT_INDOOR_TYPE_CHAIR        8
+#define OBJECT_INDOOR_TYPE_BOARD        9
+#define OBJECT_INDOOR_TYPE_DOOR         10
+
+
 
 
 
@@ -122,6 +129,8 @@
 #define JOHNSON_ANIAMATION_IDLE			0
 #define JOHNSON_ANIAMATION_WALK			1
 #define JOHNSON_ANIAMATION_ATTACK		2
+#define JOHNSON_ANIAMATION_RUN  		3
+
 
 /*ItemType*/
 //------------------------------------------------
