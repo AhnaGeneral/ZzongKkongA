@@ -1126,7 +1126,7 @@ void CGameFramework::TurnToIndoorState()
 		m_pPlayer->SetPosition(XMFLOAT3(0.f, 0.0f, 0.f));
 		m_pPlayer->SetPlayerUpdatedContext(NULL);
 		m_pPlayer->SetCameraUpdatedContext(NULL);
-		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 5.5f, -10.5f));
+		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 3.5f, -10.5f));
 		CCollisionMgr::GetInstance()->m_nSceneState = 1;
 		m_nSceneState = SCENE_STAGE_INDOOR;
 		m_pLightProcessingShader->ChangeLights();

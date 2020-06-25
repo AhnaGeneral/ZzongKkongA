@@ -123,6 +123,7 @@ public:
 	int  				 			m_nAnimationTrack = 0;
 
 public:
+	void UpdateTransformCache(int iTrackNum);
 	void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, int iNum);
 	void SetAnimationSet(int nAnimationSet, int iNum = 0);
 

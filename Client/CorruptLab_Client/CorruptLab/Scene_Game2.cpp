@@ -4,6 +4,7 @@
 #include "Object_Floor.h"
 #include "Object_DynamicObj.h"
 #include "Shader_Standard.h"
+#include "Monster_Boss.h"
 
 
 
@@ -15,7 +16,7 @@ CGameScene2::CGameScene2()
 	m_pTerrain = NULL;
 	m_pSkyBox = NULL;
 	m_pFloor = NULL;
-
+	m_pBoss = NULL;
 
 	WindowCursorPos = { 0L,0L };
 
@@ -56,6 +57,13 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	TexcoordShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	TexcoordShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	TexcoordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16
+	
+	CGameObject* pBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
+		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Monster/Boss.bin", NULL, 1);
+	m_pBoss = new CBoss();
+	m_pBoss->SetChild(pBossModel);
+	m_pBoss->SetPosition(XMFLOAT3(0, 0, 0));
+	m_pBoss->SetScale(7, 7, 7);
 
 	m_IndoorWall = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
 		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Indoor2.bin", TexcoordShader, 0);
@@ -108,6 +116,8 @@ void CGameScene2::ReleaseObjects()
 	}
 	delete[] m_pDynamicObjLists;
 	m_pDynamicObjLists = NULL;
+
+	if (m_pBoss) m_pBoss->Release();
 }
 
 ID3D12RootSignature* CGameScene2::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
@@ -243,6 +253,8 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 
 	if (m_IndoorWall)
 		m_IndoorWall->Render(pd3dCommandList, pCamera); 
+
+	if (m_pBoss) m_pBoss->Render(pd3dCommandList, pCamera);
 
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{

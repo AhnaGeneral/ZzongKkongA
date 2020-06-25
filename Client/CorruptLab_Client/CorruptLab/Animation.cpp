@@ -172,6 +172,29 @@ void CAnimationController::SetCallbackKey(int nAnimationSet, int nKeyIndex, floa
 	m_pAnimationSets[nAnimationSet].m_pCallbackKeys[nKeyIndex].m_pCallbackData = pData;
 }
 
+void CAnimationController::UpdateTransformCache(int iTrackNum)
+{
+	CAnimationSet* pAnimationSet = m_pAnimationTracks[iTrackNum].m_pAnimationSet;
+
+	if (!pAnimationSet) return;
+	float fPositon = pAnimationSet->GetPosition(pAnimationSet->m_fPosition);
+	if (pAnimationSet->m_nType == ANIMATION_TYPE_ONCE && fPositon >= pAnimationSet->m_fLength - 0.1f)
+	{
+		for (int j = 0; j < m_nAnimationBoneFrames; j++)
+		{
+			m_ppAnimationBoneFrameCaches[j]->m_xmf4x4Transform = pAnimationSet->GetSRTSimple(j, pAnimationSet->m_nKeyFrameTransforms - 1);
+		}
+	}
+	else
+	{
+		for (int j = 0; j < m_nAnimationBoneFrames; j++)
+		{
+			m_ppAnimationBoneFrameCaches[j]->m_xmf4x4Transform = pAnimationSet->GetSRT(j, fPositon);
+		}
+
+	}
+}
+
 void CAnimationController::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList, int iNum)
 {
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbBoneTransformsGpuVirtualAddress = m_pAnimationTracks[iNum].m_ppd3dcbSkinningBoneTransforms->GetGPUVirtualAddress();

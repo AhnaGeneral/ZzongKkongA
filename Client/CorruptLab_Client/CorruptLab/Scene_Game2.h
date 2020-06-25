@@ -2,12 +2,14 @@
 
 #include "Scene.h"
 
+class CBoss;
 class CFloor;
 class CGameScene2 : public CGameScene
 {
 public:
 	POINT WindowCursorPos;
 
+	CBoss* m_pBoss;
 	CPlayer* m_pPlayer;
 	CSkyBox* m_pSkyBox;
 	CObjectWater* m_pCObjectWater;

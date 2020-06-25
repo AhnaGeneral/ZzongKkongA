@@ -878,6 +878,7 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 			for (auto Obj : *m_pDynamicObjLists[i])
 			{
 				Obj->UpdateTrackNumber(Obj->m_iTrackNumber);
+				Obj->UpdateAnimationCache(Obj->m_iTrackNumber);
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 1);
 			}
@@ -890,10 +891,9 @@ void CGameScene::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera
 			for (auto Obj : *m_pMonsterLists[i])
 			{
 				Obj->UpdateTrackNumber(Obj->m_iTrackNumber);
-				//Obj->Update(m_fElapsedTime, NULL, m_pTerrain);
 
-				//Obj->Animate(m_fElapsedTime, NULL, Obj->m_iTrackNumber);
 				//	if (Obj->m_iTrackNumber == 1) continue;
+				Obj->UpdateAnimationCache(Obj->m_iTrackNumber);
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 1);
 			}

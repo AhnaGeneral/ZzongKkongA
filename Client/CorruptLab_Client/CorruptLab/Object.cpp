@@ -180,6 +180,14 @@ void CGameObject::SetParentRenderState(bool bRender)
 	if (m_pParent) m_pParent->SetParentRenderState(bRender);
 }
 
+void CGameObject::UpdateAnimationCache(int iNum)
+{
+	if (m_pAnimationController)
+		m_pAnimationController->UpdateTransformCache(iNum);
+	if (m_pSibling)	m_pSibling->UpdateAnimationCache(iNum);
+	if (m_pChild)	m_pChild->UpdateAnimationCache(iNum);
+}
+
 void CGameObject::SetChild(CGameObject* pChild, bool bReferenceUpdate)
 {
 	if (pChild)
@@ -305,7 +313,7 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 {
 
 	m_bRender = true;
-	if (m_pBoundingBoxes && nPipelineState == 0)
+	if (m_pBoundingBoxes && nPipelineState == 0 && m_nBoundingBoxes > 0)
 	{
 		int CullCount = 0;
 		//m_pCollisionBoxShader->Render(pd3dCommandList, pCamera);
@@ -318,17 +326,17 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 				CullCount++;
 			}
 		}
-		if (CullCount >= m_nBoundingBoxes)
+	/*	if (CullCount >= m_nBoundingBoxes)
 		{
 			SetParentRenderState(false);
 			return;
-		}
+		}*/
 	}
 	if (nPipelineState == 1)
 	{
 		XMFLOAT3 Camerapos = pCamera->m_boundingFrustum.Origin;
 		float distance = Vector3::Length(Vector3::Subtract(Camerapos, GetPosition()));
-		if (distance > 100) return;
+		if (distance > 200) return;
 	}
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);

@@ -69,7 +69,7 @@ public:
 	void SetShader(int nMaterial, CShader* pShader);
 	void SetMaterial(int nMaterial, CMaterial* pMaterial);
 	void SetParentRenderState(bool bRender);
-
+	void UpdateAnimationCache(int iNum);
 	void SetChild(CGameObject* pChild, bool bReferenceUpdate = false);
 
 	virtual void BuildMaterials(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) { }

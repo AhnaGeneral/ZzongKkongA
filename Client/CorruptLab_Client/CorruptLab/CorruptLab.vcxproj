@@ -149,6 +149,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="CInstancingStandardShader.h" />
+    <ClInclude Include="Monster_Boss.h" />
     <ClInclude Include="Monster_Tosm.h" />
     <ClInclude Include="Mgr_Scene.h" />
     <ClInclude Include="CShader_ParticleClass.h" />
@@ -222,6 +224,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="CInstancingStandardShader.cpp" />
+    <ClCompile Include="Monster_Boss.cpp" />
     <ClCompile Include="Monster_Tosm.cpp" />
     <ClCompile Include="IndoorSecenMapObjectLoader.cpp" />
     <ClCompile Include="Mgr_Scene.cpp" />

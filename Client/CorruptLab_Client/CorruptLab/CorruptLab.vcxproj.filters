@@ -191,6 +191,12 @@
     <Filter Include="05.Component\GameObject\08.Monster\01.Tosm">
       <UniqueIdentifier>{45a39bb1-e401-4422-a3b8-6bd29a821a3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Component\GameObject\08.Monster\02.Boss">
+      <UniqueIdentifier>{38b12cb2-d1ec-4b43-8084-bc0d0b935553}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Shader\05.Shader_Standard\01.Shader_InstancingStandard">
+      <UniqueIdentifier>{a63d4c6b-4da0-4ffa-8ec1-1549b74acb79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -388,6 +394,12 @@
     <ClInclude Include="Monster_Tosm.h">
       <Filter>05.Component\GameObject\08.Monster\01.Tosm</Filter>
     </ClInclude>
+    <ClInclude Include="Monster_Boss.h">
+      <Filter>05.Component\GameObject\08.Monster\02.Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="CInstancingStandardShader.h">
+      <Filter>04.Shader\05.Shader_Standard\01.Shader_InstancingStandard</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -572,6 +584,12 @@
     </ClCompile>
     <ClCompile Include="Monster_Tosm.cpp">
       <Filter>05.Component\GameObject\08.Monster\01.Tosm</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Boss.cpp">
+      <Filter>05.Component\GameObject\08.Monster\02.Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="CInstancingStandardShader.cpp">
+      <Filter>04.Shader\05.Shader_Standard\01.Shader_InstancingStandard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

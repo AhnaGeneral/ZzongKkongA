@@ -17,9 +17,13 @@ CMonster::CMonster()
 
 CMonster::~CMonster()
 {
-	m_pd3dDissolveTime->Release();
-	m_HPUI->ReleaseShaderVariables();
-	m_HPUI->Release();
+	if (m_pd3dDissolveTime)
+		m_pd3dDissolveTime->Release();
+	if (m_HPUI)
+	{
+		m_HPUI->ReleaseShaderVariables();
+		m_HPUI->Release();
+	}
 }
 
 void CMonster::Initialize(XMFLOAT3 FiledPos, int iAtt)
@@ -58,9 +62,12 @@ void CMonster::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCame
 	if (m_iState == MONSTER_STATE_PURIFYING && nPipelineState == 0)
 		nPipelineState = 2;
 	CGameObject::Render(pd3dCommandList, pCamera, nPipelineState);
-	m_HPUI->UpdateTransform(&m_xmf4x4World);
-	m_HPUI->Render(pd3dCommandList, pCamera);
+	if (m_HPUI)
+	{
+		m_HPUI->UpdateTransform(&m_xmf4x4World);
+		m_HPUI->Render(pd3dCommandList, pCamera);
 
+	}
 }
 
 void CMonster::SetHPUI(CUI_MonsterHP* pHP)
@@ -72,7 +79,6 @@ void CMonster::SetHPUI(CUI_MonsterHP* pHP)
 
 void CMonster::Update(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pContext)
 {
-	SetAnimationSet(0,m_iTrackNumber);
 	if (m_bIsPurified)
 		GoodUpdate(fTimeElapsed, pxmf4x4Parent, pContext);
 	else
@@ -131,11 +137,15 @@ void CMonster::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCom
 void CMonster::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
 {
 	CGameObject::UpdateShaderVariable(pd3dCommandList, pxmf4x4World);
-	::memcpy(&m_pcbMappedNoiseBuffers->frameTime, &m_fDissolveTime, sizeof(float));
+	
+	if (m_iState == MONSTER_STATE_PURIFYING)
+	{
+		::memcpy(&m_pcbMappedNoiseBuffers->frameTime, &m_fDissolveTime, sizeof(float));
+		D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dDissolveTime->GetGPUVirtualAddress();
+		pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_NOISEBUFFER, d3dGpuVirtualAddress);
 
-	D3D12_GPU_VIRTUAL_ADDRESS d3dGpuVirtualAddress = m_pd3dDissolveTime->GetGPUVirtualAddress();
-	pd3dCommandList->SetGraphicsRootConstantBufferView(ROOT_PARAMETER_NOISEBUFFER, d3dGpuVirtualAddress);
-
+	}
+	
 }
 
 void CMonster::OnInitialize()
