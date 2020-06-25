@@ -36,12 +36,13 @@ public:
 	virtual ~CSkinnedAnimationShader();
 
 	virtual D3D12_INPUT_LAYOUT_DESC CreateInputLayout();
-	
+	virtual D3D12_BLEND_DESC   CreateBlendState();
 	virtual D3D12_SHADER_BYTECODE CreateDissolvePixelShader(ID3DBlob** ppd3dShaderBlob);
 
 	virtual D3D12_SHADER_BYTECODE CreateShadowVertexShader(ID3DBlob** ppd3dShaderBlob);
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob); 
 	virtual void ReleaseShaderVariables();
+
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets = 1);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState = 0);
 
@@ -60,4 +61,12 @@ class CTexcoordStandardShader : public CStandardShader
 public:
 	virtual D3D12_SHADER_BYTECODE CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
 	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+};
+
+class AlphaChannelAnimationShader :public CSkinnedAnimationShader
+{
+public : 
+	virtual D3D12_SHADER_BYTECODE CreateDissolvePixelShader(ID3DBlob** ppd3dShaderBlob);
+	virtual D3D12_BLEND_DESC   CreateBlendState();
+
 };

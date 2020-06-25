@@ -106,8 +106,12 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	PlaceMonsterFromFile(pDiverObject, "ObjectsData/Yangmals.bin", MONSTER_TYPE_YANGMAL, pd3dDevice,pd3dCommandList);
 
 	//Tosm-------------------------------------------------
+	CShader* pAlphaChannelAnimation = new  AlphaChannelAnimationShader(); 
+	pAlphaChannelAnimation->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
+	pAlphaChannelAnimation->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	pAlphaChannelAnimation->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16
 
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Tosm.bin", NULL, 4);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Tosm.bin", pAlphaChannelAnimation, 4);
 	//pDiverObject->SetAnimatationSpeed(3, 0.5f);
 	PlaceMonsterFromFile(pDiverObject, "ObjectsData/Tosms.bin", MONSTER_TYPE_TOSM, pd3dDevice, pd3dCommandList);
 

@@ -195,23 +195,30 @@ void CPlayer::Update(float fTimeElapsed)
 		{
 			m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Gravity, fTimeElapsed, false));
 		}
+
+
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
+
 		float fMaxVelocityXZ = m_fMaxVelocityXZ * fTimeElapsed;
+
 		if (fLength >= 2.f)
 		{
 			m_xmf3Velocity.x *= (fMaxVelocityXZ / fLength);
 			m_xmf3Velocity.z *= (fMaxVelocityXZ / fLength);
 		}
+
 		float fMaxVelocityY = m_fMaxVelocityY * fTimeElapsed;
 
 		fLength = sqrtf(m_xmf3Velocity.y * m_xmf3Velocity.y);
+
 		if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
 
 		Move(m_xmf3Velocity, false);
 
 		if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
 
-			SetAnimationSet(m_iState, m_iTrackNumber);
+		SetAnimationSet(m_iState, m_iTrackNumber);
+
 	}
 
 	DWORD nCurrentCameraMode = m_pCamera->GetMode();

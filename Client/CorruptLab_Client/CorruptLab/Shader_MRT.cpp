@@ -351,7 +351,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 
 	// [ 다중랜더타겟 텍스쳐 ] ===============================================================================
-	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 5.5f, FRAME_BUFFER_HEIGHT / 5.5f, 0.0f, 1.0f);
+	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 7.0f, FRAME_BUFFER_HEIGHT / 7.f, 0.0f, 1.0f);
 	m_nRenderTargetUI = 7;
 	m_pRenderTargetUIs = new CGameObject * [m_nRenderTargetUI];
 	for (int i = 0; i < m_nRenderTargetUI;)
@@ -360,7 +360,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		int tmp = i / 5;
 		pRenderTargetUI = new CMRTUI(pd3dDevice, pd3dCommandList);
 		pRenderTargetUI->SetMesh(mesh);
-		pRenderTargetUI->Set2DPosition(-450.0f + (remainder * 220.0f), 320.0f + (-tmp * 150));
+		pRenderTargetUI->Set2DPosition(-500.0f + (remainder * 180.0f), 340.0f + (-tmp * 120));
 		pRenderTargetUI->SetObjectID(i);
 		m_pRenderTargetUIs[i++] = pRenderTargetUI;
 	}

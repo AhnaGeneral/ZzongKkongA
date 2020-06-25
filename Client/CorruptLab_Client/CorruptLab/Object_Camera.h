@@ -189,7 +189,7 @@ public:
 class CSunCamera : public CCamera
 {
 public:
-	CSunCamera(XMFLOAT3 pos, XMFLOAT3 look = XMFLOAT3(-0.92f, -0.37f, 0.2f));
+	CSunCamera(XMFLOAT3 pos, XMFLOAT3 look = XMFLOAT3(0.0f, -0.1f, 0.01f));
 	virtual ~CSunCamera() {}
 
 public:

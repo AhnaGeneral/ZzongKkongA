@@ -58,10 +58,9 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	TexcoordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16
 
 	m_IndoorWall = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
-		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/IndoorWall.bin", TexcoordShader, 0);
+		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Indoor2.bin", TexcoordShader, 0);
 	m_IndoorWall->SetPosition(0.f, 0.0f, 0.f);
 	m_IndoorWall->SetScale(63.53762f, 21.115f, 77.93047f);
-	//m_IndoorWall->SetShader(0, TexcoordShader);
 
 	PlaceObjectsFromFile(pd3dDevice, m_pd3dGraphicsRootSignature, pd3dCommandList);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
