@@ -319,7 +319,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTerrain(DS_TERRAIN_TESSELLATION_OUTPUT input
 
 	if (input.LightViewPosition.z > (depthValue + bias))
 	{
-		output.color = float4 (output.color.rgb * 0.6, 1.0f) ;
+		output.color = float4 (output.color.rgb * 0.4f, 1.0f) ;
 	}
 
 	//[바다와 블렌딩]==========================================================================

@@ -52,7 +52,7 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pFloor->SetPosition(XMFLOAT3(0, 0, 0));
 	m_pShadowCamera = new CSunCamera(XMFLOAT3(-20.f, 150.f, 0),Vector3::Normalize( XMFLOAT3(0,-1,0.01f)));
 
-	CShader* TexcoordShader = new CTexcoordStandardShader();
+	CShader* TexcoordShader = new CStandardShader();
 	TexcoordShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	TexcoordShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	TexcoordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16

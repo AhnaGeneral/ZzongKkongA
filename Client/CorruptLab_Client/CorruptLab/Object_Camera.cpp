@@ -331,11 +331,14 @@ CSunCamera::CSunCamera(XMFLOAT3 pos, XMFLOAT3 look)
 	//XMFLOAT3 xmf3Right = Vector3::Normalize(XMFLOAT3(0.7f, 0.01f, -0.7f));
 	//XMFLOAT3 xmf3Up    = Vector3::Normalize(XMFLOAT3(0.0f, 0.4f, 0.63f));
 
-	XMFLOAT3 vUp = XMFLOAT3(0, 1, 0);
-	XMFLOAT3 vRight = XMFLOAT3(-1, 0, 0);
-	m_xmf3Look = look;
-	m_xmf3Right = Vector3::CrossProduct(vUp, m_xmf3Look);
-	m_xmf3Up = Vector3::CrossProduct(m_xmf3Look, m_xmf3Right);
+	//XMFLOAT3 vUp = XMFLOAT3(0, 1, 0);
+	//XMFLOAT3 vRight = XMFLOAT3(-1, 0, 0);
+	m_xmf3Look = XMFLOAT3(0.6f, -0.8f, -0.15f);
+	m_xmf3Right = XMFLOAT3(-0.06f, 0.1f, -1.f); 
+	m_xmf3Up = XMFLOAT3(0.8f, 0.6f, 0.03f);
+	//m_xmf3Look = look;
+	//m_xmf3Right = Vector3::CrossProduct(vUp, m_xmf3Look);
+	//m_xmf3Up = Vector3::CrossProduct(m_xmf3Look, m_xmf3Right);
 
 	//m_xmf3Position = XMFLOAT3(500.0f, 95.0f,130.0f);
 	m_fSunCameraPosition[0] = pos.x;// 550.f; 
