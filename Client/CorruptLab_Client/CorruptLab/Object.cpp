@@ -317,14 +317,19 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 			{	
 				CullCount++;
 			}
-		}/*
+		}
 		if (CullCount >= m_nBoundingBoxes)
 		{
 			SetParentRenderState(false);
 			return;
-		}*/
+		}
 	}
-
+	if (nPipelineState == 1)
+	{
+		XMFLOAT3 Camerapos = pCamera->m_boundingFrustum.Origin;
+		float distance = Vector3::Length(Vector3::Subtract(Camerapos, GetPosition()));
+		if (distance > 100) return;
+	}
 	OnPrepareRender();
 	UpdateShaderVariable(pd3dCommandList, &m_xmf4x4World);
 

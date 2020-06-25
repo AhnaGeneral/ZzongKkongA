@@ -241,13 +241,48 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexCoordToMultipleRTs(VS_TEXTURED_LIGHTING_O
 
 
 // [alphaChannelShader]
-PS_MULTIPLE_RENDER_TARGETS_OUTPUT AlphaChannelDissolveForSkinned(VS_TEXTURED_LIGHTING_OUTPUT input)
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT AlphaChannelForSkinned(VS_TEXTURED_LIGHTING_OUTPUT input)
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 
 	float fDissolveTime = frameTime;
 	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
 	float AlphaValue = cColorAlbedo.a; 
+
+	if (AlphaValue < 0.5)
+		discard;
+
+	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
+	float3 normalW;
+	float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
+
+	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] ¡æ [-1, 1]
+
+	normalW = normalize(mul(vNormal, TBN));
+	output.normal = float4(normalW / 2.f + 0.5f, AlphaValue);
+
+	output.color = cColorAlbedo;
+
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 500.0f, 0, 1);
+	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
+	output.EmmisiveMRT = float4(0, 0, 0, 0);
+
+
+	return output;
+}
+
+
+// [alphaChannelShader]
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT AlphaChannelDissolveForSkinned(VS_TEXTURED_LIGHTING_OUTPUT input)
+{
+	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+
+	float fDissolveTime = frameTime;
+	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
+	float AlphaValue = cColorAlbedo.a;
+
+	if (AlphaValue < 0.5)
+		discard;
 
 	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv);
 	float3 normalW;
@@ -272,19 +307,13 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT AlphaChannelDissolveForSkinned(VS_TEXTURED_LIG
 
 	if (AlphaValue > 0.5)
 	{
-	output.color = float4(cColorAlbedo.rgb, AlphaValue);
-		
+		output.color = float4(cColorAlbedo.rgb, AlphaValue);
+
 	}
 
 	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 500.0f, 0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	output.EmmisiveMRT = float4(0, 0, 0, 0);
-
-	if (gnTextureMask & MATERIAL_EMISSION_MAP)
-	{
-		float4 cColorEmission = gtxtEmissionTexture.Sample(gSamplerState, input.uv);
-		output.EmmisiveMRT = cColorEmission;
-	}
 
 	return output;
 }

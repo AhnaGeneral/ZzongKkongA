@@ -65,8 +65,10 @@ public:
 
 class AlphaChannelAnimationShader :public CSkinnedAnimationShader
 {
-public : 
+public :
 	virtual D3D12_SHADER_BYTECODE CreateDissolvePixelShader(ID3DBlob** ppd3dShaderBlob);
-	virtual D3D12_BLEND_DESC   CreateBlendState();
+	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState = 0);
 
 };
