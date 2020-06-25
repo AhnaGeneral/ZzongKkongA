@@ -23,11 +23,13 @@ protected:
 	XMFLOAT3	           m_xmf3Velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	XMFLOAT3               m_xmf3Gravity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
+
 	float				   m_fSpeed = 10;
 	float                  m_fPitch = 0.0f;
 	float                  m_fYaw = 0.0f;
 	float                  m_fRoll = 0.0f;
 
+	float                  m_fAcceleration = 0.5f; 
 	float				   m_fVelocityXZ = 0.0f;
 	float                  m_fMaxVelocityXZ = 0.0f;
 	float                  m_fMaxVelocityY = 0.0f;
@@ -123,6 +125,8 @@ public:
 	virtual void OnPrepareRender();
 	virtual void OnCameraUpdateCallback(float fTimeElapsed);
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
+	//virtual void OnPlayerUpdateCallback(float fTimeElapsed);
+
 	bool CheckBridge(XMFLOAT3 xmf3PlayerPosition);
 	virtual void Update(float fTimeElapsed);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);

@@ -64,7 +64,8 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	XMFLOAT3 xmf3Scale(2.0f, 0.6f, 2.0f);
 	XMFLOAT4 xmf4Color(0.6f, 0.5f, 0.2f, 0.0f);
 
-	m_pShadowCamera = new CSunCamera(XMFLOAT3(80.0f, 260.f, 310.0f));
+	m_pShadowCamera = new CSunCamera(XMFLOAT3(80.0f, 260.f, 310.0f),
+		XMFLOAT3(0.6f, -0.8f, -0.15f), XMFLOAT3(-0.06f, 0.1f, -1.f), XMFLOAT3(0.8f, 0.6f, 0.03f));
 
 	m_pSkyBox = new CSkyBox(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature,

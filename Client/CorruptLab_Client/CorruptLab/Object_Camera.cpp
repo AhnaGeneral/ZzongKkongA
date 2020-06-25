@@ -325,7 +325,7 @@ void CThirdPersonCamera::SetLookAt(XMFLOAT3& xmf3LookAt)
 	m_xmf3Look = XMFLOAT3(mtxLookAt._13, mtxLookAt._23, mtxLookAt._33);
 }
 
-CSunCamera::CSunCamera(XMFLOAT3 pos, XMFLOAT3 look)
+CSunCamera::CSunCamera(XMFLOAT3 pos, XMFLOAT3 Look, XMFLOAT3 Right, XMFLOAT3 Up)
 {
 	//XMFLOAT3 xmf3Look  = Vector3::Normalize(XMFLOAT3(0.25f, -1.0f, 0.2f));
 	//XMFLOAT3 xmf3Right = Vector3::Normalize(XMFLOAT3(0.7f, 0.01f, -0.7f));
@@ -333,9 +333,9 @@ CSunCamera::CSunCamera(XMFLOAT3 pos, XMFLOAT3 look)
 
 	//XMFLOAT3 vUp = XMFLOAT3(0, 1, 0);
 	//XMFLOAT3 vRight = XMFLOAT3(-1, 0, 0);
-	m_xmf3Look = XMFLOAT3(0.6f, -0.8f, -0.15f);
-	m_xmf3Right = XMFLOAT3(-0.06f, 0.1f, -1.f); 
-	m_xmf3Up = XMFLOAT3(0.8f, 0.6f, 0.03f);
+	m_xmf3Look = Look;
+	m_xmf3Right = Right;
+	m_xmf3Up = Up;
 	//m_xmf3Look = look;
 	//m_xmf3Right = Vector3::CrossProduct(vUp, m_xmf3Look);
 	//m_xmf3Up = Vector3::CrossProduct(m_xmf3Look, m_xmf3Right);

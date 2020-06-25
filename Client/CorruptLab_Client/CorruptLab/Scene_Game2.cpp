@@ -51,7 +51,14 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 {
 	m_pFloor = new CFloor(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pFloor->SetPosition(XMFLOAT3(0, 0, 0));
-	m_pShadowCamera = new CSunCamera(XMFLOAT3(-20.f, 150.f, 0),Vector3::Normalize( XMFLOAT3(0,-1,0.01f)));
+
+	XMFLOAT3 vUp = XMFLOAT3(0, 1, 0);
+	XMFLOAT3 vRight = XMFLOAT3(-1, 0, 0);
+	XMFLOAT3 m_xmf3Look = XMFLOAT3(0, -1, 0.01f);
+	XMFLOAT3 m_xmf3Right = Vector3::CrossProduct(vUp, m_xmf3Look);
+	XMFLOAT3 m_xmf3Up = Vector3::CrossProduct(m_xmf3Look, m_xmf3Right);
+
+	m_pShadowCamera = new CSunCamera(XMFLOAT3(-20.f, 150.f, 0), m_xmf3Look, m_xmf3Right, m_xmf3Up);
 
 	CShader* TexcoordShader = new CStandardShader();
 	TexcoordShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
@@ -225,6 +232,9 @@ void CGameScene2::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamer
 			}
 		}
 	}
+
+	if (m_pBoss) m_pBoss->Render(pd3dCommandList, pCamera, 1);
+
 	if (m_pDynamicObjLists) // 오브젝트 Render
 	{
 		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
@@ -286,7 +296,7 @@ void CGameScene2::Update(float fTimeElapsed)
 	m_fElapsedTime = fTimeElapsed;
 	if (m_pPlayer)
 	{
-		m_pPlayer->Update(fTimeElapsed);
+		//m_pPlayer->Update(fTimeElapsed);
 		m_pPlayer->Animate(fTimeElapsed, NULL);
 	}
 }

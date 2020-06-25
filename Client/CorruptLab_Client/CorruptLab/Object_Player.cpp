@@ -173,29 +173,55 @@ void CPlayer::Rotate(float x, float y, float z)
 
 void CPlayer::Update(float fTimeElapsed)
 {
+
+	// ======================================================================
 	if (m_iState == JOHNSON_ANIAMATION_ATTACK)
 	{
 		SetAnimationSet(m_iState, m_iTrackNumber);
 		if (m_pChild->m_pAnimationController->m_pAnimationTracks->m_fPosition 
 			>= m_pChild->m_pAnimationController->m_pAnimationTracks->m_pAnimationSet->m_fLength - 0.1f)
 		{
-			m_iState = JOHNSON_ANIAMATION_IDLE;
+ 			m_iState = JOHNSON_ANIAMATION_IDLE;
 			m_pChild->m_pAnimationController->m_pAnimationTracks->m_pAnimationSet->m_fPosition = 0;
 		}
 		return;
 	}
+
 	else
 	{
 		if (::IsZero(m_fVelocityXZ))
-			m_iState = JOHNSON_ANIAMATION_IDLE;  
+		{
+			m_iState = JOHNSON_ANIAMATION_IDLE;
+			m_fAcceleration = 0.2f; 
+		}
+
+		else if (!(::IsZero(m_fVelocityXZ)) && m_fAcceleration > 2.3f)
+		{
+			m_iState = JOHNSON_ANIAMATION_RUN; 
+		}
 		else
+		{
 			m_iState = JOHNSON_ANIAMATION_WALK;
+		}
 
 		if (m_pPlayerUpdatedContext) 
 		{
-			m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Gravity, fTimeElapsed, false));
-		}
+			if (m_fAcceleration < 3.0f && !(::IsZero(m_fVelocityXZ)))
+			{
+				m_fAcceleration += fTimeElapsed * (0.8f);
+			}
 
+			m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Gravity, fTimeElapsed, false));
+
+		}
+		else
+		{
+			if (m_fAcceleration < 3.0f && !(::IsZero(m_fVelocityXZ)))
+			{
+				m_fAcceleration += fTimeElapsed * (0.8f);
+			}
+		}
+	// ======================================================================
 
 		float fLength = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
 
@@ -213,9 +239,20 @@ void CPlayer::Update(float fTimeElapsed)
 
 		if (fLength > m_fMaxVelocityY) m_xmf3Velocity.y *= (fMaxVelocityY / fLength);
 
-		Move(m_xmf3Velocity, false);
+		XMFLOAT3 xmf3Velocity = Vector3::ScalarProduct(m_xmf3Velocity, m_fAcceleration, false);
+		Move(xmf3Velocity, false);
 
-		if (m_pPlayerUpdatedContext) OnPlayerUpdateCallback(fTimeElapsed);
+		if (m_pPlayerUpdatedContext)
+			OnPlayerUpdateCallback(fTimeElapsed);
+		else
+		{
+			XMFLOAT3 xmf3PlayerVelocity = GetVelocity();
+			SetVelocity(xmf3PlayerVelocity);
+
+			XMFLOAT3 xmf3PlayerPosition = GetPosition();
+			SetPosition(xmf3PlayerPosition);
+
+		}
 
 		SetAnimationSet(m_iState, m_iTrackNumber);
 
@@ -231,7 +268,9 @@ void CPlayer::Update(float fTimeElapsed)
 	m_pCamera->RegenerateViewMatrix();
 
 	m_fVelocityXZ = sqrtf(m_xmf3Velocity.x * m_xmf3Velocity.x + m_xmf3Velocity.z * m_xmf3Velocity.z);
+
 	float fDeceleration = (m_fFriction * fTimeElapsed) * 0.5f;
+
 	if (fDeceleration > m_fVelocityXZ)
 		fDeceleration = m_fVelocityXZ;
 	m_xmf3Velocity = Vector3::Add(m_xmf3Velocity, Vector3::ScalarProduct(m_xmf3Velocity, -fDeceleration, true));
@@ -383,6 +422,7 @@ void CMainPlayer::OnCameraUpdateCallback(float fTimeElapsed)
 
 void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 {
+
 	XMFLOAT3 xmf3PlayerPosition = GetPosition();
 
 	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)m_pPlayerUpdatedContext;
@@ -403,6 +443,7 @@ void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 		SetPosition(xmf3PlayerPosition);
 		//m_xmf3Position = xmf3PlayerPosition;
 	}
+
 }
 
 bool CMainPlayer::CheckBridge(XMFLOAT3 xmf3PlayerPosition)

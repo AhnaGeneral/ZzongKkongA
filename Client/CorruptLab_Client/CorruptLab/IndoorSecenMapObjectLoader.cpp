@@ -81,11 +81,12 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 
 	// Dynamic ================================================================================
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
-	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Laboratory_1_(1).bin", NULL, 0);
-	CGameObject* Alpha = pDiverObject->FindFrame("cylinderAlpha");
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/LaboratoryObj.bin", NULL, 0);
+	CGameObject* Alpha = pDiverObject->FindFrame("Object021");
 	CShader* alphaShader = new CTransparentedStandardShader();
 	alphaShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	Alpha->SetShader(0, alphaShader);
+
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Laboratorys.bin", OBJECT_TYPE_LABORATOR);
 }
 
