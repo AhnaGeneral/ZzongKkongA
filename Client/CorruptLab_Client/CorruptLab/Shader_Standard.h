@@ -72,3 +72,10 @@ public :
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState = 0);
 
 };
+
+class CIndoorSceneTransparentedStandardShader : public CTransparentedStandardShader
+{
+public:
+	virtual D3D12_SHADER_BYTECODE CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+
+};

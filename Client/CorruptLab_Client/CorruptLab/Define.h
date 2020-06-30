@@ -133,6 +133,8 @@
 #define JOHNSON_ANIAMATION_RUN  		3
 
 
+
+
 /*ItemType*/
 //------------------------------------------------
 #define ITEM_TYPE_HANDLIGHT				0

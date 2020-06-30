@@ -4,6 +4,7 @@
 #include "Mgr_Collision.h"
 #include "Shader_Standard.h"
 #include "Object_DrugMaker.h"
+#include "Mgr_Scene.h"
 
 
 #define MAXSTATICEVEC 100 
@@ -14,6 +15,8 @@
 void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+
+
 	m_nStaticObjectTypeNum = 11;
 	m_pStaticObjLists = new vector<CGameObject*> * [m_nStaticObjectTypeNum];
 
@@ -83,7 +86,7 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/LaboratoryObj.bin", NULL, 0);
 	CGameObject* Alpha = pDiverObject->FindFrame("Object021");
-	CShader* alphaShader = new CTransparentedStandardShader();
+	CShader* alphaShader = new CIndoorSceneTransparentedStandardShader();
 	alphaShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	Alpha->SetShader(0, alphaShader);
 
@@ -160,14 +163,9 @@ void CGameScene2::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int 
 		XMFLOAT4X4 xmmtxWorld;
 		(UINT)::fread_s(&xmmtxWorld, sizeof(XMFLOAT4X4), sizeof(XMFLOAT4X4), 1, pInFile);
 
+		
 		switch (index)
 		{
-		//case OBJECT_TYPE_ITEMBOX:
-		//	//pGameObject = new CItemBox();
-		//	break;
-		//case OBJECT_TYPE_LABORATOR:
-			//pGameObject = new CDrugMaker(i);
-			//break;
 		case OBJECT_TYPE_RESEARCHER:
 			//pGameObject = new CResearcher(i);
 			break;

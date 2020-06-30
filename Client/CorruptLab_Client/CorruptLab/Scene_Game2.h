@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 
+
 class CBoss;
 class CFloor;
 class CGameScene2 : public CGameScene
@@ -66,6 +67,7 @@ private:
 	vector<CGameObject*>     ** m_pStaticObjLists;
 	vector<CDynamicObject*>  ** m_pDynamicObjLists;
 	vector<CMonster*>        ** m_pMonsterLists;
+	//vector<XMFLOAT3>            m_pLabatoryPos; 
 	CSoftParticleShader       * m_pSoftParticleShader;
 	CShader_SpecialFog        * m_pSpecialFogShader;
 

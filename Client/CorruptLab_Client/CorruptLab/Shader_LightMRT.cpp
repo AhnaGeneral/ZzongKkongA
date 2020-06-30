@@ -1,5 +1,6 @@
 #include "Shader_LightMRT.h"
 #include "Object_Player.h"
+#include "Mgr_Scene.h"
 CLightTarget::CLightTarget()
 {
 	m_pTextures = NULL;
@@ -152,6 +153,7 @@ void CLightTarget::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandL
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pTextures, ROOT_PARAMETER_CDN_MRT, true);
 	BuildLightsAndMaterials();
+
 }
 
 void CLightTarget::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
@@ -248,8 +250,6 @@ void CLightTarget::ChangeLights()
 	m_pLights->m_pLights[0].m_bEnable = true;
 
 	////m_pLights->m_xmf4GlobalAmbient = XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f);
-
-
 	//m_pLights->m_pLights[0].m_nType = DIRECTIONAL_LIGHT;
 	//m_pLights->m_pLights[0].m_xmf4Ambient = XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f);
 	//m_pLights->m_pLights[0].m_xmf4Diffuse = XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f);
@@ -280,8 +280,31 @@ void CLightTarget::ChangeLights()
 	m_pLights->m_pLights[2].m_fFalloff = 4.0f;
 	m_pLights->m_pLights[2].m_fPhi = (float)cos(XMConvertToRadians(50.0f));
 	m_pLights->m_pLights[2].m_fTheta = (float)cos(XMConvertToRadians(20.0f));
-
 	
+
+	FILE* pInFile = NULL;
+	::fopen_s(&pInFile, "ObjectsData/Laboratorys.bin", "rb");
+	::rewind(pInFile);
+
+	UINT nObjects = 0;
+	(UINT)::fread_s(&nObjects, sizeof(UINT), sizeof(UINT), 1, pInFile);
+
+	XMFLOAT3 xmf3Position = XMFLOAT3(0.0f, 0.0f, 0.0f),
+		xmf3Rotation = XMFLOAT3(0.0f, 0.0f, 0.0f),
+		xmf3Scale = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	XMFLOAT4 xmf4Rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+    XMFLOAT4X4 xmmtxWorld;
+
+	for (UINT i = 0; i < nObjects; i++)
+	{
+		(UINT)::fread_s(&xmf3Position, sizeof(XMFLOAT3), sizeof(float), 3, pInFile);
+		(UINT)::fread_s(&xmf3Rotation, sizeof(XMFLOAT3), sizeof(float), 3, pInFile); //Euler Angle
+		(UINT)::fread_s(&xmf3Scale, sizeof(XMFLOAT3), sizeof(float), 3, pInFile);
+		(UINT)::fread_s(&xmf4Rotation, sizeof(XMFLOAT4), sizeof(float), 4, pInFile); //Quaternion
+		(UINT)::fread_s(&xmmtxWorld, sizeof(XMFLOAT4X4), sizeof(XMFLOAT4X4), 1, pInFile);
+	}
+	if (pInFile) fclose(pInFile);
+
 }
 
 void CLightTarget::BuildLightsAndMaterials()

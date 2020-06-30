@@ -9,6 +9,7 @@
 
 
 
+
 //Scene2-----------------------------------------------------------------------------
 CGameScene2::CGameScene2()
 {
@@ -41,6 +42,8 @@ CGameScene2::CGameScene2()
 
 	m_AnimationTime = 0.0f; 
 	m_AnimationControl = true;
+	
+	//m_pLabatoryPos = new vector<XMFLOAT3>; 
 }
 
 CGameScene2::~CGameScene2()
@@ -60,17 +63,19 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_pShadowCamera = new CSunCamera(XMFLOAT3(-20.f, 150.f, 0), m_xmf3Look, m_xmf3Right, m_xmf3Up);
 
-	CShader* TexcoordShader = new CStandardShader();
+	CShader* TexcoordShader = new CTexcoordStandardShader();
 	TexcoordShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	TexcoordShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	TexcoordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16
 	
 	CGameObject* pBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
-		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Monster/Boss.bin", NULL, 1);
+		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Monster/Boss_Idle.bin", NULL, 1);
+	
 	m_pBoss = new CBoss();
 	m_pBoss->SetChild(pBossModel);
 	m_pBoss->SetPosition(XMFLOAT3(0, 0, 0));
-	m_pBoss->SetScale(7, 7, 7);
+	m_pBoss->SetScale(5, 5, 5);
+
 
 	m_IndoorWall = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
 		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Indoor2.bin", TexcoordShader, 0);
@@ -264,8 +269,15 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	if (m_IndoorWall)
 		m_IndoorWall->Render(pd3dCommandList, pCamera); 
 
-	if (m_pBoss) m_pBoss->Render(pd3dCommandList, pCamera);
+	if (m_pBoss)
+	{
+		m_pBoss->Update(m_fElapsedTime, NULL, NULL);
 
+		m_pBoss->Animate(m_fElapsedTime, NULL, 0);
+		//	if (Obj->m_iTrackNumber == 1) continue;
+		m_pBoss->UpdateTransform(NULL);
+		m_pBoss->Render(pd3dCommandList, pCamera);
+	}
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)

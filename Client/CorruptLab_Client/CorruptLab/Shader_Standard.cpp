@@ -348,3 +348,8 @@ void AlphaChannelAnimationShader::Render(ID3D12GraphicsCommandList* pd3dCommandL
 {
 	CSkinnedAnimationShader::Render(pd3dCommandList,pCamera,nPipelineState);
 }
+
+D3D12_SHADER_BYTECODE CIndoorSceneTransparentedStandardShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Standard.hlsl", "IndoorPSTransparent", "ps_5_1", ppd3dShaderBlob));
+}
