@@ -261,15 +261,22 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		XMFLOAT4X4 xmmtxWorld;
 		(UINT)::fread_s(&xmmtxWorld, sizeof(XMFLOAT4X4), sizeof(XMFLOAT4X4), 1, pInFile);
 
+		float scale = xmf3Scale.x;
 		switch (index)
 		{
 		case MONSTER_TYPE_YANGMAL:
 			pGameObject = new CYangmal();
+			pGameObject->SetChild(pModel, true);
+			pGameObject->m_iTrackNumber = i;
 			pGameObject->Initialize(XMFLOAT3(377, 39, 118), 5);
+			scale /= 15.f;
 			break;
 		case MONSTER_TYPE_TOSM:
 			pGameObject = new CTosm();
-			pGameObject->Initialize(XMFLOAT3(199, 83, 165), 5);
+			pGameObject->SetChild(pModel, true);
+			pGameObject->m_iTrackNumber = i;
+			pGameObject->Initialize(XMFLOAT3(206, 83, 138), 5);
+			scale /= 1.5f;
 			break;
 		default:
 			pGameObject = new CMonster();
@@ -281,11 +288,9 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		hp->SetShader(pShder);
 		hp->SetTexture(pMonsterHPTex);
 
-		pGameObject->SetChild(pModel, true);
 		hp->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		pGameObject->SetHPUI(hp);
 
-		float scale = xmf3Scale.x / 15.f;
 		XMFLOAT2 SCALE = XMFLOAT2(scale, scale / 10);
 		hp->SetInstanceInfo(SCALE, pd3dDevice, pd3dCommandList);
 
@@ -293,7 +298,6 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		pGameObject->m_xmf3Scale =  Vector3::ScalarProduct(xmf3Scale, 1.8f, false);
 		pGameObject->m_xmf4x4Transform = xmmtxWorld;
 		pGameObject->SetScale(2, 2, 2);
-		pGameObject->m_iTrackNumber = i;
 
 		pGameObject->UpdateTransform(NULL);
 		pGameObject->OnInitialize();

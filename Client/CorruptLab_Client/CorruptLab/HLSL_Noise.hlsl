@@ -166,7 +166,7 @@ PS_EMMISIVE_MRT_OUTPUT NoisePixelShader(GS_BILLBOARD_OUTPUT input)
 	fireColor.a = alphaColor;
 	output.EmmisiveMRT = fireColor;
 
-	float2 f2pos = float2(input.posH.x / 380 / 2 - 1, input.posH.y / 300 / 2 - 1);
+	float2 f2pos = float2(input.posH.x / 600 / 2 - 1, input.posH.y / 400 / 2 - 1);
 
 	float myDepth = input.vPorjPos.z;
 	float4 fSceneDepth = gtxtSceneDepthTexture.Sample(gSamplerState, f2pos);

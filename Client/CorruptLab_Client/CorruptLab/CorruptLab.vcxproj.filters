@@ -23,9 +23,6 @@
     <Filter Include="98.external">
       <UniqueIdentifier>{d761b15f-ab1f-4439-8351-87a8b9604e31}</UniqueIdentifier>
     </Filter>
-    <Filter Include="08.Animation">
-      <UniqueIdentifier>{4bc3aa1e-70c8-4b3a-883d-43ad0074c13c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05.Component">
       <UniqueIdentifier>{c8a9b285-7c5e-46bc-b5ac-0da6bfc99d91}</UniqueIdentifier>
     </Filter>
@@ -197,6 +194,9 @@
     <Filter Include="04.Shader\05.Shader_Standard\01.Shader_InstancingStandard">
       <UniqueIdentifier>{a63d4c6b-4da0-4ffa-8ec1-1549b74acb79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Component\08.Animation">
+      <UniqueIdentifier>{4bc3aa1e-70c8-4b3a-883d-43ad0074c13c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -227,7 +227,7 @@
       <Filter>98.external</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
-      <Filter>08.Animation</Filter>
+      <Filter>05.Component\08.Animation</Filter>
     </ClInclude>
     <ClInclude Include="Define.h">
       <Filter>00.Basic</Filter>
@@ -421,7 +421,7 @@
       <Filter>98.external</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
-      <Filter>08.Animation</Filter>
+      <Filter>05.Component\08.Animation</Filter>
     </ClCompile>
     <ClCompile Include="Object_BillBoard.cpp">
       <Filter>05.Component\GameObject\06.Billboard</Filter>

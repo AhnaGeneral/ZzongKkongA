@@ -62,7 +62,7 @@ void CMonster::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCame
 	if (m_iState == MONSTER_STATE_PURIFYING && nPipelineState == 0)
 		nPipelineState = 2;
 	CGameObject::Render(pd3dCommandList, pCamera, nPipelineState);
-	if (m_HPUI)
+	if (m_HPUI && nPipelineState == 0)
 	{
 		m_HPUI->UpdateTransform(&m_xmf4x4World);
 		m_HPUI->Render(pd3dCommandList, pCamera);

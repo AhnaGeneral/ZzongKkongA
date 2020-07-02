@@ -197,7 +197,7 @@ VS_BILLBOARD_INPUT VSMONSTERHP(VS_BILLBOARD_INPUT input)
 	VS_BILLBOARD_OUTPUT output;
 
 	output.positionW.x = gmtxGameObject._41;
-	output.positionW.y = gmtxGameObject._42 + (5);
+	output.positionW.y = gmtxGameObject._42 + (8);
 	output.positionW.z = gmtxGameObject._43;
 
 	output.sizeW = input.sizeW;
@@ -236,15 +236,17 @@ void MosnterHPGS(point VS_BILLBOARD_OUTPUT input[1], inout TriangleStream<GS_BIL
 }
 
 
-float4 PSMonsterHP(GS_BILLBOARD_OUTPUT input) : SV_TARGET5
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSMonsterHP(GS_BILLBOARD_OUTPUT input) 
 {
+	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 	float HP = (float)gf3RadiationLevel / 100.0f;
-	float4 cColor = gtxtAlbedoTexture.Sample(gSamplerClamp, input.UV);
+	output.color = gtxtAlbedoTexture.Sample(gSamplerClamp, input.UV);
 
 	if (input.UV.x > HP)
-		 cColor = float4(0.25f, 0.25f, 0.25f, 1);
+		 output.color = float4(0.7f, 0.7f, 0.7f, 1);
 
-	return float4(cColor);
+	output.normal = float4(1, 1, 1, 1);
+	return output;
 }
 
 

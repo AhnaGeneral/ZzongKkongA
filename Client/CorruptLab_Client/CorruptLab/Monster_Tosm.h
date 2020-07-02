@@ -3,11 +3,18 @@
 class CTosm :
     public CMonster
 {
+private:
+    float m_fIdleTime = 2; private:
+        CGameObject* m_pNeck = NULL;
 public:
-    CTosm() {}
+    CTosm();
     ~CTosm() {}
 
-    virtual void Update(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
+    virtual void Initialize(XMFLOAT3 FiledPos, int iAtt);
+
+
+    virtual void GoodUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
+    virtual void BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL, void* pContext = NULL);
 
 };
 

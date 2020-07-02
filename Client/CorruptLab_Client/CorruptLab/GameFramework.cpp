@@ -737,8 +737,8 @@ void CGameFramework::BuildObjects()
 
 	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList,
 		        m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pTerrain);
-	//pAirplanePlayer->SetPosition(XMFLOAT3(430.0f, 15.0f, 359.0f)); //시작 위치
-	pAirplanePlayer->SetPosition(XMFLOAT3(183.0f, 80.0f, 111.0f)); //토슴이 있는 쪽
+	pAirplanePlayer->SetPosition(XMFLOAT3(430.0f, 15.0f, 359.0f)); //시작 위치
+	//pAirplanePlayer->SetPosition(XMFLOAT3(183.0f, 80.0f, 111.0f)); //토슴이 있는 쪽
 
 	//pAirplanePlayer->SetPosition(XMFLOAT3(394, 15.0f, 88.0f));
 	m_pLightProcessingShader->SetPlayer(m_pPlayer);

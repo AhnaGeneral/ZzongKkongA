@@ -56,7 +56,7 @@ protected:
 	///
 public:
 
-	void Initialize(XMFLOAT3 FiledPos, int iAtt);
+	virtual void Initialize(XMFLOAT3 FiledPos, int iAtt);
 	bool		IsPurified() { return m_bIsPurified; }
 	int				m_iState = MONSTER_STATE_IDLE;
 	//GameContents
