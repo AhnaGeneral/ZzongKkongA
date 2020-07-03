@@ -266,7 +266,7 @@ void CObjectFog::GenerateShaderDistortionBuffer()
 CObjectWater::CObjectWater(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
 	//: CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature)
 {
-	CTriangleRect* pNoise = new CTriangleRect(pd3dDevice, pd3dCommandList, 2000.0f, 2000.0f, 1.0f, 1.0f);
+	CTriangleRect* pNoise = new CTriangleRect(pd3dDevice, pd3dCommandList, 2000.0f, 2000.0f, 0.0f, 1.0f);
 	SetMesh(pNoise);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	NoiseSetTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);

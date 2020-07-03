@@ -271,8 +271,8 @@ void CLightTarget::ChangeLights()
 	m_pLights->m_pLights[2].m_nType = SPOT_LIGHT;
 	m_pLights->m_pLights[2].m_bEnable = true;
 	m_pLights->m_pLights[2].m_fRange = 60.0f;
-	m_pLights->m_pLights[2].m_xmf4Ambient = XMFLOAT4(0.1f, 0.1f, 0.2f, 1.0f);
-	m_pLights->m_pLights[2].m_xmf4Diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0);
+	m_pLights->m_pLights[2].m_xmf4Ambient  = XMFLOAT4(0.1f, 0.1f, 0.2f, 1.0f);
+	m_pLights->m_pLights[2].m_xmf4Diffuse  = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0);
 	m_pLights->m_pLights[2].m_xmf4Specular = XMFLOAT4(0.05f, 0.1f, 0.1f, 0.0f);
 	m_pLights->m_pLights[2].m_xmf3Position = XMFLOAT3(-50.0f, 20.0f, -5.0f);
 	m_pLights->m_pLights[2].m_xmf3Direction = XMFLOAT3(0.0f, 0.0f, 1.0f);
@@ -295,14 +295,35 @@ void CLightTarget::ChangeLights()
 	XMFLOAT4 xmf4Rotation = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
     XMFLOAT4X4 xmmtxWorld;
 
-	for (UINT i = 0; i < nObjects; i++)
+	for (UINT i = 1; i < nObjects + 1; i++)
 	{
 		(UINT)::fread_s(&xmf3Position, sizeof(XMFLOAT3), sizeof(float), 3, pInFile);
 		(UINT)::fread_s(&xmf3Rotation, sizeof(XMFLOAT3), sizeof(float), 3, pInFile); //Euler Angle
 		(UINT)::fread_s(&xmf3Scale, sizeof(XMFLOAT3), sizeof(float), 3, pInFile);
 		(UINT)::fread_s(&xmf4Rotation, sizeof(XMFLOAT4), sizeof(float), 4, pInFile); //Quaternion
 		(UINT)::fread_s(&xmmtxWorld, sizeof(XMFLOAT4X4), sizeof(XMFLOAT4X4), 1, pInFile);
+
+		m_pLights->m_pLights[2+i].m_nType = SPOT_LIGHT;
+		m_pLights->m_pLights[2+i].m_bEnable = true;
+		m_pLights->m_pLights[2+i].m_fRange = 40.0f;
+		m_pLights->m_pLights[2+i].m_xmf4Ambient  = XMFLOAT4(0.1f, 0.1f, 0.2f, 1.0f);
+		m_pLights->m_pLights[2+i].m_xmf4Diffuse  = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0);
+		m_pLights->m_pLights[2+i].m_xmf4Specular = XMFLOAT4(0.05f, 0.1f, 0.26f, 0.0f);
+		if (i >= 6)
+		{
+			m_pLights->m_pLights[2 + i].m_xmf3Position = XMFLOAT3(xmf3Position.x, xmf3Position.y - 8.0f, xmf3Position.z - 3.5f);
+		}
+		else
+		{
+			m_pLights->m_pLights[2 + i].m_xmf3Position = XMFLOAT3(xmf3Position.x, xmf3Position.y - 8.0f, xmf3Position.z + 3.5f);
+		}
+		m_pLights->m_pLights[2 + i].m_xmf3Direction = XMFLOAT3(0.0f, 1.0f, 0.0f);
+		m_pLights->m_pLights[2+i].m_xmf3Attenuation = XMFLOAT3(1.0f, 0.01f, 0.00003f);
+		m_pLights->m_pLights[2+i].m_fFalloff = 3.0f;
+		m_pLights->m_pLights[2+i].m_fPhi = (float)cos(XMConvertToRadians(50.0f));
+		m_pLights->m_pLights[2+i].m_fTheta = (float)cos(XMConvertToRadians(20.0f));
 	}
+
 	if (pInFile) fclose(pInFile);
 
 }

@@ -5,6 +5,7 @@
 
 class CBoss;
 class CFloor;
+class Shader_Basic; 
 class CGameScene2 : public CGameScene
 {
 public:
@@ -17,7 +18,12 @@ public:
 	CFloor * m_pFloor;
 
 	CShader_Effect* m_pTestEffect;
+
+	CGameObject** m_IndoorWallLine = NULL;
+	CGameObject* m_IndoorWallLines = NULL;
+	//Shader_Basic* pShader = NULL; 
 	CGameObject* m_IndoorWall = NULL;
+
 	int  n_ReactItem;
 	float itemRange;
 

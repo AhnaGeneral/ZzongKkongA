@@ -46,6 +46,12 @@ protected:
 	CUI_Root                     * m_HPBAR;
 					            
 	CGameObject                 ** m_ppInVentoryBoxs;
+	UINT                           nIventoryCount;
+
+	CGameObject                 ** m_ppIndoorScenenumberBox;
+	UINT                           nNumberCount;
+	CUI_Root                     * m_pIndoorNumberBox;
+
 	CUI_Root                    *  m_pInventoryBox;
 	CUI_Root                    * m_IndoorGreeting; 
 	float                         m_Alpha = 1;
@@ -54,7 +60,6 @@ protected:
 					            
 	CUI_HP                       * m_PlayerHP;
 					            
-	UINT                           nIventoryCount;
 
 	ID3D12Resource               * m_pd3dcbvOrthoCamera;
 	VS_CB_EYE_CAMERA_ORTHO       * m_pcbMappedOrthoCamera;

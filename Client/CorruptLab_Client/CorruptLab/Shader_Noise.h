@@ -22,6 +22,19 @@ public:
 
 };
 
+class Shader_Basic : public Shader_Noise
+{
+public:
+    Shader_Basic();
+    virtual ~Shader_Basic();
+
+public:
+    virtual D3D12_SHADER_BYTECODE    CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
+    virtual D3D12_SHADER_BYTECODE    CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+    virtual D3D12_DEPTH_STENCIL_DESC  CreateDepthStencilState();
+
+};
+
 class Shader_WaterNoise : public Shader_Noise
 {
 public:

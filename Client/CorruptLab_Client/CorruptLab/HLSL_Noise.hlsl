@@ -187,3 +187,35 @@ PS_EMMISIVE_MRT_OUTPUT NoisePixelShader(GS_BILLBOARD_OUTPUT input)
 	
 	return output;
 }
+
+
+struct VS_BASIC_INPUT
+{
+	float3 position : POSITION;
+	float2 tex : TEXCOORD;
+};
+
+struct VS_BASIC_OUTPUT
+{
+	float4 position : SV_POSITION;
+	float2 tex : TEXCOORD;
+};
+
+VS_BASIC_OUTPUT BasicShaderVS (VS_BASIC_INPUT input)
+{
+	VS_BASIC_OUTPUT output;
+
+	float4 pos = mul(float4(input.position, 1.0f), gmtxGameObject);
+	output.position = mul(mul(pos, gmtxView), gmtxProjection);
+
+	output.tex = input.tex;
+
+	return output;
+}
+
+PS_EMMISIVE_MRT_OUTPUT BasicShaderPS(VS_BASIC_OUTPUT input)
+{
+	PS_EMMISIVE_MRT_OUTPUT output;
+	output.EmmisiveMRT = float4(0.1, 0.6, 0.9, 1);
+	return output; 
+}

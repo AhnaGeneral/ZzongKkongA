@@ -16,7 +16,6 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 
-
 	m_nStaticObjectTypeNum = 11;
 	m_pStaticObjLists = new vector<CGameObject*> * [m_nStaticObjectTypeNum];
 
@@ -89,7 +88,6 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	CShader* alphaShader = new CIndoorSceneTransparentedStandardShader();
 	alphaShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	Alpha->SetShader(0, alphaShader);
-
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Laboratorys.bin", OBJECT_TYPE_LABORATOR);
 }
 

@@ -85,7 +85,7 @@ public:
 	virtual void ReleaseShaderVariables();
 
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
-	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial);
+	//virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial);
 	virtual void UpdateCollisionBoxes(XMFLOAT4X4* world = NULL);
 	virtual void UpdateCollisionBoxes(XMFLOAT4X4* world , XMFLOAT4* ParentOrientation, XMFLOAT3* ParentScale);
 	virtual void ReleaseUploadBuffers();

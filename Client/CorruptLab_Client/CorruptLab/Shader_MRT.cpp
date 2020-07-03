@@ -39,15 +39,17 @@ CPostProcessingShader::CPostProcessingShader()
 
 	m_ppInVentoryBoxs = NULL;
 	m_pInventoryBox = NULL;
+	m_pIndoorNumberBox = NULL; 
 
 	m_ppItems = NULL;
 	m_pItem = NULL;
 	m_PlayerHP = NULL;
 
 	nIventoryCount = 3;
-
+	nNumberCount = 4; 
 	m_pd3dcbvOrthoCamera = NULL;
 	m_pcbMappedOrthoCamera = NULL;
+	m_ppIndoorScenenumberBox = NULL; 
 
 }
 
@@ -377,7 +379,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	m_pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_3.dds", 0);
 
 	m_pBaseUIShader = new CShader_BaseUI();
-	m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 4);
+	m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 5);
 	m_pBaseUIShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
 	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)m_pHPTexture, ROOT_PARAMETER_HP_TEX, true);
 
@@ -468,6 +470,27 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		m_pInventoryBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
 		m_ppInVentoryBoxs[i++] = m_pInventoryBox;
 	}
+
+	//[IndoorScene 번호판] =====================================================================================
+    m_ppIndoorScenenumberBox = new CGameObject*[nNumberCount];
+	
+	float UnberBoxSize = FRAME_BUFFER_HEIGHT / 5.0f;
+
+	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pInventoryTex, ROOT_PARAMETER_HP_TEX, true);
+	
+	for (int i = 0; i < (int)nNumberCount;)
+	{
+		m_pIndoorNumberBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+		m_pIndoorNumberBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pInventoryTex);
+		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, UnberBoxSize, UnberBoxSize, 0.0f, 1.0f);
+		m_pIndoorNumberBox->SetMesh(mesh);
+		m_pIndoorNumberBox->SetAlpha(&m_Alpha);
+
+		m_pIndoorNumberBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + (FRAME_BUFFER_WIDTH/3) + (i * UnberBoxSize), 
+			(-FRAME_BUFFER_HEIGHT / 2) + (FRAME_BUFFER_HEIGHT / 3));
+		m_ppIndoorScenenumberBox[i++] = m_pIndoorNumberBox;
+	}
+
 
 	//[ 아이템쓰 ] =============================================================================================
 	m_ppItems = new CGameObject * [nIventoryCount];
@@ -837,11 +860,16 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 
 	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
 
+	// ==================================================================
 	if ((npipelinestate == 1))
 	{
 		//if (m_IndoorGreeting) m_IndoorGreeting->Render(pd3dCommandList, pCamera);
+	     for (int i = 0; i < int(nNumberCount); ++i)
+	     {
+	     	 m_ppIndoorScenenumberBox[i]->Render(pd3dCommandList, 0);
+	     }
 	}
-
+	// ==================================================================
 
 	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
 
@@ -859,42 +887,34 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemReact(CItemMgr::GetInstance()->GetReactIten());
 		m_ppItems[i]->Render(pd3dCommandList, 0);
 	}
-
 	if (m_PlayerHP) m_PlayerHP->Render(pd3dCommandList, pCamera);
-
 
 	// PipelineState = 1 [IndoorState] ==================================================== 
 	if (!(npipelinestate == 1))
 	{
 		if (m_pMinimap) m_pMinimap->Render(pd3dCommandList, pCamera);
 		if (m_pRadiationShader) m_pRadiationShader->Render(pd3dCommandList, pCamera);
-
 		if (m_RadiationLevels)
 		{
 			int number = CRadationMgr::GetInstance()->GetRaditaion();
 			dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[0])->SetRadiationNumber(int(number / 10));
 			dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[1])->SetRadiationNumber(int(number % 10));
-
 			for (int i = 0; i < 2; ++i)
 			{
 				m_RadiationLevels[i]->Render(pd3dCommandList, pCamera);
 			}
 		}
-
-
 		if (m_pMinimapFog)m_pMinimapFog->Render(pd3dCommandList, pCamera);
-
 		if (pMinmapFog1) pMinmapFog1->UpdateShaderVariable(pd3dCommandList, 0);
-
 		if (m_pMapOne)
 		{
-			(m_pMapOne)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		   (m_pMapOne)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
 			m_pMapOne->Render(pd3dCommandList, pCamera);
 		}
 		if (pMinmapFog2) pMinmapFog2->UpdateShaderVariable(pd3dCommandList, 0);
 		if (m_pMapTwo)
 		{
-			(m_pMapTwo)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
+		   (m_pMapTwo)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
 			m_pMapTwo->Render(pd3dCommandList, pCamera);
 		}
 	}

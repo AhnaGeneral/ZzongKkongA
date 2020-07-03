@@ -5,6 +5,8 @@
 #include "Object_DynamicObj.h"
 #include "Shader_Standard.h"
 #include "Monster_Boss.h"
+#include "Shader_Noise.h"
+#include "Shader_BillBoard.h"
 
 
 
@@ -76,11 +78,63 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pBoss->SetPosition(XMFLOAT3(0, 0, 0));
 	m_pBoss->SetScale(5, 5, 5);
 
+	//CShader* PlaneLineShader = new CStandardShader();
+	//PlaneLineShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
+	//PlaneLineShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	//PlaneLineShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 2); //16
 
 	m_IndoorWall = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
 		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Indoor2.bin", TexcoordShader, 0);
 	m_IndoorWall->SetPosition(0.f, 0.0f, 0.f);
 	m_IndoorWall->SetScale(63.53762f, 21.115f, 77.93047f);
+
+	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 7.0f,
+		FRAME_BUFFER_HEIGHT / 7.f, 0.0f, 1.0f);
+
+	CTriangleRect* mesh2 = new CTriangleRect(pd3dDevice, pd3dCommandList, 0,
+		FRAME_BUFFER_HEIGHT / 7.f, FRAME_BUFFER_WIDTH / 7.0f, 1.0f);
+
+	m_IndoorWallLine = new CGameObject * [4];
+	Shader_Basic* pShader = new Shader_Basic();
+	pShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
+	pShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 0); //16
+
+	m_IndoorWallLines = new CGameObject();
+	m_IndoorWallLines->SetShader(pShader);
+	m_IndoorWallLines->SetMesh(mesh2);
+	m_IndoorWallLines->SetScale(0.f, 0.007f, 1.0f);
+	//m_IndoorWallLines->Rotate(0.0f, 10, 0);
+	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_IndoorWallLines->SetPosition(102, 4.f, 0);
+
+	m_IndoorWallLine[0] = m_IndoorWallLines;
+	XMFLOAT3 Axis = XMFLOAT3(0.0f, 1.f, 0.0); 
+	m_IndoorWallLines = new CGameObject();
+	m_IndoorWallLines->SetShader(pShader);
+	m_IndoorWallLines->SetMesh(mesh2);
+	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_IndoorWallLines->SetScale(0.f, 0.007f, 1.0f);
+	//m_IndoorWallLines->Rotate(0.0f, 10, 0);
+	m_IndoorWallLines->SetPosition(-102, 4.f, 0);
+
+	m_IndoorWallLine[1] = m_IndoorWallLines;
+	m_IndoorWallLines = new CGameObject();
+	m_IndoorWallLines->SetShader(pShader);
+	m_IndoorWallLines->SetMesh(mesh);
+	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_IndoorWallLines->SetScale(1.2f, 0.007f, 0.0f);
+	m_IndoorWallLines->SetPosition(0.0f, 4.f, 62.6f);
+
+	m_IndoorWallLine[2] = m_IndoorWallLines;
+	m_IndoorWallLines = new CGameObject();
+	m_IndoorWallLines->SetShader(pShader);
+	m_IndoorWallLines->SetMesh(mesh);
+	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_IndoorWallLines->SetScale(1.2f, 0.007f, 0.0f);
+	m_IndoorWallLines->SetPosition(0.0f , 4.f, -62.0f);
+	m_IndoorWallLine[3] = m_IndoorWallLines;
+	
 
 	PlaceObjectsFromFile(pd3dDevice, m_pd3dGraphicsRootSignature, pd3dCommandList);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -100,6 +154,13 @@ void CGameScene2::ReleaseObjects()
 		m_IndoorWall->Release();
 		m_IndoorWall = nullptr;
 	}
+
+	//if (m_PlaneLine)
+	//{
+	//	m_PlaneLine->ReleaseUploadBuffers();
+	//	m_PlaneLine->Release();
+	//	m_PlaneLine = nullptr;
+	//}
 	if (m_pStaticObjLists) // 오브젝트 Release
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -144,6 +205,11 @@ void CGameScene2::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graphics
 
 void CGameScene2::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
+	for (int i = 0; i < 4; ++i)
+	{
+		//m_IndoorWallLine[i]->Rotate(0, 10 + (i) * 500, 0);
+		m_IndoorWallLine[i]->UpdateShaderVariable(pd3dCommandList, &(m_IndoorWallLine[i]->m_xmf4x4World));
+	}
 }
 
 void CGameScene2::ReleaseShaderVariables()
@@ -261,14 +327,15 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 	pCamera->UpdateShaderVariables(pd3dCommandList);
-	
+
+	UpdateShaderVariables(pd3dCommandList);
+
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
 	
 	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera);
 
-	if (m_IndoorWall)
-		m_IndoorWall->Render(pd3dCommandList, pCamera); 
-
+	if (m_IndoorWall) m_IndoorWall->Render(pd3dCommandList, pCamera); 
+	//if (m_PlaneLine) m_PlaneLine->Render(pd3dCommandList, pCamera);
 	if (m_pBoss)
 	{
 		m_pBoss->Update(m_fElapsedTime, NULL, NULL);
@@ -300,6 +367,12 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 				Obj->Render(pd3dCommandList, pCamera, 0);
 			}
 		}
+	}
+
+	for (int i = 0; i < 4; ++i)
+	{
+		m_IndoorWallLine[i]->UpdateTransform(NULL);
+		m_IndoorWallLine[i]->Render(pd3dCommandList, pCamera, 0);
 	}
 }
 

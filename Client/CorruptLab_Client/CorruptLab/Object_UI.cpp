@@ -83,7 +83,8 @@ void CUI_MiniMap::InterLinkShaderTexture(ID3D12Device* pd3dDevice,
 	pMinimapTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog1.dds", 1);
 	pMinimapTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog2.dds", 2);
 	
-	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMinimapTex, ROOT_PARAMETER_ITEM_TEX, true); SetShader(pShader);
+	pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pMinimapTex, ROOT_PARAMETER_ITEM_TEX, true); 
+	SetShader(pShader);
 	m_ppMaterials[0]->SetTexture(pMinimapTex);
 }
 
