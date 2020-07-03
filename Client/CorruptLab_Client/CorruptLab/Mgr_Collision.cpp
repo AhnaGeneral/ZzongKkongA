@@ -72,7 +72,7 @@ void CCollisionMgr::MonsterDamageCheck(int iDamage)
 {
 	if (m_pMonsterLists) // ∏ÛΩ∫≈Õ Render
 	{
-		for (int i = 0; i < 1; i++)
+		for (int i = 0; i < 2; i++)
 		{
 			for (auto Obj : *m_pMonsterLists[i])
 			{

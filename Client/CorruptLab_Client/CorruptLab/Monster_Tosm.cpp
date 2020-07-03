@@ -107,6 +107,7 @@ void CTosm::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pCont
 	}
 	else
 	{
+		float fDistanceToFiled;
 		float yaw;
 		switch (m_iState)
 		{
@@ -114,7 +115,23 @@ void CTosm::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pCont
 			yaw = MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed * 0.7f, pTerrain);
 			SetAnimationSet(2, m_iTrackNumber); // RUN
 			if (m_fDistanceToPlayer < 20) m_iState = MONSTER_STATE_ATTACK;
+
+
+			fDistanceToFiled = Vector3::Length(Vector3::Subtract(m_xmf3FiledCenter, GetPosition()));
+
+			if (m_fDistanceToPlayer > 70 || fDistanceToFiled > 100)
+			{
+				XMFLOAT3 randompos;
+				randompos.x = float(rand() % 100) - 50.f;
+				randompos.y = 0.0f;
+				randompos.z = float(rand() % 100) - 50.f;
+				m_xmf3RandomMoveDest = Vector3::Add(randompos, m_xmf3FiledCenter);
+				m_iState = MONSTER_STATE_RETURNING;
+				m_bNotice = false;
+			}
+
 			break;
+
 		case MONSTER_STATE_ATTACK:
 			yaw = MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed * 0.7f, pTerrain);
 		
@@ -126,22 +143,28 @@ void CTosm::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pCont
 			if (m_fDistanceToPlayer > 20) {
 				m_iState = MONSTER_STATE_WALK;
 				m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_fPosition = 0;
+
+
+				fDistanceToFiled = Vector3::Length(Vector3::Subtract(m_xmf3FiledCenter, GetPosition()));
+
+				if (m_fDistanceToPlayer > 70 || fDistanceToFiled > 100)
+				{
+					XMFLOAT3 randompos;
+					randompos.x = float(rand() % 100) - 50.f;
+					randompos.y = 0.0f;
+					randompos.z = float(rand() % 100) - 50.f;
+					m_xmf3RandomMoveDest = Vector3::Add(randompos, m_xmf3FiledCenter);
+					m_iState = MONSTER_STATE_RETURNING;
+					m_bNotice = false;
+				}
 			}
+			break;
+
+
+		case MONSTER_STATE_DAMAGEING:
+			m_iState = MONSTER_STATE_WALK;
 			break;
 		}
 
-
-		float fDistanceToFiled = Vector3::Length(Vector3::Subtract(m_xmf3FiledCenter, GetPosition()));
-
-		if (m_fDistanceToPlayer > 70 || fDistanceToFiled > 100)
-		{
-			XMFLOAT3 randompos;
-			randompos.x = float(rand() % 100) - 50.f;
-			randompos.y = 0.0f;
-			randompos.z = float(rand() % 100) - 50.f;
-			m_xmf3RandomMoveDest = Vector3::Add(randompos, m_xmf3FiledCenter);
-			m_iState = MONSTER_STATE_RETURNING;
-			m_bNotice = false;
-		}
 	}
 }

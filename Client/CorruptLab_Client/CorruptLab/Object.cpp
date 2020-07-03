@@ -325,12 +325,12 @@ void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 			{	
 				CullCount++;
 			}
-		}
+		}/*
 		if (CullCount >= m_nBoundingBoxes)
 		{
 			SetParentRenderState(false);
 			return;
-		}
+		}*/
 	}
 	if (nPipelineState == 1)
 	{

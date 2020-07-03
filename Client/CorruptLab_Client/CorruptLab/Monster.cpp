@@ -165,7 +165,7 @@ void CMonster::GetDamaage(int iDamage)
 		if (m_iState == MONSTER_STATE_RETURNING)
 			m_bNotice = true;
 		SetAnimationSet(1, m_iTrackNumber);
-		m_iState = MONSTER_STATE_STUN;
+ 		m_iState = MONSTER_STATE_STUN;
 		m_iCurrentHP = 20;
 	}
 }

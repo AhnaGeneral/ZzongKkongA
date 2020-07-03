@@ -200,7 +200,10 @@ VS_BILLBOARD_INPUT VSMONSTERHP(VS_BILLBOARD_INPUT input)
 	output.positionW.y = gmtxGameObject._42 + (8);
 	output.positionW.z = gmtxGameObject._43;
 
-	output.sizeW = input.sizeW;
+	output.sizeW
+		
+		
+		= input.sizeW;
 	return(output);
 }
 

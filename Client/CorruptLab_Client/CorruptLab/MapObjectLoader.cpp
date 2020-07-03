@@ -109,13 +109,16 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	CShader* pAlphaChannelAnimation = new  AlphaChannelAnimationShader(); 
 	pAlphaChannelAnimation->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	pAlphaChannelAnimation->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	pAlphaChannelAnimation->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16
+	pAlphaChannelAnimation->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 4); //16
+	CTexture* dissolveTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+
+	dissolveTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Model/Textures/dissolve.dds", 0);
+	pAlphaChannelAnimation->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, dissolveTex, ROOT_PARAMETER_DISSOLVE_MAP, 0);
+	dynamic_cast<CSkinnedAnimationShader*>(pAlphaChannelAnimation)->SetDissolveTexture(dissolveTex);
 
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Tosm.bin", pAlphaChannelAnimation, 4);
 	//pDiverObject->SetAnimatationSpeed(3, 0.5f);
 	PlaceMonsterFromFile(pDiverObject, "ObjectsData/Tosms.bin", MONSTER_TYPE_TOSM, pd3dDevice, pd3dCommandList);
-
-
 
 
 	CCollisionMgr::GetInstance()->m_pMonsterLists = m_pMonsterLists;
@@ -264,6 +267,7 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		float scale = xmf3Scale.x;
 		switch (index)
 		{
+
 		case MONSTER_TYPE_YANGMAL:
 			pGameObject = new CYangmal();
 			pGameObject->SetChild(pModel, true);

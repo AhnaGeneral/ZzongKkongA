@@ -177,7 +177,7 @@ void CAnimationController::UpdateTransformCache(int iTrackNum)
 	CAnimationSet* pAnimationSet = m_pAnimationTracks[iTrackNum].m_pAnimationSet;
 
 	if (!pAnimationSet) return;
-	float fPositon = pAnimationSet->GetPosition(pAnimationSet->m_fPosition);
+	float fPositon = pAnimationSet->GetPosition(m_pAnimationTracks[iTrackNum].m_fPosition);
 	if (pAnimationSet->m_nType == ANIMATION_TYPE_ONCE && fPositon >= pAnimationSet->m_fLength - 0.1f)
 	{
 		for (int j = 0; j < m_nAnimationBoneFrames; j++)

@@ -26,7 +26,7 @@ public:
 
 class CSkinnedAnimationShader : public CStandardShader
 {
-protected:
+public:
 	CTexture* m_pDissolveTexture = NULL;
 
 public:

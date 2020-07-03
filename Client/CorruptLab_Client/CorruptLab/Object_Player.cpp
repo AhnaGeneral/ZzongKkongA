@@ -88,7 +88,10 @@ void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 		fDistance *= m_fSpeed;
 		XMFLOAT3 xmf3Shift = XMFLOAT3(0, 0, 0);
 		if (dwDirection & DIR_FORWARD) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, fDistance);
-		if (dwDirection & DIR_BACKWARD) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, -fDistance);
+		if (dwDirection & DIR_BACKWARD)
+		{
+			xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Look, -fDistance);
+		}
 		if (dwDirection & DIR_RIGHT) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, fDistance);
 		if (dwDirection & DIR_LEFT) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Right, -fDistance);
 		if (dwDirection & DIR_UP) xmf3Shift = Vector3::Add(xmf3Shift, m_xmf3Up, fDistance);
@@ -197,6 +200,8 @@ void CPlayer::Update(float fTimeElapsed)
 
 		else if (!(::IsZero(m_fVelocityXZ)) && m_fAcceleration > 2.3f)
 		{
+
+			m_pChild->m_pAnimationController->m_pAnimationSets[JOHNSON_ANIAMATION_RUN].m_fSpeed = m_fAcceleration / 3.3f;
 			m_iState = JOHNSON_ANIAMATION_RUN; 
 		}
 		else
@@ -356,7 +361,6 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	CGameObject* pGameObject =
 		CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
 			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson_Idle2_(1).bin", NULL, 1);
-
 
 	m_pSword = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
 			pd3dGraphicsRootSignature, "Model/Sword.bin", NULL, 0);

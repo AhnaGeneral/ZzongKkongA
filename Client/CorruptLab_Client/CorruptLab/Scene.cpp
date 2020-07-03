@@ -914,6 +914,7 @@ void CGameScene::Update(float fTimeElapsed)
 
 void CGameScene::ItemBoxCheck()
 {
+	int filed = CCollisionMgr::GetInstance()->m_iSceneProgress;
 	for (auto pObj : *m_pDynamicObjLists[OBJECT_TYPE_ITEMBOX])
 	{
 		XMFLOAT3 ObjPos = pObj->GetPosition();
@@ -938,12 +939,13 @@ void CGameScene::ItemBoxCheck()
 		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
 		if (Distance < 8)
 		{
-
-			int filed = CCollisionMgr::GetInstance()->m_iSceneProgress;
 			for (auto pMon : *m_pMonsterLists[filed - 1])
 				if (!pMon->IsPurified()) return;
 			ObjPos.y += 5.f;
 			CItemMgr::GetInstance()->GetItem(ITEM_TYPE_MAPSEGMENT, ObjPos);
+
+			if(CCollisionMgr::GetInstance()->m_iSceneProgress == 1 )
+			CCollisionMgr::GetInstance()->m_iSceneProgress = 2;
 
 		}
 	}
