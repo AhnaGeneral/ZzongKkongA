@@ -290,21 +290,21 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 			break;
 			if (CMgr_IndoorControl::GetInstance()->GetPasswordControl())
 			{
-		case'1':
-		case'2':
-		case'3':
-		case'4':
-		case'5':
-		case'6':
-		case'7':
-		case'8':
-		case'9':
-		case'0':
-			CMgr_IndoorControl::GetInstance()->InsertPassword(wParam-48);
-			break;
-		case VK_BACK:
-			CMgr_IndoorControl::GetInstance()->EraserPassword();
-			break;
+					case'1':
+				case'2':
+				case'3':
+				case'4':
+				case'5':
+				case'6':
+				case'7':
+				case'8':
+				case'9':
+				case'0':
+					CMgr_IndoorControl::GetInstance()->InsertPassword(wParam-48);
+					break;
+				case VK_BACK:
+					CMgr_IndoorControl::GetInstance()->EraserPassword();
+					break;
 			}
 		case VK_SPACE:
 			m_pPlayer->SetAttackState();

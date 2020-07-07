@@ -99,7 +99,8 @@ void CTosm::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pCont
 					int i = 0;
 			}
 		}
-		if (m_fDistanceToPlayer < 70 && m_iState != MONSTER_STATE_RETURNING)
+		if (m_fDistanceToPlayer < 70 && m_iState != MONSTER_STATE_RETURNING
+			&& CCollisionMgr::GetInstance()->CheckMonsterNotice(1))
 		{
 			m_bNotice = true;
 			m_iState = MONSTER_STATE_WALK;

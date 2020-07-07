@@ -301,7 +301,10 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 		pGameObject->m_xmf4Rotation = xmf4Rotation;
 		pGameObject->m_xmf3Scale =  Vector3::ScalarProduct(xmf3Scale, 1.8f, false);
 		pGameObject->m_xmf4x4Transform = xmmtxWorld;
-		pGameObject->SetScale(2, 2, 2);
+		if (index == MONSTER_TYPE_YANGMAL)
+			pGameObject->SetScale(2, 2, 2);
+		else
+			pGameObject->SetScale(1.5f, 1.5f, 1.5f);
 
 		pGameObject->UpdateTransform(NULL);
 		pGameObject->OnInitialize();

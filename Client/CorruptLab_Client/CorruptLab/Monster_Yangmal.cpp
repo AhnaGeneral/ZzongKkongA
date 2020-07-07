@@ -42,7 +42,8 @@ void CYangmal::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 					int i = 0;
 			}
 		}
-		if (m_fDistanceToPlayer < 70 && m_iState != MONSTER_STATE_RETURNING)
+		if (m_fDistanceToPlayer < 70 && m_iState != MONSTER_STATE_RETURNING
+			&& CCollisionMgr::GetInstance()->CheckMonsterNotice(0))
 		{
 			m_bNotice = true;
 			m_iState = MONSTER_STATE_WALK;

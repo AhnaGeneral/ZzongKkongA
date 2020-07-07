@@ -36,7 +36,7 @@ public:
 		}
 	}
 
-	
+	bool CheckMonsterNotice(int iType);
 	void InsertCollisionBoxes(BoundingOrientedBox box);
 	void SetPlayer(CPlayer* player) { m_pPlayer = player;  }
 

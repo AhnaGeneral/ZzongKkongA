@@ -18,6 +18,17 @@ void CCollisionMgr::Initialize(void)
 	m_pFiledCollision2[1].Extents = XMFLOAT3(5.f, 20.f, 140.f);
 }
 
+bool CCollisionMgr::CheckMonsterNotice(int iType)
+{
+	int notice = 0;
+	for (auto p : *m_pMonsterLists[iType])
+	{
+		if (p->m_bNotice) notice++;
+	}
+	if (notice <= 1) return true;
+	else return false;
+}
+
 void CCollisionMgr::InsertCollisionBoxes(BoundingOrientedBox box)
 {
 	m_pStaticCollisionlist[m_nSceneState].push_back(box);

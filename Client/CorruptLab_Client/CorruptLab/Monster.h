@@ -41,7 +41,6 @@ protected:
 	int				m_iMaxHP;
 	int				m_iCurrentHP;
 	int				m_iAtt ;
-	bool			m_bNotice ;
 	float			m_fDistanceToPlayer;
 	float			m_fSpeed;
 	float			m_fIdleTick;
@@ -56,6 +55,7 @@ protected:
 	///
 public:
 
+	bool			m_bNotice;
 	virtual void Initialize(XMFLOAT3 FiledPos, int iAtt);
 	bool		IsPurified() { return m_bIsPurified; }
 	int				m_iState = MONSTER_STATE_IDLE;
