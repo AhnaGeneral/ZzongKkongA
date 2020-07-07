@@ -894,14 +894,26 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 			}
 			if (m_pRadiationShader) m_pRadiationShader->Render(pd3dCommandList, pCamera);
 			
+			std::list<int>* plist  = CMgr_IndoorControl::GetInstance()->GetlistPassword();
+			std::list<int>::iterator iter = plist->begin();
 			for (int j = 0; j < 4; ++j)
 			{
-				if (!(CMgr_IndoorControl::GetInstance()->GetlistPassword()->empty()))
+				if (!(plist->empty()))
 				{
-					dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
-						->SetRadiationNumber(CMgr_IndoorControl::GetInstance()->GetlistPassword()->front());
-					CMgr_IndoorControl::GetInstance()->GetlistPassword()->pop_front();
+					if (iter != plist->end())
+					{
+						dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
+							->SetRadiationNumber(*iter);
+						iter++;
+					}
+					else
+						dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
+						->SetRadiationNumber(0);
 				}
+				else				
+					dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
+					->SetRadiationNumber(0);
+
 			}
 
 			for (int i = 0; i < 4; ++i)

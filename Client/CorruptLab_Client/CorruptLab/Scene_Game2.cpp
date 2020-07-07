@@ -291,34 +291,19 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 			if (CMgr_IndoorControl::GetInstance()->GetPasswordControl())
 			{
 		case'1':
-			CMgr_IndoorControl::GetInstance()->GetlistPassword()->push_back(1);
-			break;
 		case'2':
-			CMgr_IndoorControl::GetInstance()->GetlistPassword()->push_back(2);
-			break;
 		case'3':
-			CMgr_IndoorControl::GetInstance()->GetlistPassword()->push_back(3);
-			break;
 		case'4':
-			CMgr_IndoorControl::GetInstance()->GetlistPassword()->push_back(4);
-			break;
 		case'5':
-			CMgr_IndoorControl::GetInstance()->GetlistPassword()->push_back(5);
-			break;
 		case'6':
-			CMgr_IndoorControl::GetInstance()->GetlistPassword()->push_back(6);
-			break;
 		case'7':
-			CMgr_IndoorControl::GetInstance()->GetlistPassword()->push_back(7);
-			break;
 		case'8':
-			CMgr_IndoorControl::GetInstance()->GetlistPassword()->push_back(8);
-			break;
 		case'9':
-			CMgr_IndoorControl::GetInstance()->GetlistPassword()->push_back(9);
-			break;
 		case'0':
-			CMgr_IndoorControl::GetInstance()->GetlistPassword()->push_back(0);
+			CMgr_IndoorControl::GetInstance()->InsertPassword(wParam-48);
+			break;
+		case VK_BACK:
+			CMgr_IndoorControl::GetInstance()->EraserPassword();
 			break;
 			}
 		case VK_SPACE:

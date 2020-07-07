@@ -26,6 +26,18 @@ std::list<int>* CMgr_IndoorControl::GetlistPassword()
 	return listpassword;
 }
 
+void CMgr_IndoorControl::InsertPassword(int i)
+{
+	if(listpassword->size() < 4)
+		listpassword->push_back(i);
+}
+
+void CMgr_IndoorControl::EraserPassword()
+{
+	if (!listpassword->empty())
+		listpassword->pop_back();
+}
+
 void CMgr_IndoorControl::Destroy()
 {
 }

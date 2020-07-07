@@ -374,10 +374,10 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	m_pHandCollision = &(pGameObject->m_pBoundingBoxes[1]);
 	//pGameObject->m_xmf4Rotation
 
-	m_pSword->m_xmf4x4Transform = m_pDummy->m_xmf4x4Transform;
+//	m_pSword->m_xmf4x4Transform = m_pDummy->m_xmf4x4Transform;
 	m_pSword->m_xmf4x4Transform = Matrix4x4::Identity();
-	m_pSword->Rotate(0, 0, 180);
-	m_pSword->SetScale(2, 2, 2);
+	m_pSword->SetScale(1, 2, 2);
+	m_pSword->Rotate(-90, 0, 180);
 	SetChild(pGameObject, true);
 
 	OnInitialize();

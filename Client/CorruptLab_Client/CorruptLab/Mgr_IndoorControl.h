@@ -17,7 +17,11 @@ public:
 	int GetPasswordControl();
 	void SetpasswordControl(int _passwordControl);
 	std::list<int>* GetlistPassword();
-	
+
+	void InsertPassword(int i);
+	void EraserPassword();
+
+
 	static CMgr_IndoorControl* GetInstance(void)
 	{
 		if (m_pInstance == NULL)
