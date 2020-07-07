@@ -5,6 +5,9 @@
 #include "Mgr_Radiation.h"
 #include "Mgr_Item.h"
 #include "Shader_MinmapFog.h"
+#include "Mgr_IndoorControl.h"
+
+
 
 CPostProcessingShader::CPostProcessingShader()
 {
@@ -379,7 +382,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	m_pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_3.dds", 0);
 
 	m_pBaseUIShader = new CShader_BaseUI();
-	m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 5);
+	m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 6);
 	m_pBaseUIShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
 	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)m_pHPTexture, ROOT_PARAMETER_HP_TEX, true);
 
@@ -476,12 +479,15 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	
 	float UnberBoxSize = FRAME_BUFFER_HEIGHT / 5.0f;
 
-	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pInventoryTex, ROOT_PARAMETER_HP_TEX, true);
+	CTexture* pIndoorNumberBox = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pIndoorNumberBox->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/NumberBox.dds", 0);
+
+	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pIndoorNumberBox, ROOT_PARAMETER_HP_TEX, true);
 	
 	for (int i = 0; i < (int)nNumberCount;)
 	{
 		m_pIndoorNumberBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-		m_pIndoorNumberBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pInventoryTex);
+		m_pIndoorNumberBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pIndoorNumberBox);
 		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, UnberBoxSize, UnberBoxSize, 0.0f, 1.0f);
 		m_pIndoorNumberBox->SetMesh(mesh);
 		m_pIndoorNumberBox->SetAlpha(&m_Alpha);
@@ -538,7 +544,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	pRadiationCountTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/RadiationCount.dds", 0);
 
 	m_pRadiationShader = new CShader_Radiation();
-	m_pRadiationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 1);
+	m_pRadiationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 2);
 	m_pRadiationShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
 	m_pRadiationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pRadiationCountTexture, ROOT_PARAMETER_HP_TEX, true);
 
@@ -548,14 +554,31 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		m_RadiationCount = new CUI_RaditaionLevel(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 		m_RadiationCount->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pRadiationCountTexture);
 		m_RadiationCount->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-
 		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 30, 40, 0.0f, 1.0f);
-
 		m_RadiationCount->Set2DPosition(float((-FRAME_BUFFER_WIDTH / 2) + 25 *(i+1)), float((-FRAME_BUFFER_HEIGHT / 2) + 105));
 		m_RadiationCount->SetMesh(mesh);
 		m_RadiationCount->SetRadiationNumber(9);
 		m_RadiationLevels[i++] = m_RadiationCount;
 	}
+	CTexture* pIndoorNumbercountTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pIndoorNumbercountTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/NumberUI.dds", 0);
+	m_pRadiationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pIndoorNumbercountTexture, ROOT_PARAMETER_HP_TEX, true);
+
+	// 실내씬의 번호키 
+	m_IndoorNumberCounts = new CGameObject * [4];
+	CUI_RaditaionLevel* m_IndoorNumbercount;
+	for (int i = 0; i < 4;)
+	{
+		m_IndoorNumbercount = new CUI_RaditaionLevel(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+		m_IndoorNumbercount->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pIndoorNumbercountTexture);
+		m_IndoorNumbercount->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 80, 120, 0.0f, 1.0f);
+		m_IndoorNumbercount->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + (FRAME_BUFFER_WIDTH / 3) + (i * UnberBoxSize),
+			(-FRAME_BUFFER_HEIGHT / 2) + (FRAME_BUFFER_HEIGHT / 3));
+		m_IndoorNumbercount->SetMesh(mesh);
+		m_IndoorNumberCounts[i++] = m_IndoorNumbercount;
+	}
+
 	// =============================================================================================================
 
 	ReleaseUploadBuffers();
@@ -863,11 +886,29 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 	// ==================================================================
 	if ((npipelinestate == 1))
 	{
-		//if (m_IndoorGreeting) m_IndoorGreeting->Render(pd3dCommandList, pCamera);
-	     for (int i = 0; i < int(nNumberCount); ++i)
-	     {
-	     	 m_ppIndoorScenenumberBox[i]->Render(pd3dCommandList, 0);
-	     }
+		if (CMgr_IndoorControl::GetInstance()->GetPasswordControl())
+		{//if (m_IndoorGreeting) m_IndoorGreeting->Render(pd3dCommandList, pCamera);
+			for (int i = 0; i < int(nNumberCount); ++i)
+			{
+				m_ppIndoorScenenumberBox[i]->Render(pd3dCommandList, 0);
+			}
+			if (m_pRadiationShader) m_pRadiationShader->Render(pd3dCommandList, pCamera);
+			
+			for (int j = 0; j < 4; ++j)
+			{
+				if (!(CMgr_IndoorControl::GetInstance()->GetlistPassword()->empty()))
+				{
+					dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
+						->SetRadiationNumber(CMgr_IndoorControl::GetInstance()->GetlistPassword()->front());
+					CMgr_IndoorControl::GetInstance()->GetlistPassword()->pop_front();
+				}
+			}
+
+			for (int i = 0; i < 4; ++i)
+			{
+				m_IndoorNumberCounts[i]->Render(pd3dCommandList, 0);
+			}
+		}
 	}
 	// ==================================================================
 

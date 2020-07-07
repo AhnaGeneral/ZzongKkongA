@@ -35,6 +35,17 @@ public:
 
 };
 
+class Shader_TextureBasic : public Shader_Basic
+{
+public:
+    Shader_TextureBasic();
+    virtual ~Shader_TextureBasic();
+
+public:
+    virtual D3D12_SHADER_BYTECODE    CreateVertexShader(ID3DBlob** ppd3dShaderBlob);
+    virtual D3D12_SHADER_BYTECODE    CreatePixelShader(ID3DBlob** ppd3dShaderBlob);
+
+};
 class Shader_WaterNoise : public Shader_Noise
 {
 public:

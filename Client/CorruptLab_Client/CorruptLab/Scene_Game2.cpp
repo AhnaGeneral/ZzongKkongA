@@ -394,7 +394,7 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	//	m_pPasswordobj->Render(pd3dCommandList, 0);
 	//}
 
-	//if (m_IndoorWall) m_IndoorWall->Render(pd3dCommandList, pCamera); 
+	if (m_IndoorWall) m_IndoorWall->Render(pd3dCommandList, pCamera); 
 	if (m_pBoss)
 	{
 		m_pBoss->Update(m_fElapsedTime, NULL, NULL);
