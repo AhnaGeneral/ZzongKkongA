@@ -219,3 +219,11 @@ PS_EMMISIVE_MRT_OUTPUT BasicShaderPS(VS_BASIC_OUTPUT input)
 	output.EmmisiveMRT = float4(0.1, 0.6, 0.9, 1);
 	return output; 
 }
+
+
+PS_EMMISIVE_MRT_OUTPUT BasicTextureShaderPS(VS_BASIC_OUTPUT input)
+{
+	PS_EMMISIVE_MRT_OUTPUT output;
+	output.EmmisiveMRT = float4(0.1, 0.6, 0.9, 1);
+	return output;
+}

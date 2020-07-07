@@ -100,6 +100,8 @@
 #define OBJECT_INDOOR_TYPE_CHAIR        8
 #define OBJECT_INDOOR_TYPE_BOARD        9
 #define OBJECT_INDOOR_TYPE_DOOR         10
+#define OBJECT_INDOOR_TYPE_PASSWORD     11
+
 
 
 

@@ -6,6 +6,7 @@
 class CBoss;
 class CFloor;
 class Shader_Basic; 
+class Shader_TextureBasic;
 class CGameScene2 : public CGameScene
 {
 public:
@@ -19,10 +20,12 @@ public:
 
 	CShader_Effect* m_pTestEffect;
 
-	CGameObject** m_IndoorWallLine = NULL;
-	CGameObject* m_IndoorWallLines = NULL;
+	CGameObject** m_IndoorWallLine = nullptr;
+	CGameObject* m_IndoorWallLines = nullptr;
+	//CGameObject* m_pPasswordobj = nullptr; 
+	//Shader_TextureBasic* Shader_Password = nullptr;
 	//Shader_Basic* pShader = NULL; 
-	CGameObject* m_IndoorWall = NULL;
+	CGameObject* m_IndoorWall = nullptr;
 
 	int  n_ReactItem;
 	float itemRange;
@@ -49,6 +52,7 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Update(float fTimeElapsed);
 
+	void PassWordCheck(); 
 	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd);
 
 	virtual void AnimateObjects(float fTimeElapsed);
@@ -77,10 +81,11 @@ private:
 	CSoftParticleShader       * m_pSoftParticleShader;
 	CShader_SpecialFog        * m_pSpecialFogShader;
 
+	//CTexture                  * m_pPassWordTexture; 
 public:
-	CCamera* m_pShadowCamera;
-	CTexture* m_pShadowMap;
-	CTexture* m_pDepthTex;
+	CCamera                   * m_pShadowCamera;
+	CTexture                  * m_pShadowMap;
+	CTexture                  * m_pDepthTex;
 
 
 

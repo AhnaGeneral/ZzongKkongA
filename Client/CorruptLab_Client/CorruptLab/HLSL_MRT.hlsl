@@ -152,4 +152,4 @@ float4 PSUI(VS_TEXTURED_OUTPUT input) :SV_TARGET //backbuffer
 	if (gnObjectID == 6)  cColor = gtxtEmmisive.Sample(gSamplerState, input.uv);
 
 	return cColor;
-}
+}	

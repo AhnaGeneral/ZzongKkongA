@@ -569,7 +569,7 @@ CGameObject* CGameObject::LoadGeometryAndAnimationFromFile(ID3D12Device* pd3dDev
 void CGameObject::LoadBoundingBox(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, CGameObject* pGameObject, FILE* pInFile)
 {
 	BYTE nStrLength = 0;
-	char pstrToken[64] = { '\0' };
+	char pstrToken[80] = { '\0' };
 
 	(UINT)::fread(&nStrLength, sizeof(BYTE), 1, pInFile);
 	(UINT)::fread(pstrToken, sizeof(char), nStrLength, pInFile);

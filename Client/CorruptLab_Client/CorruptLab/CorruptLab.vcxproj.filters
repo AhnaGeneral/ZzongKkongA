@@ -197,6 +197,9 @@
     <Filter Include="05.Component\08.Animation">
       <UniqueIdentifier>{4bc3aa1e-70c8-4b3a-883d-43ad0074c13c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="09.GameManager\04. Mgr_IndoorControl">
+      <UniqueIdentifier>{dca43a0d-db9c-486d-a793-4debdc189c14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -400,6 +403,9 @@
     <ClInclude Include="CInstancingStandardShader.h">
       <Filter>04.Shader\05.Shader_Standard\01.Shader_InstancingStandard</Filter>
     </ClInclude>
+    <ClInclude Include="Mgr_IndoorControl.h">
+      <Filter>09.GameManager\04. Mgr_IndoorControl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -590,6 +596,9 @@
     </ClCompile>
     <ClCompile Include="CInstancingStandardShader.cpp">
       <Filter>04.Shader\05.Shader_Standard\01.Shader_InstancingStandard</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr_IndoorControl.cpp">
+      <Filter>09.GameManager\04. Mgr_IndoorControl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
