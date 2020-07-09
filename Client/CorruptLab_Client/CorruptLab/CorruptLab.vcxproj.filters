@@ -200,6 +200,9 @@
     <Filter Include="09.GameManager\04. Mgr_IndoorControl">
       <UniqueIdentifier>{dca43a0d-db9c-486d-a793-4debdc189c14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="09.GameManager\05.Mgr_Narration">
+      <UniqueIdentifier>{d63defad-a694-4e1d-880d-f5c84ae3e927}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -406,6 +409,9 @@
     <ClInclude Include="Mgr_IndoorControl.h">
       <Filter>09.GameManager\04. Mgr_IndoorControl</Filter>
     </ClInclude>
+    <ClInclude Include="CNarrationMgr.h">
+      <Filter>09.GameManager\05.Mgr_Narration</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -599,6 +605,9 @@
     </ClCompile>
     <ClCompile Include="Mgr_IndoorControl.cpp">
       <Filter>09.GameManager\04. Mgr_IndoorControl</Filter>
+    </ClCompile>
+    <ClCompile Include="CNarrationMgr.cpp">
+      <Filter>09.GameManager\05.Mgr_Narration</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

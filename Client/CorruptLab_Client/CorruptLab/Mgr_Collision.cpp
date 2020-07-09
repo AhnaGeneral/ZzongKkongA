@@ -23,7 +23,7 @@ bool CCollisionMgr::CheckMonsterNotice(int iType)
 	int notice = 0;
 	for (auto p : *m_pMonsterLists[iType])
 	{
-		if (p->m_bNotice) notice++;
+		if (p->m_bNotice && p->m_iState != MONSTER_STATE_STUN) notice++;
 	}
 	if (notice <= 1) return true;
 	else return false;

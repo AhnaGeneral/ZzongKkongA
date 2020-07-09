@@ -2,6 +2,7 @@
 #include "Shader_BaseUI.h"
 #include "Shader_Item.h"
 #include "Shader_Radiation.h"
+#include "CNarrationMgr.h"
 #include "Mgr_Radiation.h"
 #include "Mgr_Item.h"
 #include "Shader_MinmapFog.h"
@@ -60,6 +61,9 @@ CPostProcessingShader::~CPostProcessingShader()
 {
 	ReleaseShaderVariables();
 	ReleaseObjects();
+
+	CNarrationMgr::GetInstance()->Destroy();
+
 }
 
 D3D12_DEPTH_STENCIL_DESC CPostProcessingShader::CreateDepthStencilState()
@@ -581,6 +585,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 
 	// =============================================================================================================
 
+	CNarrationMgr::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	ReleaseUploadBuffers();
 }
 
@@ -776,7 +781,7 @@ void CPostProcessingShader::ReleaseUploadBuffers()
 {
 }
 
-void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int npipelinestate)
+void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int npipelinestate, float fElapsedTime)
 {
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
 
@@ -795,10 +800,13 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 	if (m_pLightTexture) m_pLightTexture->UpdateShaderVariables(pd3dCommandList);
 	if (m_pShadowTexture) m_pShadowTexture->UpdateShaderVariables(pd3dCommandList);
 
+
+
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
 
 	OnPrepareRender(pd3dCommandList, 2);
+
 
 	if (m_nMRTSwitch)
 	{
@@ -810,7 +818,10 @@ void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, C
 			}
 		}
 	}
+
 	UIRender(pd3dCommandList, pCamera, npipelinestate);
+
+	CNarrationMgr::GetInstance()->Update(fElapsedTime, pd3dCommandList, pCamera);
 }
 
 void CPostProcessingShader::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
