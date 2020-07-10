@@ -55,24 +55,24 @@ CGameScene2::~CGameScene2()
 void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	m_pFloor = new CFloor(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-	m_pFloor->SetPosition(XMFLOAT3(0, 0, 0));
+	m_pFloor->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
-	XMFLOAT3 vUp = XMFLOAT3(0, 1, 0);
-	XMFLOAT3 vRight = XMFLOAT3(-1, 0, 0);
-	XMFLOAT3 m_xmf3Look = XMFLOAT3(0, -1, 0.01f);
+	XMFLOAT3 vUp = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	XMFLOAT3 vRight = XMFLOAT3(-1.0f, 0.0f, 0.0f);
+	XMFLOAT3 m_xmf3Look = XMFLOAT3(0.0f, -0.8f, 0.01f);
 	XMFLOAT3 m_xmf3Right = Vector3::CrossProduct(vUp, m_xmf3Look);
 	XMFLOAT3 m_xmf3Up = Vector3::CrossProduct(m_xmf3Look, m_xmf3Right);
 
-	m_pShadowCamera = new CSunCamera(XMFLOAT3(-20.f, 150.f, 0), m_xmf3Look, m_xmf3Right, m_xmf3Up);
+	m_pShadowCamera = new CSunCamera(XMFLOAT3(-20.f, 200.f, 0.f), m_xmf3Look, m_xmf3Right, m_xmf3Up);
 
 	CShader* TexcoordShader = new CTexcoordStandardShader();
 	TexcoordShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	TexcoordShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	TexcoordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16
-	
+
 	CGameObject* pBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
 		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Monster/Boss_Idle.bin", NULL, 1);
-	
+
 	m_pBoss = new CBoss();
 	m_pBoss->SetChild(pBossModel);
 	m_pBoss->SetPosition(XMFLOAT3(0, 0, 0));
@@ -84,7 +84,7 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	//PlaneLineShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 2); //16
 
 	m_IndoorWall = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
-		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Indoor2.bin", TexcoordShader, 0);
+		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Indoor2_(1).bin", TexcoordShader, 0);
 	m_IndoorWall->SetPosition(0.f, 0.0f, 0.f);
 	m_IndoorWall->SetScale(63.53762f, 21.115f, 77.93047f);
 
@@ -94,7 +94,7 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	CTriangleRect* wirthMesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 0,
 		FRAME_BUFFER_HEIGHT / 7.f, FRAME_BUFFER_WIDTH / 7.0f, 1.0f);
 
-	m_IndoorWallLine = new CGameObject * [4];
+	m_IndoorWallLine = new CGameObject * [5];
 	Shader_Basic* pShader = new Shader_Basic();
 	pShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	pShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -103,19 +103,26 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_IndoorWallLines = new CGameObject();
 	m_IndoorWallLines->SetShader(pShader);
 	m_IndoorWallLines->SetMesh(wirthMesh);
-	m_IndoorWallLines->SetScale(0.f, 0.007f, 1.0f);
-	//m_IndoorWallLines->Rotate(0.0f, 10, 0);
+	m_IndoorWallLines->SetScale(0.f, 0.007f, 0.3f);
 	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	m_IndoorWallLines->SetPosition(102, 4.f, 0);
-
+	m_IndoorWallLines->SetPosition(102, 4.f, +40);
 	m_IndoorWallLine[0] = m_IndoorWallLines;
-	XMFLOAT3 Axis = XMFLOAT3(0.0f, 1.f, 0.0); 
+
+	m_IndoorWallLines = new CGameObject();
+	m_IndoorWallLines->SetShader(pShader);
+	m_IndoorWallLines->SetMesh(wirthMesh);
+	m_IndoorWallLines->SetScale(0.f, 0.007f, 0.3f);
+	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_IndoorWallLines->SetPosition(102, 4.f, -30);
+	m_IndoorWallLine[4] = m_IndoorWallLines;
+
+
+	XMFLOAT3 Axis = XMFLOAT3(0.0f, 1.f, 0.0);
 	m_IndoorWallLines = new CGameObject();
 	m_IndoorWallLines->SetShader(pShader);
 	m_IndoorWallLines->SetMesh(wirthMesh);
 	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	m_IndoorWallLines->SetScale(0.f, 0.007f, 1.0f);
-	//m_IndoorWallLines->Rotate(0.0f, 10, 0);
+	m_IndoorWallLines->SetScale(0.f, 0.007f, 0.6f);
 	m_IndoorWallLines->SetPosition(-102, 4.f, 0);
 
 	m_IndoorWallLine[1] = m_IndoorWallLines;
@@ -132,24 +139,8 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_IndoorWallLines->SetMesh(lenghtMesh);
 	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	m_IndoorWallLines->SetScale(1.2f, 0.007f, 0.0f);
-	m_IndoorWallLines->SetPosition(0.0f , 4.f, -62.0f);
+	m_IndoorWallLines->SetPosition(0.0f, 4.f, -62.0f);
 	m_IndoorWallLine[3] = m_IndoorWallLines;
-
-	//m_pPassWordTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	//m_pPassWordTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Geometry/Noise/fire01.dds", 0);
-
-	//Shader_Password = new  Shader_TextureBasic();
-	//Shader_Password->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
-	//Shader_Password->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	//Shader_Password->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1); //16
-	//Shader_Password->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pPassWordTexture, ROOT_PARAMETER_EFFECT, false);
-
-	//m_pPasswordobj = new CGameObject();
-	//m_pPasswordobj->SetShader(Shader_Password);
-	//m_pPasswordobj->SetMesh(lenghtMesh);
-	//m_pPasswordobj->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	//m_pPasswordobj->SetScale(1.0f, 1.0, 0.0f);
-	//m_pPasswordobj->SetPosition(0.0f, 0.0f, 0.0f);
 
 	PlaceObjectsFromFile(pd3dDevice, m_pd3dGraphicsRootSignature, pd3dCommandList);
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -220,7 +211,7 @@ void CGameScene2::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graphics
 
 void CGameScene2::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
 		//m_IndoorWallLine[i]->Rotate(0, 10 + (i) * 500, 0);
 		m_IndoorWallLine[i]->UpdateShaderVariable(pd3dCommandList, &(m_IndoorWallLine[i]->m_xmf4x4World));
@@ -301,10 +292,14 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 				case'8':
 				case'9':
 				case'0':
-					CMgr_IndoorControl::GetInstance()->InsertPassword(wParam-48);
+					CMgr_IndoorControl::GetInstance()->InsertPassword(wParam - 48);
 					break;
 				case VK_BACK:
 					CMgr_IndoorControl::GetInstance()->EraserPassword();
+					break;
+				case VK_RETURN:
+					bool Is_True = CMgr_IndoorControl::GetInstance()->ConfirmPassword();
+					CMgr_IndoorControl::GetInstance()->SetThatIsRightPassword(Is_True);
 					break;
 			}
 		case VK_SPACE:
@@ -414,7 +409,7 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 		}
 	}
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
 		m_IndoorWallLine[i]->UpdateTransform(NULL);
 		m_IndoorWallLine[i]->Render(pd3dCommandList, pCamera, 0);

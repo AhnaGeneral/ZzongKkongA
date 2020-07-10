@@ -68,6 +68,8 @@ protected:
 	XMFLOAT4X4		               m_xmf4x4OrthoView;
 	XMFLOAT4X4                     m_xmf4x4Ortho;
 
+	bool                           m_bPasswordRenderControl = true;
+
 public:
 
 	CPostProcessingShader();

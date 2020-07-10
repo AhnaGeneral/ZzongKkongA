@@ -176,6 +176,7 @@
     <ClInclude Include="Mesh_Skinned.h" />
     <ClInclude Include="Mesh_SkyBox.h" />
     <ClInclude Include="Mesh_Terrain.h" />
+    <ClInclude Include="Object_Door.h" />
     <ClInclude Include="Object_DrugMaker.h" />
     <ClInclude Include="Object_DynamicObj.h" />
     <ClInclude Include="Object_Effect.h" />
@@ -253,6 +254,7 @@
     <ClCompile Include="Mesh_Skinned.cpp" />
     <ClCompile Include="Mesh_SkyBox.cpp" />
     <ClCompile Include="Mesh_Terrain.cpp" />
+    <ClCompile Include="Object_Door.cpp" />
     <ClCompile Include="Object_DrugMaker.cpp" />
     <ClCompile Include="Object_DynamicObj.cpp" />
     <ClCompile Include="Object_Effect.cpp" />

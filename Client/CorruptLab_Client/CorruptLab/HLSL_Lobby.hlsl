@@ -14,7 +14,8 @@ float4 VSLobbyScene (uint nVertexID : SV_VertexID) : SV_POSITION
 
 float4 PSLobbyScene(float4 position : SV_POSITION) : SV_Target
 {
-	float4 LobbyTex = gtxtLobbyTex[int2(position.xy)];
-
+	float4 LobbyTex = 
+	gtxtLobbyTex[int2(position.xy)];
+	//gtxtLobbyTex.Sample(gSamplerState, int2(position.xy));
 	return(LobbyTex);
 }

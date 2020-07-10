@@ -8,6 +8,7 @@
 #include "Shader_LightMRT.h"
 #include "CShader_ShadowMRT.h"
 
+
 class CGameFramework
 {
 public:

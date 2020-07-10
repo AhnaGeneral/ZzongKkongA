@@ -76,7 +76,10 @@
 #define OBJECT_TYPE_HOUSE				4
 #define OBJECT_TYPE_TREE				5
 #define OBJECT_TYPE_BRIDGE				6
-#define OBJECT_TYPE_INDOORWALL			7 // Indoor Scene
+#define OBJECT_TYPE_FENCE2			7 // Indoor Scene
+#define OBJECT_TYPE_SIGN1			8 // Indoor Scene
+#define OBJECT_TYPE_SIGN2			9 // Indoor Scene
+
 
 
 // Dynamic
@@ -107,7 +110,10 @@
 
 
 
-#define OBJECT_TYPE_LABORATOR			0
+#define OBJECT_INDOOR_TYPE_LABORATOR	0
+#define OBJECT_INDOOR_TYPE_DRUGMAKER	1
+#define OBJECT_INDOOR_TYPE_DOOROPEN  	2
+
 
 
 
@@ -127,14 +133,13 @@
 #define MONSTER_STATE_PURIFYING			6
 #define MONSTER_STATE_BACK				7
 
+
 /*JohnsonAnimation*/
 //---------------------------------------------------
 #define JOHNSON_ANIAMATION_IDLE			0
 #define JOHNSON_ANIAMATION_WALK			1
 #define JOHNSON_ANIAMATION_ATTACK		2
 #define JOHNSON_ANIAMATION_RUN  		3
-
-
 
 
 /*ItemType*/

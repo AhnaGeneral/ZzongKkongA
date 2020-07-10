@@ -895,36 +895,57 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
 
 	// ==================================================================
+
 	if ((npipelinestate == 1))
 	{
-		if (CMgr_IndoorControl::GetInstance()->GetPasswordControl())
+
+		if (CMgr_IndoorControl::GetInstance()->GetPasswordControl() && m_bPasswordRenderControl)
 		{//if (m_IndoorGreeting) m_IndoorGreeting->Render(pd3dCommandList, pCamera);
+
 			for (int i = 0; i < int(nNumberCount); ++i)
 			{
 				m_ppIndoorScenenumberBox[i]->Render(pd3dCommandList, 0);
 			}
 			if (m_pRadiationShader) m_pRadiationShader->Render(pd3dCommandList, pCamera);
-			
-			std::list<int>* plist  = CMgr_IndoorControl::GetInstance()->GetlistPassword();
+
+			std::list<int>* plist = CMgr_IndoorControl::GetInstance()->GetlistPassword();
 			std::list<int>::iterator iter = plist->begin();
+
 			for (int j = 0; j < 4; ++j)
 			{
 				if (!(plist->empty()))
 				{
-					if (iter != plist->end())
+					if (!(CMgr_IndoorControl::GetInstance()->GetExecuteConfirmControl()))
 					{
-						dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
-							->SetRadiationNumber(*iter);
-						iter++;
+						if (iter != plist->end())
+						{
+							dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
+								->SetRadiationNumber(*iter);
+							iter++;
+						}
+						else
+							dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
+							->SetRadiationNumber(0);
 					}
 					else
-						dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
-						->SetRadiationNumber(0);
+					{
+						if (!(CMgr_IndoorControl::GetInstance()->GetThatIsRightPassword()))
+						{
+							plist->clear();
+							CMgr_IndoorControl::GetInstance()->SetExecuteConfirmControl(false);
+						}
+						else
+						{
+							CMgr_IndoorControl::GetInstance()->ExcuteAnimationDoor();
+							CMgr_IndoorControl::GetInstance()->SetExecuteConfirmControl(false);
+							m_bPasswordRenderControl = false;
+
+						}
+					}
 				}
-				else				
+				else
 					dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
 					->SetRadiationNumber(0);
-
 			}
 
 			for (int i = 0; i < 4; ++i)

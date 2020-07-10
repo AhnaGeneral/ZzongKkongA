@@ -412,6 +412,9 @@
     <ClInclude Include="CNarrationMgr.h">
       <Filter>09.GameManager\05.Mgr_Narration</Filter>
     </ClInclude>
+    <ClInclude Include="Object_Door.h">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -608,6 +611,9 @@
     </ClCompile>
     <ClCompile Include="CNarrationMgr.cpp">
       <Filter>09.GameManager\05.Mgr_Narration</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_Door.cpp">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

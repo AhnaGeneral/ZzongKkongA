@@ -5,6 +5,7 @@
 #include "Shader_Standard.h"
 #include "Object_DrugMaker.h"
 #include "Mgr_Scene.h"
+#include "Object_Door.h"
 
 
 #define MAXSTATICEVEC 100 
@@ -22,7 +23,7 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
 		m_pStaticObjLists[i] = new vector<CGameObject*>();
 
-	m_nDynamicObjectTypeNum = 1;
+	m_nDynamicObjectTypeNum = 3;
 	m_pDynamicObjLists = new vector<CDynamicObject*> * [m_nDynamicObjectTypeNum];
 
 	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
@@ -92,7 +93,20 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	CShader* alphaShader = new CIndoorSceneTransparentedStandardShader();
 	alphaShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	Alpha->SetShader(0, alphaShader);
-	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Laboratorys.bin", OBJECT_TYPE_LABORATOR);
+	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Laboratorys.bin", OBJECT_INDOOR_TYPE_LABORATOR);
+
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, 
+		pd3dGraphicsRootSignature, "Model/DrugMaker.bin", NULL, 0); //[ DrugMakers ]
+	CGameObject* IndoorDragMarkerAlpha = pDiverObject->FindFrame("cylinderAlpha");
+	CShader* IndoorDragMarkerShader = new CTransparentedStandardShader();
+	IndoorDragMarkerShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
+	IndoorDragMarkerAlpha->SetShader(0, IndoorDragMarkerShader);
+	PlaceDynamicFromFile(pDiverObject,"ObjectsData/IndoorDrugMakers.bin" , OBJECT_INDOOR_TYPE_DRUGMAKER);
+
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Door_Opening.bin", NULL, 1);
+	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Door_OpeningT.bin", OBJECT_INDOOR_TYPE_DOOROPEN);
+
 }
 
 void CGameScene2::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index)
@@ -168,9 +182,9 @@ void CGameScene2::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int 
 		
 		switch (index)
 		{
-		case OBJECT_TYPE_RESEARCHER:
-			//pGameObject = new CResearcher(i);
-			break;
+		case OBJECT_INDOOR_TYPE_DOOROPEN:
+			pGameObject = new CDoor();
+			break; 
 		default:
 			pGameObject = new CDynamicObject();
 			break;
@@ -194,4 +208,10 @@ void CGameScene2::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int 
 void CGameScene2::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index,
 	ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
+}
+
+void CGameScene2::ExcuteAnimationDoor()
+{
+	for (auto& a : *m_pDynamicObjLists[OBJECT_INDOOR_TYPE_DOOROPEN])
+		(dynamic_cast<CDoor*>(a))->Open();
 }

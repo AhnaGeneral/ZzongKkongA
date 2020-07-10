@@ -10,6 +10,8 @@
 #include "Mgr_Scene.h"
 #include "CNarrationMgr.h"
 #include "Object_Camera.h"
+#include "Mgr_IndoorControl.h"
+
 CGameFramework::CGameFramework()
 {
 	m_pdxgiFactory = NULL;
@@ -765,6 +767,10 @@ void CGameFramework::BuildObjects()
 	m_pScene[SCENE_STAGE_INDOOR] = new CGameScene2();
 	m_pScene[SCENE_STAGE_INDOOR]->SetGraphicsRootSignature(m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature());
 	dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pPlayer = m_pPlayer;
+	
+	CMgr_IndoorControl::GetInstance()->SetIndoorSceneAndLight
+	(dynamic_cast<CGameScene2*> (m_pScene[SCENE_STAGE_INDOOR]), m_pLightProcessingShader);
+
 	m_pLightProcessingShader->SetPlayer(m_pPlayer);
 	m_pScene[SCENE_STAGE_INDOOR]->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 	//dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pShadowCamera = dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pShadowCamera;

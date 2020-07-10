@@ -64,7 +64,7 @@ public:
 	void PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index);
 	void PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index);
 	void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
-
+	void ExcuteAnimationDoor();
 private:
 
 	bool					    m_bPipelineStateIndex;
@@ -73,6 +73,9 @@ private:
 	int						    m_nDynamicObjectTypeNum;
 	int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
 	int						    m_nMonsterTypeNum;      // 몬스터 종류 개수
+	CDynamicObject            * m_pIndoorDrugMaker = nullptr;
+	
+	                
 
 	vector<CGameObject*>     ** m_pStaticObjLists;
 	vector<CDynamicObject*>  ** m_pDynamicObjLists;
