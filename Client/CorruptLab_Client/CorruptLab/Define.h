@@ -76,9 +76,9 @@
 #define OBJECT_TYPE_HOUSE				4
 #define OBJECT_TYPE_TREE				5
 #define OBJECT_TYPE_BRIDGE				6
-#define OBJECT_TYPE_FENCE2			7 // Indoor Scene
-#define OBJECT_TYPE_SIGN1			8 // Indoor Scene
-#define OBJECT_TYPE_SIGN2			9 // Indoor Scene
+#define OBJECT_TYPE_FENCE2			    7 
+#define OBJECT_TYPE_WARNING		        8 
+
 
 
 

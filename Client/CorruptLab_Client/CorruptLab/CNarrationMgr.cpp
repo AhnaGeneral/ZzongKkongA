@@ -77,7 +77,7 @@ void CNarrationMgr::Destroy()
 	{
 		m_pNarrations.find(i+1)->second->Release();
 	}
-	if (m_pShader) m_pShader->Release();
+	//if (m_pShader) m_pShader->Release();
 
 	if (m_pInstance)
 	{

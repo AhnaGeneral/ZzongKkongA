@@ -101,12 +101,7 @@ void ParticleSystemObject::UpdateShaderVariables(ID3D12Device* pd3dDevice, ID3D1
 	}
 
 	memcpy(m_pd3dVertices, (void*)m_Vertices, (sizeof(VertexType) * m_vertexCount));
-	//m_pd3dcbVertexBuffer = CreateBufferResource(pd3dDevice, pd3dCommandList, m_Vertices, 
-	//	m_nStride * m_vertexCount, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer);
 
-	//m_d3dVertexBufferView.BufferLocation = m_pd3dcbVertexBuffer->GetGPUVirtualAddress();
-	//m_d3dVertexBufferView.StrideInBytes = m_nStride;
-	//m_d3dVertexBufferView.SizeInBytes = m_nStride * m_vertexCount;
 }
 
 void ParticleSystemObject::ReleaseShaderVariables()
@@ -356,17 +351,6 @@ void ParticleSystemObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CC
 
 void ParticleSystemObject::Shutdown()
 {
-	//if (m_pd3dcbVertexBuffer)
-	//{
-	//	m_pd3dcbVertexBuffer->Release();
-	//	m_pd3dcbVertexBuffer = nullptr; 
-	//}
-
-	//if (m_pd3dcbIndexBuffer)
-	//{
-	//	m_pd3dcbIndexBuffer->Release();
-	//	m_pd3dcbIndexBuffer = nullptr;
-	//}
 }
 
 void ParticleSystemObject::Frame(ID3D12Device* pd3dDevice, 

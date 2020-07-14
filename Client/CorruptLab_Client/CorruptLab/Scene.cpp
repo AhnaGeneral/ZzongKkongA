@@ -48,6 +48,7 @@ CGameScene::CGameScene()
 
 	m_pShadowMap = NULL;
 	m_pDepthTex = NULL;
+	 
 }
 
 CGameScene::~CGameScene()
@@ -98,6 +99,8 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_ParticleSystemObject->InitializeParticleSystem();
 	m_ParticleSystemObject->InitializeBuffer(pd3dDevice, pd3dCommandList);
 	m_ParticleSystemObject->CreateParticleShaderTexture(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+
+
 	
 }
 
@@ -851,7 +854,6 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 //		m_ParticleSystemObject->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
 
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
-
 	//if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
 	if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
 	if (m_pSpecialFogShader) m_pSpecialFogShader->Render(pd3dCommandList, pCamera);

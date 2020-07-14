@@ -20,7 +20,7 @@
 
 void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_nStaticObjectTypeNum = 8;
+	m_nStaticObjectTypeNum = 9;
 	m_pStaticObjLists = new vector<CGameObject*>*[m_nStaticObjectTypeNum];
 
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -80,15 +80,13 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Fence2T.bin", OBJECT_TYPE_FENCE2);
 
 	////Bridges------------------------------------------
-	//pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Sign1M.bin", NULL, 0);
-	//PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Sign1T.bin", OBJECT_TYPE_SIGN1);
-	////Bridges------------------------------------------
-	//pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Sign2M.bin", NULL, 0);
-	//PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Sign2T.bin", OBJECT_TYPE_SIGN2);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/warningBoard.bin", NULL, 0);
+	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/warningT.bin", OBJECT_TYPE_WARNING);
+
+
 	/*Dynamic*/
 	//ItemBox--------------------------------------------
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Box_Opening.bin", NULL, 2);
-
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/ItemBoxes.bin", OBJECT_TYPE_ITEMBOX);
 
 
@@ -103,11 +101,7 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 
 	//Researcher------------------------------------------------------
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Researcher.bin", NULL, 2);
-
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Researchers.bin", OBJECT_TYPE_RESEARCHER);
-
-
-
 
 	/*Monster*/
 	//Yangmal-------------------------------------------------
