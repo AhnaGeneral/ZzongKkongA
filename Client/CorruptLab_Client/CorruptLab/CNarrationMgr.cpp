@@ -37,8 +37,8 @@ void CNarrationMgr::Initialize(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, wc, 0);
 		m_pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTexture, ROOT_PARAMETER_HP_TEX, 0);
 		pNarration->SetTexture(pTexture);
-		CMesh* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 511, 176, 0.0f, 1.0f);
-		pNarration->Set2DPosition(0, 100);
+		CMesh* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 1200, 500, 0.0f, 1.0f);
+		pNarration->Set2DPosition(0, -150);
 		pNarration->SetMesh(mesh);
 
 		pNarration->CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -62,12 +62,22 @@ void CNarrationMgr::Update(float fElapsedTime, ID3D12GraphicsCommandList* pd3dCo
 		m_pShader->Render(pd3dCommandList, pCamera, 0);
 		m_pNarrations.find(m_iCurrentNum)->second->Render(pd3dCommandList, pCamera, 0);
 		m_fLifetime += fElapsedTime;
-		if (m_fLifetime > 3.f)
+		if (m_fLifetime > 8.f)
 		{
 			m_bRender = false;
 			m_fLifetime = 0.0f;
 			if (m_iCurrentNum == 4) TurnOnNarration(5);
 		}
+	}
+}
+
+void CNarrationMgr::Skip()
+{
+	if (m_bRender)
+	{
+		m_bRender = false;
+		m_fLifetime = 0.0f;
+		if (m_iCurrentNum == 4) TurnOnNarration(5);
 	}
 }
 

@@ -244,7 +244,7 @@ PS_NONLIGHT_MRT_OUTPUT SpecialFogPixelShader(PS_FOG_INPUT input)
 		fDepthDistance = saturate(1 - (fDepthDistance / 150.f) ); // 0.7 //0.8 //0.9 
 		//fDepthDistance *= 100; //0.3  //0.2 // 0.1 ..
 		//fDepthDistance/= 
-		output.NonLight.a -= fDepthDistance;
+		output.NonLight.a -= fDepthDistance + 0.2f;
 	}
 	output.NonLight.a /= fogTime;
 

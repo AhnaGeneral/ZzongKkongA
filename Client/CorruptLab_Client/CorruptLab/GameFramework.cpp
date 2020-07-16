@@ -3,6 +3,7 @@
 //-----------------------------------------------------------------------------
 
 #include "stdafx.h"
+#include "SoundMgr.h"
 #include "GameFramework.h"
 #include "Mgr_Radiation.h"
 #include "Mgr_Collision.h"
@@ -598,6 +599,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				m_nSceneState = SCENE_STAGE_OUTDOOR;
 			}
 			break;
+		case 'Z': 
+		case 'z':
+			CNarrationMgr::GetInstance()->Skip();
+			break;
 		case VK_F2:
 			TurnToIndoorState();
 			break;
@@ -791,6 +796,11 @@ void CGameFramework::BuildObjects()
 
 	CSceneMgr::GetInstance()->Initialize(this);
 	CSceneMgr::GetInstance()->SetSceneStatePointer(&m_nSceneState);
+
+	CSoundMgr::GetInstacne()->Initialize();
+	CSoundMgr::GetInstacne()->LoadSoundFile();
+	CSoundMgr::GetInstacne()->PlayBGMSound(_T("BossBGM"));
+
 	m_GameTimer.Reset();
 }
 

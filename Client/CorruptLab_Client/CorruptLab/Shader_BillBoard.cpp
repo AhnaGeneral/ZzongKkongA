@@ -294,15 +294,15 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	}
 
 	// ===========================================================================================
-	m_nFire = 1;
+	m_nFire =0;
 
 	m_pFireObjects = new CObjectNosie * [m_nFire];
 
 	//for (int i = 0; i < m_nFire; )
-	//{
-		pNoise = new CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, XMFLOAT3(450.0f ,55.0f, 198.0f), this);  //object
-		pNoise->GenerateShaderDistortionBuffer();
-		m_pFireObjects[0] = pNoise;
+	////{
+	//	pNoise = new CObjectNosie(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, XMFLOAT3(450.0f ,55.0f, 198.0f), this);  //object
+	//	pNoise->GenerateShaderDistortionBuffer();
+	//	m_pFireObjects[0] = pNoise;
 	//}
 	CreateNoiseTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 	ReleaseUploadBuffers();

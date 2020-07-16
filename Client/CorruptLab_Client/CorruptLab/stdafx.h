@@ -74,6 +74,23 @@ using Microsoft::WRL::ComPtr;
 
 /*#pragma comment(lib, "DirectXTex.lib") */
 
+
+// ----------------------------------
+
+
+#include "fmod.hpp"
+#include "fmod.h"
+#pragma comment (lib, "fmod_vc.lib")
+#pragma comment (lib, "fmodL_vc.lib")
+
+using namespace FMOD;
+
+
+
+
+
+
+
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
 extern UINT	gnCbvSrvDescriptorIncrementSize;

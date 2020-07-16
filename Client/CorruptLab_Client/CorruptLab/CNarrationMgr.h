@@ -30,6 +30,7 @@ public:
 	void TurnOnNarration(int iNum);
 	void Initialize(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignatureCPlayer);
 	void Update(float fElapsedTime, ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+	void Skip();
 
 	static CNarrationMgr* GetInstance(void)
 	{

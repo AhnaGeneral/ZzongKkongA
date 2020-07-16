@@ -203,6 +203,9 @@
     <Filter Include="09.GameManager\05.Mgr_Narration">
       <UniqueIdentifier>{d63defad-a694-4e1d-880d-f5c84ae3e927}</UniqueIdentifier>
     </Filter>
+    <Filter Include="09.GameManager\06.Mgr_Sound">
+      <UniqueIdentifier>{b17d86e3-dc68-4001-8554-17e6acb88c41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -415,6 +418,9 @@
     <ClInclude Include="Object_Door.h">
       <Filter>05.Component\GameObject\00.Object\01.DynamicObject</Filter>
     </ClInclude>
+    <ClInclude Include="SoundMgr.h">
+      <Filter>09.GameManager\06.Mgr_Sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -614,6 +620,9 @@
     </ClCompile>
     <ClCompile Include="Object_Door.cpp">
       <Filter>05.Component\GameObject\00.Object\01.DynamicObject</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundMgr.cpp">
+      <Filter>09.GameManager\06.Mgr_Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
