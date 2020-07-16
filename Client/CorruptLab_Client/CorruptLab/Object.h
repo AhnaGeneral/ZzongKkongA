@@ -32,6 +32,7 @@ public:
 	virtual ~CGameObject();
 
 public:
+	int								m_ObjectID = 0;
 	int								m_iTrackNumber = 0;
 	bool							m_bRender = true;
 	int								m_nBoundingBoxes;
@@ -84,6 +85,7 @@ public:
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
+	void UpdateObjectID(int ID);
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	//virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, CMaterial* pMaterial);
 	virtual void UpdateCollisionBoxes(XMFLOAT4X4* world = NULL);

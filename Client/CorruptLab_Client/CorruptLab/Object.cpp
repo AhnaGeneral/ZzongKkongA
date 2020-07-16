@@ -423,6 +423,13 @@ void CGameObject::ReleaseShaderVariables()
 	m_pd3dcbGameObjects = NULL;
 }
 
+void CGameObject::UpdateObjectID(int ID)
+{
+	m_ObjectID = ID;
+	if (m_pChild) m_pChild->UpdateObjectID(ID);
+	if (m_pSibling) m_pSibling->UpdateObjectID(ID);
+}
+
 void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
 {
 	XMFLOAT4X4 xmf4x4World;
@@ -430,7 +437,7 @@ void CGameObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLis
 
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
 
-	UINT getobjectID = 0;
+	UINT getobjectID = m_ObjectID;
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
 }
 

@@ -450,6 +450,18 @@ void CMainPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 
 }
 
+void CMainPlayer::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World)
+{
+	XMFLOAT4X4 xmf4x4World;
+	XMStoreFloat4x4(&xmf4x4World, XMMatrixTranspose(XMLoadFloat4x4(pxmf4x4World)));
+
+	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 16, &xmf4x4World, 0);
+
+	UINT getobjectID = m_ObjectID;
+	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
+
+}
+
 bool CMainPlayer::CheckBridge(XMFLOAT3 xmf3PlayerPosition)
 {
 	if (xmf3PlayerPosition.x < 73)
@@ -496,7 +508,7 @@ bool CMainPlayer::CheckBridge(XMFLOAT3 xmf3PlayerPosition)
 void CMainPlayer::Update(float fTimeElapsed)
 {
 	CPlayer::Update(fTimeElapsed);
-
+	UpdateObjectID(0);
 	UpdateCollisionBoxes();
 	if (CCollisionMgr::GetInstance()->StaticCollisionCheck() )
 		m_xmf3Position = m_xmf3PrePosition;

@@ -14,6 +14,7 @@
 #include "Shader_Effect.h"
 #include "CNarrationMgr.h"
 #include "CSystem_Particle.h"
+#include "SoundMgr.h"
 
 
 CGameScene::CGameScene()
@@ -751,6 +752,7 @@ void CGameScene::PurifyMonster()
 		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
 		if (Distance < 15)
 		{
+			CSoundMgr::GetInstacne()->PlayEffectSound(_T("Purify"));
 			CDrugMaker* pMaker = dynamic_cast<CDrugMaker*>(pObj);
 			if (pMaker->m_bEnable)
 			{
@@ -934,6 +936,7 @@ void CGameScene::ItemBoxCheck()
 			for (auto pMon : *m_pMonsterLists[filed - 1])
 				if (!pMon->IsPurified()) return;
 
+			CSoundMgr::GetInstacne()->PlayEffectSound(_T("Item"));
 			dynamic_cast<CItemBox*>(pObj)->Open();
 
 		}

@@ -35,7 +35,7 @@ void CYangmal::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 		{
 			SetAnimationSet(3, m_iTrackNumber); // WALK
 			MoveToTarget(m_xmf3RandomMoveDest, fTimeElapsed, m_fSpeed / 2.f, pTerrain);
-			if (Vector3::Length(Vector3::Subtract(m_xmf3RandomMoveDest, GetPosition())) < 3.f)
+			if (Vector3::Length(Vector3::Subtract(m_xmf3RandomMoveDest, GetPosition())) < 5.f)
 			{
 				m_iState = MONSTER_STATE_IDLE;
 				if (isnan(m_xmf4x4World._41))
@@ -57,7 +57,7 @@ void CYangmal::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 		case MONSTER_STATE_WALK:
 			yaw = MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed * 0.4f, pTerrain);
 			SetAnimationSet(3, m_iTrackNumber); // walk
-			if (abs(yaw) < 0.15f) {
+			if (abs(yaw) < 0.3f) {
 				m_iState = MONSTER_STATE_BACK;
 				m_fIdleTick = 0;
 			}

@@ -595,6 +595,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case VK_RETURN:
 			if (m_nSceneState == SCENE_LOBBY)
 			{
+				CSoundMgr::GetInstacne()->PlayBGMSound(_T("Stage1BGM"));
 				CNarrationMgr::GetInstance()->m_bRender = true;
 				m_nSceneState = SCENE_STAGE_OUTDOOR;
 			}
@@ -799,7 +800,7 @@ void CGameFramework::BuildObjects()
 
 	CSoundMgr::GetInstacne()->Initialize();
 	CSoundMgr::GetInstacne()->LoadSoundFile();
-	CSoundMgr::GetInstacne()->PlayBGMSound(_T("BossBGM"));
+	CSoundMgr::GetInstacne()->PlayBGMSound(_T("LogoBGM"));
 
 	m_GameTimer.Reset();
 }
@@ -929,7 +930,7 @@ void CGameFramework::FrameAdvanceStageIndoor()
 	
 	m_pScene[SCENE_STAGE_INDOOR]->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2s에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
 
-	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 되? 
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 돼? 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i],
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
 
@@ -1144,6 +1145,7 @@ void CGameFramework::TurnToIndoorState()
 {
 	if (m_nSceneState == SCENE_STAGE_OUTDOOR)
 	{
+		CSoundMgr::GetInstacne()->PlayBGMSound(_T("Stage2BGM"));
 		m_pPlayer->SetPosition(XMFLOAT3(0.f, 0.0f, 0.f));
 		m_pPlayer->SetPlayerUpdatedContext(NULL);
 		m_pPlayer->SetCameraUpdatedContext(NULL);

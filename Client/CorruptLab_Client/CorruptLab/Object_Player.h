@@ -126,6 +126,7 @@ public:
 	virtual void OnCameraUpdateCallback(float fTimeElapsed);
 	virtual void OnPlayerUpdateCallback(float fTimeElapsed);
 	//virtual void OnPlayerUpdateCallback(float fTimeElapsed);
+	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 
 	bool CheckBridge(XMFLOAT3 xmf3PlayerPosition);
 	virtual void Update(float fTimeElapsed);

@@ -64,12 +64,50 @@ void CSoundMgr::LoadSoundFile(void)
 
 
 	FMOD::Sound* pSound;
-	m_Result = m_pSystem->createSound("Sounds/BGM/Boss_BGM.mp3", FMOD_LOOP_NORMAL, 0, &pSound);
-	TCHAR* pName = _T("BossBGM");
+	m_Result = m_pSystem->createSound("Sounds/BGM/Logo_BGM.mp3", FMOD_LOOP_NORMAL, 0, &pSound);
+	TCHAR* pName = _T("LogoBGM");
 	if (m_Result == FMOD_OK)
 	{
 		m_mapSound.insert(make_pair(pName, pSound));
 	}
+
+	m_Result = m_pSystem->createSound("Sounds/BGM/Boss_BGM.mp3", FMOD_LOOP_NORMAL, 0, &pSound);
+	pName = _T("BossBGM");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
+
+	m_Result = m_pSystem->createSound("Sounds/BGM/Stage1_BGM.mp3", FMOD_LOOP_NORMAL, 0, &pSound);
+	pName = _T("Stage1BGM");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
+	m_Result = m_pSystem->createSound("Sounds/BGM/Stage2_BGM.mp3", FMOD_LOOP_NORMAL, 0, &pSound);
+	pName = _T("Stage2BGM");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
+	m_Result = m_pSystem->createSound("Sounds/SE/Purify.mp3", FMOD_LOOP_OFF, 0, &pSound);
+	pName = _T("Purify");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
+
+	m_Result = m_pSystem->createSound("Sounds/SE/Item.mp3", FMOD_LOOP_OFF, 0, &pSound);
+	pName = _T("Item");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
 
 	m_Result = m_pSystem->update();
 	ErrorCheck(m_Result);
@@ -90,6 +128,7 @@ void CSoundMgr::PlayEffectSound(TCHAR* pSoundKey)
 
 void CSoundMgr::PlayBGMSound(TCHAR* pSoundKey)
 {
+	StopBGM();
 	map<TCHAR*, FMOD::Sound*>::iterator iter;
 
 	iter = find_if(m_mapSound.begin(), m_mapSound.end(), CStringCMP(pSoundKey));

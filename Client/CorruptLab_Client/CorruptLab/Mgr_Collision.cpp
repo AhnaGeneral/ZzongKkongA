@@ -71,6 +71,7 @@ void CCollisionMgr::MonsterAttackCheck(int iDamaege, CCollisionBox box, float fT
 
 	if (box.boundingBox.Intersects(playerBodybox->boundingBox))
 	{
+		m_pPlayer->UpdateObjectID(1);
 		if (m_fTime > 0.5f)
 		{
 			m_pPlayer->GetDamaage(iDamaege);
@@ -90,7 +91,9 @@ void CCollisionMgr::MonsterDamageCheck(int iDamage)
 				if (!Obj->m_bRender || Obj->m_iState == MONSTER_STATE_STUN || Obj->m_iState == MONSTER_STATE_DAMAGEING) continue;
 				
 				if (Obj->GetDistanceToPlayer() < 10)
-				{
+				{\
+
+
 					Obj->GetDamaage(iDamage);
 				}
 			}
