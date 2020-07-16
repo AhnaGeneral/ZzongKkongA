@@ -37,6 +37,8 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	m_nMonsterTypeNum = 2;
 	m_pMonsterLists = new vector<CMonster*> * [m_nMonsterTypeNum];
 
+	
+
 	for (int i = 0; i < m_nMonsterTypeNum; i++) // ÃÊ±âÈ­
 		m_pMonsterLists[i] = new vector<CMonster*>();
 	
@@ -44,69 +46,85 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	CGameObject* pDiverObject = NULL;
 	/*Static*/
 	//Rocks-------------------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Rock.bin", NULL, 0);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Rock.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Rocks.bin", OBJECT_TYPE_ROCK);
 
 	//Fence-----------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, 
-		pd3dGraphicsRootSignature, "Model/Fence1.bin", NULL, 0);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Fence1.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Fences.bin", OBJECT_TYPE_FENCE);
 
 
 	//Tower-----------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/TRMTower.bin", NULL, 0);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/TRMTower.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Towers.bin", OBJECT_TYPE_TRMTOWER);
 
 	//AnimalBone------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/AnimalBon.bin", NULL, 0);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/AnimalBon.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/AnimalBones.bin", OBJECT_TYPE_BONE);
 
 
 	//House-----------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/HouseAll.bin", NULL, 0);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/HouseAll.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Houses.bin", OBJECT_TYPE_HOUSE);
 
 
 	//Tree-----------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Tree1.bin", NULL, 0);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Tree1.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Trees.bin", OBJECT_TYPE_TREE);
 
 	//Bridges------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Bridge.bin", NULL, 0);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Bridge.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Bridges.bin", OBJECT_TYPE_BRIDGE);
 
 	//Bridges------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Fence2.bin", NULL, 0);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Fence2.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Fence2T.bin", OBJECT_TYPE_FENCE2);
 
+	m_pOpenningWarningDoors = new CGameObject * [2];
+	PlaceDynamicFromFile(pDiverObject, "ObjectsData/OpeningDoorsT.bin", OBJECT_TYPE_FENCE2, 1);
+	
+	
 	////Bridges------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/warningBoard.bin", NULL, 0);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/warningBoard.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/warningT.bin", OBJECT_TYPE_WARNING);
 
 
-	/*Dynamic*/
+
+	/*Dynamic*///////////////////////////////////////////
 	//ItemBox--------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Box_Opening.bin", NULL, 2);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Box_Opening.bin", NULL, 2);
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/ItemBoxes.bin", OBJECT_TYPE_ITEMBOX);
 
 
 	////DrugMakers--------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/DrugMaker.bin", NULL, 0);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/DrugMaker.bin", NULL, 0);
 	CGameObject* Alpha = pDiverObject->FindFrame("cylinderAlpha");
 	CShader* alphaShader = new CTransparentedStandardShader();
 	alphaShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	Alpha->SetShader(0, alphaShader);
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/DrugMakers.bin", OBJECT_TYPE_DRUGMAKER);
 
-
 	//Researcher------------------------------------------------------
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Researcher.bin", NULL, 2);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Researcher.bin", NULL, 2);
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Researchers.bin", OBJECT_TYPE_RESEARCHER);
 
 	/*Monster*/
 	//Yangmal-------------------------------------------------
 
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Yangmal.bin", NULL, 4);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Yangmal.bin", NULL, 4);
 	//pDiverObject->SetAnimatationSpeed(3, 0.5f);
 	PlaceMonsterFromFile(pDiverObject, "ObjectsData/Yangmals.bin", MONSTER_TYPE_YANGMAL, pd3dDevice,pd3dCommandList);
 
@@ -121,14 +139,18 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	pAlphaChannelAnimation->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, dissolveTex, ROOT_PARAMETER_DISSOLVE_MAP, 0);
 	dynamic_cast<CSkinnedAnimationShader*>(pAlphaChannelAnimation)->SetDissolveTexture(dissolveTex);
 
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Tosm.bin", pAlphaChannelAnimation, 4);
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Monster/Tosm.bin", pAlphaChannelAnimation, 4);
 	//pDiverObject->SetAnimatationSpeed(3, 0.5f);
 	PlaceMonsterFromFile(pDiverObject, "ObjectsData/Tosms.bin", MONSTER_TYPE_TOSM, pd3dDevice, pd3dCommandList);
+
 
 
 	CCollisionMgr::GetInstance()->m_pMonsterLists = m_pMonsterLists;
 
 }
+
+
 
 void CGameScene::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index)
 {
@@ -148,7 +170,6 @@ void CGameScene::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName,
 
 	CGameObject* pGameObject = NULL;
 
-	m_pStaticObjLists[index]->reserve(MAXSTATICEVEC);
 	for (UINT i = 0; i < nObjects; i++)
 	{
 		(UINT)::fread_s(&xmf3Position, sizeof(XMFLOAT3), sizeof(float), 3, pInFile);
@@ -168,12 +189,16 @@ void CGameScene::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName,
 		pGameObject->m_iTrackNumber = i;
 		pGameObject->UpdateTransform(NULL);
 		pGameObject->OnInitialize();
-		m_pStaticObjLists[index]->emplace_back(pGameObject);
+	
+		
+			m_pStaticObjLists[index]->emplace_back(pGameObject);
+		
+	
 	}
 	if(pInFile) fclose(pInFile);
 }
 
-void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index)
+void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index,  int _OpenningDoorControl )
 {
 
 	FILE* pInFile = NULL;
@@ -190,7 +215,7 @@ void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int i
 
 	CDynamicObject* pGameObject = NULL;
 	
-	m_pDynamicObjLists[index]->reserve(MAXDYNAMICVEC);
+	//m_pDynamicObjLists[index]->reserve(MAXDYNAMICVEC);
 	for (UINT i = 0; i < nObjects; i++)
 	{
 		(UINT)::fread_s(&xmf3Position, sizeof(XMFLOAT3), sizeof(float), 3, pInFile);
@@ -226,8 +251,21 @@ void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int i
 
 	
 		pGameObject->UpdateTransform(NULL);
-		pGameObject->OnInitialize();
-		m_pDynamicObjLists[index]->emplace_back(pGameObject);
+		if (!_OpenningDoorControl)
+		{
+			pGameObject->OnInitialize();
+			m_pDynamicObjLists[index]->emplace_back(pGameObject);
+		}
+		else
+		{
+			for (int i = 0; i < pGameObject->m_pChild->m_nBoundingBoxes; i++)
+			{
+				pGameObject->m_pChild->m_pBoundingBoxes[i].Update
+				(&pGameObject->m_xmf4x4World, &pGameObject->m_xmf4Rotation, &pGameObject->m_xmf3Scale);
+			}
+		    m_pOpenningWarningDoors[i] = (pGameObject);
+			CCollisionMgr::GetInstance()->m_pDoorCollision[i] = &pGameObject-> m_pChild->m_pBoundingBoxes[i];
+		}
 	}
 	if (pInFile) fclose(pInFile);
 }

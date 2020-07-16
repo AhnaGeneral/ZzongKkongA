@@ -106,7 +106,7 @@ public:
 
 	void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList);
 	void PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index);
-	void PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index);
+	void PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index, int _OpenningDoorControl = 0);
 	void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 
 	void ChangeTerrainPipeline();
@@ -118,6 +118,8 @@ protected:
 	int						    m_nDynamicObjectTypeNum;
 	int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
 	vector<CGameObject*> 	   ** m_pStaticObjLists; 
+	CGameObject                ** m_pOpenningWarningDoors;
+	
 	vector<CDynamicObject*>    ** m_pDynamicObjLists;
 
 

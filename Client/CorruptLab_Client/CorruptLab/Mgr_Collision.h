@@ -41,6 +41,7 @@ public:
 	void SetPlayer(CPlayer* player) { m_pPlayer = player;  }
 
 	bool StaticCollisionCheck();
+	bool DoorCollisionCheck();
 	void MonsterAttackCheck(int iDamaege, CCollisionBox box, float fTimeElapsed);
 	void MonsterDamageCheck(int iDamage);
 		
@@ -51,6 +52,7 @@ public:
 	int m_iSceneProgress = PROGRESS_FILED1;
 	BoundingBox m_pFiledCollision1;
 	BoundingBox m_pFiledCollision2[2];
+	CCollisionBox* m_pDoorCollision[2];
 
 };
 

@@ -102,3 +102,18 @@ void CCollisionMgr::MonsterDamageCheck(int iDamage)
 
 }
 
+bool CCollisionMgr::DoorCollisionCheck()
+{
+	CCollisionBox* playerBodybox = m_pPlayer->m_pBodyCollision;
+	if (!playerBodybox) return false;
+	for (int i = 0; i < 2; i++)
+	{
+		if (m_pDoorCollision[i])
+		{
+			BoundingOrientedBox objCol = m_pDoorCollision[i]->boundingBox;
+			if (objCol.Intersects(playerBodybox->boundingBox))
+				return true;
+		}
+	}
+	return false;
+}
