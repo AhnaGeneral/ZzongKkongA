@@ -49,10 +49,10 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW  m_d3dVertexBufferView;
 	VertexType*     m_pd3dVertices = nullptr;
 
-	int m_indexCount = 0;
-	ID3D12Resource  * m_pd3dcbIndexBuffer = nullptr;
-	ID3D12Resource  * m_pd3dIndexUploadBuffer = nullptr;
-	D3D12_INDEX_BUFFER_VIEW m_d3dIndexBufferView; 
+	//int m_indexCount = 0;
+	//ID3D12Resource  * m_pd3dcbIndexBuffer = nullptr;
+	//ID3D12Resource  * m_pd3dIndexUploadBuffer = nullptr;
+	//D3D12_INDEX_BUFFER_VIEW m_d3dIndexBufferView; 
 	// ==================================================
 
 public:

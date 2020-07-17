@@ -483,9 +483,6 @@
     <ClCompile Include="Shader-Terrain.cpp">
       <Filter>04.Shader\02.Shader_Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="Shader_BillBoard.cpp">
-      <Filter>04.Shader\03.Shader_BillBoard</Filter>
-    </ClCompile>
     <ClCompile Include="Shader_Standard.cpp">
       <Filter>04.Shader\05.Shader_Standard</Filter>
     </ClCompile>
@@ -623,6 +620,9 @@
     </ClCompile>
     <ClCompile Include="SoundMgr.cpp">
       <Filter>09.GameManager\06.Mgr_Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader_BillBoard.cpp">
+      <Filter>04.Shader\03.Shader_BillBoard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

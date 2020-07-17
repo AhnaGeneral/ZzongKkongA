@@ -27,25 +27,25 @@ void ParticleSystemObject::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D1
 	m_d3dVertexBufferView.SizeInBytes = sizeof(VertexType) * m_vertexCount;
 
 	// indexBuffer =================================================================
-	UINT* indices = new  UINT[m_indexCount];
-	
-	for (int i = 0; i<m_indexCount; i++)
-	{
-		indices[i] = i;
-	}
+	//UINT* indices = new  UINT[m_indexCount];
+	//
+	//for (int i = 0; i<m_indexCount; i++)
+	//{
+	//	indices[i] = i;
+	//}
 
-	m_pd3dcbIndexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, indices,
-		sizeof(UINT) * m_indexCount, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER,
-		&m_pd3dIndexUploadBuffer);
+	//m_pd3dcbIndexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, indices,
+	//	sizeof(UINT) * m_indexCount, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER,
+	//	&m_pd3dIndexUploadBuffer);
 
-	//m_pd3dcbIndexBuffer->Map(0, NULL, (void**)&indices);
+	////m_pd3dcbIndexBuffer->Map(0, NULL, (void**)&indices);
 
-	m_d3dIndexBufferView.BufferLocation = m_pd3dcbIndexBuffer->GetGPUVirtualAddress();
-	m_d3dIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
-	m_d3dIndexBufferView.SizeInBytes = sizeof(UINT) * m_indexCount;
+	//m_d3dIndexBufferView.BufferLocation = m_pd3dcbIndexBuffer->GetGPUVirtualAddress();
+	//m_d3dIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
+	//m_d3dIndexBufferView.SizeInBytes = sizeof(UINT) * m_indexCount;
 
-	delete[] indices;
-	indices = 0;
+	//delete[] indices;
+	//indices = 0;
 
 }
 
@@ -54,50 +54,50 @@ void ParticleSystemObject::UpdateShaderVariables(ID3D12Device* pd3dDevice, ID3D1
 	// UpdateBuffer ==================================
 	VertexType* verticesPtr; 
 	UINT m_nStride = sizeof(VertexType); 
-	m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
 
 	memset(m_Vertices, 0, (sizeof(VertexType) * m_vertexCount)); 
 
 	// 이제 파티클 목록 배열에서 정점 배열을 만듭니다. 각 파티클은 두 개의 삼각형으로 만들어진 쿼드입니다.
-	int index = 0;
+//	int index = 0;
 
 	for (int i = 0; i < m_CurrentParticleCount; i++)
 	{
 		// 왼쪽 아래.
-		m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX - m_ParticleSize, m_ParticleList[i].posY - m_ParticleSize, m_ParticleList[i].PosZ);
-		m_Vertices[index].tex = XMFLOAT2(0.0f, 1.0f);
-		m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
-		index++;
+		m_Vertices[i].pos = XMFLOAT3(m_ParticleList[i].posX, m_ParticleList[i].posY, m_ParticleList[i].PosZ);
+		m_Vertices[i].tex = XMFLOAT2(0.0f, 1.0f);
+		m_Vertices[i].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
+		//index++;
 
-		// 왼쪽 위.
-		m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX - m_ParticleSize, m_ParticleList[i].posY + m_ParticleSize, m_ParticleList[i].PosZ);
-		m_Vertices[index].tex = XMFLOAT2(0.0f, 0.0f);
-		m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
-		index++;
+		//// 왼쪽 위.
+		//m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX - m_ParticleSize, m_ParticleList[i].posY + m_ParticleSize, m_ParticleList[i].PosZ);
+		//m_Vertices[index].tex = XMFLOAT2(0.0f, 0.0f);
+		//m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
+		//index++;
 
-		// 오른쪽 아래.
-		m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX + m_ParticleSize, m_ParticleList[i].posY - m_ParticleSize, m_ParticleList[i].PosZ);
-		m_Vertices[index].tex = XMFLOAT2(1.0f, 1.0f);
-		m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
-		index++;
+		//// 오른쪽 아래.
+		//m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX + m_ParticleSize, m_ParticleList[i].posY - m_ParticleSize, m_ParticleList[i].PosZ);
+		//m_Vertices[index].tex = XMFLOAT2(1.0f, 1.0f);
+		//m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
+		//index++;
 
-		// 오른쪽 아래.
-		m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX + m_ParticleSize, m_ParticleList[i].posY - m_ParticleSize, m_ParticleList[i].PosZ);
-		m_Vertices[index].tex = XMFLOAT2(1.0f, 1.0f);
-		m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
-		index++;
+		//// 오른쪽 아래.
+		//m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX + m_ParticleSize, m_ParticleList[i].posY - m_ParticleSize, m_ParticleList[i].PosZ);
+		//m_Vertices[index].tex = XMFLOAT2(1.0f, 1.0f);
+		//m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
+		//index++;
 
-		// 왼쪽 위.
-		m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX - m_ParticleSize, m_ParticleList[i].posY + m_ParticleSize, m_ParticleList[i].PosZ);
-		m_Vertices[index].tex = XMFLOAT2(0.0f, 0.0f);
-		m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
-		index++;
+		//// 왼쪽 위.
+		//m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX - m_ParticleSize, m_ParticleList[i].posY + m_ParticleSize, m_ParticleList[i].PosZ);
+		//m_Vertices[index].tex = XMFLOAT2(0.0f, 0.0f);
+		//m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
+		//index++;
 
-		// 오른쪽 위.
-		m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX + m_ParticleSize, m_ParticleList[i].posY + m_ParticleSize, m_ParticleList[i].PosZ);
-		m_Vertices[index].tex = XMFLOAT2(1.0f, 0.0f);
-		m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
-		index++;
+		//// 오른쪽 위.
+		//m_Vertices[index].pos = XMFLOAT3(m_ParticleList[i].posX + m_ParticleSize, m_ParticleList[i].posY + m_ParticleSize, m_ParticleList[i].PosZ);
+		//m_Vertices[index].tex = XMFLOAT2(1.0f, 0.0f);
+		//m_Vertices[index].color = XMFLOAT4(m_ParticleList[i].red, m_ParticleList[i].green, m_ParticleList[i].blue, 1.0f);
+		//index++;
 	}
 
 	memcpy(m_pd3dVertices, (void*)m_Vertices, (sizeof(VertexType) * m_vertexCount));
@@ -127,7 +127,7 @@ void ParticleSystemObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dC
 
 void ParticleSystemObject::InitializeBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_indexCount = m_vertexCount = m_maxParticles * 6;
+	 m_vertexCount = m_maxParticles * 6;
 
 	m_Vertices = new VertexType[m_vertexCount];
 
@@ -338,12 +338,10 @@ void ParticleSystemObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CC
 			}
 
 			pd3dCommandList->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
-			
-		
 			pd3dCommandList->IASetVertexBuffers(0, 1, &m_d3dVertexBufferView);
-	
-			pd3dCommandList->IASetIndexBuffer(&m_d3dIndexBufferView);
-			pd3dCommandList->DrawIndexedInstanced(m_indexCount, m_indexCount, 0, 0, 0);
+			pd3dCommandList->DrawInstanced(1, 1, 0, 0);
+			//pd3dCommandList->IASetIndexBuffer(&m_d3dIndexBufferView);
+			//pd3dCommandList->DrawIndexedInstanced(m_indexCount, m_indexCount, 0, 0, 0);
 			
 		}
 	}
