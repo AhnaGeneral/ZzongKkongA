@@ -6,6 +6,7 @@
 #include "Object_DrugMaker.h"
 #include "Mgr_Scene.h"
 #include "Object_Door.h"
+#include "Obect_Desk.h"
 
 
 #define MAXSTATICEVEC 100 
@@ -24,7 +25,7 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
 		m_pStaticObjLists[i] = new vector<CGameObject*>();
 
-	m_nDynamicObjectTypeNum = 3;
+	m_nDynamicObjectTypeNum = 4;
 	m_pDynamicObjLists = new vector<CDynamicObject*> * [m_nDynamicObjectTypeNum];
 
 	for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
@@ -108,6 +109,10 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Door_Opening.bin", NULL, 1);
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Door_OpeningT.bin", OBJECT_INDOOR_TYPE_DOOROPEN);
 
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Desk_Opening.bin", NULL, 5);
+	PlaceDynamicFromFile(pDiverObject, "ObjectsData/OpeningDeskT.bin", OBJECT_INDOOR_TYPE_DESKOPEN);
+
 }
 
 void CGameScene2::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index)
@@ -185,20 +190,28 @@ void CGameScene2::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int 
 		{
 		case OBJECT_INDOOR_TYPE_DOOROPEN:
 			pGameObject = new CDoor();
+			pGameObject->m_iTrackNumber = i;
+			pGameObject->SetChild(pModel, true);
 			break; 
 
 		case OBJECT_INDOOR_TYPE_LABORATOR:
 			pGameObject = new CDynamicObject();
+			pGameObject->m_iTrackNumber = i;
+			pGameObject->SetChild(pModel, true);
 			m_DrugmakerImpromation.push_back(DrugMakersImpormation(xmf3Position, xmf3Scale));
 			//m_DrugSize.push_back(xmf3Scale.y);
 			break;
+		case OBJECT_INDOOR_TYPE_DESKOPEN:
+			pGameObject = new CDesk();
+			pGameObject->m_iTrackNumber = i;
+			pGameObject->SetChild(pModel, true);
+			break;
 		default:
 			pGameObject = new CDynamicObject();
+			pGameObject->m_iTrackNumber = i;
+			pGameObject->SetChild(pModel, true);
 			break;
 		}
-
-		pGameObject->m_iTrackNumber = i;
-		pGameObject->SetChild(pModel, true);
 
 		pGameObject->m_xmf4Rotation = xmf4Rotation;
 		pGameObject->m_xmf3Scale = Vector3::ScalarProduct(xmf3Scale, 0.5f, false);

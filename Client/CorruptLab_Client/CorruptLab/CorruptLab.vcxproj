@@ -170,6 +170,7 @@
     </ClInclude>
     <ClInclude Include="CShader_ShadowMRT.h" />
     <ClInclude Include="Mgr_Collision.h" />
+    <ClInclude Include="Obect_Desk.h" />
     <ClInclude Include="Object_Camera.h" />
     <ClInclude Include="CorruptLab.h" />
     <ClInclude Include="Define.h" />
@@ -250,6 +251,7 @@
     </ClCompile>
     <ClCompile Include="CShader_ShadowMRT.cpp" />
     <ClCompile Include="Mgr_Collision.cpp" />
+    <ClCompile Include="Obect_Desk.cpp" />
     <ClCompile Include="Object_Camera.cpp" />
     <ClCompile Include="CorruptLab.cpp" />
     <ClCompile Include="Mesh_Skinned.cpp" />

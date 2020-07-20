@@ -206,6 +206,12 @@
     <Filter Include="09.GameManager\06.Mgr_Sound">
       <UniqueIdentifier>{b17d86e3-dc68-4001-8554-17e6acb88c41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Component\GameObject\00.Object\01.DynamicObject\04.Object_Door">
+      <UniqueIdentifier>{4df397b7-6576-439a-85a9-5b47969c54fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Component\GameObject\00.Object\01.DynamicObject\05.Object_Desk">
+      <UniqueIdentifier>{36f26ace-f89d-4234-975e-10fbc722c495}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -415,11 +421,14 @@
     <ClInclude Include="CNarrationMgr.h">
       <Filter>09.GameManager\05.Mgr_Narration</Filter>
     </ClInclude>
-    <ClInclude Include="Object_Door.h">
-      <Filter>05.Component\GameObject\00.Object\01.DynamicObject</Filter>
-    </ClInclude>
     <ClInclude Include="SoundMgr.h">
       <Filter>09.GameManager\06.Mgr_Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_Door.h">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\04.Object_Door</Filter>
+    </ClInclude>
+    <ClInclude Include="Obect_Desk.h">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\05.Object_Desk</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -615,14 +624,17 @@
     <ClCompile Include="CNarrationMgr.cpp">
       <Filter>09.GameManager\05.Mgr_Narration</Filter>
     </ClCompile>
-    <ClCompile Include="Object_Door.cpp">
-      <Filter>05.Component\GameObject\00.Object\01.DynamicObject</Filter>
-    </ClCompile>
     <ClCompile Include="SoundMgr.cpp">
       <Filter>09.GameManager\06.Mgr_Sound</Filter>
     </ClCompile>
     <ClCompile Include="Shader_BillBoard.cpp">
       <Filter>04.Shader\03.Shader_BillBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_Door.cpp">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\04.Object_Door</Filter>
+    </ClCompile>
+    <ClCompile Include="Obect_Desk.cpp">
+      <Filter>05.Component\GameObject\00.Object\01.DynamicObject\05.Object_Desk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

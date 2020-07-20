@@ -443,6 +443,7 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 		{
 			for (auto Obj : *m_pDynamicObjLists[i])
 			{
+				Obj->UpdateTrackNumber(Obj->m_iTrackNumber);
 				Obj->Update(m_fElapsedTime);
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 0);
