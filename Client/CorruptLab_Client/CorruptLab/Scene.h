@@ -118,7 +118,7 @@ protected:
 	int						    m_nDynamicObjectTypeNum;
 	int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
 	vector<CGameObject*> 	   ** m_pStaticObjLists; 
-	CGameObject                ** m_pOpenningWarningDoors;
+	CGameObject                ** m_pOpeningWarningDoors;
 	
 	vector<CDynamicObject*>    ** m_pDynamicObjLists;
 

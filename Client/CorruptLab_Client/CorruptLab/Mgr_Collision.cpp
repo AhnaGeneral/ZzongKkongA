@@ -108,12 +108,18 @@ bool CCollisionMgr::DoorCollisionCheck()
 	if (!playerBodybox) return false;
 	for (int i = 0; i < 2; i++)
 	{
-		if (m_pDoorCollision[i])
-		{
-			BoundingOrientedBox objCol = m_pDoorCollision[i]->boundingBox;
-			if (objCol.Intersects(playerBodybox->boundingBox))
+			XMFLOAT4 Rotation = m_pOpeningDoors[i]->
+			GetRotateQuaternion(m_pOpeningDoors[i]->m_xmf3Scale.y,
+				m_pOpeningDoors[i]->m_xmf4x4World);
+
+			m_pOpeningDoors[i]->UpdateCollisionBoxes(
+				&m_pOpeningDoors[i]->m_xmf4x4World, &Rotation, &m_pOpeningDoors[i]->m_xmf3Scale);
+
+			CCollisionBox* boxes = m_pOpeningDoors[i]->GetCollisionBoxes();
+			BoundingOrientedBox objCol = boxes[0].boundingBox;
+			BoundingOrientedBox objCol2 = boxes[1].boundingBox;
+			if (objCol.Intersects(playerBodybox->boundingBox)  || objCol2.Intersects(playerBodybox->boundingBox))
 				return true;
-		}
 	}
 	return false;
 }

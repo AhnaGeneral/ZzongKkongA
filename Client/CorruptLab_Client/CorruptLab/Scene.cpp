@@ -849,12 +849,12 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	}
 	CheckCollisions();
 
-	if (m_pOpenningWarningDoors)
+	if (m_pOpeningWarningDoors)
 	{
 		for (int i = 0; i < 2; ++i)
 		{
-			m_pOpenningWarningDoors[i]->UpdateTransform(NULL);
-			m_pOpenningWarningDoors[i]->Render(pd3dCommandList, pCamera, 0);
+			m_pOpeningWarningDoors[i]->UpdateTransform(NULL);
+			m_pOpeningWarningDoors[i]->Render(pd3dCommandList, pCamera, 0);
 		}
 	}
 
@@ -924,22 +924,12 @@ void CGameScene::Update(float fTimeElapsed)
 	m_fElapsedTime = fTimeElapsed;
 	AnimateObjects(fTimeElapsed);
 
-	if (m_pOpenningWarningDoors)
+	if (m_pOpeningWarningDoors)
 	{
 		for (int i = 0; i < 2; ++i)
 		{
 			//m_pOpenningWarningDoors[i]->UpdateCollisionBoxes
-			m_pOpenningWarningDoors[i]->Rotate(0, -(fTimeElapsed * 2), 0);
-
-			//XMFLOAT3 pos = m_pOpenningWarningDoors[i]->GetPosition();
-		   //m_pOpenningWarningDoors[i]->SetPosition(pos.x, pos.y + 0.02, pos.z);
-			CCollisionBox* tmpCollision = m_pOpenningWarningDoors[i]->GetCollisionBoxes();
-			XMFLOAT4 Rotation = m_pOpenningWarningDoors[i]->
-				GetRotateQuaternion(m_pOpenningWarningDoors[i]->m_xmf3Scale.x,
-					tmpCollision->m_xmf4x4World);
-			tmpCollision->Update(&tmpCollision->m_xmf4x4World, &Rotation, &m_pOpenningWarningDoors[i]->m_xmf3Scale);
-
-
+			m_pOpeningWarningDoors[i]->Rotate(0, -(fTimeElapsed * 4), 0);
 		}
 	}
 

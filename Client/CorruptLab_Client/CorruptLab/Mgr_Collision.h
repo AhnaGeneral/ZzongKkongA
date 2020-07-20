@@ -6,6 +6,7 @@ using namespace std;
 class CCollisionBox;
 class CPlayer;
 class CMonster;
+class CGameObject;
 
 
 class CCollisionMgr
@@ -52,7 +53,7 @@ public:
 	int m_iSceneProgress = PROGRESS_FILED1;
 	BoundingBox m_pFiledCollision1;
 	BoundingBox m_pFiledCollision2[2];
-	CCollisionBox* m_pDoorCollision[2];
+	CGameObject* m_pOpeningDoors[2];
 
 };
 

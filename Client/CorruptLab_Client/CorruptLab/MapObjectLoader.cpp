@@ -83,12 +83,12 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Bridge.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Bridges.bin", OBJECT_TYPE_BRIDGE);
 
-	//Bridges------------------------------------------
+	//OpeningDoor------------------------------------------
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Fence2.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Fence2T.bin", OBJECT_TYPE_FENCE2);
 
-	m_pOpenningWarningDoors = new CGameObject * [2];
+	m_pOpeningWarningDoors = new CGameObject * [2];
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/OpeningDoorsT.bin", OBJECT_TYPE_FENCE2, 1);
 	
 	
@@ -264,8 +264,8 @@ void CGameScene::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int i
 				pGameObject->m_pChild->m_pBoundingBoxes[i].Update
 				(&pGameObject->m_xmf4x4World, &pGameObject->m_xmf4Rotation, &pGameObject->m_xmf3Scale);
 			}
-		    m_pOpenningWarningDoors[i] = (pGameObject);
-			CCollisionMgr::GetInstance()->m_pDoorCollision[i] = &pGameObject-> m_pChild->m_pBoundingBoxes[i];
+		    m_pOpeningWarningDoors[i] = (pGameObject);
+			CCollisionMgr::GetInstance()->m_pOpeningDoors[i] = pGameObject;
 		}
 	}
 	if (pInFile) fclose(pInFile);
