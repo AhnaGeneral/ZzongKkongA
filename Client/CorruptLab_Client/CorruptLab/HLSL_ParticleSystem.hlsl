@@ -3,7 +3,7 @@
 struct vertexInputType
 {
 	float3 position : POSITION; 
-	float2 tex : TEXCOORD0; 
+	float size : SIZE;
 	float4 color : COLOR;
 };
 
@@ -11,7 +11,7 @@ struct vertexInputType
 struct GeometryInputType
 {
 	float3 position : POSITION;
-	float2 tex : TEXCOORD0;
+	float size : SIZE;
 	float4 color : COLOR;
 };
 
@@ -27,7 +27,7 @@ GeometryInputType particleVertexShader(vertexInputType input)
 	GeometryInputType output;
 
 	output.position = input.position;
-	output.tex = input.tex;
+	output.size = input.size;
 	output.color = input.color;
 
 	return output; 
@@ -42,8 +42,9 @@ void ParticleGeometryShader(point GeometryInputType input[1],
 	vLook = normalize(vLook);
 	float3 vRight = cross(vUP, vLook);
 
-	float fHalfW = 10 * 0.5f;
-	float fHalfH = 10 * 0.5f;
+	
+	float fHalfW = input[0].size;
+	float fHalfH = input[0].size;
 
 	float4 pVertices[4];
 	pVertices[0] = float4(input[0].position + fHalfW * vRight - fHalfH * vUP, 1.0f);
@@ -75,6 +76,6 @@ PS_NONLIGHT_MRT_OUTPUT ParticlePixelShader(GeometryOutputType input)
 
 	textureColor = gtxtEffectTexture.Sample(gSamplerState, input.tex);
 	finalColor = textureColor * input.color; 
-	output.NonLight = finalColor; 
+	output.NonLight = float4 (finalColor.rgb, textureColor.a);
 	return output;
 }

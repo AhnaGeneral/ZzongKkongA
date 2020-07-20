@@ -12,6 +12,7 @@
 #define MAXDYNAMICVEC 100
 #define MAXMONSTERVEC 100 
 
+class DrugMakersImpormation;
 
 void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -185,6 +186,12 @@ void CGameScene2::PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int 
 		case OBJECT_INDOOR_TYPE_DOOROPEN:
 			pGameObject = new CDoor();
 			break; 
+
+		case OBJECT_INDOOR_TYPE_LABORATOR:
+			pGameObject = new CDynamicObject();
+			m_DrugmakerImpromation.push_back(DrugMakersImpormation(xmf3Position, xmf3Scale));
+			//m_DrugSize.push_back(xmf3Scale.y);
+			break;
 		default:
 			pGameObject = new CDynamicObject();
 			break;

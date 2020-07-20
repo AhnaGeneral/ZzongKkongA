@@ -39,10 +39,10 @@ CPostProcessingShader::CPostProcessingShader()
 
 	m_pRadiationShader = NULL;
 
-	m_HPBAR = NULL;
+	m_StatementUI = NULL;
 
-	m_ppInVentoryBoxs = NULL;
-	m_pInventoryBox = NULL;
+	//m_ppInVentoryBoxs = NULL;
+	//m_pInventoryBox = NULL;
 	m_pIndoorNumberBox = NULL; 
 
 	m_ppItems = NULL;
@@ -360,134 +360,64 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 
 	// [ 다중랜더타겟 텍스쳐 ] ===============================================================================
-	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 7.0f, FRAME_BUFFER_HEIGHT / 7.f, 0.0f, 1.0f);
+	CTriangleRect* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList,
+		FRAME_BUFFER_WIDTH / 7.0f, FRAME_BUFFER_HEIGHT / 7.f, 0.0f, 1.0f);
+
 	m_nRenderTargetUI = 7;
 	m_pRenderTargetUIs = new CGameObject * [m_nRenderTargetUI];
 	for (int i = 0; i < m_nRenderTargetUI;)
 	{
-		int remainder = i % 5;
-		int tmp = i / 5;
+		int remainder = i % 4;
+		int tmp = i / 4;
 		pRenderTargetUI = new CMRTUI(pd3dDevice, pd3dCommandList);
 		pRenderTargetUI->SetMesh(mesh);
-		pRenderTargetUI->Set2DPosition(-500.0f + (remainder * 180.0f), 340.0f + (-tmp * 120));
+		pRenderTargetUI->Set2DPosition(+520.0f - (remainder * 170.0f), 340.0f + (-tmp * 110));
 		pRenderTargetUI->SetObjectID(i);
 		m_pRenderTargetUIs[i++] = pRenderTargetUI;
 	}
 
-	//[ 미니맵 ] ============================================================================================
-	m_pMinimap = new CUI_MiniMap(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	m_pMinimap->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
-	m_pMinimap->SetMesh(mesh);
-	m_pMinimap->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
-
-	//[ 체력 ] ==============================================================================================
-	CTexture* m_pHPTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	m_pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_3.dds", 0);
-
-	m_pBaseUIShader = new CShader_BaseUI();
-	m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 6);
-	m_pBaseUIShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
-	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)m_pHPTexture, ROOT_PARAMETER_HP_TEX, true);
-
-	//float m_Alpha = 1; 
-	m_HPBAR = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	m_HPBAR->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, m_pHPTexture);
-	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 250, 200, 0.0f, 1.0f);
-	m_HPBAR->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
-	m_HPBAR->SetMesh(mesh);	
-	m_HPBAR->SetAlpha(&m_Alpha);
-
-	// ========================================================================================================
-	CTexture* m_pIndoorGreetingTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	m_pIndoorGreetingTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Font/IndoorGreeting.dds", 0);
-	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)m_pIndoorGreetingTex, ROOT_PARAMETER_HP_TEX, true);
-
-	m_IndoorGreeting = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	m_IndoorGreeting->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, m_pIndoorGreetingTex);
-	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 512, 256, 0.0f, 1.0f);
-	m_IndoorGreeting->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 380, (-FRAME_BUFFER_HEIGHT / 2) + 500);
-	m_IndoorGreeting->SetMesh(mesh);
-	m_IndoorGreeting->SetAlpha(&m_Alpha);
-
-	//[ 방사능 박스 ] ===========================================================================================
-	CTexture* pRadiationTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pRadiationTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_1.dds", 0);
-
-	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pRadiationTex, ROOT_PARAMETER_HP_TEX, true);
-
-	m_Radiation = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	m_Radiation->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pRadiationTex);
-	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 250, 200, 0.0f, 1.0f);
-	m_Radiation->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 125, (-FRAME_BUFFER_HEIGHT / 2) + 100);
-	m_Radiation->SetMesh(mesh);
-	m_Radiation->SetAlpha(&m_Alpha);
-
-
-	// ========================================================================================================
-	m_pMinimapFog = new CShader_MinmapFog();
-	m_pMinimapFog->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 2);
-	m_pMinimapFog->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
-
-	pMinmapFog1 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pMinmapFog1->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog1.dds", 0);
-
-	m_pMinimapFog->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog1, ROOT_PARAMETER_MINIIMAPFOG, true);
-
-	m_pMapOne = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
-	m_pMapOne->SetObjectID(0);
-	m_pMapOne->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
-	m_pMapOne->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	m_pMapOne->SetMesh(mesh);
-
-    pMinmapFog2 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-
-	pMinmapFog2->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog2.dds", 0);
-
-	m_pMinimapFog->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog2, ROOT_PARAMETER_MINIIMAPFOG, true);
-
-	m_pMapTwo = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 180, 180, 0.0f, 1.0f);
-	m_pMapTwo->SetObjectID(1);
-	m_pMapTwo->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - 90, (-FRAME_BUFFER_HEIGHT / 2) + 90);
-	m_pMapTwo->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	m_pMapTwo->SetMesh(mesh);
-
-
-
 	//[ 인벤토리 ] ==============================================================================================
-	m_ppInVentoryBoxs = new CGameObject * [nIventoryCount];
+	//m_ppInVentoryBoxs = new CGameObject * [nIventoryCount];
 
-	float ItemBoxSize = FRAME_BUFFER_HEIGHT / 10.0f;
+	//CTexture* pInventoryTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	//pInventoryTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/Inventory.dds", 0);
 
-	CTexture* pInventoryTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pInventoryTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/Inventory.dds", 0);
+	//m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pInventoryTex, ROOT_PARAMETER_HP_TEX, true);
 
-	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pInventoryTex, ROOT_PARAMETER_HP_TEX, true);
+	//for (int i = 0; i < (int)nIventoryCount;)
+	//{
+	//	m_pInventoryBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	//	m_pInventoryBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pInventoryTex);
+	//	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, ItemBoxSize, ItemBoxSize, 0.0f, 1.0f);
+	//	m_pInventoryBox->SetMesh(mesh);
+	//	m_pInventoryBox->SetAlpha(&m_Alpha);
 
-	for (int i = 0; i < (int)nIventoryCount;)
-	{
-		m_pInventoryBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-		m_pInventoryBox->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pInventoryTex);
-		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, ItemBoxSize, ItemBoxSize, 0.0f, 1.0f);
-		m_pInventoryBox->SetMesh(mesh);
-		m_pInventoryBox->SetAlpha(&m_Alpha);
+	//	m_pInventoryBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
+	//	m_ppInVentoryBoxs[i++] = m_pInventoryBox;
+	//}
 
-		m_pInventoryBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
-		m_ppInVentoryBoxs[i++] = m_pInventoryBox;
-	}
+	BuildObjectMinimap(pd3dDevice, pd3dCommandList); // 미니맵 빌드
+	BuildObjectPlayerStateUICollection(pd3dDevice, pd3dCommandList); // 플레이어 상태 빌드 (아이템, HP바, 상태UI, 방사능 수치 )
+	BuildObjectIndoorScenePassword(pd3dDevice, pd3dCommandList); // 실내 씬의 비밀번호 빌드 (비밀번호 판과 비밀번호 숫자들)
+
+	CNarrationMgr::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+	ReleaseUploadBuffers();
+}
+
+void CPostProcessingShader::BuildObjectIndoorScenePassword(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CTriangleRect* mesh = nullptr;
 
 	//[IndoorScene 번호판] =====================================================================================
-    m_ppIndoorScenenumberBox = new CGameObject*[nNumberCount];
-	
+	m_ppIndoorScenenumberBox = new CGameObject * [nNumberCount];
+
 	float UnberBoxSize = FRAME_BUFFER_HEIGHT / 5.0f;
 
 	CTexture* pIndoorNumberBox = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 	pIndoorNumberBox->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/NumberBox.dds", 0);
 
 	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pIndoorNumberBox, ROOT_PARAMETER_HP_TEX, true);
-	
+
 	for (int i = 0; i < (int)nNumberCount;)
 	{
 		m_pIndoorNumberBox = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
@@ -496,79 +426,16 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		m_pIndoorNumberBox->SetMesh(mesh);
 		m_pIndoorNumberBox->SetAlpha(&m_Alpha);
 
-		m_pIndoorNumberBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + (FRAME_BUFFER_WIDTH/3) + (i * UnberBoxSize), 
+		m_pIndoorNumberBox->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + (FRAME_BUFFER_WIDTH / 3) + (i * UnberBoxSize),
 			(-FRAME_BUFFER_HEIGHT / 2) + (FRAME_BUFFER_HEIGHT / 3));
 		m_ppIndoorScenenumberBox[i++] = m_pIndoorNumberBox;
 	}
 
 
-	//[ 아이템쓰 ] =============================================================================================
-	m_ppItems = new CGameObject * [nIventoryCount];
-
-	m_pItemTex = new CTexture(3, RESOURCE_TEXTURE2D, 0);
-    m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HandLight.dds", 0);
-    m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HP_Kit.dds", 1);
-    m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/Pill.dds", 2);
-
-	//m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pItemTex, ROOT_PARAMETER_HP_TEX, true);
-
-	m_pItemShader = new CShader_Item();
-	m_pItemShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 3);
-	m_pItemShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
-    m_pItemShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTex, ROOT_PARAMETER_ITEM_TEX, true);
-
-	for (int i = 0; i < int(nIventoryCount);)
-	{
-		m_pItem = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-		m_pItem->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL);
-
-		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, ItemBoxSize, ItemBoxSize, 0.0f, 1.0f); //60, 60
-		m_pItem->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-		m_pItem->SetMesh(mesh);
-		m_pItem->SetObjectID(i);
-		//UINT unber = 1;
-		//m_pItem->SetItemReact(&unber);
-		m_pItem->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 30 + (i * ItemBoxSize), (-FRAME_BUFFER_HEIGHT / 2) + 30);
-		m_ppItems[i++] = m_pItem;
-	}
-	//[ 체력바 ] =================================================================================================
-	CTexture* pHPTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP_2.dds", 0);
-
-	m_PlayerHP = new CUI_HP(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-	m_PlayerHP->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pHPTexture);
-	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 190, 18, 0.0f, 1.0f);
-	m_PlayerHP->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	m_PlayerHP->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 150, (-FRAME_BUFFER_HEIGHT / 2) + 90);
-	m_PlayerHP->SetObjectID(4);
-	m_PlayerHP->SetMesh(mesh);
-
-	//[ 방사능 수치 카운터 ] ======================================================================================= 
-	CTexture* pRadiationCountTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pRadiationCountTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/RadiationCount.dds", 0);
-
-	m_pRadiationShader = new CShader_Radiation();
-	m_pRadiationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 2);
-	m_pRadiationShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
-	m_pRadiationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pRadiationCountTexture, ROOT_PARAMETER_HP_TEX, true);
-
-	m_RadiationLevels = new CGameObject*[2];
-	for (int i = 0; i < 2;)
-	{
-		m_RadiationCount = new CUI_RaditaionLevel(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
-		m_RadiationCount->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pRadiationCountTexture);
-		m_RadiationCount->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 30, 40, 0.0f, 1.0f);
-		m_RadiationCount->Set2DPosition(float((-FRAME_BUFFER_WIDTH / 2) + 25 *(i+1)), float((-FRAME_BUFFER_HEIGHT / 2) + 105));
-		m_RadiationCount->SetMesh(mesh);
-		m_RadiationCount->SetRadiationNumber(9);
-		m_RadiationLevels[i++] = m_RadiationCount;
-	}
+	// 실내씬의 번호키 
 	CTexture* pIndoorNumbercountTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 	pIndoorNumbercountTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/NumberUI.dds", 0);
 	m_pRadiationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pIndoorNumbercountTexture, ROOT_PARAMETER_HP_TEX, true);
-
-	// 실내씬의 번호키 
 	m_IndoorNumberCounts = new CGameObject * [4];
 	CUI_RaditaionLevel* m_IndoorNumbercount;
 	for (int i = 0; i < 4;)
@@ -582,11 +449,132 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		m_IndoorNumbercount->SetMesh(mesh);
 		m_IndoorNumberCounts[i++] = m_IndoorNumbercount;
 	}
+}
 
-	// =============================================================================================================
+void CPostProcessingShader::BuildObjectPlayerStateUICollection(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CTriangleRect* mesh = nullptr;
 
-	CNarrationMgr::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-	ReleaseUploadBuffers();
+	//[ 플레이어 상태 UI ]======================================================================================
+	CTexture* m_pHPTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	m_pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/StatementUI.dds", 0);
+
+	m_pBaseUIShader = new CShader_BaseUI();
+	m_pBaseUIShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 5);
+	m_pBaseUIShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
+	m_pBaseUIShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)m_pHPTexture, ROOT_PARAMETER_HP_TEX, true);
+
+	m_StatementUI = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	m_StatementUI->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, m_pHPTexture);
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 500, 200, 0.0f, 1.0f);
+	m_StatementUI->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 240, (FRAME_BUFFER_HEIGHT / 2) - 90);
+	m_StatementUI->SetMesh(mesh);
+	m_StatementUI->SetAlpha(&m_Alpha);
+
+	//[ 체력바 ] =================================================================================================
+	CTexture* pHPTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pHPTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP.dds", 0);
+
+	m_PlayerHP = new CUI_HP(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	m_PlayerHP->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), pHPTexture);
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 320, 15, 0.0f, 1.0f);
+	m_PlayerHP->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_PlayerHP->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 310, (FRAME_BUFFER_HEIGHT / 2) - 5);
+	m_PlayerHP->SetObjectID(4);
+	m_PlayerHP->SetMesh(mesh);
+
+	//[ 아이템쓰 ] =============================================================================================
+	float ItemBoxSize = FRAME_BUFFER_HEIGHT / 13.0f;
+	m_ppItems = new CGameObject * [nIventoryCount];
+
+	m_pItemTex = new CTexture(3, RESOURCE_TEXTURE2D, 0);
+	m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HandLight.dds", 0);
+	m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/HP_Kit.dds", 1);
+	m_pItemTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Inventory/Pill.dds", 2);
+
+	m_pItemShader = new CShader_Item();
+	m_pItemShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 3);
+	m_pItemShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
+	m_pItemShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pItemTex, ROOT_PARAMETER_ITEM_TEX, true);
+
+	for (int i = 0; i < int(nIventoryCount);)
+	{
+		m_pItem = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+		m_pItem->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL);
+
+		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, ItemBoxSize, ItemBoxSize, 0.0f, 1.0f); //60, 60
+		m_pItem->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		m_pItem->SetMesh(mesh);
+		m_pItem->SetObjectID(i);
+		//UINT unber = 1;
+		//m_pItem->SetItemReact(&unber);
+		m_pItem->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 215 + (i * ItemBoxSize), (FRAME_BUFFER_HEIGHT / 2) - 60);
+		m_ppItems[i++] = m_pItem;
+	}
+
+	//[ 방사능 수치 카운터 ] ======================================================================================= 
+	CTexture* pRadiationCountTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pRadiationCountTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/RadiationCount.dds", 0);
+
+	m_pRadiationShader = new CShader_Radiation();
+	m_pRadiationShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 2);
+	m_pRadiationShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
+	m_pRadiationShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pRadiationCountTexture, ROOT_PARAMETER_HP_TEX, true);
+
+	m_RadiationLevels = new CGameObject * [2];
+	for (int i = 0; i < 2;)
+	{
+		m_RadiationCount = new CUI_RaditaionLevel(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+		m_RadiationCount->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, pRadiationCountTexture);
+		m_RadiationCount->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+		mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 40, 50, 0.0f, 1.0f);
+		m_RadiationCount->Set2DPosition(float((-FRAME_BUFFER_WIDTH / 2) + 65 + 35 * (i + 1)), float((FRAME_BUFFER_HEIGHT / 2) - 135));
+		m_RadiationCount->SetMesh(mesh);
+		m_RadiationCount->SetRadiationNumber(9);
+		m_RadiationLevels[i++] = m_RadiationCount;
+	}
+}
+
+void CPostProcessingShader::BuildObjectMinimap(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CTriangleRect* mesh = nullptr;
+	int MiniMapHeight = 240, MiniMapWidth = 260;
+	//[ 미니맵 ] ============================================================================================
+	m_pMinimap = new CUI_MiniMap(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	m_pMinimap->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, MiniMapWidth, MiniMapHeight, 0.0f, 1.0f);
+	m_pMinimap->SetMesh(mesh);
+	m_pMinimap->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - (MiniMapWidth/2), (-FRAME_BUFFER_HEIGHT / 2) + (MiniMapHeight / 2));
+
+
+	m_pMinimapFog = new CShader_MinmapFog();
+	m_pMinimapFog->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 2, 2);
+	m_pMinimapFog->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
+
+	pMinmapFog1 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	pMinmapFog1->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog1.dds", 0);
+
+	m_pMinimapFog->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog1, ROOT_PARAMETER_MINIIMAPFOG, true);
+
+	m_pMapOne = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, MiniMapWidth, MiniMapHeight, 0.0f, 1.0f);
+	m_pMapOne->SetObjectID(0);
+	m_pMapOne->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - (MiniMapWidth / 2), (-FRAME_BUFFER_HEIGHT / 2) + (MiniMapHeight / 2));
+	m_pMapOne->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_pMapOne->SetMesh(mesh);
+
+	pMinmapFog2 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+
+	pMinmapFog2->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog2.dds", 0);
+
+	m_pMinimapFog->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog2, ROOT_PARAMETER_MINIIMAPFOG, true);
+
+	m_pMapTwo = new CUI_ITem(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, MiniMapWidth, MiniMapHeight, 0.0f, 1.0f);
+	m_pMapTwo->SetObjectID(1);
+	m_pMapTwo->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - (MiniMapWidth / 2), (-FRAME_BUFFER_HEIGHT / 2) + (MiniMapHeight / 2));
+	m_pMapTwo->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_pMapTwo->SetMesh(mesh);
 }
 
 void CPostProcessingShader::ReleaseObjects()
@@ -679,22 +667,13 @@ void CPostProcessingShader::ReleaseObjects()
 		m_pHP->Release();
 		m_pHP = NULL;
 	}
-	if (m_Radiation)
-	{
-		m_Radiation->ReleaseShaderVariables();
-		m_Radiation->ReleaseUploadBuffers();
-		m_Radiation->Release();
-		m_Radiation = NULL;
-	}
-
-	if (m_IndoorGreeting)
-	{
-		m_IndoorGreeting->ReleaseShaderVariables();
-		m_IndoorGreeting->ReleaseUploadBuffers();
-		m_IndoorGreeting->Release();
-		m_IndoorGreeting = NULL;
-	}
-	
+	//if (m_Radiation)
+	//{
+	//	m_Radiation->ReleaseShaderVariables();
+	//	m_Radiation->ReleaseUploadBuffers();
+	//	m_Radiation->Release();
+	//	m_Radiation = NULL;
+	//}
 
 	if (m_pMapOne)
 	{
@@ -738,24 +717,24 @@ void CPostProcessingShader::ReleaseObjects()
 		m_RadiationLevels = NULL;
 	}
 
-	if (m_HPBAR)
+	if (m_StatementUI)
 	{
-		m_HPBAR->ReleaseShaderVariables();
-		m_HPBAR->ReleaseUploadBuffers();
-		m_HPBAR->Release();
-		m_HPBAR = NULL;
+		m_StatementUI->ReleaseShaderVariables();
+		m_StatementUI->ReleaseUploadBuffers();
+		m_StatementUI->Release();
+		m_StatementUI = NULL;
 	}
 
-	if (m_ppInVentoryBoxs)
-	{
-		for (int i = 0; i < 3; ++i)
-		{
-			m_ppInVentoryBoxs[i]->ReleaseShaderVariables();
-			m_ppInVentoryBoxs[i]->ReleaseUploadBuffers();
-			m_ppInVentoryBoxs[i]->Release();
-			m_ppInVentoryBoxs[i] = NULL; 
-		}
-	}
+	//if (m_ppInVentoryBoxs)
+	//{
+	//	for (int i = 0; i < 3; ++i)
+	//	{
+	//		m_ppInVentoryBoxs[i]->ReleaseShaderVariables();
+	//		m_ppInVentoryBoxs[i]->ReleaseUploadBuffers();
+	//		m_ppInVentoryBoxs[i]->Release();
+	//		m_ppInVentoryBoxs[i] = NULL; 
+	//	}
+	//}
 
 	if (m_ppItems)
 	{
@@ -868,14 +847,14 @@ void CPostProcessingShader::ReleaseShaderVariables()
 	}
 
 	if (m_pHP) m_pHP->ReleaseShaderVariables();
-	if (m_Radiation) m_Radiation->ReleaseShaderVariables();
-	if (m_HPBAR) m_HPBAR->ReleaseShaderVariables();
+	//if (m_Radiation) m_Radiation->ReleaseShaderVariables();
+	if (m_StatementUI) m_StatementUI->ReleaseShaderVariables();
 
-	if (m_ppInVentoryBoxs)
-	{
-		for (int i = 0; i < 3; ++i)
-			m_ppInVentoryBoxs[i]->ReleaseShaderVariables();
-	}
+	//if (m_ppInVentoryBoxs)
+	//{
+	//	for (int i = 0; i < 3; ++i)
+	//		m_ppInVentoryBoxs[i]->ReleaseShaderVariables();
+	//}
 
 	if (m_ppItems)
 	{
@@ -892,7 +871,7 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 	
 	if (m_pBaseUIShader)m_pBaseUIShader->Render(pd3dCommandList, pCamera);
 
-	if (m_HPBAR) m_HPBAR->Render(pd3dCommandList, pCamera);
+	if (m_StatementUI) m_StatementUI->Render(pd3dCommandList, pCamera);
 
 	// ==================================================================
 
@@ -900,7 +879,7 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 	{
 
 		if (CMgr_IndoorControl::GetInstance()->GetPasswordControl() && m_bPasswordRenderControl)
-		{//if (m_IndoorGreeting) m_IndoorGreeting->Render(pd3dCommandList, pCamera);
+		{
 
 			for (int i = 0; i < int(nNumberCount); ++i)
 			{
@@ -956,13 +935,13 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 	}
 	// ==================================================================
 
-	if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
+	//if (m_Radiation) m_Radiation->Render(pd3dCommandList, pCamera);
 
-	for (int i = 0; i < int(nIventoryCount); ++i)
-	{
-		m_ppInVentoryBoxs[i]->Render(pd3dCommandList, 0);
-	}
-
+	//for (int i = 0; i < int(nIventoryCount); ++i)
+	//{
+	//	m_ppInVentoryBoxs[i]->Render(pd3dCommandList, 0);
+	//}
+	if (m_PlayerHP) m_PlayerHP->Render(pd3dCommandList, pCamera);
 	if (m_pItemShader)m_pItemShader->Render(pd3dCommandList, pCamera);
 	if (m_pItemTex) m_pItemTex->UpdateShaderVariable(pd3dCommandList, 0);
 
@@ -972,7 +951,8 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 		dynamic_cast<CUI_ITem*>(m_ppItems[i])->SetItemReact(CItemMgr::GetInstance()->GetReactIten());
 		m_ppItems[i]->Render(pd3dCommandList, 0);
 	}
-	if (m_PlayerHP) m_PlayerHP->Render(pd3dCommandList, pCamera);
+
+
 
 	// PipelineState = 1 [IndoorState] ==================================================== 
 	if (!(npipelinestate == 1))

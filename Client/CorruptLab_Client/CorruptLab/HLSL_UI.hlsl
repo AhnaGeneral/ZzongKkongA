@@ -23,6 +23,9 @@ float4 PSHP(VS_TEXTURED_OUTPUT input ): SV_TARGET
 //[ITEM]================================================================================
 float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 {
+
+	float alphaControl = 0.6f;
+    float3 zeroColor = float3(0.2, 0.2, 0.2);
 	float4 cHandLight = gtxtHandLighTexture.Sample(gSamplerClamp, input.uv);
 	float4 cHPKit = gtxtHPKitdTexture.Sample(gSamplerClamp, input.uv);
 	float4 cPillds = gtxtPillddsTexture.Sample(gSamplerClamp, input.uv);
@@ -38,13 +41,13 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 
 
 		if (gnObjectID == 0 && gf4ItemCount.x <= 0.0f)
-			cColor = float4(cHandLight.rgb * 0.2, cHandLight.a);
+			cColor = float4(zeroColor, cHandLight.a);
 		
 		if (gnObjectID == 1 && gf4ItemCount.y <= 0.0f)
-			cColor = float4(cHPKit.rgb * 0.2, cHPKit.a);
+			cColor = float4(zeroColor, cHPKit.a);
 		
 		if (gnObjectID == 2 && gf4ItemCount.z <= 0.0f) 
-			cColor = float4(cPillds.rgb * 0.2, cPillds.a);
+			cColor = float4(zeroColor, cPillds.a);
 	}
 	else
 	{
@@ -55,15 +58,15 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 			{
 			case 0: 
 				if(gf4ItemCount.x > 0.0f) cColor = cHandLight; 
-				if (gf4ItemCount.x == 0.0f) cColor = float4(cHandLight.rgb * 0.2, cHandLight.a);
+				if (gf4ItemCount.x == 0.0f) cColor = float4(zeroColor, cHandLight.a);
 				break;
 			case 1:
 				if (gf4ItemCount.y > 0.0f) cColor = cHPKit;
-				if (gf4ItemCount.y == 0.0f) cColor = float4(cHPKit.rgb * 0.2, cHPKit.a);
+				if (gf4ItemCount.y == 0.0f) cColor = float4(zeroColor, cHPKit.a);
 				break;
 			case 2:
 				if (gf4ItemCount.z > 0.0f) cColor = cPillds;
-				if (gf4ItemCount.z == 0.0f) cColor = float4(cPillds.rgb * 0.2, cPillds.a);
+				if (gf4ItemCount.z == 0.0f) cColor = float4(zeroColor, cPillds.a);
 				break;
 			}
 			break;
@@ -73,15 +76,15 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 			{
 			case 0:
 				if (gf4ItemCount.x > 0.0f) cColor = cHandLight;
-				if (gf4ItemCount.x == 0.0f) cColor = float4(cHandLight.rgb * 0.2, cHandLight.a);
+				if (gf4ItemCount.x == 0.0f) cColor = float4(zeroColor, cHandLight.a);
 				break;
 			case 1:
 				if (gf4ItemCount.y > 0.0f) cColor = cHPKit;
-				if (gf4ItemCount.y == 0.0f) cColor = float4(cHPKit.rgb * 0.2, cHPKit.a);
+				if (gf4ItemCount.y == 0.0f) cColor = float4(zeroColor, cHPKit.a);
 				break;
 			case 2:
 				if (gf4ItemCount.z > 0.0f) cColor = cPillds;
-				if (gf4ItemCount.z == 0.0f) cColor = float4(cPillds.rgb * 0.2, cPillds.a);
+				if (gf4ItemCount.z == 0.0f) cColor = float4(zeroColor, cPillds.a);
 				break;
 			}
 			break;
@@ -91,15 +94,15 @@ float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 			{
 			case 0:
 				if (gf4ItemCount.x > 0.0f) cColor = cHandLight;
-				if (gf4ItemCount.x == 0.0f) cColor = float4(cHandLight.rgb * 0.2, cHandLight.a);
+				if (gf4ItemCount.x == 0.0f) cColor = float4(zeroColor, cHandLight.a);
 				break;
 			case 1:
 				if (gf4ItemCount.y > 0.0f) cColor = cHPKit;
-				if (gf4ItemCount.y == 0.0f) cColor = float4(cHPKit.rgb * 0.2, cHPKit.a);
+				if (gf4ItemCount.y == 0.0f) cColor = float4(zeroColor, cHPKit.a);
 				break;
 			case 2:
 				if (gf4ItemCount.z > 0.0f) cColor = cPillds;
-				if (gf4ItemCount.z == 0.0f) cColor = float4(cPillds.rgb * 0.2, cPillds.a);
+				if (gf4ItemCount.z == 0.0f) cColor = float4(zeroColor, cPillds.a);
 				break;
 			}
 			break;

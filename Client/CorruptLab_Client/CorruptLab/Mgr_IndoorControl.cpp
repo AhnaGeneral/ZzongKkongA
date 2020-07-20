@@ -74,6 +74,16 @@ bool CMgr_IndoorControl::GetExecuteConfirmControl()
 	return ExecuteConfirmControl;
 }
 
+void CMgr_IndoorControl::SetExecuteHandLightControl(bool _Excute)
+{
+	ExecuteHandLightControl = _Excute; 
+}
+
+bool CMgr_IndoorControl::GetExecuteHandLightControl()
+{
+	return ExecuteHandLightControl;
+}
+
 void CMgr_IndoorControl::SetIndoorSceneAndLight(CGameScene2* _IndoorScene, CLightTarget* _LightTarget)
 {
 	pIndoorScene = _IndoorScene;

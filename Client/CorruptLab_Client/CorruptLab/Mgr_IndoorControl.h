@@ -18,7 +18,8 @@ private:
 
 	bool ThatIsRightPassword = false; 
 	bool ExecuteConfirmControl = false; 
-	
+	bool ExecuteHandLightControl = false; 
+
 	CGameScene2  * pIndoorScene = nullptr;
 	CLightTarget * pIndoorLightTarget = nullptr;
 
@@ -41,9 +42,13 @@ public:
 	void SetExecuteConfirmControl(bool _Excute);
 	bool GetExecuteConfirmControl();
 
+	void SetExecuteHandLightControl(bool _Excute);
+	bool GetExecuteHandLightControl();
+
 	void SetIndoorSceneAndLight(CGameScene2* _IndoorScene, CLightTarget* _LightTarget);
 	void ExcuteAnimationDoor();
 	
+
 	static CMgr_IndoorControl* GetInstance(void)
 	{
 		if (m_pInstance == NULL)

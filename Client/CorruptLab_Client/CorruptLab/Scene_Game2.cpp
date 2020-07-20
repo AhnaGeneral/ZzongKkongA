@@ -8,6 +8,7 @@
 #include "Shader_Noise.h"
 #include "Shader_BillBoard.h"
 #include "Mgr_IndoorControl.h"
+#include "CSystem_Particle.h"
 #include "CNarrationMgr.h"
 
 //Scene2-----------------------------------------------------------------------------
@@ -43,6 +44,8 @@ CGameScene2::CGameScene2()
 	m_AnimationTime = 0.0f; 
 	m_AnimationControl = true;
 	CMgr_IndoorControl::GetInstance()->Initialize();
+
+	m_pIndoorParticleSystemObject = NULL;
 	//m_pPassWordTexture = NULL; 
 	
 	//m_pLabatoryPos = new vector<XMFLOAT3>; 
@@ -50,6 +53,10 @@ CGameScene2::CGameScene2()
 
 CGameScene2::~CGameScene2()
 {
+	for (auto _autoPaticle : m_pIndoorParticleSystems)
+	{
+		_autoPaticle->Shutdown();
+	}
 }
 
 void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -142,7 +149,21 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_IndoorWallLines->SetPosition(0.0f, 4.f, -62.0f);
 	m_IndoorWallLine[3] = m_IndoorWallLines;
 
+
+	// emplace particle 
 	PlaceObjectsFromFile(pd3dDevice, m_pd3dGraphicsRootSignature, pd3dCommandList);
+
+	for (auto a : m_DrugmakerImpromation)
+	{
+		m_pIndoorParticleSystemObject = new ParticleSystemObject(pd3dDevice, pd3dCommandList,
+			m_pd3dGraphicsRootSignature, XMFLOAT3(a.pos.x, a.pos.y, a.pos.z), 4.0f+ a.size.y*3.0f);
+		m_pIndoorParticleSystemObject->InitializeParticleSystem();
+		m_pIndoorParticleSystemObject->InitializeBuffer(pd3dDevice, pd3dCommandList);
+		m_pIndoorParticleSystemObject->CreateParticleShaderTexture(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+		m_pIndoorParticleSystems.push_back(m_pIndoorParticleSystemObject);
+	}
+
+
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -196,7 +217,17 @@ void CGameScene2::ReleaseObjects()
 	delete[] m_pDynamicObjLists;
 	m_pDynamicObjLists = NULL;
 
+	//----------------------------------------------
+
+	for (auto _autoPaticle : m_pIndoorParticleSystems)
+	{
+		_autoPaticle->DisconnectList();
+		_autoPaticle->Release();
+	}
+
 	if (m_pBoss) m_pBoss->Release();
+
+
 }
 
 ID3D12RootSignature* CGameScene2::CreateGraphicsRootSignature(ID3D12Device* pd3dDevice)
@@ -220,6 +251,11 @@ void CGameScene2::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandLi
 
 void CGameScene2::ReleaseShaderVariables()
 {
+	for (auto _autoPaticle : m_pIndoorParticleSystems)
+	{
+		_autoPaticle->ReleaseShaderVariables();
+	}
+
 }
 
 bool CGameScene2::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -302,6 +338,14 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 					CMgr_IndoorControl::GetInstance()->SetThatIsRightPassword(Is_True);
 					break;
 			}
+
+		case 'L':
+			if (CMgr_IndoorControl::GetInstance()->GetExecuteHandLightControl())
+				CMgr_IndoorControl::GetInstance()->SetExecuteHandLightControl(false); 
+			else
+				CMgr_IndoorControl::GetInstance()->SetExecuteHandLightControl(true);
+
+			break; 
 		case VK_SPACE:
 			m_pPlayer->SetAttackState();
 			break;
@@ -366,14 +410,11 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	
 	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera);
 	
-	//if(Shader_Password)Shader_Password->Render(pd3dCommandList, pCamera);
-	//if(m_pPassWordTexture)m_pPassWordTexture->UpdateShaderVariable(pd3dCommandList, 0);
 
-	//if (m_pPasswordobj) 
-	//{
-	//	m_pPasswordobj->UpdateTransform(NULL);
-	//	m_pPasswordobj->Render(pd3dCommandList, 0);
-	//}
+	for (auto _autoPaticle : m_pIndoorParticleSystems)
+	{
+		_autoPaticle->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
+	}
 
 	if (m_IndoorWall) m_IndoorWall->Render(pd3dCommandList, pCamera); 
 	if (m_pBoss)

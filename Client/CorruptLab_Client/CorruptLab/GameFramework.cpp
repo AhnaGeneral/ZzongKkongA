@@ -946,7 +946,9 @@ void CGameFramework::FrameAdvanceStageIndoor()
 
 	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenLightBuffers, m_pd3dOffScreenLightBufferCPUHandles, TRUE, NULL);
 	
+
 	m_pLightProcessingShader->AnimateObjects(m_GameTimer.GetTimeElapsed());
+
 	m_pLightProcessingShader->IndoorRender(m_pd3dCommandList, m_pCamera);
 
 	for (int i = 0; i < m_nOffScreenLightBuffers; i++)

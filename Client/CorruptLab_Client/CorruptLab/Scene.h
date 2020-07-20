@@ -67,7 +67,7 @@ public:
 	CObjectWater              * m_pCObjectWater; 
 
 	CShader_Effect            * m_pTestEffect; 
-	ParticleSystemObject      * m_ParticleSystemObject; 
+	ParticleSystemObject      * m_pParticleSystemObject; 
 	int                         n_ReactItem; 
 	float                       itemRange;
 	ID3D12Device              * m_pDevice; 

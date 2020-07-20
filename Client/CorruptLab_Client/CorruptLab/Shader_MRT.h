@@ -43,7 +43,7 @@ protected:
 	CGameObject                 ** m_RadiationLevels;
 	CUI_RaditaionLevel           * m_RadiationCount;
 					            
-	CUI_Root                     * m_HPBAR;
+	CUI_Root                     * m_StatementUI;
 					            
 	CGameObject                 ** m_ppInVentoryBoxs;
 	UINT                           nIventoryCount;
@@ -91,6 +91,11 @@ public:
 		void* pContext = NULL, void* pLightContext = NULL, void* pShadowContext = NULL);
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+
+	void BuildObjectIndoorScenePassword(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void BuildObjectPlayerStateUICollection(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void BuildObjectMinimap(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+
 
 	virtual void ReleaseObjects();
 	virtual void ReleaseUploadBuffers();

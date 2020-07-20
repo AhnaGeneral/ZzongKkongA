@@ -77,10 +77,10 @@ float4 PSIndoorPostProcessing(float4 position : SV_POSITION) : SV_Target
 
 	float fog = length(cNonLight.rgb);
 
-	float4 fogColor = float4(0.6f,0.6f,0.6f,1);
-	if (fog > 0)
-		fogColor.g *= cNonLight.g / cNonLight.r * 0.9f;
-	cColor = lerp(cColor, fogColor,fog);
+	//float4 fogColor = float4(0.6f,0.6f,0.6f,1);
+	//if (fog > 0)
+		//fogColor.g *= cNonLight.g / cNonLight.r * 0.9f;
+	cColor += cNonLight;
 	cColor += cEmmisive;
 
 	//cColor = lerp(cColor,fLighted,0.6f);

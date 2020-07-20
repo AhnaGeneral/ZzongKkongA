@@ -1,6 +1,7 @@
 #include "Shader_LightMRT.h"
 #include "Object_Player.h"
 #include "Mgr_Scene.h"
+#include "Mgr_IndoorControl.h"
 CLightTarget::CLightTarget()
 {
 	m_pTextures = NULL;
@@ -268,7 +269,7 @@ void CLightTarget::ChangeLights()
 
 
 	m_pLights->m_pLights[2].m_nType = SPOT_LIGHT;
-	m_pLights->m_pLights[2].m_bEnable = true;
+	m_pLights->m_pLights[2].m_bEnable = false;
 	m_pLights->m_pLights[2].m_fRange = 60.0f;
 	m_pLights->m_pLights[2].m_xmf4Ambient  = XMFLOAT4(0.1f, 0.1f, 0.2f, 1.0f);
 	m_pLights->m_pLights[2].m_xmf4Diffuse  = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0);
@@ -398,9 +399,15 @@ D3D12_SHADER_BYTECODE CLightTarget::CreatePixelShader(ID3DBlob** ppd3dShaderBlob
 
 void CLightTarget::AnimateObjects(float fTimeElapsed)
 {
-	if (m_pLights)
+	
+	if (m_pLights&& CMgr_IndoorControl::GetInstance()->GetExecuteHandLightControl())
 	{
+		m_pLights->m_pLights[2].m_bEnable = true;
 		m_pLights->m_pLights[2].m_xmf3Position = XMFLOAT3 (m_pPlayer->GetPosition().x, m_pPlayer->GetPosition().y + 3.0f , m_pPlayer->GetPosition().z );
 		m_pLights->m_pLights[2].m_xmf3Direction = m_pPlayer->GetLookVector();
+	}
+	else
+	{
+		m_pLights->m_pLights[2].m_bEnable = false; 
 	}
 }

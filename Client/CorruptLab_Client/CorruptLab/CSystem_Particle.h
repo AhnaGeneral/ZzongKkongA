@@ -5,14 +5,15 @@ struct ParticleType
 {
 	float posX, posY, PosZ; 
 	float red, green, blue; 
-	float velocity; 
+	float velocity;
+	float size;
 	bool active; 
 };
 
-struct VertexType
+struct CB_ParicleShader
 {
 	XMFLOAT3 pos; 
-	XMFLOAT2 tex; 
+	float size;
 	XMFLOAT4 color; 
 };
 
@@ -30,7 +31,7 @@ private:
 	float m_ParticleSize = 0;
 	float m_ParticlePerSecond = 0; 
 	float m_maxParticles = 0; 
-
+	float m_DeadIineY = 50.0f;
 	int m_CurrentParticleCount = 0; 
 	float m_accumulatedTime = 0; //accumulate รเรด
 
@@ -40,24 +41,22 @@ private:
 	ParticleType* m_ParticleList = nullptr;
 
 
-	VertexType* m_Vertices = nullptr; 
+	CB_ParicleShader* m_Vertices = nullptr; 
 
 	// ==================================================
 	int m_vertexCount = 0; 
-	ID3D12Resource  * m_pd3dcbVertexBuffer = nullptr;
-	ID3D12Resource  * m_pd3dVertexUploadBuffer = nullptr;
-	D3D12_VERTEX_BUFFER_VIEW  m_d3dVertexBufferView;
-	VertexType*     m_pd3dVertices = nullptr;
+	ID3D12Resource            * m_pd3dcbVertexBuffer = nullptr;
+	ID3D12Resource            * m_pd3dVertexUploadBuffer = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW    m_d3dVertexBufferView;
+	CB_ParicleShader                * m_pd3dVertices = nullptr;
 
-	//int m_indexCount = 0;
-	//ID3D12Resource  * m_pd3dcbIndexBuffer = nullptr;
-	//ID3D12Resource  * m_pd3dIndexUploadBuffer = nullptr;
-	//D3D12_INDEX_BUFFER_VIEW m_d3dIndexBufferView; 
+	XMFLOAT3                    m_EmplacePos = XMFLOAT3(0.0f, 0.0f, 0.0f); 
 	// ==================================================
 
 public:
+	ParticleSystemObject() {}
 	ParticleSystemObject(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
-		ID3D12RootSignature* pd3dGraphicsRootSignature);
+		ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 _EmplacePos = XMFLOAT3(0.0f, 0.0f,0.0f), float _DeadLineY = 50.0f);
 	virtual ~ParticleSystemObject();
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);

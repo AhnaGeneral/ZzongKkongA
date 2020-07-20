@@ -7,6 +7,17 @@ class CBoss;
 class CFloor;
 class Shader_Basic; 
 class Shader_TextureBasic;
+class ParticleSystemObject;
+
+struct DrugMakersImpormation
+{
+	XMFLOAT3 pos;
+	XMFLOAT3 size;
+	
+public:
+	DrugMakersImpormation(XMFLOAT3 _pos, XMFLOAT3 _size) :pos(_pos), size(_size) {}
+};
+
 class CGameScene2 : public CGameScene
 {
 public:
@@ -22,14 +33,14 @@ public:
 
 	CGameObject** m_IndoorWallLine = nullptr;
 	CGameObject* m_IndoorWallLines = nullptr;
-	//CGameObject* m_pPasswordobj = nullptr; 
-	//Shader_TextureBasic* Shader_Password = nullptr;
-	//Shader_Basic* pShader = NULL; 
 	CGameObject* m_IndoorWall = nullptr;
+
+	ParticleSystemObject * m_pIndoorParticleSystemObject;
+	list<ParticleSystemObject*> m_pIndoorParticleSystems;
+	list<DrugMakersImpormation> m_DrugmakerImpromation;
 
 	int  n_ReactItem;
 	float itemRange;
-
 	float m_AnimationTime;
 	bool m_AnimationControl; 
 public:
