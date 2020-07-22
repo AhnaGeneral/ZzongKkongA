@@ -53,6 +53,17 @@ bool CMgr_IndoorControl::ConfirmPassword()
 	}
 }
 
+void CMgr_IndoorControl::SetDeskOpenControl(int _DeskOpeningControl)
+{
+	DeskOpenControl = _DeskOpeningControl;
+	pIndoorScene->ExcuteAnimationDesk(DeskOpenControl);
+}
+
+int CMgr_IndoorControl::GetDeskOpenControl()
+{
+	return DeskOpenControl;
+}
+
 void CMgr_IndoorControl::SetThatIsRightPassword(bool _ThatIsRight)
 {
 	ThatIsRightPassword = _ThatIsRight; 
@@ -95,6 +106,7 @@ void CMgr_IndoorControl::ExcuteAnimationDoor()
 	pIndoorScene->ExcuteAnimationDoor();
 	pIndoorLightTarget->TurnOnLabatoryLight();
 }
+
 
 void CMgr_IndoorControl::Destroy()
 {

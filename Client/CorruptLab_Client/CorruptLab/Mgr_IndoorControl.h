@@ -12,6 +12,7 @@ class CMgr_IndoorControl
 {
 private:
 	int passwordControl = 0; 
+	int DeskOpenControl = 0; 
 
 	std::list<int>* listpassword = nullptr;
 	static CMgr_IndoorControl* m_pInstance;
@@ -33,6 +34,9 @@ public:
 	void EraserPassword();
 	bool ConfirmPassword(); 
 
+	void SetDeskOpenControl(int _DeskOpeningControl);
+	int  GetDeskOpenControl();
+
 	void SetpasswordControl(int _passwordControl);
 	int  GetPasswordControl();
 
@@ -47,6 +51,7 @@ public:
 
 	void SetIndoorSceneAndLight(CGameScene2* _IndoorScene, CLightTarget* _LightTarget);
 	void ExcuteAnimationDoor();
+
 	
 
 	static CMgr_IndoorControl* GetInstance(void)

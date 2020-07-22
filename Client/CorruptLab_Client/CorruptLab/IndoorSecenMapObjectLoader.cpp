@@ -35,10 +35,6 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	CGameObject* pDiverObject = NULL;
 
     // Static ================================================================================
-	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ Desk01 ]
-	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Desk1.bin", NULL, 0);
-	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Desk01s.bin", OBJECT_INDOOR_TYPE_DESK);
-
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile  // [ Desk02 ]
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Desk2.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Desk02s.bin", OBJECT_INDOOR_TYPE_DESK);
@@ -110,7 +106,7 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/Door_OpeningT.bin", OBJECT_INDOOR_TYPE_DOOROPEN);
 
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
-	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Desk_Opening.bin", NULL, 5);
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Desk_Opening.bin", NULL, 8);
 	PlaceDynamicFromFile(pDiverObject, "ObjectsData/OpeningDeskT.bin", OBJECT_INDOOR_TYPE_DESKOPEN);
 
 }
@@ -234,4 +230,13 @@ void CGameScene2::ExcuteAnimationDoor()
 {
 	for (auto& a : *m_pDynamicObjLists[OBJECT_INDOOR_TYPE_DOOROPEN])
 		(dynamic_cast<CDoor*>(a))->Open();
+}
+
+void CGameScene2::ExcuteAnimationDesk(int _TrackNumber)
+{
+	for (auto& a : *m_pDynamicObjLists[OBJECT_INDOOR_TYPE_DESKOPEN])
+	{
+		if(a->m_iTrackNumber == _TrackNumber)
+		(dynamic_cast<CDesk*>(a))->Open();
+	}
 }

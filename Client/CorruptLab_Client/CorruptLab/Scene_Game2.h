@@ -64,6 +64,8 @@ public:
 	virtual void Update(float fTimeElapsed);
 
 	void PassWordCheck(); 
+	void DeskOpenCheck(); 
+
 	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd);
 
 	virtual void AnimateObjects(float fTimeElapsed);
@@ -76,6 +78,7 @@ public:
 	void PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index);
 	void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	void ExcuteAnimationDoor();
+	void ExcuteAnimationDesk(int _TrackNumber);
 private:
 
 	bool					    m_bPipelineStateIndex;

@@ -297,6 +297,7 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 		case 'Q':
 		case 'q':
 			PassWordCheck();
+			DeskOpenCheck();
 			break;
 		case 'A':
 			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
@@ -471,7 +472,6 @@ void CGameScene2::Update(float fTimeElapsed)
 }
 
 int tmp = 0; 
-
 void CGameScene2::PassWordCheck()
 {
 	for (auto pObj : *m_pStaticObjLists[OBJECT_INDOOR_TYPE_PASSWORD])
@@ -480,7 +480,7 @@ void CGameScene2::PassWordCheck()
 		XMFLOAT3 PlayerPos = m_pPlayer->GetPosition();
 
 		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
-		if (Distance < 15)
+		if (Distance < 18.f)
 		{
 			if (tmp == 0)
 			{
@@ -491,6 +491,23 @@ void CGameScene2::PassWordCheck()
 				tmp = 0;
 			}
 			CMgr_IndoorControl::GetInstance()->SetpasswordControl(tmp);
+		}
+	}
+}
+
+void CGameScene2::DeskOpenCheck()
+{
+	for (auto pObj : *m_pDynamicObjLists[OBJECT_INDOOR_TYPE_DESKOPEN])
+	{
+		XMFLOAT3 ObjPos = pObj->GetPosition();
+		XMFLOAT3 PlayerPos = m_pPlayer->GetPosition();
+
+
+		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
+		
+		if (Distance < 13.f)
+		{
+			CMgr_IndoorControl::GetInstance()->SetDeskOpenControl(pObj->m_iTrackNumber);
 		}
 	}
 }
