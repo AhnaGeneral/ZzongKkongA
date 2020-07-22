@@ -1,6 +1,7 @@
 #include "Mgr_IndoorControl.h"
 #include "Scene_Game2.h"
 #include "Shader_LightMRT.h"
+#include "SoundMgr.h"
 
 CMgr_IndoorControl* CMgr_IndoorControl::m_pInstance = NULL;
 
@@ -46,9 +47,15 @@ bool CMgr_IndoorControl::ConfirmPassword()
 	if (listpassword->size() != 4) return false; 
 	else
 	{
-		int i = 0; 
+		int i = 0;
 		for (auto& a : *listpassword)
-			if (ThatIsRightPassword[i++] != a) return false; 
+		if (ThatIsRightPassword[i++] != a)
+		{
+			CSoundMgr::GetInstacne()->PlayEffectSound(_T("WrongNumber"));
+			return false;
+		}
+		CSoundMgr::GetInstacne()->PlayEffectSound(_T("RightNumber"));
+		CSoundMgr::GetInstacne()->PlayEffectSound(_T("door2"));
 		return true;
 	}
 }

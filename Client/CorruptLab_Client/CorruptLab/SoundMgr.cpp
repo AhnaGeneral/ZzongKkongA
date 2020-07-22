@@ -108,6 +108,49 @@ void CSoundMgr::LoadSoundFile(void)
 		m_mapSound.insert(make_pair(pName, pSound));
 	}
 
+	m_Result = m_pSystem->createSound("Sounds/SE/Attack.mp3", FMOD_LOOP_OFF, 0, &pSound);
+	pName = _T("Attack");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
+
+	m_Result = m_pSystem->createSound("Sounds/SE/Attacked.mp3", FMOD_LOOP_OFF, 0, &pSound);
+	pName = _T("Attacked");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+	
+	m_Result = m_pSystem->createSound("Sounds/SE/NumberWrong.mp3", FMOD_LOOP_OFF, 0, &pSound);
+	pName = _T("WrongNumber");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
+	m_Result = m_pSystem->createSound("Sounds/SE/NumberRight.mp3", FMOD_LOOP_OFF, 0, &pSound);
+	pName = _T("RightNumber");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
+	m_Result = m_pSystem->createSound("Sounds/SE/door.mp3", FMOD_LOOP_OFF, 0, &pSound);
+	pName = _T("door");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
+	m_Result = m_pSystem->createSound("Sounds/SE/door2.mp3", FMOD_LOOP_OFF, 0, &pSound);
+	pName = _T("door2");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
 
 	m_Result = m_pSystem->update();
 	ErrorCheck(m_Result);

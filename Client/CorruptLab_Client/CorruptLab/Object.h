@@ -19,7 +19,7 @@ struct CB_GAMEOBJECT_INFO
 
 class CGameObject
 {
-protected:
+public:
 	int								m_nReferences = 0;
 
 

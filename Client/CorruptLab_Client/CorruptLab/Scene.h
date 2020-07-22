@@ -17,6 +17,13 @@ class CSkyBox;
 class CItemBox;
 class CShader_Effect; 
 
+struct OpeningDoorInfo
+{
+	XMFLOAT3 DoorPos;
+	float	openingTime = 0.f;
+	bool	bOpen = false;
+};
+
 class CScene
 {
 public:
@@ -92,6 +99,7 @@ public:
 	virtual void DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Update(float fTimeElapsed);
+	
 
 	void ItemBoxCheck();
 
@@ -109,10 +117,11 @@ public:
 	void PlaceDynamicFromFile(CGameObject* pModel, char* FileName, int index, int _OpenningDoorControl = 0);
 	void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 
+	void CheckOpeningDoor();
 	void ChangeTerrainPipeline();
 
 protected:
-
+	OpeningDoorInfo				m_OpeningDoorsInfo[2];
 	bool					    m_bPipelineStateIndex;
 	POINT					    m_ptOldCursorPos;
 	int						    m_nDynamicObjectTypeNum;

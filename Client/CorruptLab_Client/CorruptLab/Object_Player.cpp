@@ -6,6 +6,7 @@
 #include "Object_Player.h"
 #include "Mgr_Scene.h"
 #include "Mgr_Collision.h"
+#include "SoundMgr.h"
 #include "Animation.h"
 #include "Shader.h"
 
@@ -52,6 +53,8 @@ CPlayer::~CPlayer()
 
 void CPlayer::SetAttackState()
 {
+
+	CSoundMgr::GetInstacne()->PlayEffectSound(_T("Attack"));
 	m_iState = JOHNSON_ANIAMATION_ATTACK;
 	m_pChild->m_pAnimationController->m_pAnimationTracks->m_fPosition = 0;
 	CCollisionMgr::GetInstance()->MonsterDamageCheck(m_iAtt);

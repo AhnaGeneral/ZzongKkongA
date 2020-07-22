@@ -69,8 +69,13 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 
 	//House-----------------------------------------------
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
-	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/HouseAll.bin", NULL, 0);
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/HouseAll_1.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Houses.bin", OBJECT_TYPE_HOUSE);
+	pDiverObject->m_nReferences--;
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/HouseAll_2.bin", NULL, 0);
+	m_pStaticObjLists[OBJECT_TYPE_HOUSE]->at(1)->m_pChild = NULL;
+	m_pStaticObjLists[OBJECT_TYPE_HOUSE]->at(1)->SetChild(pDiverObject);
 
 
 	//Tree-----------------------------------------------
@@ -190,8 +195,7 @@ void CGameScene::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName,
 		pGameObject->UpdateTransform(NULL);
 		pGameObject->OnInitialize();
 	
-		
-			m_pStaticObjLists[index]->emplace_back(pGameObject);
+		m_pStaticObjLists[index]->emplace_back(pGameObject);
 		
 	
 	}
@@ -358,6 +362,7 @@ void CGameScene::PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int i
 	//pModel->m_pAnimationController = NULL;
 	if (pInFile) fclose(pInFile);
 }
+
 
 
 void CGameScene::ChangeTerrainPipeline()

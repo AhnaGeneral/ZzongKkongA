@@ -156,7 +156,7 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	for (auto a : m_DrugmakerImpromation)
 	{
 		m_pIndoorParticleSystemObject = new ParticleSystemObject(pd3dDevice, pd3dCommandList,
-			m_pd3dGraphicsRootSignature, XMFLOAT3(a.pos.x, a.pos.y, a.pos.z), 4.0f+ a.size.y*3.0f);
+			m_pd3dGraphicsRootSignature, XMFLOAT3(a.pos.x, a.pos.y + 2, a.pos.z), 4.0f+ a.size.y*3.0f);
 		m_pIndoorParticleSystemObject->InitializeParticleSystem();
 		m_pIndoorParticleSystemObject->InitializeBuffer(pd3dDevice, pd3dCommandList);
 		m_pIndoorParticleSystemObject->CreateParticleShaderTexture(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);

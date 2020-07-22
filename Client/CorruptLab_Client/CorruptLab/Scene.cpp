@@ -100,7 +100,9 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pParticleSystemObject->InitializeParticleSystem();
 	m_pParticleSystemObject->InitializeBuffer(pd3dDevice, pd3dCommandList);
 	m_pParticleSystemObject->CreateParticleShaderTexture(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-
+	
+	m_OpeningDoorsInfo[0].DoorPos = XMFLOAT3(412.f, 46.f, 319.f);
+	m_OpeningDoorsInfo[1].DoorPos = XMFLOAT3(331.f, 59.f, 220.f);
 
 	
 }
@@ -657,6 +659,7 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 			break;
 		case 'Q':
 		case 'q':
+			CheckOpeningDoor();
 			PurifyMonster();
 			ItemBoxCheck();
 			break;
@@ -742,6 +745,24 @@ bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 }
 
 
+void CGameScene::CheckOpeningDoor()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		if (m_OpeningDoorsInfo[i].bOpen == false)
+		{
+			if (i == 1 && CCollisionMgr::GetInstance()->m_iSceneProgress != 2)
+				return;
+			XMFLOAT3 playerpos = m_pPlayer->GetPosition();
+			float distance = Vector3::Length(Vector3::Subtract(playerpos, m_OpeningDoorsInfo[i].DoorPos));
+			if (distance < 15)
+			{
+				CSoundMgr::GetInstacne()->PlayEffectSound(_T("door"));
+				m_OpeningDoorsInfo[i].bOpen = true;
+			}
+		}
+	}
+}
 void CGameScene::PurifyMonster()
 {
 	for (auto pObj : *m_pDynamicObjLists[OBJECT_TYPE_DRUGMAKER])
@@ -928,8 +949,14 @@ void CGameScene::Update(float fTimeElapsed)
 	{
 		for (int i = 0; i < 2; ++i)
 		{
-			//m_pOpenningWarningDoors[i]->UpdateCollisionBoxes
-			m_pOpeningWarningDoors[i]->Rotate(0, -(fTimeElapsed * 4), 0);
+			if (m_OpeningDoorsInfo[i].bOpen)
+			{
+				m_OpeningDoorsInfo[i].openingTime += fTimeElapsed;
+				if (m_OpeningDoorsInfo[i].openingTime < 10.f)
+					m_pOpeningWarningDoors[i]->Rotate(0, -(fTimeElapsed * 10), 0);
+				else
+					m_OpeningDoorsInfo[i].bOpen = false;
+			}
 		}
 	}
 

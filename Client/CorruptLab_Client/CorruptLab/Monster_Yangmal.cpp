@@ -136,6 +136,9 @@ void CYangmal::GoodUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* p
 	else if (m_iState == MONSTER_STATE_WALK || m_iState == MONSTER_STATE_RETURNING)
 	{
 		SetAnimationSet(3, m_iTrackNumber); // WALK
+
+
+		if (m_fDistanceToPlayer < 5.f) return;
 		MoveToTarget(m_xmf3RandomMoveDest, fTimeElapsed, m_fSpeed / 2.f, pTerrain);
 		if (Vector3::Length(Vector3::Subtract(m_xmf3RandomMoveDest, GetPosition())) < 3.f)
 		{

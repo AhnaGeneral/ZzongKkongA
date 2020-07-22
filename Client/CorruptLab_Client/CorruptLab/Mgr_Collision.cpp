@@ -2,6 +2,7 @@
 #include "Mgr_Collision.h"
 #include "Object_Player.h"
 #include "Monster.h"
+#include "SoundMgr.h"
 #include "Mgr_Item.h"
 
 CCollisionMgr* CCollisionMgr::m_pInstance = NULL;
@@ -74,6 +75,7 @@ void CCollisionMgr::MonsterAttackCheck(int iDamaege, CCollisionBox box, float fT
 		m_pPlayer->UpdateObjectID(1);
 		if (m_fTime > 0.5f)
 		{
+			CSoundMgr::GetInstacne()->PlayEffectSound(_T("Attacked"));
 			m_pPlayer->GetDamaage(iDamaege);
 			m_fTime = 0.0f;
 		}
@@ -91,7 +93,7 @@ void CCollisionMgr::MonsterDamageCheck(int iDamage)
 				if (!Obj->m_bRender || Obj->m_iState == MONSTER_STATE_STUN || Obj->m_iState == MONSTER_STATE_DAMAGEING) continue;
 				
 				if (Obj->GetDistanceToPlayer() < 10)
-				{\
+				{
 
 
 					Obj->GetDamaage(iDamage);
