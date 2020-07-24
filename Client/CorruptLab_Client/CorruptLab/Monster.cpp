@@ -51,7 +51,7 @@ float CMonster::MoveToTarget(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHe
 
 	XMFLOAT3 MovePos = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Look, Speed * fTimeElapsed));
 	if (pTerrain)
-		MovePos.y = pTerrain->GetHeight(MovePos.x, MovePos.z);
+		MovePos.y = pTerrain->GetHeight(MovePos.x, MovePos.z) + m_fHarfHeight;
 
 	SetPosition(MovePos);
 	return RotateYaw;
@@ -164,7 +164,7 @@ void CMonster::GetDamaage(int iDamage)
 	{
 		if (m_iState == MONSTER_STATE_RETURNING)
 			m_bNotice = true;
-		SetAnimationSet(1, m_iTrackNumber);
+		SetAnimationSet(m_iStunAnimation, m_iTrackNumber);
  		m_iState = MONSTER_STATE_STUN;
 		m_iCurrentHP = 20;
 	}

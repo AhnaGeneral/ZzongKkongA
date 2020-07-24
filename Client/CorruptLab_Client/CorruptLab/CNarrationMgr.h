@@ -11,10 +11,11 @@ using namespace std;
 class CNarration : public CUI_Root
 {
 public:
-	bool IsEnabled = false;
+	bool IsEnabled = true;
 	CTexture* m_pTexture = NULL;
 
 };
+
 class CNarrationMgr
 {
 private:

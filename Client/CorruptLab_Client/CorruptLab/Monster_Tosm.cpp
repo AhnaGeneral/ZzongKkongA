@@ -5,6 +5,7 @@
 CTosm::CTosm()
 {
 	m_fSpeed = 20;
+	m_iStunAnimation = 5;
 }
 
 void CTosm::Initialize(XMFLOAT3 FiledPos, int iAtt)
@@ -64,6 +65,10 @@ void CTosm::GoodUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pCon
 
 void CTosm::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pContext)
 {
+	if (m_iState == MONSTER_STATE_STUN)
+	{
+		return;
+	}
 	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)pContext;
 
 	if (!m_bNotice) // 랜덤으로 돌아다니면서 쉬기
@@ -163,9 +168,28 @@ void CTosm::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pCont
 
 
 		case MONSTER_STATE_DAMAGEING:
-			m_iState = MONSTER_STATE_WALK;
+			SetAnimationSet(4, m_iTrackNumber);
+			if (m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_pAnimationSet->m_fPosition >= 0.75f)
+			{
+				m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_pAnimationSet->m_fPosition = 0;
+				m_iState = MONSTER_STATE_WALK;
+			}
 			break;
 		}
 
+	}
+}
+
+void CTosm::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, int iNum)
+{
+	//SetAnimationSet(1);
+	switch (m_iState)
+	{
+	case MONSTER_STATE_STUN:
+		if (m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_fPosition >= m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_pAnimationSet->m_fLength - 0.05)
+			m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_bEnable = false;
+	default:
+		CGameObject::Animate(fTimeElapsed, NULL, iNum);
+		break;
 	}
 }

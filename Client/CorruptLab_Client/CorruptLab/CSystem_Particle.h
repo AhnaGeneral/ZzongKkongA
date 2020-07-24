@@ -43,6 +43,7 @@ private:
 
 	CB_ParicleShader* m_Vertices = nullptr; 
 
+	bool m_bEnable = false;
 	// ==================================================
 	int m_vertexCount = 0; 
 	ID3D12Resource            * m_pd3dcbVertexBuffer = nullptr;
@@ -66,8 +67,10 @@ public:
      void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 
 public:
+	void SwitchEnable();
+	void RegenerateParticles(XMFLOAT3 Emitpos);
 	void InitializeBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
-	bool InitializeParticleSystem(); 
+	bool InitializeParticleSystem(float velocity , float ParticlePerSecond, float maxParticles); 
 	void EmitParticles(float frameTime); 
 	void UpdateParticles(float frameTime);
 	void KillParticles();

@@ -35,7 +35,8 @@ protected:
 	float			m_fDissolveTime = 0;
 	ID3D12Resource* m_pd3dDissolveTime = NULL;
 	float			m_fFurifyingTime = 0;
-
+	int				m_iStunAnimation = 1;
+	float			m_fHarfHeight = 0 ;
 
 	CAnimationController* m_pAnimationController = NULL;
 	int				m_iMaxHP;

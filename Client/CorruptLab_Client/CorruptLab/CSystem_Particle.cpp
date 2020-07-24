@@ -74,6 +74,33 @@ void ParticleSystemObject::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dC
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
 }
 
+void ParticleSystemObject::SwitchEnable()
+{
+	m_bEnable = !m_bEnable;
+}
+
+void ParticleSystemObject::RegenerateParticles(XMFLOAT3 EmplacePOS)
+{
+	SwitchEnable();
+	// 파티클 리스트를 생성합니다.
+	if (m_ParticleList)
+	{
+		delete[] m_ParticleList;
+	}
+	m_ParticleList = new ParticleType[m_maxParticles];
+	// 파티클 리스트를 초기화 합니다.
+	for (int i = 0; i < m_maxParticles; i++)
+	{
+		m_ParticleList[i].active = false;
+	}
+	// 아직 배출되지 않으므로 현재 파티클 수를 0으로 초기화합니다.
+	m_CurrentParticleCount = 0;
+	m_EmplacePos = EmplacePOS;
+	// 초당 파티클 방출 속도의 초기 누적 시간을 지웁니다.
+	m_accumulatedTime = 0.0f;
+
+}
+
 void ParticleSystemObject::InitializeBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	 m_vertexCount = m_maxParticles * 6;
@@ -86,7 +113,7 @@ void ParticleSystemObject::InitializeBuffer(ID3D12Device* pd3dDevice, ID3D12Grap
 
 }
 
-bool ParticleSystemObject::InitializeParticleSystem()
+bool ParticleSystemObject::InitializeParticleSystem(float velocity, float ParticlePerSecond, float maxParticles)
 {
 	// 방출 될 때 파티클이 위치 할 수 있는 임의의 편차를 설정합니다.
 	m_particleDeviationX = 4.0f;
@@ -94,17 +121,17 @@ bool ParticleSystemObject::InitializeParticleSystem()
 	m_particleDeviationZ = 4.5f;
 
 	// 파티클의 속도와 속도 변화를 설정합니다.
-	m_ParticleVelocity = 2.5f;
+	m_ParticleVelocity = velocity;
 	m_ParticleVelocityVariation = 0.3f;
 
 	// 파티클의 물리적 크기를 설정합니다.
 	m_ParticleSize = 0.3f ;
 
 	// 초당 방출 할 파티클 수를 설정합니다.
-	m_ParticlePerSecond = 250.0f;
+	m_ParticlePerSecond = ParticlePerSecond;
 
 	// 파티클 시스템에 허용되는 최대 파티클 수를 설정합니다.
-	m_maxParticles = 300;
+	m_maxParticles = maxParticles;
 
 	// 파티클 리스트를 생성합니다.
 	m_ParticleList = new ParticleType[m_maxParticles];
@@ -309,6 +336,8 @@ void ParticleSystemObject::Shutdown()
 void ParticleSystemObject::Frame(ID3D12Device* pd3dDevice, 
 	float frameTime, ID3D12GraphicsCommandList * pd3dCommandList, CCamera* pCamera)
 {
+	if (!m_bEnable) return;
+
 	KillParticles();
 
 	EmitParticles(frameTime);

@@ -73,7 +73,7 @@ void CCollisionMgr::MonsterAttackCheck(int iDamaege, CCollisionBox box, float fT
 	if (box.boundingBox.Intersects(playerBodybox->boundingBox))
 	{
 		m_pPlayer->UpdateObjectID(1);
-		if (m_fTime > 0.5f)
+		if (m_fTime > 1.f)
 		{
 			CSoundMgr::GetInstacne()->PlayEffectSound(_T("Attacked"));
 			m_pPlayer->GetDamaage(iDamaege);

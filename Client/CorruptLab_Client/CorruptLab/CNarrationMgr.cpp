@@ -9,8 +9,14 @@ void CNarrationMgr::TurnOnNarration(int iNum)
 {
 	m_iCurrentNum = iNum;
 	m_bRender = true;
-}
+	if (m_pNarrations.find(iNum)->second->IsEnabled)
+	{
+		m_iCurrentNum = iNum;
+		m_bRender = true;
+		m_pNarrations.find(iNum)->second->IsEnabled = false;
+	}
 
+}
 void CNarrationMgr::Initialize(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignatureCPlayer)
 {
 

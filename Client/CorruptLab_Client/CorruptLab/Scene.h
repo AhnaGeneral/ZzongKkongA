@@ -64,6 +64,7 @@ protected:
 
 class CMonster;
 class CDynamicObject;
+class ParticleSystemObject;
 
 class CGameScene : public CScene
 {
@@ -140,6 +141,7 @@ private:
 	vector<CMonster*>          ** m_pMonsterLists;
 	CSoftParticleShader         * m_pSoftParticleShader;
 	CShader_SpecialFog          * m_pSpecialFogShader;
+	ParticleSystemObject		** m_pParticleSystemObject;
 	
 
 public:

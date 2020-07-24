@@ -516,7 +516,7 @@ void CGameScene2::IndoorParticleEffectRender()
 		ParticleSystemObject* m_pIndoorParticleSystemObject = new ParticleSystemObject(m_pd3dDevice, m_pd3dCommandList,
 			m_pd3dGraphicsRootSignature, XMFLOAT3(a.pos.x, a.pos.y + 2, a.pos.z), 4.0f + a.size.y * 3.0f);
 
-		m_pIndoorParticleSystemObject->InitializeParticleSystem();
+		m_pIndoorParticleSystemObject->InitializeParticleSystem(2.5f, 250.0f, 300.f);
 		m_pIndoorParticleSystemObject->InitializeBuffer(m_pd3dDevice, m_pd3dCommandList);
 		m_pIndoorParticleSystemObject->CreateParticleShaderTexture(m_pd3dDevice, m_pd3dCommandList, m_pd3dGraphicsRootSignature);
 		m_pIndoorParticleSystems.push_back(m_pIndoorParticleSystemObject);
@@ -526,7 +526,7 @@ void CGameScene2::IndoorParticleEffectRender()
 		ParticleSystemObject *m_pLastParticlesystemObject = new ParticleSystemObject(m_pd3dDevice, m_pd3dCommandList,
 			m_pd3dGraphicsRootSignature, XMFLOAT3(135.0f, 3.0f, 10.0f - (i*5)), 4.0f + 7.0f * 3.0f);
 
-		m_pLastParticlesystemObject->InitializeParticleSystem();
+		m_pLastParticlesystemObject->InitializeParticleSystem(2.5f, 250.0f, 300.f);
 		m_pLastParticlesystemObject->InitializeBuffer(m_pd3dDevice, m_pd3dCommandList);
 		m_pLastParticlesystemObject->CreateParticleShaderTexture(m_pd3dDevice, m_pd3dCommandList, m_pd3dGraphicsRootSignature);
 

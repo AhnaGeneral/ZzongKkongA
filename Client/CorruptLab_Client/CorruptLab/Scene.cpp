@@ -13,6 +13,8 @@
 #include "Object_DrugMaker.h"
 #include "Shader_Effect.h"
 #include "CNarrationMgr.h"
+#include "Object_Researcher.h"
+#include "CSystem_Particle.h"
 #include "SoundMgr.h"
 
 
@@ -42,6 +44,7 @@ CGameScene::CGameScene()
 	m_pMonsterLists = NULL;
 	m_pSoftParticleShader = NULL;
 	m_pSpecialFogShader = NULL;
+	m_pParticleSystemObject = NULL;
 
 	m_pShadowCamera = NULL;
 
@@ -54,6 +57,8 @@ CGameScene::~CGameScene()
 {
 	CItemMgr::GetInstance()->Destroy();
 	CCollisionMgr::GetInstance()->Destroy();
+	for (int i = 0; i < 4; i++) m_pParticleSystemObject[i]->Shutdown();
+
 
 }
 
@@ -93,7 +98,16 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	CCollisionMgr::GetInstance()->Initialize();
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	
+
+	m_pParticleSystemObject = new ParticleSystemObject * [4];
+	for (int i = 0; i < 4; i++)
+	{
+		m_pParticleSystemObject[i] = new ParticleSystemObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, XMFLOAT3(394.0f, 40.0f, 88.0f));;
+		m_pParticleSystemObject[i]->InitializeParticleSystem(4.f, 200.f, 250.f);
+		m_pParticleSystemObject[i]->InitializeBuffer(pd3dDevice, pd3dCommandList);
+		m_pParticleSystemObject[i]->CreateParticleShaderTexture(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+	}
+
 	m_OpeningDoorsInfo[0].DoorPos = XMFLOAT3(412.f, 46.f, 319.f);
 	m_OpeningDoorsInfo[1].DoorPos = XMFLOAT3(331.f, 59.f, 220.f);
 
@@ -194,6 +208,16 @@ void CGameScene::ReleaseObjects()
 		m_pShadowMap->ReleaseUploadBuffers();
 		m_pShadowMap->Release();
 		m_pShadowMap = NULL;
+	}
+	//-----------------------------------------------
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (m_pParticleSystemObject[i])
+		{
+			m_pParticleSystemObject[i]->DisconnectList();
+			m_pParticleSystemObject[i]->Release();
+		}
 	}
 
 }
@@ -560,10 +584,11 @@ void CGameScene::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandLis
 
 void CGameScene::ReleaseShaderVariables()
 {
-	//if (m_pParticleSystemObject)
-	//{
-	//	m_pParticleSystemObject->ReleaseShaderVariables();
-	//}
+	for (int i = 0; i < 4; i++)
+		if (m_pParticleSystemObject[i])
+		{
+			m_pParticleSystemObject[i]->ReleaseShaderVariables();
+		}
 }
 
 bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -754,7 +779,6 @@ void CGameScene::PurifyMonster()
 		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
 		if (Distance < 15)
 		{
-			CSoundMgr::GetInstacne()->PlayEffectSound(_T("Purify"));
 			CDrugMaker* pMaker = dynamic_cast<CDrugMaker*>(pObj);
 			if (pMaker->m_bEnable)
 			{
@@ -762,10 +786,17 @@ void CGameScene::PurifyMonster()
 				{
 					if (pMon->m_iState != MONSTER_STATE_STUN) return;
 				}
+				CSoundMgr::GetInstacne()->PlayEffectSound(_T("Purify"));
+				int i = 0;
 				for (auto pMon : *m_pMonsterLists[pMaker->m_iMonsterType])
 				{
+					m_pParticleSystemObject[i]->RegenerateParticles(pMon->GetPosition());
+					CDynamicObject* researcher = m_pDynamicObjLists[OBJECT_TYPE_RESEARCHER]->at(pMaker->m_iMonsterType);
+					dynamic_cast<CResearcher*> (researcher)->SetBilBil();
+
 					pMaker->m_bEnable = false;
 					pMon->GetPurified();
+					i++;
 				}
 
 			}
@@ -868,6 +899,13 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	//if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
 	if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
 	if (m_pSpecialFogShader) m_pSpecialFogShader->Render(pd3dCommandList, pCamera);
+
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (m_pParticleSystemObject[i])
+			m_pParticleSystemObject[i]->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
+	}
 }
 
 
@@ -985,6 +1023,9 @@ void CGameScene::ItemBoxCheck()
 			}
 			else
 				CNarrationMgr::GetInstance()->TurnOnNarration(3);
+
+			for (int i = 0; i < 4; i++)
+				m_pParticleSystemObject[i]->SwitchEnable();
 		}
 	}
 }
