@@ -667,13 +667,6 @@ void CPostProcessingShader::ReleaseObjects()
 		m_pHP->Release();
 		m_pHP = NULL;
 	}
-	//if (m_Radiation)
-	//{
-	//	m_Radiation->ReleaseShaderVariables();
-	//	m_Radiation->ReleaseUploadBuffers();
-	//	m_Radiation->Release();
-	//	m_Radiation = NULL;
-	//}
 
 	if (m_pMapOne)
 	{
@@ -724,17 +717,6 @@ void CPostProcessingShader::ReleaseObjects()
 		m_StatementUI->Release();
 		m_StatementUI = NULL;
 	}
-
-	//if (m_ppInVentoryBoxs)
-	//{
-	//	for (int i = 0; i < 3; ++i)
-	//	{
-	//		m_ppInVentoryBoxs[i]->ReleaseShaderVariables();
-	//		m_ppInVentoryBoxs[i]->ReleaseUploadBuffers();
-	//		m_ppInVentoryBoxs[i]->Release();
-	//		m_ppInVentoryBoxs[i] = NULL; 
-	//	}
-	//}
 
 	if (m_ppItems)
 	{

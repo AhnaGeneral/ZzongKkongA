@@ -45,7 +45,6 @@ CGameScene2::CGameScene2()
 	m_AnimationControl = true;
 	CMgr_IndoorControl::GetInstance()->Initialize();
 
-	m_pIndoorParticleSystemObject = NULL;
 	//m_pPassWordTexture = NULL; 
 	
 	//m_pLabatoryPos = new vector<XMFLOAT3>; 
@@ -149,21 +148,11 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_IndoorWallLines->SetPosition(0.0f, 4.f, -62.0f);
 	m_IndoorWallLine[3] = m_IndoorWallLines;
 
+	m_pd3dDevice = pd3dDevice; 
+	m_pd3dCommandList = pd3dCommandList; 
 
 	// emplace particle 
 	PlaceObjectsFromFile(pd3dDevice, m_pd3dGraphicsRootSignature, pd3dCommandList);
-
-	for (auto a : m_DrugmakerImpromation)
-	{
-		m_pIndoorParticleSystemObject = new ParticleSystemObject(pd3dDevice, pd3dCommandList,
-			m_pd3dGraphicsRootSignature, XMFLOAT3(a.pos.x, a.pos.y + 2, a.pos.z), 4.0f+ a.size.y*3.0f);
-		m_pIndoorParticleSystemObject->InitializeParticleSystem();
-		m_pIndoorParticleSystemObject->InitializeBuffer(pd3dDevice, pd3dCommandList);
-		m_pIndoorParticleSystemObject->CreateParticleShaderTexture(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
-		m_pIndoorParticleSystems.push_back(m_pIndoorParticleSystemObject);
-	}
-
-
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 }
 
@@ -381,7 +370,10 @@ void CGameScene2::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamer
 		}
 	}
 
-	if (m_pBoss) m_pBoss->Render(pd3dCommandList, pCamera, 1);
+	if (m_ThatIsRightPassword)
+	{
+		if (m_pBoss) m_pBoss->Render(pd3dCommandList, pCamera, 1);
+	}
 
 	if (m_pDynamicObjLists) // 오브젝트 Render
 	{
@@ -418,15 +410,20 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	}
 
 	if (m_IndoorWall) m_IndoorWall->Render(pd3dCommandList, pCamera); 
-	if (m_pBoss)
+	
+	if (m_ThatIsRightPassword)
 	{
-		m_pBoss->Update(m_fElapsedTime, NULL, NULL);
+		if (m_pBoss)
+		{
+			m_pBoss->Update(m_fElapsedTime, NULL, NULL);
 
-		m_pBoss->Animate(m_fElapsedTime, NULL, 0);
-		//	if (Obj->m_iTrackNumber == 1) continue;
-		m_pBoss->UpdateTransform(NULL);
-		m_pBoss->Render(pd3dCommandList, pCamera);
+			m_pBoss->Animate(m_fElapsedTime, NULL, 0);
+			//	if (Obj->m_iTrackNumber == 1) continue;
+			m_pBoss->UpdateTransform(NULL);
+			m_pBoss->Render(pd3dCommandList, pCamera);
+		}
 	}
+
 	if (m_pStaticObjLists) // 오브젝트 Render
 	{
 		for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -510,6 +507,36 @@ void CGameScene2::DeskOpenCheck()
 			CMgr_IndoorControl::GetInstance()->SetDeskOpenControl(pObj->m_iTrackNumber);
 		}
 	}
+}
+
+void CGameScene2::IndoorParticleEffectRender()
+{
+	for (auto a : m_DrugmakerImpromation)
+	{
+		ParticleSystemObject* m_pIndoorParticleSystemObject = new ParticleSystemObject(m_pd3dDevice, m_pd3dCommandList,
+			m_pd3dGraphicsRootSignature, XMFLOAT3(a.pos.x, a.pos.y + 2, a.pos.z), 4.0f + a.size.y * 3.0f);
+
+		m_pIndoorParticleSystemObject->InitializeParticleSystem();
+		m_pIndoorParticleSystemObject->InitializeBuffer(m_pd3dDevice, m_pd3dCommandList);
+		m_pIndoorParticleSystemObject->CreateParticleShaderTexture(m_pd3dDevice, m_pd3dCommandList, m_pd3dGraphicsRootSignature);
+		m_pIndoorParticleSystems.push_back(m_pIndoorParticleSystemObject);
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		ParticleSystemObject *m_pLastParticlesystemObject = new ParticleSystemObject(m_pd3dDevice, m_pd3dCommandList,
+			m_pd3dGraphicsRootSignature, XMFLOAT3(135.0f, 3.0f, 10.0f - (i*5)), 4.0f + 7.0f * 3.0f);
+
+		m_pLastParticlesystemObject->InitializeParticleSystem();
+		m_pLastParticlesystemObject->InitializeBuffer(m_pd3dDevice, m_pd3dCommandList);
+		m_pLastParticlesystemObject->CreateParticleShaderTexture(m_pd3dDevice, m_pd3dCommandList, m_pd3dGraphicsRootSignature);
+
+		m_pIndoorParticleSystems.push_back(m_pLastParticlesystemObject);
+	}
+}
+
+void CGameScene2::SetThatIsRightPassword(bool _ThatIsRightPassword)
+{
+	m_ThatIsRightPassword = _ThatIsRightPassword;
 }
 
 bool CGameScene2::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
@@ -603,6 +630,19 @@ void CGameScene2::AnimateObjects(float fTimeElapsed)
 					obj->SetPosition(TmpPosition.x, TmpPosition.y + fTime, TmpPosition.z);
 				}
 			}
+		}
+	}
+
+	if (m_ThatIsRightPassword && m_NarationControl)
+	{
+		XMFLOAT3 ObjPos = XMFLOAT3(118.0f, 0.0f, 3.0f);
+		XMFLOAT3 PlayerPos = m_pPlayer->GetPosition();
+
+		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
+		if (Distance < 8)
+		{
+			CNarrationMgr::GetInstance()->TurnOnNarration(5);
+			m_NarationControl = false;
 		}
 	}
 }

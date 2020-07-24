@@ -40,19 +40,13 @@ void CNarrationMgr::Initialize(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		CMesh* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 1200, 500, 0.0f, 1.0f);
 		pNarration->Set2DPosition(0, -150);
 		pNarration->SetMesh(mesh);
-
 		pNarration->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		float* alpha = new float(1);
 		pNarration->SetAlpha(alpha);
-
-
 		m_pNarrations.insert(make_pair(i, pNarration));
 
 	}
-	//if (pTexture)
-	//{
-	//	m_ppMaterials[0]->SetTexture((CTexture*)pTexture);
-	//}
+
 }
 
 void CNarrationMgr::Update(float fElapsedTime, ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
@@ -66,7 +60,7 @@ void CNarrationMgr::Update(float fElapsedTime, ID3D12GraphicsCommandList* pd3dCo
 		{
 			m_bRender = false;
 			m_fLifetime = 0.0f;
-			if (m_iCurrentNum == 4) TurnOnNarration(5);
+			if (m_iCurrentNum == 5) TurnOnNarration(6);
 		}
 	}
 }
@@ -77,7 +71,7 @@ void CNarrationMgr::Skip()
 	{
 		m_bRender = false;
 		m_fLifetime = 0.0f;
-		if (m_iCurrentNum == 4) TurnOnNarration(5);
+		if (m_iCurrentNum == 5) TurnOnNarration(6);
 	}
 }
 

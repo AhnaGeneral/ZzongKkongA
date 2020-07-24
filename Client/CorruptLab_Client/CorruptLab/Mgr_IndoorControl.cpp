@@ -2,6 +2,7 @@
 #include "Scene_Game2.h"
 #include "Shader_LightMRT.h"
 #include "SoundMgr.h"
+#include "CNarrationMgr.h"
 
 CMgr_IndoorControl* CMgr_IndoorControl::m_pInstance = NULL;
 
@@ -111,7 +112,10 @@ void CMgr_IndoorControl::SetIndoorSceneAndLight(CGameScene2* _IndoorScene, CLigh
 void CMgr_IndoorControl::ExcuteAnimationDoor()
 {
 	pIndoorScene->ExcuteAnimationDoor();
+	pIndoorScene->IndoorParticleEffectRender();
+	pIndoorScene->SetThatIsRightPassword(true); 
 	pIndoorLightTarget->TurnOnLabatoryLight();
+	
 }
 
 

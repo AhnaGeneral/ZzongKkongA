@@ -35,7 +35,7 @@ public:
 	CGameObject* m_IndoorWallLines = nullptr;
 	CGameObject* m_IndoorWall = nullptr;
 
-	ParticleSystemObject * m_pIndoorParticleSystemObject;
+	bool m_ThatIsRightPassword = false; 
 	list<ParticleSystemObject*> m_pIndoorParticleSystems;
 	list<DrugMakersImpormation> m_DrugmakerImpromation;
 
@@ -43,6 +43,8 @@ public:
 	float itemRange;
 	float m_AnimationTime;
 	bool m_AnimationControl; 
+	bool m_NarationControl = true; 
+
 public:
 	CGameScene2();
 	virtual ~CGameScene2();
@@ -65,11 +67,10 @@ public:
 
 	void PassWordCheck(); 
 	void DeskOpenCheck(); 
-
+	void IndoorParticleEffectRender();
+	void SetThatIsRightPassword(bool _ThatIsRightPassword);
 	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd);
-
 	virtual void AnimateObjects(float fTimeElapsed);
-
 	virtual void ReleaseUploadBuffers();
 
 
@@ -79,31 +80,25 @@ public:
 	void PlaceMonsterFromFile(CGameObject* pModel, char* FileName, int index, ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	void ExcuteAnimationDoor();
 	void ExcuteAnimationDesk(int _TrackNumber);
-private:
 
+private:
 	bool					    m_bPipelineStateIndex;
 	POINT					    m_ptOldCursorPos;
 
 	int						    m_nDynamicObjectTypeNum;
 	int						    m_nStaticObjectTypeNum; // 오브젝트 종류 개수
 	int						    m_nMonsterTypeNum;      // 몬스터 종류 개수
-	CDynamicObject            * m_pIndoorDrugMaker = nullptr;
-	
-	                
 
+	CDynamicObject            * m_pIndoorDrugMaker = nullptr;
 	vector<CGameObject*>     ** m_pStaticObjLists;
 	vector<CDynamicObject*>  ** m_pDynamicObjLists;
 	vector<CMonster*>        ** m_pMonsterLists;
-	//vector<XMFLOAT3>            m_pLabatoryPos; 
 	CSoftParticleShader       * m_pSoftParticleShader;
 	CShader_SpecialFog        * m_pSpecialFogShader;
 
-	//CTexture                  * m_pPassWordTexture; 
 public:
+
 	CCamera                   * m_pShadowCamera;
 	CTexture                  * m_pShadowMap;
 	CTexture                  * m_pDepthTex;
-
-
-
 };

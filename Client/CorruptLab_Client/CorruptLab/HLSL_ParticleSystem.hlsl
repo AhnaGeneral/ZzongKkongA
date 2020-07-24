@@ -67,6 +67,7 @@ void ParticleGeometryShader(point GeometryInputType input[1],
 
 //  gtxtEffectTexture register 31 Texture 
 //ParticlePixelShader
+
 PS_NONLIGHT_MRT_OUTPUT ParticlePixelShader(GeometryOutputType input)
 {
 	PS_NONLIGHT_MRT_OUTPUT output; 

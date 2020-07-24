@@ -81,5 +81,8 @@ protected:
 	ID3D12Resource      * m_pd3dcbMaterials ;
 	MATERIAL            * m_pcbMappedMaterials;
 
+	float                 m_fTime = 0.0f; 
+	bool                  m_bTimeControl = true;
+
 };
 

@@ -748,8 +748,10 @@ void CGameFramework::BuildObjects()
 
 
 	CMainPlayer* pAirplanePlayer = new CMainPlayer(m_pd3dDevice, m_pd3dCommandList,
-		        m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pTerrain);
+		        m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), 
+		dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pTerrain);
 	pAirplanePlayer->SetPosition(XMFLOAT3(430.0f, 15.0f, 359.0f)); //시작 위치
+
 	//pAirplanePlayer->SetPosition(XMFLOAT3(183.0f, 80.0f, 111.0f)); //토슴이 있는 쪽
 	//pAirplanePlayer->Rotate(0, 180, 0);
 	//pAirplanePlayer->SetPosition(XMFLOAT3(394, 15.0f, 88.0f));
@@ -761,7 +763,6 @@ void CGameFramework::BuildObjects()
 	CRadationMgr::GetInstance()->SetPlayer(m_pPlayer);
 	m_pPostProcessingShader->GetMinimap()->SetPlayerPosition(m_pPlayer->GetPositionPointer());
 	m_pPostProcessingShader->GetMinimap()->CreateShaderVariables(m_pd3dDevice, m_pd3dCommandList);
-
 	m_pPostProcessingShader->GetPlayerHP()->SetPlayerHP(m_pPlayer->GetPlayerHPPointer());
 	
 	m_pCamera = m_pPlayer->GetCamera();
@@ -772,13 +773,15 @@ void CGameFramework::BuildObjects()
 
 	m_pScene[SCENE_STAGE_INDOOR] = new CGameScene2();
 	m_pScene[SCENE_STAGE_INDOOR]->SetGraphicsRootSignature(m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature());
-	dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pPlayer = m_pPlayer;
-	
-	CMgr_IndoorControl::GetInstance()->SetIndoorSceneAndLight
-	(dynamic_cast<CGameScene2*> (m_pScene[SCENE_STAGE_INDOOR]), m_pLightProcessingShader);
 
+	dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pPlayer = m_pPlayer;
+	CMgr_IndoorControl::GetInstance()->SetIndoorSceneAndLight
+
+	(dynamic_cast<CGameScene2*> (m_pScene[SCENE_STAGE_INDOOR]), m_pLightProcessingShader);
 	m_pLightProcessingShader->SetPlayer(m_pPlayer);
+
 	m_pScene[SCENE_STAGE_INDOOR]->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+
 	//dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pShadowCamera = dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->m_pShadowCamera;
 	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
 	m_pd3dCommandList->Close();
@@ -1059,8 +1062,9 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 	m_pd3dCommandList->ClearRenderTargetView(m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
 	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
 
-	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, 0, m_GameTimer.GetTimeElapsed()); // 화면 좌표계에 해당하는 투영좌표계의 좌표로 인해 사각형을하나 그려서 그림을 복사 해서 그림을 그려라.
-																   // 스크린 좌표계 !! 
+	m_pPostProcessingShader->Render(m_pd3dCommandList, m_pCamera, 0, m_GameTimer.GetTimeElapsed()); 
+	// 화면 좌표계에 해당하는 투영좌표계의 좌표로 인해 사각형을하나 그려서 그림을 복사 해서 그림을 그려라.
+	// 스크린 좌표계 !! 
 
 #ifdef _WITH_PLAYER_TOP
 	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
@@ -1148,10 +1152,14 @@ void CGameFramework::TurnToIndoorState()
 	if (m_nSceneState == SCENE_STAGE_OUTDOOR)
 	{
 		CSoundMgr::GetInstacne()->PlayBGMSound(_T("Stage2BGM"));
-		m_pPlayer->SetPosition(XMFLOAT3(0.f, 0.0f, 0.f));
+
+		m_pPlayer->SetPosition(XMFLOAT3(-90.0f, 0.0f, -1.f));
 		m_pPlayer->SetPlayerUpdatedContext(NULL);
 		m_pPlayer->SetCameraUpdatedContext(NULL);
+		m_pPlayer->Rotate(0.0f, -90.0f, 0.0f);
+
 		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 3.5f, -10.5f));
+
 		CCollisionMgr::GetInstance()->m_nSceneState = 1;
 		m_nSceneState = SCENE_STAGE_INDOOR;
 		m_pLightProcessingShader->ChangeLights();

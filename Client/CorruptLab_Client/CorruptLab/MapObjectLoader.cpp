@@ -79,8 +79,13 @@ void CGameScene::PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignat
 
 
 	//Tree-----------------------------------------------
+	CShader* TexcoordShader = new CTreeTexcoordStandardShader();
+	TexcoordShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
+	TexcoordShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	TexcoordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16
+
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
-	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Tree1.bin", NULL, 0);
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Tree1.bin", TexcoordShader, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/Trees.bin", OBJECT_TYPE_TREE);
 
 	//Bridges------------------------------------------

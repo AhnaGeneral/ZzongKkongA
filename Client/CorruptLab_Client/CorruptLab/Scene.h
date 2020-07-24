@@ -55,13 +55,15 @@ public:
 
 protected:
 	ID3D12RootSignature       * m_pd3dGraphicsRootSignature;
+	ID3D12Device              * m_pd3dDevice;
+	ID3D12GraphicsCommandList * m_pd3dCommandList;
+
 	float                       m_fElapsedTime;
 };
 
 
 class CMonster;
 class CDynamicObject;
-class ParticleSystemObject; 
 
 class CGameScene : public CScene
 {
@@ -74,10 +76,10 @@ public:
 	CObjectWater              * m_pCObjectWater; 
 
 	CShader_Effect            * m_pTestEffect; 
-	ParticleSystemObject      * m_pParticleSystemObject; 
 	int                         n_ReactItem; 
 	float                       itemRange;
 	ID3D12Device              * m_pDevice; 
+
 public:
 	CGameScene();
 	virtual ~CGameScene();

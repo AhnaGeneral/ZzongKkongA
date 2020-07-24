@@ -17,11 +17,8 @@ struct VS_TEXTURED_LIGHTING_OUTPUT
 	float3 bitangentW : BITANGENT;
 	float2 uv : TEXCOORD;
 	float4 vPorjPos : TEXCOORD1; 
-
-	//그림자를 위한 
 	float4 LightViewPosition : TEXCOORD2;
 	float3 LightPos : TEXCOORD3;
-	
 };
 
 struct VS_SKINNED_STANDARD_INPUT
@@ -331,6 +328,68 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT AlphaChannelDissolveForSkinned(VS_TEXTURED_LIG
 	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 500.0f, 0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	output.EmmisiveMRT = float4(0, 0, 0, 0);
+
+	return output;
+}
+
+struct VS_TEXTURED_OUTPUT
+{
+	float4 position : SV_POSITION;
+	float3 positionW : POSITION;
+	float3 normalW : NORMAL;
+	float3 tangentW : TANGENT;
+	float3 bitangentW : BITANGENT;
+	float2 uv : TEXCOORD;
+	float4 vPorjPos : TEXCOORD1;
+	float4 LightViewPosition : TEXCOORD2;
+	float3 LightPos : TEXCOORD3;
+	float2 uv2 : TEXCOORD4;
+};
+
+VS_TEXTURED_OUTPUT TreeVSTexcoord(VS_TEXTURED_LIGHTING_INPUT input)
+{
+	VS_TEXTURED_OUTPUT output;
+	output.normalW = mul(input.normal, (float3x3)gmtxGameObject);
+	output.positionW = (float3)mul(float4(input.position, 1.0f), gmtxGameObject);
+	output.position = mul(mul(float4(output.positionW, 1.0f), gmtxView), gmtxProjection);
+	output.tangentW = mul(input.tangent, (float3x3)gmtxGameObject);
+	output.bitangentW = mul(input.bitangent, (float3x3)gmtxGameObject);
+	output.uv = float2(input.uv.x * 6.0f, input.uv.y*6.0f);
+	output.uv2 = float2(input.uv.x , input.uv.y );
+	output.vPorjPos = output.position;
+	output.LightViewPosition = mul(mul(float4(output.positionW, 1.0f), shadowgmtxView), shadowgmtxProjection);
+	return output;
+}
+
+
+PS_MULTIPLE_RENDER_TARGETS_OUTPUT TreePSTexCoordToMultipleRTs(VS_TEXTURED_OUTPUT input)
+{
+	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
+
+
+	float4 cColorAlbedo = gtxtAlbedoTexture.Sample(gSamplerState, input.uv);
+	output.color = cColorAlbedo;
+
+	float4 cColorNormal = gtxtNormalTexture.Sample(gSamplerState, input.uv2);
+
+	float3 normalW;
+	float3x3 TBN = float3x3(normalize(input.tangentW), normalize(input.bitangentW), normalize(input.normalW));
+
+	float3 vNormal = normalize(cColorNormal.rgb * 2.0f - 1.0f); //[0, 1] → [-1, 1]
+
+	normalW = normalize(mul(vNormal, TBN));
+
+	output.normal = float4(input.normalW / 2.0f + 0.5f, 1);
+
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 500.0f, 0, 1);
+	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
+	output.EmmisiveMRT = float4(0, 0, 0, 0);
+
+	if (gnTextureMask & MATERIAL_EMISSION_MAP)
+	{
+		float4 cColorEmission = gtxtEmissionTexture.Sample(gSamplerState, input.uv);
+		output.EmmisiveMRT = cColorEmission;
+	}
 
 	return output;
 }

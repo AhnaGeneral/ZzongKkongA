@@ -13,7 +13,6 @@
 #include "Object_DrugMaker.h"
 #include "Shader_Effect.h"
 #include "CNarrationMgr.h"
-#include "CSystem_Particle.h"
 #include "SoundMgr.h"
 
 
@@ -43,7 +42,6 @@ CGameScene::CGameScene()
 	m_pMonsterLists = NULL;
 	m_pSoftParticleShader = NULL;
 	m_pSpecialFogShader = NULL;
-	m_pParticleSystemObject = NULL; 
 
 	m_pShadowCamera = NULL;
 
@@ -56,7 +54,6 @@ CGameScene::~CGameScene()
 {
 	CItemMgr::GetInstance()->Destroy();
 	CCollisionMgr::GetInstance()->Destroy();
-	if (m_pParticleSystemObject)m_pParticleSystemObject->Shutdown(); 
 
 }
 
@@ -96,10 +93,6 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	CCollisionMgr::GetInstance()->Initialize();
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
 
-	m_pParticleSystemObject = new ParticleSystemObject(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, XMFLOAT3(394.0f, 40.0f, 88.0f));;
-	m_pParticleSystemObject->InitializeParticleSystem();
-	m_pParticleSystemObject->InitializeBuffer(pd3dDevice, pd3dCommandList);
-	m_pParticleSystemObject->CreateParticleShaderTexture(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	
 	m_OpeningDoorsInfo[0].DoorPos = XMFLOAT3(412.f, 46.f, 319.f);
 	m_OpeningDoorsInfo[1].DoorPos = XMFLOAT3(331.f, 59.f, 220.f);
@@ -202,18 +195,6 @@ void CGameScene::ReleaseObjects()
 		m_pShadowMap->Release();
 		m_pShadowMap = NULL;
 	}
-	//if (m_pDepthTex)
-	//{
-	//	m_pDepthTex->ReleaseUploadBuffers();
-	//	//m_pDepthTex->Release(); 다른 곳에서 하나 ..? 
-	//	m_pDepthTex = NULL; 
-	//}
-	if (m_pParticleSystemObject)
-	{
-		m_pParticleSystemObject->DisconnectList();
-		m_pParticleSystemObject->Release();
-	}
-	//----------------------------------------------
 
 }
 void CGameScene::ReleaseUploadBuffers()
@@ -579,10 +560,10 @@ void CGameScene::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandLis
 
 void CGameScene::ReleaseShaderVariables()
 {
-	if (m_pParticleSystemObject)
-	{
-		m_pParticleSystemObject->ReleaseShaderVariables();
-	}
+	//if (m_pParticleSystemObject)
+	//{
+	//	m_pParticleSystemObject->ReleaseShaderVariables();
+	//}
 }
 
 bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -881,8 +862,7 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera);
     if (m_pSkyBox)  m_pSkyBox->Render(pd3dCommandList, pCamera);
-if (m_pParticleSystemObject)
-		m_pParticleSystemObject->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
+
 
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
 	//if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
