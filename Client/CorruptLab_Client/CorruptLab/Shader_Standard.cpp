@@ -380,8 +380,3 @@ D3D12_SHADER_BYTECODE CTreeTexcoordStandardShader::CreateVertexShader(ID3DBlob**
 {
 	return(CShader::CompileShaderFromFile(L"HLSL_Standard.hlsl", "TreeVSTexcoord", "vs_5_1", ppd3dShaderBlob));
 }
-
-D3D12_SHADER_BYTECODE CTreeTexcoordStandardShader::CreatePixelShader(ID3DBlob** ppd3dShaderBlob)
-{
-	return(CShader::CompileShaderFromFile(L"HLSL_Standard.hlsl", "TreePSTexCoordToMultipleRTs", "ps_5_1", ppd3dShaderBlob));
-}
