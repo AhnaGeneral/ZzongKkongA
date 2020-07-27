@@ -842,7 +842,6 @@ void CGameFramework::ProcessInput()
 	static UCHAR pKeysBuffer[256];
 	bool bProcessedByScene = false;
 
-
 	if (GetKeyboardState(pKeysBuffer) && m_nSceneState == SCENE_STAGE_OUTDOOR)
 		bProcessedByScene = m_pScene[SCENE_STAGE_OUTDOOR]->ProcessInput(pKeysBuffer, m_hWnd);
 
@@ -1160,7 +1159,7 @@ void CGameFramework::TurnToIndoorState()
 
 		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 3.5f, -10.5f));
 
-		CCollisionMgr::GetInstance()->m_nSceneState = 1;
+		CCollisionMgr::GetInstance()->m_nSceneState = 0;
 		m_nSceneState = SCENE_STAGE_INDOOR;
 		m_pLightProcessingShader->ChangeLights();
 		CNarrationMgr::GetInstance()->TurnOnNarration(4);

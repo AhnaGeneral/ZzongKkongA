@@ -515,6 +515,7 @@ void CMainPlayer::Update(float fTimeElapsed)
 	UpdateCollisionBoxes();
 	if (CCollisionMgr::GetInstance()->StaticCollisionCheck() ||
 		CCollisionMgr::GetInstance()->DoorCollisionCheck())
+
 		m_xmf3Position = m_xmf3PrePosition;
 	m_xmf3PrePosition = m_xmf3Position;
 

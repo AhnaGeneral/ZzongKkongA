@@ -101,12 +101,13 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		FRAME_BUFFER_HEIGHT / 7.f, FRAME_BUFFER_WIDTH / 7.0f, 1.0f);
 
 	m_IndoorWallLine = new CGameObject * [5];
+
 	Shader_Basic* pShader = new Shader_Basic();
 	pShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	pShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 0); //16
 
-	m_IndoorWallLines = new CGameObject();
+	CGameObject* m_IndoorWallLines = new CGameObject();
 	m_IndoorWallLines->SetShader(pShader);
 	m_IndoorWallLines->SetMesh(wirthMesh);
 	m_IndoorWallLines->SetScale(0.f, 0.007f, 0.3f);
@@ -147,6 +148,16 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_IndoorWallLines->SetScale(1.2f, 0.007f, 0.0f);
 	m_IndoorWallLines->SetPosition(0.0f, 4.f, -62.0f);
 	m_IndoorWallLine[3] = m_IndoorWallLines;
+
+
+	CTriangleRect* TestTex = new CTriangleRect(pd3dDevice, pd3dCommandList, 0,
+		FRAME_BUFFER_HEIGHT / 7.f, FRAME_BUFFER_WIDTH / 7.0f, 1.0f);
+	m_TestTexure = new CGameObject();
+	m_TestTexure->SetShader(pShader);
+	m_TestTexure->SetMesh(TestTex);
+	m_TestTexure->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	m_TestTexure->SetScale(1.f, 1.f, 1.f);
+	m_TestTexure->SetPosition(1.f, 1.f, 1.f);
 
 	m_pd3dDevice = pd3dDevice; 
 	m_pd3dCommandList = pd3dCommandList; 
@@ -288,24 +299,24 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 			PassWordCheck();
 			DeskOpenCheck();
 			break;
-		case 'A':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
-			break;
-		case 'S':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] -= 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
-			break;
-		case 'D':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] += 10.0f, m_fShadowPosition[2]);
-			break;
-		case 'F':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] -= 10.0f, m_fShadowPosition[2]);
-			break;
-		case 'G':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2] += 10.0f);
-			break;
-		case 'H':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2] -= 10.0f);
-			break;
+		//case 'A':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
+		//	break;
+		//case 'S':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] -= 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
+		//	break;
+		//case 'D':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] += 10.0f, m_fShadowPosition[2]);
+		//	break;
+		//case 'F':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] -= 10.0f, m_fShadowPosition[2]);
+		//	break;
+		//case 'G':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2] += 10.0f);
+		//	break;
+		//case 'H':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2] -= 10.0f);
+		//	break;
 			if (CMgr_IndoorControl::GetInstance()->GetPasswordControl())
 			{
 					case'1':
@@ -404,10 +415,6 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera);
 	
 
-	for (auto _autoPaticle : m_pIndoorParticleSystems)
-	{
-		_autoPaticle->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
-	}
 
 	if (m_IndoorWall) m_IndoorWall->Render(pd3dCommandList, pCamera); 
 	
@@ -448,12 +455,21 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 			}
 		}
 	}
+	for (auto _autoPaticle : m_pIndoorParticleSystems)
+	{
+		_autoPaticle->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
+	}
+
 
 	for (int i = 0; i < 5; ++i)
 	{
 		m_IndoorWallLine[i]->UpdateTransform(NULL);
 		m_IndoorWallLine[i]->Render(pd3dCommandList, pCamera, 0);
 	}
+
+	CheckCollisions();
+	//m_TestTexure->UpdateTransform(nullptr);
+	//m_TestTexure->Render(pd3dCommandList, pCamera, 0);
 
 
 }
@@ -519,6 +535,7 @@ void CGameScene2::IndoorParticleEffectRender()
 		m_pIndoorParticleSystemObject->InitializeParticleSystem(2.5f, 250.0f, 300.f);
 		m_pIndoorParticleSystemObject->InitializeBuffer(m_pd3dDevice, m_pd3dCommandList);
 		m_pIndoorParticleSystemObject->CreateParticleShaderTexture(m_pd3dDevice, m_pd3dCommandList, m_pd3dGraphicsRootSignature);
+		m_pIndoorParticleSystemObject->RegenerateParticles(XMFLOAT3(a.pos.x, a.pos.y + 2, a.pos.z));
 		m_pIndoorParticleSystems.push_back(m_pIndoorParticleSystemObject);
 	}
 	for (int i = 0; i < 5; i++)
@@ -529,7 +546,7 @@ void CGameScene2::IndoorParticleEffectRender()
 		m_pLastParticlesystemObject->InitializeParticleSystem(2.5f, 250.0f, 300.f);
 		m_pLastParticlesystemObject->InitializeBuffer(m_pd3dDevice, m_pd3dCommandList);
 		m_pLastParticlesystemObject->CreateParticleShaderTexture(m_pd3dDevice, m_pd3dCommandList, m_pd3dGraphicsRootSignature);
-
+		m_pLastParticlesystemObject->RegenerateParticles(XMFLOAT3(135.0f, 3.0f, 10.0f - (i * 5)));
 		m_pIndoorParticleSystems.push_back(m_pLastParticlesystemObject);
 	}
 }
@@ -548,10 +565,10 @@ bool CGameScene2::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 	if (!CNarrationMgr::GetInstance()->m_bRender)
 	{
 
-		if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
-		if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
-		if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-		if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
+		if (pKeysBuffer[0x57] & 0xF0) dwDirection |= DIR_FORWARD;
+		if (pKeysBuffer[0x53] & 0xF0) dwDirection |= DIR_BACKWARD;
+		if (pKeysBuffer[0x41] & 0xF0) dwDirection |= DIR_LEFT;
+		if (pKeysBuffer[0x44] & 0xF0) dwDirection |= DIR_RIGHT;
 		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
 		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
 		if (GetCapture() == hWnd)

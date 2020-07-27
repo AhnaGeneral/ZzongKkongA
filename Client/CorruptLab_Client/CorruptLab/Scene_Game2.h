@@ -32,8 +32,11 @@ public:
 	CShader_Effect* m_pTestEffect;
 
 	CGameObject** m_IndoorWallLine = nullptr;
-	CGameObject* m_IndoorWallLines = nullptr;
+	//CGameObject* m_IndoorWallLines = nullptr;
 	CGameObject* m_IndoorWall = nullptr;
+
+	CGameObject* m_TestTexure = nullptr;
+
 
 	bool m_ThatIsRightPassword = false; 
 	list<ParticleSystemObject*> m_pIndoorParticleSystems;

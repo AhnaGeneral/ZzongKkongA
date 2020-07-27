@@ -57,8 +57,13 @@ CGameScene::~CGameScene()
 {
 	CItemMgr::GetInstance()->Destroy();
 	CCollisionMgr::GetInstance()->Destroy();
-	for (int i = 0; i < 4; i++) m_pParticleSystemObject[i]->Shutdown();
 
+
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	if(m_pParticleSystemObject[i])
+	//	m_pParticleSystemObject[i]->Shutdown();
+	//}
 
 }
 
@@ -669,24 +674,24 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 			PurifyMonster();
 			ItemBoxCheck();
 			break;
-		case 'A':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
-			break;
-		case 'S':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] -= 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
-			break;
-		case 'D':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] += 10.0f, m_fShadowPosition[2]);
-			break;
-		case 'F':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] -= 10.0f, m_fShadowPosition[2]);
-			break;
-		case 'G':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]+=10.0f);
-			break;
-		case 'H':
-			m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]-=10.0f);
-			break;
+		//case 'A':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
+		//	break;
+		//case 'S':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] -= 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
+		//	break;
+		//case 'D':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] += 10.0f, m_fShadowPosition[2]);
+		//	break;
+		//case 'F':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] -= 10.0f, m_fShadowPosition[2]);
+		//	break;
+		//case 'G':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]+=10.0f);
+		//	break;
+		//case 'H':
+		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]-=10.0f);
+		//	break;
 		case VK_SPACE:
 			m_pPlayer->SetAttackState();
 			break;
@@ -710,10 +715,10 @@ bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 	if (!CNarrationMgr::GetInstance()->m_bRender)
 	{
 
-		if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
-		if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
-		if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-		if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
+		if (pKeysBuffer[0x57] & 0xF0) dwDirection |= DIR_FORWARD;
+		if (pKeysBuffer[0x53] & 0xF0) dwDirection |= DIR_BACKWARD;
+		if (pKeysBuffer[0x41] & 0xF0) dwDirection |= DIR_LEFT;
+		if (pKeysBuffer[0x44] & 0xF0) dwDirection |= DIR_RIGHT;
 		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
 		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
 		if (GetCapture() == hWnd)

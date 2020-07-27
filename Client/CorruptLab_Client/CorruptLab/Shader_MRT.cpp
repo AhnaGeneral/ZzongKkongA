@@ -564,7 +564,6 @@ void CPostProcessingShader::BuildObjectMinimap(ID3D12Device* pd3dDevice, ID3D12G
 	m_pMapOne->SetMesh(mesh);
 
 	pMinmapFog2 = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-
 	pMinmapFog2->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/MiniMap/Map_Fog2.dds", 0);
 
 	m_pMinimapFog->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)pMinmapFog2, ROOT_PARAMETER_MINIIMAPFOG, true);
