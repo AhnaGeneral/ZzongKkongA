@@ -96,8 +96,8 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pCObjectWater->Rotate(90.0f, 0.0f, 0.0f);
 	m_pCObjectWater->GenerateShaderDistortionBuffer();
 
-	m_pTestEffect = new CShader_Effect(); 
-	m_pTestEffect->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, NULL, m_pTerrain);
+	//m_pTestEffect = new CShader_Effect(); 
+	//m_pTestEffect->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, NULL, m_pTerrain);
 
 	CItemMgr::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	CCollisionMgr::GetInstance()->Initialize();
@@ -373,7 +373,7 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 
 	D3D12_DESCRIPTOR_RANGE pd3dEffectTex; 
 	pd3dEffectTex.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dEffectTex.NumDescriptors = 1;
+	pd3dEffectTex.NumDescriptors = 2;
 	pd3dEffectTex.BaseShaderRegister = 70;
 	pd3dEffectTex.RegisterSpace = 0;
 	pd3dEffectTex.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
@@ -393,7 +393,7 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dParticleTexture.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 
-	D3D12_ROOT_PARAMETER pd3dRootParameters[24];
+	D3D12_ROOT_PARAMETER pd3dRootParameters[25];
 
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	pd3dRootParameters[ROOT_PARAMETER_CAMERA].Descriptor.ShaderRegister = 1; //b1 : Camera
@@ -515,6 +515,11 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 	pd3dRootParameters[ROOT_PARAMETER_PARTICLE].DescriptorTable.NumDescriptorRanges = 1;
 	pd3dRootParameters[ROOT_PARAMETER_PARTICLE].DescriptorTable.pDescriptorRanges = &pd3dParticleTexture;
 	pd3dRootParameters[ROOT_PARAMETER_PARTICLE].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+
+	pd3dRootParameters[ROOT_PARAMETER_EFFECTCBV].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	pd3dRootParameters[ROOT_PARAMETER_EFFECTCBV].Constants.ShaderRegister = 12;
+	pd3dRootParameters[ROOT_PARAMETER_EFFECTCBV].Constants.RegisterSpace = 0;
+	pd3dRootParameters[ROOT_PARAMETER_EFFECTCBV].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 
 	D3D12_STATIC_SAMPLER_DESC d3dSamplerDesc[2];
 	::ZeroMemory(&d3dSamplerDesc, sizeof(D3D12_STATIC_SAMPLER_DESC));
@@ -795,7 +800,11 @@ void CGameScene::PurifyMonster()
 				int i = 0;
 				for (auto pMon : *m_pMonsterLists[pMaker->m_iMonsterType])
 				{
-					m_pParticleSystemObject[i]->RegenerateParticles(pMon->GetPosition());
+					XMFLOAT3 monsterpos = pMon->GetPosition();
+					if (CCollisionMgr::GetInstance()->m_iSceneProgress == 2)
+						monsterpos.y += 5.0f;
+
+					m_pParticleSystemObject[i]->RegenerateParticles(monsterpos);
 					CDynamicObject* researcher = m_pDynamicObjLists[OBJECT_TYPE_RESEARCHER]->at(pMaker->m_iMonsterType);
 					dynamic_cast<CResearcher*> (researcher)->SetBilBil();
 
@@ -901,7 +910,9 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
+
 	//if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
+
 	if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
 	if (m_pSpecialFogShader) m_pSpecialFogShader->Render(pd3dCommandList, pCamera);
 

@@ -50,6 +50,8 @@ cbuffer cbPlayerPosition : register(b6) // 플레이어 위치
 	float3			gf3PlayerPos :packoffset(c0);
 }
 
+
+
 cbuffer cbNoiseBuffer : register(b9)
 {
 	float    frameTime : packoffset(c0);
@@ -109,7 +111,7 @@ Texture2D gtxtMinimapFogTexture : register(t30);
 
 Texture2D gtxtEffectTexture : register(t31);
 Texture2D gtxtDissolveTexture : register(t69);
-//Texture2D gtxtEffectTexture : register(t70);
+Texture2D gtxtRealEffectTexture : register(t70);
 
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
