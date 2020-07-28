@@ -42,8 +42,8 @@ void EffectGS(point GS_EFFECT_INPUT input[1], inout TriangleStream<GS_EFFECT_OUT
 	vLook = normalize(vLook);
 	float3 vRight = cross(vUP, vLook);
 
-	float fHalfW = 50 * 0.5f;
-	float fHalfH = 50 * 0.5f;
+	float fHalfW = 20 * 0.5f;
+	float fHalfH = 20 * 0.5f;
 
 	float4 pVertices[4];
 	pVertices[0] = float4(input[0].positionW + fHalfW * vRight - fHalfH * vUP, 1.0f);
@@ -76,7 +76,7 @@ PS_NONLIGHT_MRT_OUTPUT EffectPixelShader(GS_EFFECT_OUTPUT input)
 	return(output);
 }
 
-[maxvertexcount(4)]
+[maxvertexcount(4)] //±âÇÏ½¦ÀÌ´õ ´¯È÷±â ...
 void EffectSPTGS(point GS_EFFECT_INPUT input[1], inout TriangleStream<GS_EFFECT_OUTPUT> outStream)
 {
 	float3 vUP = float3(0.0f, 1.0f, 0.0f);
@@ -88,10 +88,10 @@ void EffectSPTGS(point GS_EFFECT_INPUT input[1], inout TriangleStream<GS_EFFECT_
 	float fHalfH = 50 * 0.5f;
 
 	float4 pVertices[4];
-	pVertices[0] = float4(input[0].positionW + fHalfW * vRight - fHalfH * vUP, 1.0f);
-	pVertices[1] = float4(input[0].positionW + fHalfW * vRight + fHalfH * vUP, 1.0f);
-	pVertices[2] = float4(input[0].positionW - fHalfW * vRight - fHalfH * vUP, 1.0f);
-	pVertices[3] = float4(input[0].positionW - fHalfW * vRight + fHalfH * vUP, 1.0f);
+	pVertices[0] = float4(input[0].positionW.x + fHalfW, input[0].positionW.y, input[0].positionW.z + fHalfW ,1.0f);
+	pVertices[1] = float4(input[0].positionW.x + fHalfW, input[0].positionW.y, input[0].positionW.z - fHalfW, 1.0f);
+	pVertices[2] = float4(input[0].positionW.x - fHalfW, input[0].positionW.y, input[0].positionW.z + fHalfW, 1.0f);
+	pVertices[3] = float4(input[0].positionW.x - fHalfW, input[0].positionW.y, input[0].positionW.z - fHalfW, 1.0f);
 
 	float2 pUVs[4] = { float2 (0.0f, 1.0f), float2(0.0f, 0.0f), float2(1.0f, 1.0f), float2(1.0f, 0.0f) };
 

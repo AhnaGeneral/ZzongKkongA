@@ -221,10 +221,10 @@ void CShader_Effect::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 2); 
 
 	m_pLight01obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-		XMFLOAT3(0, 0, 0), this);
+		XMFLOAT3(0, 2, 0), this);
 
 	m_pSPT_Wave02obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-		XMFLOAT3(0, 5, 0), this);
+		XMFLOAT3(0, 0, 0), this);
 	m_pSPT_Wave02obj->Rotate(180, 0, 0);
 
 	m_spt.col = 0;
