@@ -26,7 +26,13 @@ void CRadationMgr::Update(float fElapsedTime)
 }
 int CRadationMgr::GetStrength(XMFLOAT3 pos)
 {
+	// 417,190 - 445,215
 	XMFLOAT2 Pos = XMFLOAT2(pos.x, pos.z);
+	if(Pos.x > 417 && Pos.x < 445 && Pos.y >190 && Pos.y <215)
+			return 0;
+	if (Pos.x > 204 && Pos.x < 240 && Pos.y >270 && Pos.y < 282)
+		return 0;
+
 	int Strength = 0;
 	for (int i = 0; i < 5; ++i)
 	{

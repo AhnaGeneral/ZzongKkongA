@@ -845,7 +845,13 @@ void CGameScene::PurifyMonster()
 					if (pMon->m_iState != MONSTER_STATE_STUN) return;
 				}
 				CSoundMgr::GetInstacne()->PlayEffectSound(_T("Purify"));
-				int i = 0;
+				int i = 0; 
+				if (pMaker->m_iMonsterType == 0)
+				{
+					CGameObject* pObj = m_pMonsterLists[pMaker->m_iMonsterType]->front()->m_pChild;
+					pObj->m_pChild->m_ppMaterials[0]->SetTexture(m_pPurifiedYMBC, 0);
+					pObj->m_pChild->m_ppMaterials[0]->SetTexture(m_pPurifiedYMNM, 2);
+				}
 				for (auto pMon : *m_pMonsterLists[pMaker->m_iMonsterType])
 				{
 					XMFLOAT3 monsterpos = pMon->GetPosition();

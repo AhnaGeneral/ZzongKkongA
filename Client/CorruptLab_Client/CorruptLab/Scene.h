@@ -151,6 +151,8 @@ public:
 	CTexture                  * m_pShadowMap;
 	CTexture                  * m_pDepthTex;
 						      
-	
+
+	CTexture* m_pPurifiedYMBC;
+	CTexture* m_pPurifiedYMNM;
 
 };
