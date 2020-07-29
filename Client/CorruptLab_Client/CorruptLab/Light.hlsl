@@ -107,17 +107,22 @@ float4 PointLight(int nIndex, float3 vPosition, float3 vNormal, float3 vToCamera
 	if (fDistance <= gLights[nIndex].m_fRange)
 	{
 		float fSpecularFactor = 0.0f;
-		vToLight /= fDistance;
-		float fDiffuseFactor = dot(vToLight, vNormal);
-		if (fDiffuseFactor > 0.0f)
+		vToLight = normalize(vToLight);
+		float fDiffuseFactor = dot(vToLight, vNormal) / 1.2f;
+
+		float4 diffuse = max(fDiffuseFactor * gLights[nIndex].m_cDiffuse, -0.f);
+		float4 spec = float4(0, 0, 0, 0);
+
+		if (fDiffuseFactor > 0.f)
 		{
 			float3 halfVec = normalize(-vToCamera + vToLight);
 			const float m = 0.06f * 256.0f;
 			float roughnessFactor = (m + 3.0f) * pow(max(dot(halfVec, vNormal), 0.0f), m) / 8.0f;
-			fresnelFactor = SchlickFresnel(gLights[nIndex].m_cSpecular.xyz, halfVec, vToLight);
+			float3 fresnelFactor = SchlickFresnel(gLights[nIndex].m_cSpecular.xyz, halfVec, vToLight) / 2.5f;
+			spec = float4 (fresnelFactor * roughnessFactor, 1);
 		}
 		float fAttenuationFactor = 1.0f / dot(gLights[nIndex].m_vAttenuation, float3(1.0f, fDistance, fDistance * fDistance));
-		float4 LightColor = (gLights[nIndex].m_cDiffuse * fDiffuseFactor  + gLights[nIndex].m_cSpecular * fresnelFactor);
+		float4 LightColor = (spec)+diffuse;
 		return LightColor * fAttenuationFactor;
 	}
 	return(float4(0.0f, 0.0f, 0.0f, 0.0f));
