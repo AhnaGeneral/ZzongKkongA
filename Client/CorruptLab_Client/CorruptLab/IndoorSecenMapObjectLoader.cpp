@@ -19,7 +19,7 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 
-	m_nStaticObjectTypeNum = 12;
+	m_nStaticObjectTypeNum = 13;
 	m_pStaticObjLists = new vector<CGameObject*> * [m_nStaticObjectTypeNum];
 
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -83,6 +83,10 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Number.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/passwordT.bin", OBJECT_INDOOR_TYPE_PASSWORD);
 
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/AnimalAll.bin", NULL, 0);
+	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/AnimalAllT.bin", OBJECT_INDOOR_TYPE_ANIMALALL);
+
 
 	// Dynamic ================================================================================
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
@@ -99,7 +103,7 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	CShader* IndoorDragMarkerShader = new CTransparentedStandardShader();
 	IndoorDragMarkerShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	IndoorDragMarkerAlpha->SetShader(0, IndoorDragMarkerShader);
-	PlaceDynamicFromFile(pDiverObject,"ObjectsData/IndoorDrugMakers.bin" , OBJECT_INDOOR_TYPE_DRUGMAKER);
+	PlaceDynamicFromFile(pDiverObject,"ObjectsData/LabatoryIndoorT.bin" , OBJECT_INDOOR_TYPE_DRUGMAKER);
 
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Door_Opening.bin", NULL, 1);

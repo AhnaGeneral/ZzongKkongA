@@ -562,7 +562,7 @@ void CGameScene2::IndoorParticleEffectRender()
 		m_pLastParticlesystemObject->InitializeParticleSystem(2.5f, 250.0f, 300.f);
 		m_pLastParticlesystemObject->InitializeBuffer(m_pd3dDevice, m_pd3dCommandList);
 		m_pLastParticlesystemObject->CreateParticleShaderTexture(m_pd3dDevice, m_pd3dCommandList, m_pd3dGraphicsRootSignature);
-		m_pLastParticlesystemObject->RegenerateParticles(XMFLOAT3(135.0f, 3.0f, 10.0f - (i * 5)));
+		m_pLastParticlesystemObject->RegenerateParticles(XMFLOAT3(135.0f, 3.0f, 8.0f - (i * 5)));
 		m_pIndoorParticleSystems.push_back(m_pLastParticlesystemObject);
 	}
 }
