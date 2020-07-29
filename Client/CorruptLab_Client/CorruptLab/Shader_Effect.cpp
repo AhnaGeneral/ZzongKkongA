@@ -124,11 +124,11 @@ void CShader_Effect::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graph
 
 void CShader_Effect::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
-	m_spt.time += 1.0f;
-
-	if (m_spt.time > 5.0f)
+	m_spt.LifeTime += 0.02f;
+	m_spt.LoopTime += 1.0f;
+	if (m_spt.LoopTime > 5.0f)
 	{
-		m_spt.time = 0.0f;
+		m_spt.LoopTime = 0.0f;
 
 		if (m_spt.row > 6)
 		{
@@ -141,12 +141,11 @@ void CShader_Effect::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dComman
 			m_spt.col = 0;
 		}
 
-	
-
 		m_spt.row += 1;
 	}
 
-	::memcpy(&m_pcbMappedEffectBuffers->time, &m_spt.time, sizeof(float));
+	::memcpy(&m_pcbMappedEffectBuffers->LifeTime, &m_spt.LifeTime, sizeof(float));
+	::memcpy(&m_pcbMappedEffectBuffers->LoopTime, &m_spt.LoopTime, sizeof(float));
 	::memcpy(&m_pcbMappedEffectBuffers->row, &m_spt.row, sizeof(int));
 	::memcpy(&m_pcbMappedEffectBuffers->col, &m_spt.col, sizeof(int));
 
@@ -225,7 +224,6 @@ void CShader_Effect::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 
 	m_pSPT_Wave02obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 		XMFLOAT3(0, 0, 0), this);
-	m_pSPT_Wave02obj->Rotate(180, 0, 0);
 
 	m_spt.col = 0;
 	m_spt.row = 0;

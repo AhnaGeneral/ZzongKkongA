@@ -5,6 +5,7 @@ cbuffer cbEffectCompoment : register(b12)
 	int row : packoffset(c0);
 	int col : packoffset(c0.y);
 	float fime : packoffset(c0.z);
+	float fLifetime : packoffset(c0.w);
 }
 
 struct VS_EFFECT_INPUT
@@ -37,7 +38,10 @@ GS_EFFECT_INPUT EffectVertexShader(VS_EFFECT_INPUT input)
 [maxvertexcount(4)]
 void EffectGS(point GS_EFFECT_INPUT input[1], inout TriangleStream<GS_EFFECT_OUTPUT> outStream)
 {
-	float3 vUP = float3(0.0f, 1.0f, 0.0f);
+	float upX = cos(fLifetime);
+	float upY = sin(fLifetime);
+
+	float3 vUP = normalize(float3(0, upX, upY));
 	float3 vLook = gvCameraPosition.xyz - input[0].positionW;
 	vLook = normalize(vLook);
 	float3 vRight = cross(vUP, vLook);

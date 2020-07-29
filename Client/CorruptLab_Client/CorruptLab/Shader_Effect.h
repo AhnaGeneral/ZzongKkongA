@@ -6,7 +6,8 @@ struct CB_SPTEFFECTTYPE
 {
 	int row; 
 	int col; 
-	float time;
+	float LoopTime;
+	float LifeTime;
 };
 
 class CShader_Effect : public CShader 
