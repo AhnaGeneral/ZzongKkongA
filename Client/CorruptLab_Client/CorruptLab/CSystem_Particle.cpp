@@ -96,7 +96,6 @@ void ParticleSystemObject::RegenerateParticles(XMFLOAT3 EmplacePOS)
 	// 아직 배출되지 않으므로 현재 파티클 수를 0으로 초기화합니다.
 	m_CurrentParticleCount = 0;
 	m_EmplacePos = EmplacePOS;
-	m_DeadIineY = EmplacePOS.y + 4.0f;
 	// 초당 파티클 방출 속도의 초기 누적 시간을 지웁니다.
 	m_accumulatedTime = 0.0f;
 
