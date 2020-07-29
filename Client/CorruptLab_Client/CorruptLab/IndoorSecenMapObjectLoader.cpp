@@ -19,7 +19,7 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 
-	m_nStaticObjectTypeNum = 13;
+	m_nStaticObjectTypeNum = 14;
 	m_pStaticObjLists = new vector<CGameObject*> * [m_nStaticObjectTypeNum];
 
 	for (int i = 0; i < m_nStaticObjectTypeNum; i++)
@@ -86,6 +86,10 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/AnimalAll.bin", NULL, 0);
 	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/AnimalAllT.bin", OBJECT_INDOOR_TYPE_ANIMALALL);
+
+	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
+	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/BossMachine.bin", NULL, 0);
+	PlaceStaticObjectsFromFile(pDiverObject, "ObjectsData/BossMachineT.bin", OBJECT_INDOOR_TYPE_BOSSMACHINE);
 
 
 	// Dynamic ================================================================================
