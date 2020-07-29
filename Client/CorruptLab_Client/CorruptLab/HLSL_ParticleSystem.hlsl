@@ -72,16 +72,21 @@ void ParticleGeometryShader(point GeometryInputType input[1],
 //{
 //	float4 NonLight : SV_TARGET4;
 //};
+//struct PS_EMMISIVE_MRT_OUTPUT
+//{
+//	float4 EmmisiveMRT : SV_TARGET5;
+//};
 
-PS_NONLIGHT_MRT_OUTPUT ParticlePixelShader(GeometryOutputType input)
+
+PS_EMMISIVE_MRT_OUTPUT ParticlePixelShader(GeometryOutputType input)
 {
-	PS_NONLIGHT_MRT_OUTPUT output;
+	PS_EMMISIVE_MRT_OUTPUT output;
 
 	float4 textureColor; 
 	float4 finalColor; 
 
 	textureColor = gtxtEffectTexture.Sample(gSamplerState, input.tex);
 	finalColor = textureColor * input.color; 
-	output.NonLight = float4 (finalColor.rgb, textureColor.a);
+	output.EmmisiveMRT = float4 (finalColor.rgb, textureColor.a);
 	return output;
 }

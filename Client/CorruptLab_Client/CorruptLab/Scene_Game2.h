@@ -29,7 +29,7 @@ public:
 	CObjectWater* m_pCObjectWater;
 	CFloor * m_pFloor;
 
-	CShader_Effect* m_pTestEffect;
+	CShader_Effect* m_pGreenZoonEffect;
 
 	CGameObject** m_IndoorWallLine = nullptr;
 	//CGameObject* m_IndoorWallLines = nullptr;

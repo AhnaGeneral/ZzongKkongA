@@ -214,16 +214,18 @@ void CShader_Effect::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature*
 
 }
 
-void CShader_Effect::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, void* pContext, CHeightMapTerrain* pTerrain)
+void CShader_Effect::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
+	ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 _pos)
+
 {
 	CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 2); 
 
 	m_pLight01obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-		XMFLOAT3(0, 2, 0), this);
+		XMFLOAT3(_pos.x,_pos.y + 2, _pos.z), this);
 
 	m_pSPT_Wave02obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-		XMFLOAT3(0, 0, 0), this);
+		XMFLOAT3(_pos.x, _pos.y, _pos.z), this);
 
 	m_spt.col = 0;
 	m_spt.row = 0;

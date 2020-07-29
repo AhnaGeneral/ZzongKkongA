@@ -39,7 +39,8 @@ private:
 	CTexture* m_Texture = nullptr; 
 
 	ParticleType* m_ParticleList = nullptr;
-
+	XMFLOAT3 m_xmColor = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	bool m_ColorSwitch = false;
 
 	CB_ParicleShader* m_Vertices = nullptr; 
 
@@ -72,11 +73,12 @@ public:
 	void InitializeBuffer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	bool InitializeParticleSystem(float velocity , float ParticlePerSecond, float maxParticles); 
 	void EmitParticles(float frameTime); 
+	void SetColor(float _red, float _green, float _blue);
 	void UpdateParticles(float frameTime);
 	void KillParticles();
 	void DisconnectList(); 
 	void CreateParticleShaderTexture(ID3D12Device* pd3dDevice,
-		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
+		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, wchar_t* m_filename = nullptr);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
 
 	void Shutdown(); 

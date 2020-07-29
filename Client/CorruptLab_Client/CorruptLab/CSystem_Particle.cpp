@@ -96,6 +96,7 @@ void ParticleSystemObject::RegenerateParticles(XMFLOAT3 EmplacePOS)
 	// 아직 배출되지 않으므로 현재 파티클 수를 0으로 초기화합니다.
 	m_CurrentParticleCount = 0;
 	m_EmplacePos = EmplacePOS;
+	m_DeadIineY = EmplacePOS.y + 4.0f;
 	// 초당 파티클 방출 속도의 초기 누적 시간을 지웁니다.
 	m_accumulatedTime = 0.0f;
 
@@ -181,10 +182,25 @@ void ParticleSystemObject::EmitParticles(float frameTime)
 		float velocity = m_ParticleVelocity +
 			(((float)rand() - (float)rand()) / RAND_MAX) * m_ParticleVelocityVariation;
 
-		float red   = (((float)rand() - (float)rand()) / RAND_MAX) + 0.7f;
-		float green =  0.8f;
-		float blue =   0.9f;
+		float red = 0.0f;
+		float green = 0.0f;
+		float blue = 0.0f;
 
+		if (!m_ColorSwitch)
+		{
+			 red   = (((float)rand() - (float)rand()) / RAND_MAX) + 0.7f;
+			 green = 0.8f;
+			 blue  = 0.9f;
+		}
+
+		else
+		{
+			 red = m_xmColor.x;
+			 green = m_xmColor.y;
+			 blue = m_xmColor.z;
+		}
+
+		
 		float Size = (((float)rand() - (float)rand()) / RAND_MAX) + 0.2f ;
 
 		// 블랜딩을 위해 파티클을 뒤에서 앞으로 렌더링을 해야 한다. 즉, 파티클 배열을 정렬해야 함. 
@@ -241,6 +257,14 @@ void ParticleSystemObject::EmitParticles(float frameTime)
 	}
 }
 
+void ParticleSystemObject::SetColor(float _red, float _green, float _blue)
+{
+	m_xmColor.x = _red; 
+	m_xmColor.y = _green;
+	m_xmColor.z = _blue; 
+	m_ColorSwitch = true;
+}
+
 void ParticleSystemObject::UpdateParticles(float frameTime)
 {
 	// 각 프레임은 위치, 속도 및 프레임 시간을 사용하여 아래쪽으로 이동하여 모든 파티클을 업데이트합니다.
@@ -286,10 +310,15 @@ void ParticleSystemObject::DisconnectList()
 }
 
 void ParticleSystemObject::CreateParticleShaderTexture(ID3D12Device* pd3dDevice, 
-	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+	ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature, wchar_t* m_filename)
 {
+
 	CTexture* pNoiseTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Particle/T_Light01.dds", 0);
+
+	if(m_filename == nullptr)
+	   pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Particle/T_Light01.dds", 0);
+	else
+		pNoiseTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, m_filename, 0);
 
 	Shader_ParticleClass* pNosieShader = new Shader_ParticleClass();
 	pNosieShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);

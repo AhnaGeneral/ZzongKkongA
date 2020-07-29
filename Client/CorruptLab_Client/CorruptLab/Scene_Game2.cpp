@@ -170,8 +170,8 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	//m_TestTexure->SetScale(0.5f, 0.5f, 0.5f);
 	//m_TestTexure->SetPosition(1.0f, 1.0f, 1.0f);
 
-	m_pTestEffect = new CShader_Effect();
-	m_pTestEffect->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, NULL, NULL);
+	/*m_pTestEffect = new CShader_Effect();
+	m_pTestEffect->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, NULL, NULL);*/
 
 	m_pd3dDevice = pd3dDevice; 
 	m_pd3dCommandList = pd3dCommandList; 
@@ -481,7 +481,7 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 		m_IndoorWallLine[i]->Render(pd3dCommandList, pCamera, 0);
 	}
 
-	if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
+	//if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
 
 	CheckCollisions();
 	//m_TestTexure->UpdateTransform(nullptr);

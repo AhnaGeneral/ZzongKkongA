@@ -96,9 +96,6 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	m_pCObjectWater->Rotate(90.0f, 0.0f, 0.0f);
 	m_pCObjectWater->GenerateShaderDistortionBuffer();
 
-	//m_pTestEffect = new CShader_Effect(); 
-	//m_pTestEffect->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, NULL, m_pTerrain);
-
 	CItemMgr::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	CCollisionMgr::GetInstance()->Initialize();
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);
@@ -115,6 +112,40 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	m_OpeningDoorsInfo[0].DoorPos = XMFLOAT3(412.f, 46.f, 319.f);
 	m_OpeningDoorsInfo[1].DoorPos = XMFLOAT3(331.f, 59.f, 220.f);
+
+
+	// 그린존 =============================================================================
+	m_pGreenZoonEffect = new CShader_Effect*[2];
+	m_pGreenZoonParticleSystemObject = new ParticleSystemObject * [2];
+	
+	for (int i = 0; i < 2; i++)
+	{
+		m_pGreenZoonEffect[i] = new CShader_Effect();
+		if (i == 0)
+		{
+			m_pGreenZoonParticleSystemObject[i] = new ParticleSystemObject(pd3dDevice, pd3dCommandList,
+				m_pd3dGraphicsRootSignature, XMFLOAT3(430.8f, 41.8f, 205.0f));
+			m_pGreenZoonParticleSystemObject[i]->RegenerateParticles(XMFLOAT3(430.8f, 42.8f, 205.0f));
+
+			m_pGreenZoonEffect[i]->BuildObjects(pd3dDevice, pd3dCommandList,
+				m_pd3dGraphicsRootSignature, XMFLOAT3(430.8f, 41.8f, 205.0f)); //양말이 하우스
+		}
+		if (i == 1)
+		{
+			m_pGreenZoonParticleSystemObject[i] = new ParticleSystemObject(pd3dDevice, pd3dCommandList,
+				m_pd3dGraphicsRootSignature, XMFLOAT3(220.0f, 94.f, 277.0f), 108.f);
+			m_pGreenZoonParticleSystemObject[i]->RegenerateParticles(XMFLOAT3(220.0f, 99.f, 277.0f));
+
+
+			m_pGreenZoonEffect[i]->BuildObjects(pd3dDevice, pd3dCommandList,
+				m_pd3dGraphicsRootSignature, XMFLOAT3(220.0f, 95.f, 277.0f)); //토슴이 하우스
+		}
+		m_pGreenZoonParticleSystemObject[i]->SetColor(0.6f, 0.8f, 0.6f);
+		m_pGreenZoonParticleSystemObject[i]->InitializeParticleSystem(4.f, 330.f, 330.f);
+		m_pGreenZoonParticleSystemObject[i]->InitializeBuffer(pd3dDevice, pd3dCommandList);
+		m_pGreenZoonParticleSystemObject[i]->CreateParticleShaderTexture(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, L"Effect/T_Flare01.dds");
+	}
+
 
 	
 }
@@ -224,6 +255,15 @@ void CGameScene::ReleaseObjects()
 			m_pParticleSystemObject[i]->Release();
 		}
 	}
+	for (int i = 0; i < 2; i++)
+	{
+		if (m_pGreenZoonParticleSystemObject[i])
+		{
+			m_pGreenZoonParticleSystemObject[i]->DisconnectList();
+			m_pGreenZoonParticleSystemObject[i]->Release();
+		}
+	}
+	
 
 }
 void CGameScene::ReleaseUploadBuffers()
@@ -599,6 +639,14 @@ void CGameScene::ReleaseShaderVariables()
 		{
 			m_pParticleSystemObject[i]->ReleaseShaderVariables();
 		}
+
+	for (int i = 0; i < 2; i++)
+		if (m_pGreenZoonParticleSystemObject[i])
+		{
+			m_pGreenZoonParticleSystemObject[i]->ReleaseShaderVariables();
+		}
+
+	
 }
 
 bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -911,8 +959,11 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 
 	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
 
-	//if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
-
+	if (m_pGreenZoonEffect)
+	{
+		for(int i = 0 ; i < 2 ; ++i)
+		   m_pGreenZoonEffect[i]->Render(pd3dCommandList, pCamera);
+	}
 	if (m_pSoftParticleShader) m_pSoftParticleShader->Render(pd3dCommandList, pCamera);
 	if (m_pSpecialFogShader) m_pSpecialFogShader->Render(pd3dCommandList, pCamera);
 
@@ -921,6 +972,12 @@ void CGameScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCa
 	{
 		if (m_pParticleSystemObject[i])
 			m_pParticleSystemObject[i]->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
+	}
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (m_pGreenZoonParticleSystemObject[i])
+			m_pGreenZoonParticleSystemObject[i]->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
 	}
 }
 

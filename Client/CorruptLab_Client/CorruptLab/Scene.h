@@ -76,7 +76,9 @@ public:
 	CSkyBox                   * m_pSkyBox;
 	CObjectWater              * m_pCObjectWater; 
 
-	CShader_Effect            * m_pTestEffect; 
+	CShader_Effect            ** m_pGreenZoonEffect; 
+	ParticleSystemObject      ** m_pGreenZoonParticleSystemObject;
+
 	int                         n_ReactItem; 
 	float                       itemRange;
 	ID3D12Device              * m_pDevice; 

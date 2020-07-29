@@ -83,6 +83,7 @@ protected:
 
 	float                 m_fTime = 0.0f; 
 	bool                  m_bTimeControl = true;
+	bool                  m_IndoorScene = false; 
 
 };
 

@@ -68,14 +68,14 @@ void EffectGS(point GS_EFFECT_INPUT input[1], inout TriangleStream<GS_EFFECT_OUT
 	}
 }
 
-PS_NONLIGHT_MRT_OUTPUT EffectPixelShader(GS_EFFECT_OUTPUT input)
+PS_EMMISIVE_MRT_OUTPUT EffectPixelShader(GS_EFFECT_OUTPUT input)
 {
 
-	PS_NONLIGHT_MRT_OUTPUT output;
+	PS_EMMISIVE_MRT_OUTPUT output;
 
 	float3 uvw = float3 (input.UV, 0.0f);
 	float4 cColor = gtxtRealEffectTexture.Sample(gSamplerState, uvw);
-	output.NonLight = cColor; 
+	output.EmmisiveMRT = cColor;
 	//output.NonLight = float4(1,1,1,1);
 	return(output);
 }
@@ -109,10 +109,15 @@ void EffectSPTGS(point GS_EFFECT_INPUT input[1], inout TriangleStream<GS_EFFECT_
 		outStream.Append(output);
 	}
 }
-PS_NONLIGHT_MRT_OUTPUT EffectSPTPixelShader(GS_EFFECT_OUTPUT input)
+
+//struct PS_EMMISIVE_MRT_OUTPUT
+//{
+//	float4 EmmisiveMRT : SV_TARGET5;
+//};
+PS_EMMISIVE_MRT_OUTPUT EffectSPTPixelShader(GS_EFFECT_OUTPUT input)
 {
 
-	PS_NONLIGHT_MRT_OUTPUT output;
+	PS_EMMISIVE_MRT_OUTPUT output;
 
 	input.UV.x /= 8;
 	input.UV.x += (1.f / 8.f) * row;
@@ -123,7 +128,7 @@ PS_NONLIGHT_MRT_OUTPUT EffectSPTPixelShader(GS_EFFECT_OUTPUT input)
 
 	float3 uvw = float3 (input.UV, 0.0f);
 	float4 cColor = gtxtRealEffectTexture.Sample(gSamplerState, uvw);
-	output.NonLight = cColor;
+	output.EmmisiveMRT = cColor;
 	//output.NonLight = float4(1,1,1,1);
 	return(output);
 }
