@@ -54,6 +54,7 @@ protected:
 	CGameObject* m_SwordEffect = NULL;
 	CGameObject* m_SwordEffect2 = NULL;
 	CTexture* m_SwordEffectTexture = NULL;
+	CShader* SwordShader = NULL;
 
 	int					   m_nRightHandIndex = 25;
 
@@ -62,8 +63,9 @@ protected:
 	float				   m_iMaxHP ;
 	float			       m_iCurrentHP ;
 	float				   m_fComboTick;
-	int					 m_nCombo;
+	int					   m_nCombo;
 	int				       m_iAtt ;
+	bool                   m_bSwordEffectControl = false; 
 
 ///
 public:

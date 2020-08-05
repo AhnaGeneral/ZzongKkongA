@@ -60,6 +60,7 @@ public:
 
 	Shader_CollisionBox           * m_pCollisionBoxShader = NULL;
 	float                           m_fSwordEffectTime = 0.0f; 
+	float                           m_fSwordEffectRenderTime = 0.0f;
 
 
 	CCollisionBox* GetCollisionBoxes();

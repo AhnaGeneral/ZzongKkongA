@@ -56,6 +56,7 @@ void CPlayer::SetType()
 
 void CPlayer::SetAttackState()
 {
+	m_bSwordEffectControl = true;
 	if (m_bShift) m_nCombo = 1;
 	else m_nCombo = 0;
 	CSoundMgr::GetInstacne()->PlayEffectSound(_T("Attack"));
@@ -401,7 +402,7 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	//m_pSword->SetScale(1, 2, 2);
 	//m_pSword->Rotate(-90, 0, 180);
 
-	CShader* SwordShader = new CSwordEffectShader();
+	SwordShader = new CSwordEffectShader();
 	SwordShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	SwordShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	SwordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 6); //16
@@ -415,12 +416,12 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 
 	m_SwordEffect2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
 		pd3dGraphicsRootSignature, "Effect/AttackAni2.bin", SwordShader, 0);
-	m_SwordEffect2->SetScale(1.0f, 1.0f, 1.0f);
+	m_SwordEffect2->SetScale(0.8f, 0.8f, 0.8f);
 	m_SwordEffect2->Rotate(-90.f, 0.0f, 0.0f);
 
 	m_SwordEffect = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
 		pd3dGraphicsRootSignature, "Effect/AttackAni1.bin", SwordShader, 0);
-	m_SwordEffect->SetScale(1.0f, 1.0f, 1.0f);
+	m_SwordEffect->SetScale(0.8f, 0.8f, 0.8f);
 	m_SwordEffect->Rotate(-90.f, 0.0f, 0.0f);
 
 
@@ -576,13 +577,23 @@ void CMainPlayer::Update(float fTimeElapsed)
 		m_SwordEffect->UpdateTransform(&m_xmworld);
 		m_SwordEffect2->UpdateTransform(&m_xmworld);
 	}
-
-	m_fSwordEffectTime += (fTimeElapsed * 3.0f);
-
-	if (m_fSwordEffectTime > 1.0f)
+	if (m_bSwordEffectControl)
 	{
-		m_fSwordEffectTime = 0.0f;
+		m_fSwordEffectRenderTime += fTimeElapsed;
+		m_fSwordEffectTime += (fTimeElapsed * 4.0f);
+
+		if (m_fSwordEffectTime > 1.0f)
+		{
+			m_fSwordEffectTime = 0.0f;
+		}
+
+		if (m_fSwordEffectRenderTime > 0.4f)
+		{
+			m_fSwordEffectRenderTime = 0.0f;
+			m_bSwordEffectControl = false; 
+		}
 	}
+
 
 	//SetAnimation();
 }
@@ -591,13 +602,22 @@ void CMainPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 {
 	CPlayer::Render(pd3dCommandList, pCamera, nPipelineState);
 
-	if (m_SwordEffect && m_SwordEffect2)
+	if (m_bSwordEffectControl)
 	{
-		m_SwordEffectTexture->UpdateShaderVariable(pd3dCommandList, 1);
-		m_SwordEffect->Render(pd3dCommandList, pCamera, nPipelineState);
-
-		m_SwordEffectTexture->UpdateShaderVariable(pd3dCommandList, 0);
-		m_SwordEffect2->Render(pd3dCommandList, pCamera, nPipelineState);
+		SwordShader->OnPrepareRender(pd3dCommandList, 0);
+		if (m_SwordEffect && m_SwordEffect2)
+		{
+			if (m_fSwordEffectRenderTime >= 0.0f && m_fSwordEffectRenderTime < 0.2f)
+			{
+				m_SwordEffectTexture->UpdateShaderVariable(pd3dCommandList, 0);
+				m_SwordEffect->Render(pd3dCommandList, pCamera, 0);
+			}
+			else 
+			{
+				m_SwordEffectTexture->UpdateShaderVariable(pd3dCommandList, 1);
+				m_SwordEffect2->Render(pd3dCommandList, pCamera, 0);
+			}
+		}
 	}
 }
 

@@ -363,7 +363,7 @@ PS_EMMISIVE_MRT_OUTPUT PSSwordEffectShader(VS_TEXTURED_LIGHTING_OUTPUT input)
 	float alphaControl = cColorEmission.x;
 	alphaControl -= gnSwordEffectTime;
 
-	output.EmmisiveMRT = float4(0.0f, mulColor.y, mulColor.z, alphaControl);
+	output.EmmisiveMRT = float4(0.0f, mulColor.y, mulColor.z, cColorEmission.x);
 
 	return output;
 }
