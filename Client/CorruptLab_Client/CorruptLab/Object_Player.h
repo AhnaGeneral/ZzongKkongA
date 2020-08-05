@@ -10,6 +10,8 @@
 #include "Object.h"
 #include "Object_Terrain.h"
 #include "Object_Camera.h"
+#include "Shader_Standard.h"
+
 struct AttackCombo
 {
 	float Start;
@@ -48,6 +50,10 @@ protected:
 	CPlayerCamera        * m_pCamera = NULL;
 	CGameObject          * m_pDummy = NULL;
 	CGameObject          * m_pSword = NULL;
+
+	CGameObject* m_SwordEffect = NULL;
+	CGameObject* m_SwordEffect2 = NULL;
+	CTexture* m_SwordEffectTexture = NULL;
 
 	int					   m_nRightHandIndex = 25;
 

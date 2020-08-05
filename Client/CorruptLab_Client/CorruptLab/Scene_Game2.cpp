@@ -158,28 +158,9 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_IndoorWallLines->SetPosition(0.0f, 4.f, -62.0f);
 	m_IndoorWallLine[3] = m_IndoorWallLines;
 
-	//CTexture* EffectTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
-	//EffectTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/HP/HP.dds", 0);
-
-	//Shader_TextureBasic* pTextureShader = new Shader_TextureBasic();
-	//pTextureShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
-	//pTextureShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	//pTextureShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1); 
-	//pTextureShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, 
-	//	(CTexture*)EffectTex, ROOT_PARMAMETER_WATER_NORMAL_TEX, true);
-
-	//CTriangleRect* TestTex = new CTriangleRect(pd3dDevice, pd3dCommandList, 0,
-	//	FRAME_BUFFER_HEIGHT / 7.f, FRAME_BUFFER_WIDTH / 7.0f, 1.0f);
-
-	//m_TestTexure = new CGameObject();
-	//m_TestTexure->SetShader(pTextureShader);
-	//m_TestTexure->SetMesh(TestTex);
-	//m_TestTexure->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	//m_TestTexure->SetScale(0.5f, 0.5f, 0.5f);
-	//m_TestTexure->SetPosition(1.0f, 1.0f, 1.0f);
-
-	/*m_pTestEffect = new CShader_Effect();
-	m_pTestEffect->BuildObjects(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, NULL, NULL);*/
+	m_pTipingEffect = new CShader_Effect;
+	m_pTipingEffect->BuildObjects(pd3dDevice, pd3dCommandList,
+		m_pd3dGraphicsRootSignature, XMFLOAT3(0.0f, 10.0f, 23.0f), false);
 
 	m_pd3dDevice = pd3dDevice; 
 	m_pd3dCommandList = pd3dCommandList; 
@@ -497,7 +478,7 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 		m_IndoorWallLine[i]->Render(pd3dCommandList, pCamera, 0);
 	}
 
-	//if (m_pTestEffect)m_pTestEffect->Render(pd3dCommandList, pCamera);
+	if (m_pTipingEffect) { m_pTipingEffect->Render(pd3dCommandList, pCamera, false); }
 
 	CheckCollisions();
 	//m_TestTexure->UpdateTransform(nullptr);

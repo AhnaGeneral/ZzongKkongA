@@ -59,6 +59,7 @@ public:
 	CB_GAMEOBJECT_INFO            * m_pcbMappedGameObjects = NULL;
 
 	Shader_CollisionBox           * m_pCollisionBoxShader = NULL;
+	float                           m_fSwordEffectTime = 0.0f; 
 
 
 	CCollisionBox* GetCollisionBoxes();

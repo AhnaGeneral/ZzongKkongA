@@ -108,9 +108,14 @@ D3D12_SHADER_BYTECODE CShader_Effect::CreateSPRPixelShader(ID3DBlob** ppd3dShade
 	return(CShader::CompileShaderFromFile(L"HLSL_Effect.hlsl", "EffectSPTPixelShader", "ps_5_1", ppd3dShaderBlob));
 }
 
-D3D12_SHADER_BYTECODE CShader_Effect::CreateSPRGeometryShader(ID3DBlob** ppd3dShaderBlob)
+D3D12_SHADER_BYTECODE CShader_Effect::CreateSPRXZGeometryShader(ID3DBlob** ppd3dShaderBlob)
 {
 	return(CShader::CompileShaderFromFile(L"HLSL_Effect.hlsl", "EffectSPTGS", "gs_5_1", ppd3dShaderBlob));
+}
+
+D3D12_SHADER_BYTECODE CShader_Effect::CreateSPRYZGeometryShader(ID3DBlob** ppd3dShaderBlob)
+{
+	return(CShader::CompileShaderFromFile(L"HLSL_Effect.hlsl", "EffectSPTYZGS", "gs_5_1", ppd3dShaderBlob));
 }
 
 void CShader_Effect::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
@@ -157,12 +162,15 @@ void CShader_Effect::ReleaseShaderVariables()
 {
 }
 
-void CShader_Effect::CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature)
+void CShader_Effect::CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
+	ID3D12RootSignature* pd3dGraphicsRootSignature)
 {
-	m_pEffectTestTexture = new CTexture(2, RESOURCE_TEXTURE2D, 0); 
-	m_pEffectTestTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Effect/T_Light01.dds", 0); 
-	m_pEffectTestTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Effect/SPT_Wave02.dds", 1);
-	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pEffectTestTexture, ROOT_PARAMETER_EFFECT, false);
+	m_pEffectTexture = new CTexture(3, RESOURCE_TEXTURE2D, 0); 
+	m_pEffectTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Effect/T_Light01.dds", 0);
+	m_pEffectTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Effect/SPT_Wave02.dds", 1);
+	m_pEffectTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Effect/SPT_Tiping.dds", 2);
+
+	CreateShaderResourceViews(pd3dDevice, pd3dCommandList, m_pEffectTexture, ROOT_PARAMETER_EFFECT, false);
 }
 
 void CShader_Effect::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets)
@@ -199,12 +207,19 @@ void CShader_Effect::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature*
 	HRESULT hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc, 
 		__uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[0]);
 
+	//=============================================================
 	d3dPipelineStateDesc.VS = CreateSPRVertexShader(&pd3dVertexShaderBlob);
-	d3dPipelineStateDesc.GS = CreateSPRGeometryShader(&pd3dGeometryShaderBlob);
+	d3dPipelineStateDesc.GS = CreateSPRXZGeometryShader(&pd3dGeometryShaderBlob);
 	d3dPipelineStateDesc.PS = CreateSPRPixelShader(&pd3dPixelShaderBlob);
 
 	hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc,
 		__uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[1]);
+
+	//=============================================================
+	d3dPipelineStateDesc.GS = CreateSPRYZGeometryShader(&pd3dGeometryShaderBlob);
+
+	hResult = pd3dDevice->CreateGraphicsPipelineState(&d3dPipelineStateDesc,
+		__uuidof(ID3D12PipelineState), (void**)&m_ppd3dPipelineStates[2]);
 
 	if (pd3dVertexShaderBlob) pd3dVertexShaderBlob->Release();
 	if (pd3dPixelShaderBlob) pd3dPixelShaderBlob->Release();
@@ -215,17 +230,25 @@ void CShader_Effect::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature*
 }
 
 void CShader_Effect::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
-	ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 _pos)
+	ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 _pos, bool GreenZoon)
 
 {
 	CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
-	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 2); 
+	CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); 
+	
+	if (GreenZoon)
+	{
+		m_pLight01obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
+			XMFLOAT3(_pos.x, _pos.y + 2, _pos.z), this);
 
-	m_pLight01obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-		XMFLOAT3(_pos.x,_pos.y + 2, _pos.z), this);
-
-	m_pSPT_Wave02obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
-		XMFLOAT3(_pos.x, _pos.y, _pos.z), this);
+		m_pSPT_Wave02obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
+			XMFLOAT3(_pos.x, _pos.y, _pos.z), this);
+	}
+	else
+	{
+		m_pSPT_Tiping = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
+			XMFLOAT3(_pos.x, _pos.y, _pos.z), this);
+	}
 
 	m_spt.col = 0;
 	m_spt.row = 0;
@@ -235,16 +258,23 @@ void CShader_Effect::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 	ReleaseUploadBuffers(); 
 }
 
-void CShader_Effect::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
+void CShader_Effect::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool GreenZoon)
 {
-	OnPrepareRender(pd3dCommandList, 0); 
-
-	m_pEffectTestTexture->UpdateShaderVariable(pd3dCommandList, 0); 
-	m_pLight01obj->Render(pd3dCommandList, pCamera); 
-
-	OnPrepareRender(pd3dCommandList, 1);
-	m_pEffectTestTexture->UpdateShaderVariable(pd3dCommandList, 1);
-	m_pSPT_Wave02obj->Render(pd3dCommandList, pCamera);
+	if (GreenZoon)
+	{
+		OnPrepareRender(pd3dCommandList, 0);
+		m_pEffectTexture->UpdateShaderVariable(pd3dCommandList, 0);
+		m_pLight01obj->Render(pd3dCommandList, pCamera);
+		OnPrepareRender(pd3dCommandList, 1);
+		m_pEffectTexture->UpdateShaderVariable(pd3dCommandList, 1);
+		m_pSPT_Wave02obj->Render(pd3dCommandList, pCamera);
+	}
+	else
+	{
+		OnPrepareRender(pd3dCommandList, 2);
+		m_pEffectTexture->UpdateShaderVariable(pd3dCommandList, 2);
+		m_pSPT_Tiping->Render(pd3dCommandList, pCamera);
+	}
 
 }
 

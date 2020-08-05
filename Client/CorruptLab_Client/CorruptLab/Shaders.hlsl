@@ -22,6 +22,7 @@ cbuffer cbGameObjectInfo : register(b2)
 	matrix		    gmtxGameObject : packoffset(c0); // 16
 	uint            gnObjectID : packoffset (c4); 
 	uint			gnTextureMask : packoffset(c5);
+	float           gnSwordEffectTime : packoffset(c6);
 };
 
 cbuffer cbOrthoInfo : register(b4)

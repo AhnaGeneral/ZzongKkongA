@@ -45,11 +45,6 @@ CPlayer::~CPlayer()
 
 	if (m_pCamera) delete m_pCamera;
 
-	if (m_pSword)
-	{
-		m_pSword->ReleaseUploadBuffers();
-		m_pSword->Release();
-	}
 }
 
 void CPlayer::SetType()
@@ -405,6 +400,30 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	//m_pSword->m_xmf4x4Transform = Matrix4x4::Identity();
 	//m_pSword->SetScale(1, 2, 2);
 	//m_pSword->Rotate(-90, 0, 180);
+
+	CShader* SwordShader = new CSwordEffectShader();
+	SwordShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
+	SwordShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+	SwordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 6); //16
+
+	m_SwordEffectTexture = new CTexture(2, RESOURCE_TEXTURE2D, 0);
+	m_SwordEffectTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Effect/Attack2.dds", 0);
+	m_SwordEffectTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Effect/Attack1.dds", 1);
+
+	SwordShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList,
+		m_SwordEffectTexture, ROOT_PARAMETER_EFFECT, false);
+
+	m_SwordEffect2 = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
+		pd3dGraphicsRootSignature, "Effect/AttackAni2.bin", SwordShader, 0);
+	m_SwordEffect2->SetScale(1.0f, 1.0f, 1.0f);
+	m_SwordEffect2->Rotate(-90.f, 0.0f, 0.0f);
+
+	m_SwordEffect = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
+		pd3dGraphicsRootSignature, "Effect/AttackAni1.bin", SwordShader, 0);
+	m_SwordEffect->SetScale(1.0f, 1.0f, 1.0f);
+	m_SwordEffect->Rotate(-90.f, 0.0f, 0.0f);
+
+
 	SetChild(pGameObject, true);
 
 	OnInitialize();
@@ -487,6 +506,9 @@ void CMainPlayer::UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandLis
 	UINT getobjectID = m_ObjectID;
 	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &getobjectID, 16);
 
+	float SwordEffectTime = m_fSwordEffectTime;
+	pd3dCommandList->SetGraphicsRoot32BitConstants(ROOT_PARAMETER_OBJECT, 4, &SwordEffectTime, 24);
+
 }
 
 bool CMainPlayer::CheckBridge(XMFLOAT3 xmf3PlayerPosition)
@@ -547,12 +569,36 @@ void CMainPlayer::Update(float fTimeElapsed)
 	{
 		m_pSword->UpdateTransform(&m_pDummy->m_xmf4x4World);
 	}
+
+	if (m_SwordEffect || m_SwordEffect2)
+	{
+		XMFLOAT4X4 m_xmworld = m_xmf4x4World;
+		m_SwordEffect->UpdateTransform(&m_xmworld);
+		m_SwordEffect2->UpdateTransform(&m_xmworld);
+	}
+
+	m_fSwordEffectTime += (fTimeElapsed * 3.0f);
+
+	if (m_fSwordEffectTime > 1.0f)
+	{
+		m_fSwordEffectTime = 0.0f;
+	}
+
 	//SetAnimation();
 }
 
 void CMainPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	CPlayer::Render(pd3dCommandList, pCamera, nPipelineState);
+
+	if (m_SwordEffect && m_SwordEffect2)
+	{
+		m_SwordEffectTexture->UpdateShaderVariable(pd3dCommandList, 1);
+		m_SwordEffect->Render(pd3dCommandList, pCamera, nPipelineState);
+
+		m_SwordEffectTexture->UpdateShaderVariable(pd3dCommandList, 0);
+		m_SwordEffect2->Render(pd3dCommandList, pCamera, nPipelineState);
+	}
 }
 
 void CMainPlayer::SetAnimation()

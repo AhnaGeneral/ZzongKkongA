@@ -13,10 +13,12 @@ struct CB_SPTEFFECTTYPE
 class CShader_Effect : public CShader 
 {
 protected :
-	CTexture* m_pEffectTestTexture = NULL; 
+	CTexture* m_pEffectTexture = NULL; 
 
 	CObject_Effect* m_pLight01obj = NULL;
 	CObject_Effect* m_pSPT_Wave02obj = NULL;
+	CObject_Effect* m_pSPT_Tiping = NULL;
+
 
 	ID3D12Resource* m_pd3dcbEffectBuffer = NULL;
 	CB_SPTEFFECTTYPE* m_pcbMappedEffectBuffers = NULL;
@@ -39,20 +41,23 @@ public :
 
 	D3D12_SHADER_BYTECODE    CreateSPRVertexShader(ID3DBlob** ppd3dShaderBlob);
 	D3D12_SHADER_BYTECODE    CreateSPRPixelShader(ID3DBlob** ppd3dShaderBlob);
-	D3D12_SHADER_BYTECODE    CreateSPRGeometryShader(ID3DBlob** ppd3dShaderBlob);
+	D3D12_SHADER_BYTECODE    CreateSPRXZGeometryShader(ID3DBlob** ppd3dShaderBlob);
+	D3D12_SHADER_BYTECODE    CreateSPRYZGeometryShader(ID3DBlob** ppd3dShaderBlob);
+
 
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void ReleaseShaderVariables();
 
-	void CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
+	void CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
+		ID3D12RootSignature* pd3dGraphicsRootSignature);
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets = 1);
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, 
-		ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 _pos);
+		ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 _pos, bool GreenZoon = true);
 
-	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
+	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool GreenZoon = true);
 	virtual void ReleaseObjects();
 	virtual void ReleaseUploadBuffers();
 

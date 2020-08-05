@@ -413,7 +413,7 @@ ID3D12RootSignature* CGameScene::CreateGraphicsRootSignature(ID3D12Device* pd3dD
 
 	D3D12_DESCRIPTOR_RANGE pd3dEffectTex; 
 	pd3dEffectTex.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	pd3dEffectTex.NumDescriptors = 2;
+	pd3dEffectTex.NumDescriptors = 3;
 	pd3dEffectTex.BaseShaderRegister = 70;
 	pd3dEffectTex.RegisterSpace = 0;
 	pd3dEffectTex.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;

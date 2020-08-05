@@ -38,6 +38,9 @@ public:
 
 	CGameObject* m_TestTexure = nullptr;
 
+	CShader_Effect* m_pTipingEffect;
+
+
 
 	bool m_ThatIsRightPassword = false; 
 	list<ParticleSystemObject*> m_pIndoorParticleSystems;

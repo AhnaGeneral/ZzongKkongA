@@ -347,3 +347,23 @@ VS_TEXTURED_LIGHTING_OUTPUT TreeVSTexcoord(VS_TEXTURED_LIGHTING_INPUT input)
 }
 
 
+PS_EMMISIVE_MRT_OUTPUT PSSwordEffectShader(VS_TEXTURED_LIGHTING_OUTPUT input)
+{
+	PS_EMMISIVE_MRT_OUTPUT output;
+
+	float2 alphaUV = input.uv;
+	alphaUV.y += gnSwordEffectTime;
+
+	float4 cColorEmission = gtxtAlbedoTexture.Sample(gSamplerClamp, alphaUV);
+
+	float4 SwordEffectTexture = gtxtRealEffectTexture.Sample(gSamplerState, alphaUV);
+
+	float3 mulColor = mul((float3)cColorEmission, (float3)SwordEffectTexture);
+
+	float alphaControl = cColorEmission.x;
+	alphaControl -= gnSwordEffectTime;
+
+	output.EmmisiveMRT = float4(0.0f, mulColor.y, mulColor.z, alphaControl);
+
+	return output;
+}
