@@ -100,6 +100,8 @@ public:
 	virtual void ReleaseObjects();
 	virtual void ReleaseUploadBuffers();
 
+	virtual void EndingRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int npipelinestate = 0, float fElapsedTime = 0);
+
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int npipelinestate = 0, float fElapsedTime = 0 );
 
 	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);

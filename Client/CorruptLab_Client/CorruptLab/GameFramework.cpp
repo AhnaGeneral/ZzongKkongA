@@ -617,7 +617,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				m_pPostProcessingShader->SetMRTSwitch(1);
 			break;
 		case VK_F9:
-			ChangeSwapChainState();
+			TurnToEnding();
 			break;
 		case VK_F10:
 			break;
@@ -744,6 +744,9 @@ void CGameFramework::BuildObjects()
 	dynamic_cast<CGameScene*>(m_pScene[SCENE_STAGE_OUTDOOR])->PlaceObjectsFromFile
 	(m_pd3dDevice, m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature(), m_pd3dCommandList);
 
+
+
+
 	m_pPostProcessingShader->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 
@@ -797,6 +800,11 @@ void CGameFramework::BuildObjects()
 	{
 		m_pPlayer->ReleaseUploadBuffers();
 	}
+
+	//EndingScene--------------------------------------------------------------------------
+	CBoss* boss = dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->m_pBoss;
+	m_pScene[SCENE_ENDING] = new CEndingScene(m_pPlayer, boss);
+	m_pScene[SCENE_ENDING]->SetGraphicsRootSignature(m_pScene[SCENE_STAGE_OUTDOOR]->GetGraphicsRootSignature());
 
 	CSceneMgr::GetInstance()->Initialize(this);
 	CSceneMgr::GetInstance()->SetSceneStatePointer(&m_nSceneState);
@@ -1100,6 +1108,102 @@ void CGameFramework::FrameAdvanceStageOutdoor()
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 }
 
+void CGameFramework::FrameAdvanceEnding()
+{
+	m_GameTimer.Tick(0.0f);
+
+	ProcessInput();
+	m_pScene[SCENE_ENDING]->Update(m_GameTimer.GetTimeElapsed());
+
+	HRESULT hResult = m_pd3dCommandAllocator->Reset();
+	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
+
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i],
+			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	float pfClearColor[4] = { 0.0f, 0.0f,0.0f, 1.0f };
+
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++)
+		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenRenderTargetBufferCPUHandles[i], pfClearColor, 0, NULL);
+
+	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+
+	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenRenderTargetBuffers, m_pd3dOffScreenRenderTargetBufferCPUHandles, TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
+
+	m_pScene[SCENE_ENDING]->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2s에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
+													// write 용으로 사용하고 있었음
+
+	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 되? 
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i],
+			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+	//---------------------------------------------------------------------------------------------------------------------
+	ShadowMapRender();
+	//---------------------------------------------------------------------------------------------------------------------
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],
+			D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+		m_pd3dCommandList->ClearRenderTargetView(m_pd3dOffScreenLightBufferCPUHandles[i], pfClearColor, 0, NULL);
+
+	m_pd3dCommandList->OMSetRenderTargets(m_nOffScreenLightBuffers, m_pd3dOffScreenLightBufferCPUHandles, TRUE, NULL);
+
+	m_pLightProcessingShader->AnimateObjects(m_GameTimer.GetTimeElapsed());
+	m_pLightProcessingShader->OutdoorRender(m_pd3dCommandList, m_pCamera);
+
+	for (int i = 0; i < m_nOffScreenLightBuffers; i++)
+		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dLightMapRenderTargetBuffers[i],
+			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+	//---------------------------------------------------------------------------------------------------------------------
+
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex],
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	m_pd3dCommandList->ClearRenderTargetView(m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], Colors::Azure, 0, NULL);
+	m_pd3dCommandList->OMSetRenderTargets(1, &m_pd3dRtvSwapChainBackBufferCPUHandles[m_nSwapChainBufferIndex], TRUE, &m_d3dDsvDepthStencilBufferCPUHandle);
+
+	m_pPostProcessingShader->EndingRender(m_pd3dCommandList, m_pCamera, 0, m_GameTimer.GetTimeElapsed());
+	// 화면 좌표계에 해당하는 투영좌표계의 좌표로 인해 사각형을하나 그려서 그림을 복사 해서 그림을 그려라.
+	// 스크린 좌표계 !! 
+
+#ifdef _WITH_PLAYER_TOP
+	m_pd3dCommandList->ClearDepthStencilView(m_d3dDsvDepthStencilBufferCPUHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
+#endif
+
+	::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dSwapChainBackBuffers[m_nSwapChainBufferIndex],
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
+	hResult = m_pd3dCommandList->Close();
+
+	ID3D12CommandList* ppd3dCommandLists[] = { m_pd3dCommandList };
+	m_pd3dCommandQueue->ExecuteCommandLists(1, ppd3dCommandLists);
+	WaitForGpuComplete();
+
+#ifdef _WITH_PRESENT_PARAMETERS
+	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
+	dxgiPresentParameters.DirtyRectsCount = 0;
+	dxgiPresentParameters.pDirtyRects = NULL;
+	dxgiPresentParameters.pScrollRect = NULL;
+	dxgiPresentParameters.pScrollOffset = NULL;
+	m_pdxgiSwapChain->Present1(1, 0, &dxgiPresentParameters);
+#else
+#ifdef _WITH_SYNCH_SWAPCHAIN
+	m_pdxgiSwapChain->Present(1, 0);
+#else
+	m_pdxgiSwapChain->Present(0, 0);
+	//버퍼두개를 교환하는 것을 present라고한다.
+#endif
+#endif
+
+	MoveToNextFrame();
+
+	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
+	::SetWindowText(m_hWnd, m_pszFrameRate);
+}
+
 void CGameFramework::FrameAdvanceLobby()
 {
 	m_GameTimer.Tick(0.0f);
@@ -1163,6 +1267,25 @@ void CGameFramework::TurnToIndoorState()
 		m_nSceneState = SCENE_STAGE_INDOOR;
 		m_pLightProcessingShader->ChangeLights();
 		CNarrationMgr::GetInstance()->TurnOnNarration(4);
+	}
+}
+
+void CGameFramework::TurnToEnding()
+{
+	if (m_nSceneState == SCENE_STAGE_INDOOR)
+	{
+		CSoundMgr::GetInstacne()->PlayBGMSound(_T("Stage2BGM"));
+
+		m_pPlayer->SetPosition(XMFLOAT3(-90.0f, 0.0f, -1.f));
+		m_pPlayer->SetPlayerUpdatedContext(NULL);
+		m_pPlayer->SetCameraUpdatedContext(NULL);
+		m_pPlayer->Rotate(0.0f, -90.0f, 0.0f);
+
+		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 1.5f, -10.5f));
+
+		CCollisionMgr::GetInstance()->m_nSceneState = 0;
+		m_nSceneState = SCENE_ENDING;
+		m_pLightProcessingShader->ChangeLights();
 	}
 }
 

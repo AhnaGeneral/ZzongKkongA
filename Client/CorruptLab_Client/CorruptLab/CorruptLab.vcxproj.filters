@@ -212,6 +212,9 @@
     <Filter Include="05.Component\GameObject\00.Object\01.DynamicObject\05.Object_Desk">
       <UniqueIdentifier>{36f26ace-f89d-4234-975e-10fbc722c495}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Scene\02.Scene_Ending">
+      <UniqueIdentifier>{e1cf1ff7-2aaf-4b54-a6b1-aab9ea1f75b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -430,6 +433,9 @@
     <ClInclude Include="Obect_Desk.h">
       <Filter>05.Component\GameObject\00.Object\01.DynamicObject\05.Object_Desk</Filter>
     </ClInclude>
+    <ClInclude Include="EndingScene.h">
+      <Filter>02.Scene\02.Scene_Ending</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Timer.cpp">
@@ -635,6 +641,9 @@
     </ClCompile>
     <ClCompile Include="Obect_Desk.cpp">
       <Filter>05.Component\GameObject\00.Object\01.DynamicObject\05.Object_Desk</Filter>
+    </ClCompile>
+    <ClCompile Include="EndingScene.cpp">
+      <Filter>02.Scene\02.Scene_Ending</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

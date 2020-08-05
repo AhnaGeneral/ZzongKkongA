@@ -160,7 +160,7 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_pTipingEffect = new CShader_Effect;
 	m_pTipingEffect->BuildObjects(pd3dDevice, pd3dCommandList,
-		m_pd3dGraphicsRootSignature, XMFLOAT3(0.0f, 10.0f, 23.0f), false);
+		m_pd3dGraphicsRootSignature, XMFLOAT3(0.0f, 12.0f, 23.0f), false);
 
 	m_pd3dDevice = pd3dDevice; 
 	m_pd3dCommandList = pd3dCommandList; 

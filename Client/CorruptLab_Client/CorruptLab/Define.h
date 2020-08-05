@@ -176,7 +176,7 @@
 #define SCENE_LOBBY           0  
 #define SCENE_STAGE_OUTDOOR   1 
 #define SCENE_STAGE_INDOOR    2 
-#define SCENE_CLEAR           3
+#define SCENE_ENDING           3
 //____________________________________________
 
 

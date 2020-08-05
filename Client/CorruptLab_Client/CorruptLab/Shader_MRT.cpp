@@ -741,6 +741,31 @@ void CPostProcessingShader::ReleaseUploadBuffers()
 {
 }
 
+void CPostProcessingShader::EndingRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int npipelinestate, float fElapsedTime)
+{
+	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
+
+	if (m_pd3dGraphicsRootSignature)
+		pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
+
+	if (m_ppd3dPipelineStates)
+		pd3dCommandList->SetPipelineState(m_ppd3dPipelineStates[npipelinestate]);
+
+	if (m_pTexture) m_pTexture->UpdateShaderVariables(pd3dCommandList);
+
+	if (m_pd3dCbvSrvDescriptorHeap)
+		pd3dCommandList->SetDescriptorHeaps(1, &m_pd3dCbvSrvDescriptorHeap);
+
+
+	if (m_pLightTexture) m_pLightTexture->UpdateShaderVariables(pd3dCommandList);
+	if (m_pShadowTexture) m_pShadowTexture->UpdateShaderVariables(pd3dCommandList);
+
+
+	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
+
+}
+
 void CPostProcessingShader::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int npipelinestate, float fElapsedTime)
 {
 	pCamera->SetViewportsAndScissorRects(pd3dCommandList);

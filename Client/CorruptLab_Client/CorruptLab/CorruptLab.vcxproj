@@ -151,6 +151,7 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="CInstancingStandardShader.h" />
     <ClInclude Include="CNarrationMgr.h" />
+    <ClInclude Include="EndingScene.h" />
     <ClInclude Include="Mgr_IndoorControl.h" />
     <ClInclude Include="Monster_Boss.h" />
     <ClInclude Include="Monster_Tosm.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="CInstancingStandardShader.cpp" />
     <ClCompile Include="CNarrationMgr.cpp" />
+    <ClCompile Include="EndingScene.cpp" />
     <ClCompile Include="Mgr_IndoorControl.cpp" />
     <ClCompile Include="Monster_Boss.cpp" />
     <ClCompile Include="Monster_Tosm.cpp" />

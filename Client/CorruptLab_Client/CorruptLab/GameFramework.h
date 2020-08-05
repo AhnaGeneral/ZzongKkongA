@@ -7,6 +7,7 @@
 #include "LobbyScene.h"
 #include "Shader_LightMRT.h"
 #include "CShader_ShadowMRT.h"
+#include "EndingScene.h"
 
 
 class CGameFramework
@@ -40,9 +41,11 @@ public:
 	void ShadowMapRender();
 	void FrameAdvanceStageIndoor();
 	void FrameAdvanceStageOutdoor();
+	void FrameAdvanceEnding();
 	void FrameAdvanceLobby();
 	UINT GetSceneState() { return m_nSceneState; }
 	void TurnToIndoorState();
+	void TurnToEnding();
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
@@ -126,7 +129,7 @@ private:
 	CLightTarget                      * m_pLightProcessingShader; 
 	Shader_ShadowMRT                  * m_pShadowShader; 
 
-	CScene                            * m_pScene[3];
+	CScene                            * m_pScene[4];
 	//UINT                                m_SceneItemReact;
 
 	CPlayer                           * m_pPlayer ;
