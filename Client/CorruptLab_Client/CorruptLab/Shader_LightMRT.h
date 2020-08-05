@@ -65,6 +65,7 @@ public:
     void IndoorRender(ID3D12GraphicsCommandList* pd3dCommandList,CCamera* pCamera, int nPipelineState = 0);
 	void SetPlayer(CPlayer* Player) { m_pPlayer = Player; }
 	void ChangeLights();
+	void ChangeLights2();
 	void TurnOnLabatoryLight();
 	void BuildLightsAndMaterials();
 

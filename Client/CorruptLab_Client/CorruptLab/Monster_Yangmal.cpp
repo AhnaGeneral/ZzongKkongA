@@ -164,7 +164,7 @@ void CYangmal::Rush(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHeightMapTe
 {
 	XMFLOAT3 xmf3Position = GetPosition();
 
-	if (m_fDistanceToPlayer < 5.f && m_iState == MONSTER_STATE_ATTACK) return;
+	if (m_fDistanceToPlayer < 7.f && m_iState == MONSTER_STATE_ATTACK) return;
 
 	XMFLOAT3 MovePos = Vector3::Add(xmf3Position, Vector3::ScalarProduct(GetLook(), Speed * fTimeElapsed));
 	if (pTerrain)

@@ -1274,18 +1274,17 @@ void CGameFramework::TurnToEnding()
 {
 	if (m_nSceneState == SCENE_STAGE_INDOOR)
 	{
-		CSoundMgr::GetInstacne()->PlayBGMSound(_T("Stage2BGM"));
+		CSoundMgr::GetInstacne()->PlayBGMSound(_T("EndingBGM"));
 
-		m_pPlayer->SetPosition(XMFLOAT3(-90.0f, 0.0f, -1.f));
-		m_pPlayer->SetPlayerUpdatedContext(NULL);
-		m_pPlayer->SetCameraUpdatedContext(NULL);
-		m_pPlayer->Rotate(0.0f, -90.0f, 0.0f);
+		m_pCamera->SetPosition(XMFLOAT3(00.f, 15.5f, -35.f));
+		m_pCamera->SetLookAt(XMFLOAT3(0, 5, 0));
+		m_pCamera->RegenerateViewMatrix();
+		CGameObject* animal = dynamic_cast<CGameScene2*>(m_pScene[SCENE_STAGE_INDOOR])->GetAnimals();
+		dynamic_cast<CEndingScene*>(m_pScene[SCENE_ENDING])->m_pAnimals = animal;
 
-		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 1.5f, -10.5f));
-
-		CCollisionMgr::GetInstance()->m_nSceneState = 0;
+		m_pScene[SCENE_ENDING]->CreateShaderVariables(m_pd3dDevice, m_pd3dCommandList);
 		m_nSceneState = SCENE_ENDING;
-		m_pLightProcessingShader->ChangeLights();
+		m_pLightProcessingShader->ChangeLights2();
 	}
 }
 

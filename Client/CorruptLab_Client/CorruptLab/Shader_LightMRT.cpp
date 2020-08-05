@@ -288,6 +288,19 @@ void CLightTarget::ChangeLights()
 
 }
 
+void CLightTarget::ChangeLights2()
+{
+	for (int i = 0; i < MAX_LIGHTS; i++)
+		m_pLights->m_pLights[i].m_bEnable = false;
+
+	m_pLights->m_pLights[0].m_bEnable = true;
+	m_pLights->m_pLights[0].m_xmf4Specular = XMFLOAT4(0.5f, 0.5f, 0.2f, 1.0f);
+	m_pLights->m_pLights[0].m_xmf4Diffuse = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+	m_pLights->m_xmf4GlobalAmbient = XMFLOAT4(0.07f, 0.07f, 0.07f, 1.0f);
+
+
+}
+
 void CLightTarget::TurnOnLabatoryLight()
 {
 	m_pLights->m_pLights[0].m_xmf4Specular = XMFLOAT4(0.0f, 0.1f, 0.2f, 1.0f);

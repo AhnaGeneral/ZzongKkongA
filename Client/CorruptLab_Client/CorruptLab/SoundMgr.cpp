@@ -79,6 +79,13 @@ void CSoundMgr::LoadSoundFile(void)
 	}
 
 
+	m_Result = m_pSystem->createSound("Sounds/BGM/Ending_BGM.mp3", FMOD_LOOP_NORMAL, 0, &pSound);
+	pName = _T("EndingBGM");
+	if (m_Result == FMOD_OK)
+	{
+		m_mapSound.insert(make_pair(pName, pSound));
+	}
+
 	m_Result = m_pSystem->createSound("Sounds/BGM/Stage1_BGM.mp3", FMOD_LOOP_NORMAL, 0, &pSound);
 	pName = _T("Stage1BGM");
 	if (m_Result == FMOD_OK)

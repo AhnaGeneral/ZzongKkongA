@@ -80,7 +80,10 @@ public:
 	virtual bool ProcessInput(UCHAR* pKeysBuffer, HWND hWnd);
 	virtual void AnimateObjects(float fTimeElapsed);
 	virtual void ReleaseUploadBuffers();
-
+	CGameObject* GetAnimals()
+	{
+		return m_pStaticObjLists[OBJECT_INDOOR_TYPE_ANIMALALL]->front();
+	}
 
 	void PlaceObjectsFromFile(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, ID3D12GraphicsCommandList* pd3dCommandList);
 	void PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName, UINT index);

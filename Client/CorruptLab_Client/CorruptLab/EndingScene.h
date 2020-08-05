@@ -15,7 +15,7 @@ public:
 
 	virtual ID3D12RootSignature* CreateGraphicsRootSignature(ID3D12Device* pd3dDevice);
 
-	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList) {}
+	virtual void CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList) {}
 	virtual void ReleaseShaderVariables() {}
 
@@ -34,5 +34,6 @@ public:
 public:
 	CPlayer* m_pPlayer;
 	CBoss* m_pBoss;
+	CGameObject* m_pAnimals;
 };
 
