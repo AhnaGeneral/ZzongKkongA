@@ -10,6 +10,14 @@
 #include "Object.h"
 #include "Object_Terrain.h"
 #include "Object_Camera.h"
+struct AttackCombo
+{
+	float Start;
+	float length;
+	AttackCombo(float s, float l) { Start = s; length = l; }
+};
+
+
 
 class CPlayer : public CGameObject
 {
@@ -22,7 +30,6 @@ protected:
 
 	XMFLOAT3	           m_xmf3Velocity = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	XMFLOAT3               m_xmf3Gravity = XMFLOAT3(0.0f, 0.0f, 0.0f);
-
 
 	float				   m_fSpeed = 10;
 	float                  m_fPitch = 0.0f;
@@ -48,6 +55,8 @@ protected:
 	int					   m_iState;
 	float				   m_iMaxHP ;
 	float			       m_iCurrentHP ;
+	float				   m_fComboTick;
+	int					 m_nCombo;
 	int				       m_iAtt ;
 
 ///
@@ -58,7 +67,11 @@ public:
 	void GetFullHP() { m_iCurrentHP = m_iMaxHP; }
 	float* GetPlayerHPPointer() { return &m_iCurrentHP; }
 ///
-
+	AttackCombo combolists[2] =
+	{
+		AttackCombo(0,0.4f), AttackCombo(0.4f,1.7f),
+	};
+	bool					m_bShift = false;
 
 	CCollisionBox* m_pHandCollision;
 	CCollisionBox* m_pBodyCollision;
@@ -72,6 +85,7 @@ public:
 	XMFLOAT3 GetUpVector() { return(m_xmf3Up); }
 	XMFLOAT3 GetRightVector() { return(m_xmf3Right); }
 
+	void SetType();
 	void SetAttackState();
 	void SetFriction(float fFriction) { m_fFriction = fFriction; }
 	void SetGravity(const XMFLOAT3& xmf3Gravity) { m_xmf3Gravity = xmf3Gravity; }

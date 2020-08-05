@@ -154,8 +154,8 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT IndoorPSTransparent(VS_TEXTURED_LIGHTING_OUTPU
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 
 	float fresnelFator = dot(-gvCameraNoraml, input.normalW);
-	fresnelFator = pow(max(fresnelFator, 0.0f), 1.0f)/2.0f;
-	output.EmmisiveMRT = float4(0.5f, 0.5f, 0.8, 0.8 - fresnelFator);
+	fresnelFator = pow(max(fresnelFator, -1.0f), 1.5f) / 7;
+	output.EmmisiveMRT = float4(0.5f, 0.5f, 0.8, 1 - fresnelFator);
 	return output;
 }
 

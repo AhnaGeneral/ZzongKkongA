@@ -28,6 +28,7 @@ public:
 	CSkyBox* m_pSkyBox;
 	CObjectWater* m_pCObjectWater;
 	CFloor * m_pFloor;
+	CFloor* m_pCeiling;
 
 	CShader_Effect* m_pGreenZoonEffect;
 
@@ -68,6 +69,7 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Update(float fTimeElapsed);
 
+	void CodingCheck();
 	void PassWordCheck(); 
 	void DeskOpenCheck(); 
 	void IndoorParticleEffectRender();

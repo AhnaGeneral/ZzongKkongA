@@ -18,6 +18,7 @@ CGameScene2::CGameScene2()
 	m_pPlayer = NULL;
 	m_pTerrain = NULL;
 	m_pSkyBox = NULL;
+	m_pCeiling = NULL;
 	m_pFloor = NULL;
 	m_pBoss = NULL;
 
@@ -64,6 +65,12 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_pFloor = new CFloor(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	m_pFloor->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
+	m_pCeiling = new CFloor(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
+	m_pCeiling->SetPosition(XMFLOAT3(0.0f, 27.f, 0.0f));
+	m_pCeiling->Rotate(180, 0, 0);
+	m_pCeiling->UpdateTransform(NULL);
+
+
 	XMFLOAT3 vUp = XMFLOAT3(0.0f, 1.0f, 0.0f);
 	XMFLOAT3 vRight = XMFLOAT3(-1.0f, 0.0f, 0.0f);
 	XMFLOAT3 m_xmf3Look = XMFLOAT3(0.0f, -0.8f, 0.01f);
@@ -78,12 +85,13 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	TexcoordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16
 
 	CGameObject* pBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
-		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Monster/Boss_Idle.bin", NULL, 1);
+		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Monster/Boss.bin", NULL, 1);
 
 	m_pBoss = new CBoss();
 	m_pBoss->SetChild(pBossModel);
-	m_pBoss->SetPosition(XMFLOAT3(0, 0, 0));
-	m_pBoss->SetScale(5, 5, 5);
+	m_pBoss->SetPosition(XMFLOAT3(0, 7, 0));
+	m_pBoss->SetScale(9, 9, 9);
+	m_pBoss->Rotate(0, 90, 0);
 
 	//CShader* PlaneLineShader = new CStandardShader();
 	//PlaneLineShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
@@ -188,6 +196,11 @@ void CGameScene2::ReleaseObjects()
 		m_pFloor->ReleaseUploadBuffers();
 		m_pFloor->Release();
 		m_pFloor = nullptr; 
+
+		m_pCeiling->ReleaseUploadBuffers();
+		m_pCeiling->Release();
+		m_pCeiling = nullptr;
+
 	}
 	if (m_IndoorWall)
 	{
@@ -312,6 +325,7 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 		case 'q':
 			PassWordCheck();
 			DeskOpenCheck();
+			CodingCheck();
 			break;
 		//case 'A':
 		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
@@ -414,6 +428,7 @@ void CGameScene2::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamer
 
 	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera, 1);
 	if (m_pPlayer) m_pPlayer->Render(pd3dCommandList, pCamera, 1);
+
 }
 
 void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
@@ -429,6 +444,7 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 	if (m_pFloor) m_pFloor->Render(pd3dCommandList, pCamera);
 	
 
+	if (m_pCeiling) m_pCeiling->Render(pd3dCommandList, pCamera, 0);
 
 	if (m_IndoorWall) m_IndoorWall->Render(pd3dCommandList, pCamera); 
 	
@@ -501,6 +517,18 @@ void CGameScene2::Update(float fTimeElapsed)
 }
 
 int tmp = 0; 
+void CGameScene2::CodingCheck()
+{
+	XMFLOAT3 playerpos = m_pPlayer->GetPosition();
+	float MoniterPos1 = Vector3::Length(Vector3::Subtract(playerpos, XMFLOAT3(0, 0, 15))); 
+	float MoniterPos2 = Vector3::Length(Vector3::Subtract(playerpos, XMFLOAT3(0, 0, -15)));
+	
+	if (MoniterPos1 < 4 || MoniterPos2 < 4)
+	{
+		m_pPlayer->SetType();
+	}
+
+}
 void CGameScene2::PassWordCheck()
 {
 	for (auto pObj : *m_pStaticObjLists[OBJECT_INDOOR_TYPE_PASSWORD])

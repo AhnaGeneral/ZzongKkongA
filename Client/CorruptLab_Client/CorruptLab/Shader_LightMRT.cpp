@@ -284,10 +284,18 @@ void CLightTarget::ChangeLights()
 	m_pLights->m_pLights[2].m_fPhi = (float)cos(XMConvertToRadians(50.0f));
 	m_pLights->m_pLights[2].m_fTheta = (float)cos(XMConvertToRadians(20.0f));
 	//TurnOnLabatoryLight();
+	m_IndoorScene = true;
+
 }
 
 void CLightTarget::TurnOnLabatoryLight()
 {
+	m_pLights->m_pLights[0].m_xmf4Specular = XMFLOAT4(0.0f, 0.1f, 0.2f, 1.0f);
+	m_pLights->m_pLights[0].m_xmf4Diffuse = XMFLOAT4(0.07f, 0.07f, 0.07f, 1.0f);
+	m_pLights->m_xmf4GlobalAmbient = XMFLOAT4(0.01f, 0.01f, 0.01f, 1.0f);
+
+
+
 	FILE* pInFile = NULL;
 	::fopen_s(&pInFile, "ObjectsData/Laboratorys.bin", "rb");
 	::rewind(pInFile);
@@ -314,7 +322,7 @@ void CLightTarget::TurnOnLabatoryLight()
 		m_pLights->m_pLights[2 + i].m_fRange = 40.0f;
 		m_pLights->m_pLights[2 + i].m_xmf4Ambient = XMFLOAT4(0.1f, 0.1f, 0.2f, 1.0f);
 		m_pLights->m_pLights[2 + i].m_xmf4Diffuse = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0);
-		m_pLights->m_pLights[2 + i].m_xmf4Specular = XMFLOAT4(0.05f, 0.1f, 0.26f, 0.0f);
+		m_pLights->m_pLights[2 + i].m_xmf4Specular = XMFLOAT4(0.05f, 0.1f, 0.26f, 1.0f);
 		if (i >= 6)
 		{
 			m_pLights->m_pLights[2 + i].m_xmf3Position = XMFLOAT3(xmf3Position.x, xmf3Position.y - 8.0f, xmf3Position.z - 3.5f);
@@ -397,8 +405,7 @@ void CLightTarget::TurnOnLabatoryLight()
 	m_pLights->m_pLights[15].m_fTheta = (float)cos(XMConvertToRadians(30.0f));
 	m_pLights->m_pLights[15].m_xmf3Position = XMFLOAT3(0.0f, 30.0f, 0.0f);
 
-	
-	m_IndoorScene = true; 
+
 
 }
 

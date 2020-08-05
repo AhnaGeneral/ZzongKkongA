@@ -25,7 +25,8 @@ CPlayer::CPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComman
 	m_fMaxVelocityY = 0.0f;
 	m_fFriction = 0.0f;
 	m_xmf3Scale = XMFLOAT3(20.f, 20.f, 20.f);
-
+	m_fComboTick = 0.0f;
+	m_nCombo = 0;
 	m_fPitch = 0.0f;
 	m_fRoll = 0.0f;
 	m_fYaw = 0.0f;
@@ -51,13 +52,24 @@ CPlayer::~CPlayer()
 	}
 }
 
+void CPlayer::SetType()
+{
+	m_iState = JOHNSON_ANIAMATION_TIPING;
+	m_pSword->m_bRender = false;
+	m_pChild->m_pAnimationController->m_pAnimationTracks->m_fPosition = 0;
+}
+
 void CPlayer::SetAttackState()
 {
-
+	if (m_bShift) m_nCombo = 1;
+	else m_nCombo = 0;
 	CSoundMgr::GetInstacne()->PlayEffectSound(_T("Attack"));
+	
 	m_iState = JOHNSON_ANIAMATION_ATTACK;
-	m_pChild->m_pAnimationController->m_pAnimationTracks->m_fPosition = 0;
+	m_pChild->m_pAnimationController->m_pAnimationTracks->m_fPosition = combolists[m_nCombo].Start;
 	CCollisionMgr::GetInstance()->MonsterDamageCheck(m_iAtt);
+
+	if (m_nCombo > 2) m_nCombo = 0;
 	//SetAnima
 }
 
@@ -85,7 +97,7 @@ void CPlayer::UpdateCollisionBoxes(XMFLOAT4X4* world)
 
 void CPlayer::Move(DWORD dwDirection, float fDistance, bool bUpdateVelocity)
 {
-	if (m_iState == JOHNSON_ANIAMATION_ATTACK) return;
+	if (m_iState == JOHNSON_ANIAMATION_ATTACK || m_iState == JOHNSON_ANIAMATION_TIPING) return;
 	if (dwDirection)
 	{
 		fDistance *= m_fSpeed;
@@ -183,13 +195,26 @@ void CPlayer::Update(float fTimeElapsed)
 	// ======================================================================
 	if (m_iState == JOHNSON_ANIAMATION_ATTACK)
 	{
+		m_fComboTick += fTimeElapsed;
 		SetAnimationSet(m_iState, m_iTrackNumber);
-		if (m_pChild->m_pAnimationController->m_pAnimationTracks->m_fPosition 
-			>= m_pChild->m_pAnimationController->m_pAnimationTracks->m_pAnimationSet->m_fLength - 0.1f)
+		if (m_fComboTick > combolists[m_nCombo].length)
 		{
+			m_fComboTick = 0;
  			m_iState = JOHNSON_ANIAMATION_IDLE;
 			m_pChild->m_pAnimationController->m_pAnimationTracks->m_pAnimationSet->m_fPosition = 0;
 		}
+		return;
+	}
+	else if (m_iState == JOHNSON_ANIAMATION_TIPING)
+	{
+		m_fComboTick += fTimeElapsed;
+		if (m_fComboTick > 8.5f)
+		{
+			m_pSword->m_bRender = true;
+			m_iState = JOHNSON_ANIAMATION_IDLE;
+			m_fComboTick = 0;
+		}
+		SetAnimationSet(m_iState, m_iTrackNumber);
 		return;
 	}
 
@@ -363,10 +388,9 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 
 	CGameObject* pGameObject =
 		CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
-			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson_Idle2_(1).bin", NULL, 1);
+			                  pd3dGraphicsRootSignature, "Model/Johnson/Johnson_Idle.bin", NULL, 1);
 
-	m_pSword = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList,
-			pd3dGraphicsRootSignature, "Model/Sword.bin", NULL, 0);
+	m_pSword = pGameObject->FindFrame("Object001_1");
 
 	//SetPosition(0.0f, 0.0f, 0.0f);
 
@@ -378,9 +402,9 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	//pGameObject->m_xmf4Rotation
 
 //	m_pSword->m_xmf4x4Transform = m_pDummy->m_xmf4x4Transform;
-	m_pSword->m_xmf4x4Transform = Matrix4x4::Identity();
-	m_pSword->SetScale(1, 2, 2);
-	m_pSword->Rotate(-90, 0, 180);
+	//m_pSword->m_xmf4x4Transform = Matrix4x4::Identity();
+	//m_pSword->SetScale(1, 2, 2);
+	//m_pSword->Rotate(-90, 0, 180);
 	SetChild(pGameObject, true);
 
 	OnInitialize();
@@ -529,7 +553,6 @@ void CMainPlayer::Update(float fTimeElapsed)
 void CMainPlayer::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 	CPlayer::Render(pd3dCommandList, pCamera, nPipelineState);
-	if(m_pSword) m_pSword->Render(pd3dCommandList, pCamera, nPipelineState);
 }
 
 void CMainPlayer::SetAnimation()

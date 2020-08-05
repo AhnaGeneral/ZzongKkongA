@@ -772,6 +772,8 @@ bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 		if (pKeysBuffer[0x53] & 0xF0) dwDirection |= DIR_BACKWARD;
 		if (pKeysBuffer[0x41] & 0xF0) dwDirection |= DIR_LEFT;
 		if (pKeysBuffer[0x44] & 0xF0) dwDirection |= DIR_RIGHT;
+		if (pKeysBuffer[0x44] & 0xF0) dwDirection |= DIR_RIGHT;
+
 		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
 		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
 		if (GetCapture() == hWnd)
@@ -803,6 +805,8 @@ bool CGameScene::ProcessInput(UCHAR* pKeysBuffer, HWND hWnd)
 		if (dwDirection)
 			m_pPlayer->Move(dwDirection, m_fElapsedTime, true);
 	}
+	if (pKeysBuffer[VK_SHIFT] & 0xF0) m_pPlayer->m_bShift = true;
+	else m_pPlayer->m_bShift = false;
 	m_pPlayer->Update(m_fElapsedTime);
 
 	return true;

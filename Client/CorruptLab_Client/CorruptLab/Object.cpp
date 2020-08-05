@@ -312,7 +312,7 @@ void CGameObject::OnPrepareRender() {}
 void CGameObject::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int nPipelineState)
 {
 
-	m_bRender = true;
+	if (!m_bRender) return;
 	if (m_pBoundingBoxes && nPipelineState == 0 && m_nBoundingBoxes > 0)
 	{
 		int CullCount = 0;

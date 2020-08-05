@@ -1157,7 +1157,7 @@ void CGameFramework::TurnToIndoorState()
 		m_pPlayer->SetCameraUpdatedContext(NULL);
 		m_pPlayer->Rotate(0.0f, -90.0f, 0.0f);
 
-		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 3.5f, -10.5f));
+		dynamic_cast<CPlayerCamera*>(m_pCamera)->SetOffset(XMFLOAT3(0.0f, 1.5f, -10.5f));
 
 		CCollisionMgr::GetInstance()->m_nSceneState = 0;
 		m_nSceneState = SCENE_STAGE_INDOOR;

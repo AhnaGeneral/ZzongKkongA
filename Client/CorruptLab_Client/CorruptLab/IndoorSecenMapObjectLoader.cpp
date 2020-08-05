@@ -107,11 +107,21 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice, pd3dCommandList, 
 		pd3dGraphicsRootSignature, "Model/DrugMaker.bin", NULL, 0); //[ DrugMakers ]
-	CGameObject* IndoorDragMarkerAlpha = pDiverObject->FindFrame("cylinderAlpha");
-	CShader* IndoorDragMarkerShader = new CTransparentedStandardShader();
-	IndoorDragMarkerShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
-	IndoorDragMarkerAlpha->SetShader(0, IndoorDragMarkerShader);
+	CGameObject* IndoorDrugMakerAlpha = pDiverObject->FindFrame("cylinderAlpha");
+	CShader* IndoorDrugMakerShader = new CTransparentedStandardShader();
+	IndoorDrugMakerShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
+	IndoorDrugMakerAlpha->SetShader(0, IndoorDrugMakerShader);
+
+	CGameObject* bosscylinder = new CStaticObject();
+	bosscylinder->SetChild(Alpha, true);
+	bosscylinder->SetPosition(0, -7, 0);
+	bosscylinder->SetScale(10,10,10);
+	bosscylinder->UpdateTransform(NULL);
+	bosscylinder->OnInitialize();
+	m_pStaticObjLists[OBJECT_INDOOR_TYPE_CHAIR]->emplace_back(bosscylinder);
+
 	PlaceDynamicFromFile(pDiverObject,"ObjectsData/LabatoryIndoorT.bin" , OBJECT_INDOOR_TYPE_DRUGMAKER);
+
 
 	pDiverObject = CGameObject::LoadGeometryAndAnimationFromFile
 	(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/Door_Opening.bin", NULL, 1);
@@ -155,10 +165,14 @@ void CGameScene2::PlaceStaticObjectsFromFile(CGameObject* pModel, char* FileName
 		pGameObject = new CStaticObject();
 		pGameObject->SetChild(pModel, true);
 
+		if (index == OBJECT_INDOOR_TYPE_BOSSMONITER)
+			xmmtxWorld._42 -= 1.f;
 		pGameObject->m_xmf4Rotation = xmf4Rotation;
 		pGameObject->m_xmf3Scale = Vector3::ScalarProduct(xmf3Scale, 0.5f, false);
 		pGameObject->m_xmf4x4Transform = xmmtxWorld;
 		pGameObject->m_iTrackNumber = i;
+
+
 		pGameObject->UpdateTransform(NULL);
 		pGameObject->OnInitialize();
 		m_pStaticObjLists[index]->emplace_back(pGameObject);
