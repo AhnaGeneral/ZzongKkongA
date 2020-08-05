@@ -20,6 +20,15 @@ float4 PSHP(VS_TEXTURED_OUTPUT input ): SV_TARGET
 	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, input.uv);
 	return float4(cColor.xyz, cColor.a * gfremainingHP);
 }
+
+float4 PSEndingUI(VS_TEXTURED_OUTPUT input) : SV_TARGET
+{
+	float2 UV = input.uv; 
+	UV.y /= 1.0f;
+	float4 cColor = gtxtRootUITexture.Sample(gSamplerClamp, UV);
+	return float4(cColor.xyz, cColor.a * gfremainingHP);
+}
+
 //[ITEM]================================================================================
 float4 PSItem(VS_TEXTURED_OUTPUT input) : SV_TARGET
 {

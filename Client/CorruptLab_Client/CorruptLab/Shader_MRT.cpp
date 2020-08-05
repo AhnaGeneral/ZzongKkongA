@@ -399,7 +399,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 	BuildObjectMinimap(pd3dDevice, pd3dCommandList); // 미니맵 빌드
 	BuildObjectPlayerStateUICollection(pd3dDevice, pd3dCommandList); // 플레이어 상태 빌드 (아이템, HP바, 상태UI, 방사능 수치 )
 	BuildObjectIndoorScenePassword(pd3dDevice, pd3dCommandList); // 실내 씬의 비밀번호 빌드 (비밀번호 판과 비밀번호 숫자들)
-
+	BuildObjectEnding(pd3dDevice, pd3dCommandList);
 	CNarrationMgr::GetInstance()->Initialize(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature);
 	ReleaseUploadBuffers();
 }
@@ -574,6 +574,26 @@ void CPostProcessingShader::BuildObjectMinimap(ID3D12Device* pd3dDevice, ID3D12G
 	m_pMapTwo->Set2DPosition((+FRAME_BUFFER_WIDTH / 2) - (MiniMapWidth / 2), (-FRAME_BUFFER_HEIGHT / 2) + (MiniMapHeight / 2));
 	m_pMapTwo->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	m_pMapTwo->SetMesh(mesh);
+}
+
+void CPostProcessingShader::BuildObjectEnding(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
+{
+	CTexture* m_pEndingTex = new CTexture(1, RESOURCE_TEXTURE2D, 0);
+	m_pEndingTex->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"UserInterface/Ending/EndingCredit.dds", 0);
+
+	m_pEndingShader = new CShader_BaseUI();
+	m_pEndingShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 1);
+	m_pEndingShader->CreateShader(pd3dDevice, GetGraphicsRootSignature(), FINAL_MRT_COUNT);
+	m_pEndingShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, (CTexture*)m_pEndingTex, ROOT_PARAMETER_HP_TEX, true);
+	
+	CTriangleRect* mesh = nullptr;
+
+	m_EndingCreditUI = new CUI_Root(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
+	m_EndingCreditUI->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature(), NULL, m_pEndingTex);
+	mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 461, 2126, 0.0f, 1.0f); //1063-800= 263
+	m_EndingCreditUI->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 900, (FRAME_BUFFER_HEIGHT / 2) - 1900);
+	m_EndingCreditUI->SetMesh(mesh);
+	m_EndingCreditUI->SetAlpha(&m_Alpha);
 }
 
 void CPostProcessingShader::ReleaseObjects()
@@ -763,6 +783,9 @@ void CPostProcessingShader::EndingRender(ID3D12GraphicsCommandList* pd3dCommandL
 
 	pd3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pd3dCommandList->DrawInstanced(6, 1, 0, 0);
+
+	OnPrepareRender(pd3dCommandList, 2);
+	UIEndingRender(pd3dCommandList, pCamera, npipelinestate, fElapsedTime);
 
 }
 
@@ -988,6 +1011,18 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 		   (m_pMapTwo)->SetItemCount(CItemMgr::GetInstance()->GetItemNums());
 			m_pMapTwo->Render(pd3dCommandList, pCamera);
 		}
+	}
+}
+
+void CPostProcessingShader::UIEndingRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int npipelinestate , float fElapsedTime)
+{
+	if (m_pEndingShader) m_pEndingShader->Render(pd3dCommandList, pCamera, 1);
+
+	if (m_EndingCreditUI) 
+	{
+		m_EndingCount += (abs(fElapsedTime * 70.0f));
+		m_EndingCreditUI->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 900, (FRAME_BUFFER_HEIGHT / 2) - (1900 - m_EndingCount));
+		m_EndingCreditUI->Render(pd3dCommandList, pCamera);
 	}
 }
 

@@ -23,9 +23,11 @@ protected:
 	CTexture                     * pMinmapFog2;
 
 	CShader                      * m_pBaseUIShader; 
+	CShader                      * m_pEndingShader;
 	CShader                      * m_pMinimapFog;
 	CShader                      * m_pItemShader;
-					            
+	
+	float                          m_EndingCount = 0.0f;
 	int                            m_nMRTSwitch;
 	int                            m_nRenderTargetUI;
 	CGameObject                 ** m_pRenderTargetUIs ;
@@ -44,6 +46,8 @@ protected:
 	CUI_RaditaionLevel           * m_RadiationCount;
 					            
 	CUI_Root                     * m_StatementUI;
+	CUI_Root                     * m_EndingCreditUI;
+
 					            
 	CGameObject                 ** m_ppInVentoryBoxs;
 	UINT                           nIventoryCount;
@@ -95,6 +99,7 @@ public:
 	void BuildObjectIndoorScenePassword(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	void BuildObjectPlayerStateUICollection(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 	void BuildObjectMinimap(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
+	void BuildObjectEnding(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList);
 
 
 	virtual void ReleaseObjects();
@@ -109,6 +114,7 @@ public:
 	virtual void ReleaseShaderVariables();
 
 	void UIRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera,  int npipelinestate = 0);
+	void UIEndingRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, int npipelinestate = 0, float fElapsedTime = 0);
 	void GenerateOrthoLHMatrix(float fWidth, float fHeight, float fNearPlaneDistance, float fFarPlaneDistance);
 	int GetMRTSwitch() { return m_nMRTSwitch; }
 	void SetMRTSwitch(int iunder) { m_nMRTSwitch = iunder; }
