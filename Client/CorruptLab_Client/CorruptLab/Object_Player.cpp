@@ -580,14 +580,14 @@ void CMainPlayer::Update(float fTimeElapsed)
 	if (m_bSwordEffectControl)
 	{
 		m_fSwordEffectRenderTime += fTimeElapsed;
-		m_fSwordEffectTime += (fTimeElapsed * 4.0f);
+		m_fSwordEffectTime += (fTimeElapsed * 3.0f);
 
 		if (m_fSwordEffectTime > 1.0f)
 		{
 			m_fSwordEffectTime = 0.0f;
 		}
 
-		if (m_fSwordEffectRenderTime > 0.4f)
+		if (m_fSwordEffectRenderTime > 0.48f)
 		{
 			m_fSwordEffectRenderTime = 0.0f;
 			m_bSwordEffectControl = false; 

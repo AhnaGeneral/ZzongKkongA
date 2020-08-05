@@ -14,11 +14,13 @@ public:
 	virtual void ReleaseShaderVariables();
 	virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
+	void UpdatePosition(XMFLOAT3 _NewPos);
 
 protected:
 	ID3D12Resource* m_pd3dPositionBuffer = NULL;
 	ID3D12Resource* m_pd3dPositionUploadBuffer = NULL;
 	D3D12_VERTEX_BUFFER_VIEW		m_d3dPositionBufferView;
+	XMFLOAT3                        *m_position = nullptr;
 };
 
 //class CObject_MeshEffect : public CGameObject

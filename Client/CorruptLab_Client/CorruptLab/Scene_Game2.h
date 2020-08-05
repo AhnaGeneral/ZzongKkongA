@@ -31,26 +31,27 @@ public:
 	CFloor* m_pCeiling;
 
 	CShader_Effect* m_pGreenZoonEffect;
+	CShader_Effect* m_pTipingEffect;
 
 	CGameObject** m_IndoorWallLine = nullptr;
-	//CGameObject* m_IndoorWallLines = nullptr;
 	CGameObject* m_IndoorWall = nullptr;
 
 	CGameObject* m_TestTexure = nullptr;
 
-	CShader_Effect* m_pTipingEffect;
-
-
-
 	bool m_ThatIsRightPassword = false; 
+	bool m_AnimationControl;
+	bool m_NarationControl = true;
+
+	bool                        m_HoloGramControl[2]{ false, false };
+	float                       m_HoloGramRenderTime[2]{ 0.0f, 0.0f };
+
 	list<ParticleSystemObject*> m_pIndoorParticleSystems;
 	list<DrugMakersImpormation> m_DrugmakerImpromation;
 
 	int  n_ReactItem;
 	float itemRange;
 	float m_AnimationTime;
-	bool m_AnimationControl; 
-	bool m_NarationControl = true; 
+
 
 public:
 	CGameScene2();
@@ -72,6 +73,7 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Update(float fTimeElapsed);
 
+	void BuildHoloGram();
 	void CodingCheck();
 	void PassWordCheck(); 
 	void DeskOpenCheck(); 

@@ -23,6 +23,7 @@ protected :
 	ID3D12Resource* m_pd3dcbEffectBuffer = NULL;
 	CB_SPTEFFECTTYPE* m_pcbMappedEffectBuffers = NULL;
 	CB_SPTEFFECTTYPE  m_spt;
+	float             m_SPTTimeSpeed = 1.0f; 
 	//float m_fFrameTime = 0.0f;
 	
 
@@ -55,8 +56,9 @@ public :
 	virtual void CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets = 1);
 
 	virtual void BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, 
-		ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 _pos, bool GreenZoon = true);
+		ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 _pos, bool GreenZoon = true, float _SPTTimeSpeed =1.0f);
 
+	void UpdatePosition(XMFLOAT3 _pos);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool GreenZoon = true);
 	virtual void ReleaseObjects();
 	virtual void ReleaseUploadBuffers();

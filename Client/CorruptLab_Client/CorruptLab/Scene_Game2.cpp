@@ -160,7 +160,7 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_pTipingEffect = new CShader_Effect;
 	m_pTipingEffect->BuildObjects(pd3dDevice, pd3dCommandList,
-		m_pd3dGraphicsRootSignature, XMFLOAT3(0.0f, 12.0f, 23.0f), false);
+		m_pd3dGraphicsRootSignature, XMFLOAT3(0.0f, 12.0f, 23.0f), false, 0.6);
 
 	m_pd3dDevice = pd3dDevice; 
 	m_pd3dCommandList = pd3dCommandList; 
@@ -308,24 +308,6 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 			DeskOpenCheck();
 			CodingCheck();
 			break;
-		//case 'A':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
-		//	break;
-		//case 'S':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] -= 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
-		//	break;
-		//case 'D':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] += 10.0f, m_fShadowPosition[2]);
-		//	break;
-		//case 'F':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] -= 10.0f, m_fShadowPosition[2]);
-		//	break;
-		//case 'G':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2] += 10.0f);
-		//	break;
-		//case 'H':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2] -= 10.0f);
-		//	break;
 			if (CMgr_IndoorControl::GetInstance()->GetPasswordControl())
 			{
 					case'1':
@@ -478,38 +460,76 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 		m_IndoorWallLine[i]->Render(pd3dCommandList, pCamera, 0);
 	}
 
-	if (m_pTipingEffect) { m_pTipingEffect->Render(pd3dCommandList, pCamera, false); }
+
+	if (m_pTipingEffect&& (m_HoloGramControl[0]|| m_HoloGramControl[1])) 
+	{
+		
+		m_pTipingEffect->Render(pd3dCommandList, pCamera, false); 
+	}
 
 	CheckCollisions();
-	//m_TestTexure->UpdateTransform(nullptr);
-	//m_TestTexure->Render(pd3dCommandList, pCamera, 0);
-
-
 }
 
 void CGameScene2::Update(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
+
 	if (m_pPlayer)
 	{
-		//m_pPlayer->Update(fTimeElapsed);
 		m_pPlayer->Animate(fTimeElapsed, NULL);
 	}
-}
+		
+	if (m_HoloGramControl[0])
+	{
+		m_HoloGramRenderTime[0] += fTimeElapsed; 
 
-int tmp = 0; 
+		if (m_HoloGramRenderTime[0] > 11.0f)
+		{
+			m_HoloGramRenderTime[0] = 0.0f;
+			m_HoloGramControl[0] = false;
+		}
+	}
+
+	if (m_HoloGramControl[1])
+	{
+		m_HoloGramRenderTime[1] += fTimeElapsed;
+
+		if (m_HoloGramRenderTime[1] > 11.0f)
+		{
+			m_HoloGramRenderTime[1] = 0.0f;
+			m_HoloGramControl[1] = false;
+		}
+	}
+}
+	
+
+
+
 void CGameScene2::CodingCheck()
 {
 	XMFLOAT3 playerpos = m_pPlayer->GetPosition();
 	float MoniterPos1 = Vector3::Length(Vector3::Subtract(playerpos, XMFLOAT3(0, 0, 15))); 
 	float MoniterPos2 = Vector3::Length(Vector3::Subtract(playerpos, XMFLOAT3(0, 0, -15)));
 	
-	if (MoniterPos1 < 4 || MoniterPos2 < 4)
+	if (MoniterPos1 < 5.5 )
 	{
 		m_pPlayer->SetType();
+		m_HoloGramControl[0] = true;
+		m_HoloGramControl[1] = false;
+		BuildHoloGram();
+
 	}
 
+	if (MoniterPos2 < 5.5)
+	{
+		m_pPlayer->SetType();
+		m_HoloGramControl[1] = true;
+		m_HoloGramControl[0] = false;
+		BuildHoloGram();
+	}
 }
+
+int tmp = 0;
 void CGameScene2::PassWordCheck()
 {
 	for (auto pObj : *m_pStaticObjLists[OBJECT_INDOOR_TYPE_PASSWORD])
@@ -573,6 +593,18 @@ void CGameScene2::IndoorParticleEffectRender()
 		m_pLastParticlesystemObject->CreateParticleShaderTexture(m_pd3dDevice, m_pd3dCommandList, m_pd3dGraphicsRootSignature);
 		m_pLastParticlesystemObject->RegenerateParticles(XMFLOAT3(135.0f, 3.0f, 8.0f - (i * 5)));
 		m_pIndoorParticleSystems.push_back(m_pLastParticlesystemObject);
+	}
+}
+
+void CGameScene2::BuildHoloGram()
+{
+	if (m_pTipingEffect)
+	{
+		if (m_HoloGramControl[0])
+			m_pTipingEffect->UpdatePosition(XMFLOAT3(0.0f, 12.0f, 23.0f));
+
+		if(m_HoloGramControl[1])
+			m_pTipingEffect->UpdatePosition(XMFLOAT3(0.0f, 12.0f, -23.0f));
 	}
 }
 

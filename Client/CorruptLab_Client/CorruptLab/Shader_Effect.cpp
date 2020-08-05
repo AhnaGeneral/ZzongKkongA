@@ -130,7 +130,9 @@ void CShader_Effect::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D12Graph
 void CShader_Effect::UpdateShaderVariables(ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	m_spt.LifeTime += 0.02f;
-	m_spt.LoopTime += 1.0f;
+
+	m_spt.LoopTime += m_SPTTimeSpeed;
+
 	if (m_spt.LoopTime > 5.0f)
 	{
 		m_spt.LoopTime = 0.0f;
@@ -230,7 +232,7 @@ void CShader_Effect::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature*
 }
 
 void CShader_Effect::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList,
-	ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 _pos, bool GreenZoon)
+	ID3D12RootSignature* pd3dGraphicsRootSignature, XMFLOAT3 _pos, bool GreenZoon, float _SPTTimeSpeed)
 
 {
 	CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
@@ -240,22 +242,33 @@ void CShader_Effect::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsComman
 	{
 		m_pLight01obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 			XMFLOAT3(_pos.x, _pos.y + 2, _pos.z), this);
+		m_pLight01obj->UpdatePosition(XMFLOAT3(_pos.x, _pos.y + 2, _pos.z));
 
 		m_pSPT_Wave02obj = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 			XMFLOAT3(_pos.x, _pos.y, _pos.z), this);
+		m_pSPT_Wave02obj->UpdatePosition(XMFLOAT3(_pos.x, _pos.y, _pos.z));
+
 	}
 	else
 	{
 		m_pSPT_Tiping = new CObject_Effect(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature,
 			XMFLOAT3(_pos.x, _pos.y, _pos.z), this);
+		m_pSPT_Tiping->UpdatePosition(XMFLOAT3(_pos.x, _pos.y, _pos.z));
 	}
 
 	m_spt.col = 0;
 	m_spt.row = 0;
 
+	m_SPTTimeSpeed = _SPTTimeSpeed;
+
 	CreateTexture(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature); 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList); 
 	ReleaseUploadBuffers(); 
+}
+
+void CShader_Effect::UpdatePosition(XMFLOAT3 _pos)
+{
+	if (m_pSPT_Tiping)m_pSPT_Tiping->UpdatePosition(_pos);
 }
 
 void CShader_Effect::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera, bool GreenZoon)
