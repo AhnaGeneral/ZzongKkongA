@@ -335,7 +335,10 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 			if (CMgr_IndoorControl::GetInstance()->GetExecuteHandLightControl())
 				CMgr_IndoorControl::GetInstance()->SetExecuteHandLightControl(false); 
 			else
+			{
+				CNarrationMgr::GetInstance()->TurnOnNarration(15);
 				CMgr_IndoorControl::GetInstance()->SetExecuteHandLightControl(true);
+			}
 
 			break; 
 		case VK_SPACE:
@@ -499,6 +502,13 @@ void CGameScene2::Update(float fTimeElapsed)
 			m_HoloGramRenderTime[1] = 0.0f;
 			m_HoloGramControl[1] = false;
 		}
+	}
+
+	if (m_ThatIsRightPassword)
+	{
+		XMFLOAT3 playerPos = m_pPlayer->GetPosition();
+		if (playerPos.x < 35)
+			CNarrationMgr::GetInstance()->TurnOnNarration(9);
 	}
 }
 	

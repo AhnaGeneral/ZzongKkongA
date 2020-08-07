@@ -51,6 +51,7 @@ public:
 	vector<BoundingOrientedBox> m_pStaticCollisionlist[2];
 	vector<CMonster*>** m_pMonsterLists;
 	int m_iSceneProgress = PROGRESS_FILED1;
+	XMFLOAT3 FiledPos[2] ;
 	BoundingBox m_pFiledCollision1;
 	BoundingBox m_pFiledCollision2[2];
 	CGameObject* m_pOpeningDoors[2];

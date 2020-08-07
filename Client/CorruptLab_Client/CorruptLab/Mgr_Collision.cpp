@@ -17,6 +17,9 @@ void CCollisionMgr::Initialize(void)
 
 	m_pFiledCollision2[1].Center = XMFLOAT3(340.f, 70.f, 380.f);
 	m_pFiledCollision2[1].Extents = XMFLOAT3(5.f, 20.f, 140.f);
+
+	FiledPos[0] = XMFLOAT3(377, 39, 118);
+	FiledPos[1] = XMFLOAT3(206, 83, 138);
 }
 
 bool CCollisionMgr::CheckMonsterNotice(int iType)
@@ -84,6 +87,19 @@ void CCollisionMgr::MonsterAttackCheck(int iDamaege, CCollisionBox box, float fT
 
 void CCollisionMgr::MonsterDamageCheck(int iDamage)
 {
+	if (iDamage == 100 && m_pMonsterLists) {
+		XMFLOAT3 playerPos = m_pPlayer->GetPosition();
+		float distance = Vector3::Length(Vector3::Subtract(playerPos, FiledPos[m_iSceneProgress - 1]));
+		if (distance > 30) return;
+
+		for (auto Obj : *m_pMonsterLists[m_iSceneProgress - 1])
+		{
+			if (!Obj->m_bRender || Obj->m_iState == MONSTER_STATE_STUN || Obj->m_iState == MONSTER_STATE_DAMAGEING) continue;
+
+				Obj->GetDamaage(iDamage);
+		}
+		return;
+	}
 	if (m_pMonsterLists) // ∏ÛΩ∫≈Õ Render
 	{
 		for (int i = 0; i < 2; i++)

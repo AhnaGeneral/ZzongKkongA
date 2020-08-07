@@ -1062,6 +1062,16 @@ void CGameScene::Update(float fTimeElapsed)
 		}
 	}
 
+	XMFLOAT3 NarrationPos12 = XMFLOAT3(397.f, 42.f, 256.f);
+	XMFLOAT3 NarrationPos13 = XMFLOAT3(430.8f, 41.8f, 205.0f);
+	XMFLOAT3 playerPos = m_pPlayer->GetPosition();
+	float distance12 = Vector3::Length(Vector3::Subtract(NarrationPos12, playerPos));
+	float distance13 = Vector3::Length(Vector3::Subtract(NarrationPos13, playerPos));
+	if (distance12 < 10)
+		CNarrationMgr::GetInstance()->TurnOnNarration(12);
+	if (distance13 < 10)
+		CNarrationMgr::GetInstance()->TurnOnNarration(13);
+
 	m_pPlayer->Animate(fTimeElapsed, NULL);
 	CItemMgr::GetInstance()->Update(fTimeElapsed);
 	CRadationMgr::GetInstance()->Update(m_fElapsedTime);

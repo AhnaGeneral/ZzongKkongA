@@ -63,7 +63,10 @@ void CPlayer::SetAttackState()
 	
 	m_iState = JOHNSON_ANIAMATION_ATTACK;
 	m_pChild->m_pAnimationController->m_pAnimationTracks->m_fPosition = combolists[m_nCombo].Start;
-	CCollisionMgr::GetInstance()->MonsterDamageCheck(m_iAtt);
+	if (m_nCombo == 1)
+		CCollisionMgr::GetInstance()->MonsterDamageCheck(100);
+	else
+		CCollisionMgr::GetInstance()->MonsterDamageCheck(m_iAtt);
 
 	if (m_nCombo > 2) m_nCombo = 0;
 	//SetAnima
@@ -671,7 +674,7 @@ CPlayerCamera* CMainPlayer::ChangeCamera(DWORD nNewCameraMode, float fTimeElapse
 		m_pCamera = dynamic_cast<CPlayerCamera*>(OnChangeCamera(THIRD_PERSON_CAMERA, nCurrentCameraMode));
 		m_pCamera->SetTimeLag(0.25f);
 		m_pCamera->SetOffset(XMFLOAT3(0.0f, 2.0f, -10.5f));
-		m_pCamera->GenerateProjectionMatrix(1.01f, CAMERA_CULL_RANGE, ASPECT_RATIO, 60.0f);
+		m_pCamera->GenerateProjectionMatrix(1.01f, CAMERA_CULL_RANGE, ASPECT_RATIO, 50.0f);
 		m_pCamera->SetViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.0f);
 		m_pCamera->SetScissorRect(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
 		//m_pCamera->GenerateOrthoLHMatrix(FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT, 0.0f, 1.f);

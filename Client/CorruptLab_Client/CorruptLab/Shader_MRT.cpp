@@ -26,7 +26,7 @@ CPostProcessingShader::CPostProcessingShader()
 	m_pRenderTargetUIs = NULL;
 	m_nRenderTargetUI = 0;
 	pRenderTargetUI = NULL;
-	m_nMRTSwitch = 1;
+	m_nMRTSwitch = 0;
 
 	m_pMinimap = NULL;
 
@@ -1021,7 +1021,7 @@ void CPostProcessingShader::UIEndingRender(ID3D12GraphicsCommandList* pd3dComman
 	if (m_EndingCreditUI) 
 	{
 		m_EndingCount += (abs(fElapsedTime * 70.0f));
-		m_EndingCreditUI->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 900, (FRAME_BUFFER_HEIGHT / 2) - (1900 - m_EndingCount));
+		m_EndingCreditUI->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 1200, (FRAME_BUFFER_HEIGHT / 2) - (1900 - m_EndingCount));
 		m_EndingCreditUI->Render(pd3dCommandList, pCamera);
 	}
 }

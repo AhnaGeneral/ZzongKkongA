@@ -7,8 +7,6 @@ CNarrationMgr* CNarrationMgr::m_pInstance = NULL;
 
 void CNarrationMgr::TurnOnNarration(int iNum)
 {
-	m_iCurrentNum = iNum;
-	m_bRender = true;
 	if (m_pNarrations.find(iNum)->second->IsEnabled)
 	{
 		m_iCurrentNum = iNum;
@@ -23,10 +21,10 @@ void CNarrationMgr::Initialize(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_pShader = new CShader_BaseUI();
 	m_pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignatureCPlayer, FINAL_MRT_COUNT);
-	m_pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1,7);
+	m_pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1,16);
 	CNarration* pNarration;
 	
-	for (int i = 1; i <= 6; i++)
+	for (int i = 1; i <= 15; i++)
 	{
 
 		pNarration = new CNarration();
@@ -35,6 +33,16 @@ void CNarrationMgr::Initialize(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 		CTexture* pTexture = new CTexture(1, RESOURCE_TEXTURE2D, 0);
 		char filename[45] = "UserInterface/Narrations/Narration_1.dds";
+		if (i > 9)
+		{
+			filename[35] = 49;
+			filename[36] = i % 10 + 48;
+			filename[37] = '.';
+			filename[38] = 'd';
+			filename[39] = 'd';
+			filename[40] = 's';
+		}
+		else
 		filename[35] = i+48;
 		wchar_t wc[45];
 		for (int i = 0; i < 45; i++)
@@ -44,7 +52,7 @@ void CNarrationMgr::Initialize(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		m_pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTexture, ROOT_PARAMETER_HP_TEX, 0);
 		pNarration->SetTexture(pTexture);
 		CMesh* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 1200, 500, 0.0f, 1.0f);
-		pNarration->Set2DPosition(0, -150);
+		pNarration->Set2DPosition(0, -200);
 		pNarration->SetMesh(mesh);
 		pNarration->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		float* alpha = new float(1);
@@ -77,7 +85,17 @@ void CNarrationMgr::Skip()
 	{
 		m_bRender = false;
 		m_fLifetime = 0.0f;
-		if (m_iCurrentNum == 5) TurnOnNarration(6);
+		switch (m_iCurrentNum)
+		{
+		case 5: TurnOnNarration(6);
+			break;
+		case 9: TurnOnNarration(10);
+			break;
+		case 10: TurnOnNarration(8);
+			break;
+		case 8: TurnOnNarration(11);
+			break;
+		}
 	}
 }
 

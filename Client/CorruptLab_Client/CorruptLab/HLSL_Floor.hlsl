@@ -55,7 +55,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT FloorPS(PS_FLOOR_INPUT input) : SV_TARGET
 {
 	PS_MULTIPLE_RENDER_TARGETS_OUTPUT output;
 	output.color = gtxtAlbedoTexture.Sample(gSamplerState, input.tex);
-	output.depth = float4(input.posj.z / input.posj.w, input.posj.w / 500.0f, 0, 1);
+	output.depth = float4(input.posj.z / input.posj.w, input.posj.w / 800.0f, 0, 1);
 	float3x3 TBN;
 	if (input.normal.y > 0)
 		TBN = float3x3(float3(1, 0, 0), float3(0, 0, 1), float3(0, 1, 0));
