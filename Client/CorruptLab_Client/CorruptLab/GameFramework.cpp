@@ -75,7 +75,7 @@ CGameFramework::CGameFramework()
 
 	m_fSunTime = 0;
 
-	_tcscpy_s(m_pszFrameRate, _T("LabProject ("));
+	_tcscpy_s(m_pszFrameRate, _T("CorruptLab ("));
 }
 
 CGameFramework::~CGameFramework()

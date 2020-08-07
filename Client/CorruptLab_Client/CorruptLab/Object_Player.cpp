@@ -408,7 +408,7 @@ CMainPlayer::CMainPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd
 	SwordShader = new CSwordEffectShader();
 	SwordShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	SwordShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	SwordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 6); //16
+	SwordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1,6); //16
 
 	m_SwordEffectTexture = new CTexture(2, RESOURCE_TEXTURE2D, 0);
 	m_SwordEffectTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, L"Effect/Attack2.dds", 0);

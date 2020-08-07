@@ -82,7 +82,7 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	CShader* TexcoordShader = new CTexcoordStandardShader();
 	TexcoordShader->CreateShader(pd3dDevice, m_pd3dGraphicsRootSignature, FINAL_MRT_COUNT);
 	TexcoordShader->CreateShaderVariables(pd3dDevice, pd3dCommandList);
-	TexcoordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1, 3); //16
+	TexcoordShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1,2); //16
 
 	CGameObject* pBossModel = CGameObject::LoadGeometryAndAnimationFromFile(pd3dDevice,
 		pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/Monster/Boss.bin", NULL, 1);
