@@ -114,6 +114,10 @@ Texture2D gtxtEffectTexture : register(t31);
 Texture2D gtxtDissolveTexture : register(t69);
 Texture2D gtxtRealEffectTexture : register(t70);
 
+
+static float gtxFRAME_BUFFER_WIDTH = 1600.f /2.f;
+static float gtxFRAME_BUFFER_HEIGHT = 900.f /2.f;
+
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {
 	float4 color        : SV_TARGET0;

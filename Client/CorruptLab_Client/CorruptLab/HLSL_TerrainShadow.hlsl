@@ -53,7 +53,6 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<
 		{
 			fTessFactor = 1000.f / fDistanceToCamera;
 		}
-
 	}
 	HS_TERRAIN_TESSELLATION_CONSTANT output;
 
@@ -147,7 +146,7 @@ PS_SHADOW_OUTPUT PSTerrainShadow(DS_TERRAIN_TESSELLATION_SHADOW_OUTPUT input)
 {
 	PS_SHADOW_OUTPUT output;
 
-	output.ShadowTex = float4(input.posj.z/input.posj.w, input.posj.w/ 600.0f , 0.0f, 1.0f);
+	output.ShadowTex = float4(input.posj.z/input.posj.w, input.posj.w/ 800.0f , 0.0f, 1.0f);
 	//output.ShadowTex = float4(input.position.z  , 0, 0.0f, 1.0f);
 	return output;
 }

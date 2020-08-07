@@ -111,12 +111,12 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 
 	float4 noise1 = gtxtAlpha01.Sample(gSamplerState, input.tex1);
 	float4 noise2 = gtxtAlpha02.Sample(gSamplerState, input.tex2);
-	float2 f2pos = float2(input.position.x / 600 / 2 - 1, input.position.y / 400 / 2 - 1);
+	float2 f2pos = float2(input.position.x / 800.0f /2.0f- 1, input.position.y / 450.0f /2.0f- 1);
 
 	float myDepth = input.vPorjPos.z;
 	float4 fSceneDepth = gtxtSceneDepthTexture.Sample(gSamplerState, f2pos);
 
-	float fSceenW = fSceneDepth.g * 600.f;
+	float fSceenW = fSceneDepth.g * 800.0f;
 	float fSceenZ = fSceneDepth.r * fSceenW;
 
 	float4 finalNoise = lerp(noise1, noise2, 0.7);
@@ -226,12 +226,12 @@ PS_NONLIGHT_MRT_OUTPUT SpecialFogPixelShader(PS_FOG_INPUT input)
 
 	float4 noise1 = gtxtAlpha01.Sample(gSamplerState, input.tex1);
 	float4 noise2 = gtxtAlpha02.Sample(gSamplerState, input.tex2);
-	float2 f2pos = float2(input.position.x / 600 / 2 - 1, input.position.y / 400 / 2 - 1);
+	float2 f2pos = float2(input.position.x / 800.0f /2.0f - 1, input.position.y / 450.0f /2.0f - 1);
 
 	float myDepth = input.vPorjPos.z;
 	float4 fSceneDepth = gtxtSceneDepthTexture.Sample(gSamplerState, f2pos);
 
-	float fSceenW = fSceneDepth.g * 600.f;
+	float fSceenW = fSceneDepth.g * 800.0f;
 	float fSceenZ = fSceneDepth.r * fSceenW;
 
 

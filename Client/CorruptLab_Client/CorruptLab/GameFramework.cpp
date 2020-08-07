@@ -431,7 +431,7 @@ void CGameFramework::CreateShadowRenderTargetViews()
 
 	for (UINT i = 0; i < m_nOffScreenShadowBuffers; i++)
 	{
-		m_ppd3dShadowRenderTargetBuffers[i] = pShadowMap->CreateTexture(m_pd3dDevice, m_pd3dCommandList , m_nWndClientWidth * 4, m_nWndClientHeight * 4,
+		m_ppd3dShadowRenderTargetBuffers[i] = pShadowMap->CreateTexture(m_pd3dDevice, m_pd3dCommandList , m_nWndClientWidth * 5, m_nWndClientHeight * 5,
 			DXGI_FORMAT_R32G32B32A32_FLOAT, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ, &d3dClearValue, i);
 		m_ppd3dShadowRenderTargetBuffers[i]->AddRef();
 	}
@@ -504,8 +504,8 @@ void CGameFramework::CreateShadowDepthStencilView()
 	D3D12_RESOURCE_DESC d3dResourceDesc;
 	d3dResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	d3dResourceDesc.Alignment = 0;
-	d3dResourceDesc.Width = m_nWndClientWidth * 4;
-	d3dResourceDesc.Height = m_nWndClientHeight * 4;
+	d3dResourceDesc.Width = m_nWndClientWidth * 5;
+	d3dResourceDesc.Height = m_nWndClientHeight * 5;
 	d3dResourceDesc.DepthOrArraySize = 1;
 	d3dResourceDesc.MipLevels = 1;
 	d3dResourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;

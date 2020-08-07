@@ -664,7 +664,8 @@ bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 		//n_ReactItem
 		itemRange = FRAME_BUFFER_HEIGHT / 10.0f; //60
 
-		if (WindowCursorPos.y <= FRAME_BUFFER_HEIGHT && WindowCursorPos.y >= (FRAME_BUFFER_HEIGHT - itemRange))
+		if (WindowCursorPos.y <= FRAME_BUFFER_HEIGHT
+			&& WindowCursorPos.y >= (FRAME_BUFFER_HEIGHT - itemRange))
 		{
 			if ((WindowCursorPos.x >= 0.0f) && (WindowCursorPos.x <= itemRange))
 			{
