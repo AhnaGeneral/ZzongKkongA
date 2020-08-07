@@ -42,21 +42,63 @@ void CMgr_IndoorControl::EraserPassword()
 		listpassword->pop_back();
 }
 
-bool CMgr_IndoorControl::ConfirmPassword()
+bool CMgr_IndoorControl::ConfirmDoorPassword()
 {
-	const int ThatIsRightPassword[4] = { 8,2,7,7 };
 	if (listpassword->size() != 4) return false; 
 	else
 	{
 		int i = 0;
 		for (auto& a : *listpassword)
-		if (ThatIsRightPassword[i++] != a)
+		if (m_DoorPassWord[i++] != a)
 		{
 			CSoundMgr::GetInstacne()->PlayEffectSound(_T("WrongNumber"));
 			return false;
 		}
+		m_Coded[0] = true;
 		CSoundMgr::GetInstacne()->PlayEffectSound(_T("RightNumber"));
 		CSoundMgr::GetInstacne()->PlayEffectSound(_T("door2"));
+		return true;
+	}
+}
+
+bool CMgr_IndoorControl::ConfirmRightPassword()
+{
+	if (listpassword->size() != 4) return false;
+	else
+	{
+		int i = 0;
+		for (auto& a : *listpassword)
+			if (m_RightPassWord[i++] != a)
+			{
+				CSoundMgr::GetInstacne()->PlayEffectSound(_T("WrongNumber"));
+				return false;
+			}
+		CSoundMgr::GetInstacne()->PlayEffectSound(_T("RightNumber"));
+		m_Coded[2] = true;
+		SetpasswordControl(false);
+		pIndoorScene->CodeMachine(true);
+		listpassword->clear();
+		return true;
+	}
+}
+
+bool CMgr_IndoorControl::ConfirmLeftPassword()
+{
+	if (listpassword->size() != 4) return false;
+	else
+	{
+		int i = 0;
+		for (auto& a : *listpassword)
+			if (m_LeftPassWord[i++] != a)
+			{
+				CSoundMgr::GetInstacne()->PlayEffectSound(_T("WrongNumber"));
+				return false;
+			}
+		CSoundMgr::GetInstacne()->PlayEffectSound(_T("RightNumber"));
+		m_Coded[1] = true;
+		SetpasswordControl(false);
+		pIndoorScene->CodeMachine(false);
+		listpassword->clear();
 		return true;
 	}
 }

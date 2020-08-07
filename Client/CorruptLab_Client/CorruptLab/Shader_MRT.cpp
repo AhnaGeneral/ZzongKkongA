@@ -946,7 +946,8 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 						{
 							CMgr_IndoorControl::GetInstance()->ExcuteAnimationDoor();
 							CMgr_IndoorControl::GetInstance()->SetExecuteConfirmControl(false);
-							m_bPasswordRenderControl = false;
+							CMgr_IndoorControl::GetInstance()->SetpasswordControl(false);
+							plist->clear();
 
 						}
 					}

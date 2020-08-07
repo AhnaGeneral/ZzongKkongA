@@ -21,7 +21,7 @@ void CNarrationMgr::Initialize(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_pShader = new CShader_BaseUI();
 	m_pShader->CreateShader(pd3dDevice, pd3dGraphicsRootSignatureCPlayer, FINAL_MRT_COUNT);
-	m_pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1,16);
+	m_pShader->CreateCbvAndSrvDescriptorHeaps(pd3dDevice, pd3dCommandList, 1,15);
 	CNarration* pNarration;
 	
 	for (int i = 1; i <= 15; i++)

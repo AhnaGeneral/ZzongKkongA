@@ -317,7 +317,7 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 				case'5':
 				case'6':
 				case'7':
-				case'8':
+				case'8': 
 				case'9':
 				case'0':
 					CMgr_IndoorControl::GetInstance()->InsertPassword(wParam - 48);
@@ -326,8 +326,28 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 					CMgr_IndoorControl::GetInstance()->EraserPassword();
 					break;
 				case VK_RETURN:
-					bool Is_True = CMgr_IndoorControl::GetInstance()->ConfirmPassword();
-					CMgr_IndoorControl::GetInstance()->SetThatIsRightPassword(Is_True);
+					if (CMgr_IndoorControl::GetInstance()->GetIsCoded(0) == false)
+					{
+						bool Is_True = CMgr_IndoorControl::GetInstance()->ConfirmDoorPassword();
+						CMgr_IndoorControl::GetInstance()->SetThatIsRightPassword(Is_True);
+					}
+					else
+					{
+
+						XMFLOAT3 playerpos = m_pPlayer->GetPosition();
+						float MoniterPos1 = Vector3::Length(Vector3::Subtract(playerpos, XMFLOAT3(0, 0, 15)));
+						float MoniterPos2 = Vector3::Length(Vector3::Subtract(playerpos, XMFLOAT3(0, 0, -15)));
+
+						if (MoniterPos2 < 5.5)
+						{
+							bool Is_True = CMgr_IndoorControl::GetInstance()->ConfirmLeftPassword();
+						}
+						else if(MoniterPos1 < 5.5)
+						{
+							bool Is_True = CMgr_IndoorControl::GetInstance()->ConfirmRightPassword();
+
+						}
+					}
 					break;
 			}
 
@@ -517,25 +537,25 @@ void CGameScene2::Update(float fTimeElapsed)
 
 void CGameScene2::CodingCheck()
 {
+	if (CMgr_IndoorControl::GetInstance()->GetIsCoded(0) == false) return;
+
 	XMFLOAT3 playerpos = m_pPlayer->GetPosition();
 	float MoniterPos1 = Vector3::Length(Vector3::Subtract(playerpos, XMFLOAT3(0, 0, 15))); 
 	float MoniterPos2 = Vector3::Length(Vector3::Subtract(playerpos, XMFLOAT3(0, 0, -15)));
 	
 	if (MoniterPos1 < 5.5 )
 	{
-		m_pPlayer->SetType();
-		m_HoloGramControl[0] = true;
-		m_HoloGramControl[1] = false;
-		BuildHoloGram();
+		if (CMgr_IndoorControl::GetInstance()->GetIsCoded(2)) return;
+		CMgr_IndoorControl::GetInstance()->SetpasswordControl(true);
+		
+
 
 	}
 
 	if (MoniterPos2 < 5.5)
 	{
-		m_pPlayer->SetType();
-		m_HoloGramControl[1] = true;
-		m_HoloGramControl[0] = false;
-		BuildHoloGram();
+		if (CMgr_IndoorControl::GetInstance()->GetIsCoded(1)) return;
+		CMgr_IndoorControl::GetInstance()->SetpasswordControl(true);
 	}
 }
 
@@ -561,6 +581,7 @@ void CGameScene2::PassWordCheck()
 			CMgr_IndoorControl::GetInstance()->SetpasswordControl(tmp);
 		}
 	}
+
 }
 
 void CGameScene2::DeskOpenCheck()
@@ -604,6 +625,23 @@ void CGameScene2::IndoorParticleEffectRender()
 		m_pLastParticlesystemObject->RegenerateParticles(XMFLOAT3(135.0f, 3.0f, 8.0f - (i * 5)));
 		m_pIndoorParticleSystems.push_back(m_pLastParticlesystemObject);
 	}
+}
+
+void CGameScene2::CodeMachine(bool r) // true: right, false : left
+{
+	m_pPlayer->SetType();
+	if (r)
+	{
+		m_HoloGramControl[0] = true;
+		m_HoloGramControl[1] = false;
+	}
+	else
+	{
+
+		m_HoloGramControl[1] = true;
+		m_HoloGramControl[0] = false;
+	}
+	BuildHoloGram();
 }
 
 void CGameScene2::BuildHoloGram()

@@ -940,6 +940,9 @@ void CGameFramework::FrameAdvanceStageIndoor()
 	
 	m_pScene[SCENE_STAGE_INDOOR]->Render(m_pd3dCommandList, m_pCamera); // RTV 0 , RTV 1 , RTV 2s에서 그림이 그려진다. swapchain back buffer에는 그림이 그려지지 않는다. 
 
+	if (CMgr_IndoorControl::GetInstance()->m_bTurnToEnding)
+		TurnToEnding();
+
 	for (int i = 0; i < m_nOffScreenRenderTargetBuffers; i++) // 이거 읽어도 돼? 
 		::SynchronizeResourceTransition(m_pd3dCommandList, m_ppd3dOffScreenRenderTargetBuffers[i],
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);

@@ -73,6 +73,7 @@ public:
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL);
 	virtual void Update(float fTimeElapsed);
 
+	void CodeMachine(bool r);
 	void BuildHoloGram();
 	void CodingCheck();
 	void PassWordCheck(); 

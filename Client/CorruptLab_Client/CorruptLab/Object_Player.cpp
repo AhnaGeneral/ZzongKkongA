@@ -6,6 +6,7 @@
 #include "Object_Player.h"
 #include "Mgr_Scene.h"
 #include "Mgr_Collision.h"
+#include "Mgr_IndoorControl.h"
 #include "SoundMgr.h"
 #include "Animation.h"
 #include "Shader.h"
@@ -212,6 +213,8 @@ void CPlayer::Update(float fTimeElapsed)
 			m_pSword->m_bRender = true;
 			m_iState = JOHNSON_ANIAMATION_IDLE;
 			m_fComboTick = 0;
+			if (CMgr_IndoorControl::GetInstance()->GetIsCoded(1) && CMgr_IndoorControl::GetInstance()->GetIsCoded(2))
+				CMgr_IndoorControl::GetInstance()->m_bTurnToEnding = true;
 		}
 		SetAnimationSet(m_iState, m_iTrackNumber);
 		return;
