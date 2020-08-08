@@ -12,6 +12,7 @@ class CItemMgr
 private:
 	static CItemMgr    * m_pInstance;
 	CRotatingItem      * m_pRotatingItem = NULL;
+	CRotatingItem		* m_pPasswordInDesk = NULL;
 
 	XMFLOAT4 m_fItemNums = { 0.0f, 0.0f, 0.0f, 0.0f };
 	int	m_iItemNum[4] = {0,0,0,0};
@@ -22,6 +23,8 @@ public:
 	void BillboardUIRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 	void Update(float fElapsedTime);
 	
+	
+	void GetPassword(XMFLOAT3 Pos);
 	void GetItem(int iType, XMFLOAT3 Pos);
 	void GiveItemToPlayer(int iType);
 	void UseItemToPlayer(int iType); 

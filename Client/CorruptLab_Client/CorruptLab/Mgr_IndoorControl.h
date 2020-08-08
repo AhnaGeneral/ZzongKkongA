@@ -14,8 +14,8 @@ private:
 	int passwordControl = 0; 
 	int DeskOpenControl = 0;
 	const int m_DoorPassWord[4] = { 8,2,7,7 };
-	const int m_LeftPassWord[4] = { 4,3,2,4 };
-	const int m_RightPassWord[4] = { 3,6,5,7 };
+	const int m_LeftPassWord[4] = { 1,9,9,6};
+	const int m_RightPassWord[4] = { 1,9,9,6 };
 	bool	m_Coded[3] = {false, false, false }; // 0 : door, 1 : Left, 2 : right
 
 	std::list<int>* listpassword = nullptr;

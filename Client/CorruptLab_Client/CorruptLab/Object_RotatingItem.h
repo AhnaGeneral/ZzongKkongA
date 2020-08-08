@@ -3,7 +3,7 @@
 class CRotatingItem :public CUI_ITem
 {
 public:
-
+	CRotatingItem() {}
 	CRotatingItem(ID3D12Device* pd3dDevice,
 		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
 	virtual void Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera = NULL, int nPipelineState = 0);
@@ -22,3 +22,17 @@ public:
 
 };
 
+
+class CPasswordInDesk :public CRotatingItem
+{
+public:
+	CPasswordInDesk() {}
+	CPasswordInDesk(ID3D12Device* pd3dDevice,
+		ID3D12GraphicsCommandList* pd3dCommandList, ID3D12RootSignature* pd3dGraphicsRootSignature);
+
+	virtual void Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent = NULL);
+	//virtual void UpdateShaderVariable(ID3D12GraphicsCommandList* pd3dCommandList, XMFLOAT4X4* pxmf4x4World);
+	 ~CPasswordInDesk() {}
+
+
+};

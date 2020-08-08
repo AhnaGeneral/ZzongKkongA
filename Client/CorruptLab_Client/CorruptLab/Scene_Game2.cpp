@@ -9,6 +9,7 @@
 #include "Shader_BillBoard.h"
 #include "Mgr_IndoorControl.h"
 #include "CSystem_Particle.h"
+#include "Mgr_Item.h"
 #include "CNarrationMgr.h"
 #include "Shader_Effect.h"
 
@@ -406,6 +407,8 @@ void CGameScene2::DepthRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamer
 		{
 			for (auto Obj : *m_pDynamicObjLists[i])
 			{
+				Obj->UpdateTrackNumber(Obj->m_iTrackNumber);
+				Obj->UpdateAnimationCache(Obj->m_iTrackNumber);
 				Obj->UpdateTransform(NULL);
 				Obj->Render(pd3dCommandList, pCamera, 1);
 			}
@@ -489,7 +492,9 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 		
 		m_pTipingEffect->Render(pd3dCommandList, pCamera, false); 
 	}
-
+	
+	CItemMgr::GetInstance()->Update(m_fElapsedTime);
+	CItemMgr::GetInstance()->BillboardUIRender(pd3dCommandList, pCamera);
 	CheckCollisions();
 }
 
@@ -590,13 +595,14 @@ void CGameScene2::DeskOpenCheck()
 	{
 		XMFLOAT3 ObjPos = pObj->GetPosition();
 		XMFLOAT3 PlayerPos = m_pPlayer->GetPosition();
-
-
+		
 		float Distance = Vector3::Length(Vector3::Subtract(ObjPos, PlayerPos));
 		
 		if (Distance < 13.f)
 		{
 			CMgr_IndoorControl::GetInstance()->SetDeskOpenControl(pObj->m_iTrackNumber);
+			if (pObj->m_iTrackNumber == 4)
+				CItemMgr::GetInstance()->GetPassword(ObjPos);
 		}
 	}
 }

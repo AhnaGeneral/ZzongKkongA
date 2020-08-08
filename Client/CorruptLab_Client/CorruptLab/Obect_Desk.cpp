@@ -20,8 +20,6 @@ void CDesk::Update(float fElapsedTime)
 			m_bAnimating = false;
 		}
 	}
-	else
-		UpdateAnimationCache(m_iTrackNumber);
 }
 
 void CDesk::Open()

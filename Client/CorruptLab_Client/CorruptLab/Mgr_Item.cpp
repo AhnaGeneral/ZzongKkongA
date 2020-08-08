@@ -8,17 +8,29 @@ void CItemMgr::Initialize(ID3D12Device* pd3dDevice,
 {
 	m_pRotatingItem = new CRotatingItem(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
 	m_pRotatingItem->CreateShaderVariables(pd3dDevice, pd3dCommandList);
+
+	m_pPasswordInDesk = new CPasswordInDesk(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature);
+	m_pPasswordInDesk->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	//m_cb_item = new CB_ITEM;
 }
 
 void CItemMgr::BillboardUIRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	m_pRotatingItem->Render(pd3dCommandList, pCamera);
+	m_pPasswordInDesk->Render(pd3dCommandList, pCamera);
 }
 
 void CItemMgr::Update(float fElapsedTime)
 {
 	m_pRotatingItem->Animate(fElapsedTime, NULL);
+	m_pPasswordInDesk->Animate(fElapsedTime, NULL);
+}
+
+void CItemMgr::GetPassword(XMFLOAT3 Pos)
+{
+	Pos.y += 3.f;
+	m_pPasswordInDesk->SetPosition(Pos);
+	m_pPasswordInDesk->m_bAnimate = true;
 }
 
 void CItemMgr::GetItem(int iType, XMFLOAT3 Pos)
@@ -73,7 +85,12 @@ void CItemMgr::Destroy()
 		m_pRotatingItem->ReleaseUploadBuffers();
 		m_pRotatingItem->Release();
 	}
-
+	if (m_pPasswordInDesk)
+	{
+		m_pPasswordInDesk->ReleaseShaderVariables();
+		m_pPasswordInDesk->ReleaseUploadBuffers();
+		m_pPasswordInDesk->Release();
+	}
 
 	if (m_pInstance)
 	{
