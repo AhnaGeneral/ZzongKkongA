@@ -46,7 +46,8 @@ void GS(point GS_NOISE_INPUT input[1], inout TriangleStream<PS_FOG_INPUT> outStr
 	pVertices[2] = float4(input[0].positionW - fHalfW * vRight - fHalfH * vUP, 1.0f);
 	pVertices[3] = float4(input[0].positionW - fHalfW * vRight + fHalfH * vUP, 1.0f);
 
-	float2 pUVs[4] = { float2 (0.0f, 1.0f), float2(0.0f, 0.0f), float2(1.0f, 1.0f), float2(1.0f, 0.0f) };
+	float2 pUVs[4] = { float2 (0.0f, 1.0f), float2(0.0f, 0.0f),
+		float2(1.0f, 1.0f), float2(1.0f, 0.0f) };
 
 	PS_FOG_INPUT output;
 
@@ -111,12 +112,12 @@ PS_NONLIGHT_MRT_OUTPUT FogPixelShader(PS_FOG_INPUT input)
 
 	float4 noise1 = gtxtAlpha01.Sample(gSamplerState, input.tex1);
 	float4 noise2 = gtxtAlpha02.Sample(gSamplerState, input.tex2);
-	float2 f2pos = float2(input.position.x / 800.0f /2.0f- 1, input.position.y / 450.0f /2.0f- 1);
+	float2 f2pos = float2(input.position.x / (gtx_Buffer_width / 2.0f) /2.0f- 1, input.position.y / (gtx_Buffer_height / 2.0f) /2.0f- 1);
 
 	float myDepth = input.vPorjPos.z;
 	float4 fSceneDepth = gtxtSceneDepthTexture.Sample(gSamplerState, f2pos);
 
-	float fSceenW = fSceneDepth.g * 800.0f;
+	float fSceenW = fSceneDepth.g * (gtx_Buffer_width / 2.0f);
 	float fSceenZ = fSceneDepth.r * fSceenW;
 
 	float4 finalNoise = lerp(noise1, noise2, 0.7);
@@ -226,12 +227,12 @@ PS_NONLIGHT_MRT_OUTPUT SpecialFogPixelShader(PS_FOG_INPUT input)
 
 	float4 noise1 = gtxtAlpha01.Sample(gSamplerState, input.tex1);
 	float4 noise2 = gtxtAlpha02.Sample(gSamplerState, input.tex2);
-	float2 f2pos = float2(input.position.x / 800.0f /2.0f - 1, input.position.y / 450.0f /2.0f - 1);
+	float2 f2pos = float2(input.position.x / (gtx_Buffer_width / 2.0f) /2.0f - 1, input.position.y / (gtx_Buffer_height / 2.0f) /2.0f - 1);
 
 	float myDepth = input.vPorjPos.z;
 	float4 fSceneDepth = gtxtSceneDepthTexture.Sample(gSamplerState, f2pos);
 
-	float fSceenW = fSceneDepth.g * 800.0f;
+	float fSceenW = fSceneDepth.g * (gtx_Buffer_width / 2.0f);
 	float fSceenZ = fSceneDepth.r * fSceenW;
 
 

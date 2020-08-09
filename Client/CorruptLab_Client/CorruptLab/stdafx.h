@@ -58,11 +58,11 @@ using Microsoft::WRL::ComPtr;
 //#define _WITH_CB_GAMEOBJECT_32BIT_CONSTANTS
 //#define _WITH_CB_GAMEOBJECT_ROOT_DESCRIPTOR
 
-#ifdef UNICODE
-#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
-#else
-#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
-#endif
+//#ifdef UNICODE
+//#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+//#else
+//#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+//#endif
 
 
 #define _WITH_CB_WORLD_MATRIX_DESCRIPTOR_TABLE
@@ -85,12 +85,6 @@ using Microsoft::WRL::ComPtr;
 
 using namespace FMOD;
 
-
-
-
-
-
-
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
 extern UINT	gnCbvSrvDescriptorIncrementSize;
@@ -107,7 +101,6 @@ extern float ReadFloatFromFile(FILE* pInFile);
 extern BYTE ReadStringFromFile(FILE* pInFile, char* pstrToken);
 
 #include "Define.h"
-
 #include <iostream>
 
 inline bool IsZero(float fValue) { return((fabsf(fValue) < EPSILON)); }

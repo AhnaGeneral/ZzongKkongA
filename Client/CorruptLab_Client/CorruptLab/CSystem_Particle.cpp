@@ -32,7 +32,7 @@ void ParticleSystemObject::CreateShaderVariables(ID3D12Device* pd3dDevice, ID3D1
 void ParticleSystemObject::UpdateShaderVariables(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	// UpdateBuffer ==================================
-	CB_ParicleShader* verticesPtr; 
+	//CB_ParicleShader* verticesPtr; 
 	UINT m_nStride = sizeof(CB_ParicleShader); 
 	m_d3dPrimitiveTopology = D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
 
@@ -131,7 +131,7 @@ bool ParticleSystemObject::InitializeParticleSystem(float velocity, float Partic
 	m_ParticlePerSecond = ParticlePerSecond;
 
 	// 파티클 시스템에 허용되는 최대 파티클 수를 설정합니다.
-	m_maxParticles = maxParticles;
+	m_maxParticles = int(maxParticles);
 
 	// 파티클 리스트를 생성합니다.
 	m_ParticleList = new ParticleType[m_maxParticles];

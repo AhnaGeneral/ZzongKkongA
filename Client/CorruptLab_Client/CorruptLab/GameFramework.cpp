@@ -188,7 +188,7 @@ void CGameFramework::CreateDirect3DDevice()
 
 	IDXGIAdapter1* pd3dAdapter = NULL;
 
-	for (UINT i =1; DXGI_ERROR_NOT_FOUND != m_pdxgiFactory->EnumAdapters1(i, &pd3dAdapter); i++)
+	for (UINT i = 1; DXGI_ERROR_NOT_FOUND != m_pdxgiFactory->EnumAdapters1(i, &pd3dAdapter); i++)
 	{
 		DXGI_ADAPTER_DESC1 dxgiAdapterDesc;
 		pd3dAdapter->GetDesc1(&dxgiAdapterDesc);
@@ -617,9 +617,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				m_pPostProcessingShader->SetMRTSwitch(1);
 			break;
 		case VK_F9:
-			TurnToEnding();
+			ChangeSwapChainState();
 			break;
 		case VK_F10:
+			TurnToEnding();
 			break;
 		default:
 			break;

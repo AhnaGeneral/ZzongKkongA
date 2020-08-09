@@ -118,7 +118,7 @@ void CGameScene2::PlaceObjectsFromFile(ID3D12Device* pd3dDevice,
 	bosscylinder->SetScale(10,10,10);
 	bosscylinder->UpdateTransform(NULL);
 	bosscylinder->OnInitialize();
-	m_pStaticObjLists[OBJECT_INDOOR_TYPE_CHAIR]->emplace_back(bosscylinder);
+	m_pStaticObjLists[OBJECT_INDOOR_TYPE_BOSSMONITER]->emplace_back(bosscylinder);
 
 	PlaceDynamicFromFile(pDiverObject,"ObjectsData/LabatoryIndoorT.bin" , OBJECT_INDOOR_TYPE_DRUGMAKER);
 

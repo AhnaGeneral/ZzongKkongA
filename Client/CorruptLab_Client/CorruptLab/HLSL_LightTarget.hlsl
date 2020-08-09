@@ -21,10 +21,10 @@ PS_LRT_OUTPUT PSLightTargeet(float4 position : SV_POSITION)
 {
 	PS_LRT_OUTPUT output;
 
-	float vPorjPosZ = gtxtDepth[int2(position.xy)].y * 800.0f;
-	float uvX = position.x / 1600.0f;
+	float vPorjPosZ = gtxtDepth[int2(position.xy)].y * (gtx_Buffer_width / 2.0f);
+	float uvX = position.x / gtx_Buffer_width;
 	uvX = (uvX * 2.0f) - 1.0f;
-	float uvY = position.y / 900.0f;
+	float uvY = position.y / gtx_Buffer_height;
 	uvY = (uvY * 2.0f) - 1.0f;
 
 	float4 vPosition;

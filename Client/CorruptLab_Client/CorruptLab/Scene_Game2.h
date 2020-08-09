@@ -9,8 +9,9 @@ class Shader_Basic;
 class Shader_TextureBasic;
 class ParticleSystemObject;
 
-struct DrugMakersImpormation
+class DrugMakersImpormation
 {
+public:
 	XMFLOAT3 pos;
 	XMFLOAT3 size;
 	

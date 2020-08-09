@@ -30,7 +30,7 @@ private:
 	float m_ParticleVelocityVariation = 0; //Variation ∫Ø»≠
 	float m_ParticleSize = 0;
 	float m_ParticlePerSecond = 0; 
-	float m_maxParticles = 0; 
+	int m_maxParticles = 0; 
 	float m_DeadIineY = 50.0f;
 	int m_CurrentParticleCount = 0; 
 	float m_accumulatedTime = 0; //accumulate √‡√¥

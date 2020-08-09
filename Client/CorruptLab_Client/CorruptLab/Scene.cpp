@@ -662,36 +662,36 @@ bool CGameScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wPa
 		//ScreenToClient함수 전체화면 기준인 커서의를 해당 클라이언트 윈도우 기준으로 좌표를 변환해주는 함수 이다. 
 		ScreenToClient(hWnd, &WindowCursorPos);
 		//n_ReactItem
-		itemRange = FRAME_BUFFER_HEIGHT / 10.0f; //60
+		//itemRange = FRAME_BUFFER_HEIGHT / 10.0f; //60
 
-		if (WindowCursorPos.y <= FRAME_BUFFER_HEIGHT
-			&& WindowCursorPos.y >= (FRAME_BUFFER_HEIGHT - itemRange))
-		{
-			if ((WindowCursorPos.x >= 0.0f) && (WindowCursorPos.x <= itemRange))
-			{
-				n_ReactItem = ITEM_TYPE_HANDLIGHT;
-				CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_HANDLIGHT);
-				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HANDLIGHT);
-			}
-			if ((WindowCursorPos.x >= itemRange) && (WindowCursorPos.x <= (itemRange * 2)))
-			{
-				n_ReactItem = ITEM_TYPE_HPKIT;
-				CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_HPKIT);
-				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HPKIT);
-			}
+		//if (WindowCursorPos.y <= FRAME_BUFFER_HEIGHT
+		//	&& WindowCursorPos.y >= (FRAME_BUFFER_HEIGHT - itemRange))
+		//{
+		//	if ((WindowCursorPos.x >= 0.0f) && (WindowCursorPos.x <= itemRange))
+		//	{
+		//		n_ReactItem = ITEM_TYPE_HANDLIGHT;
+		//		CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_HANDLIGHT);
+		//		CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HANDLIGHT);
+		//	}
+		//	if ((WindowCursorPos.x >= itemRange) && (WindowCursorPos.x <= (itemRange * 2)))
+		//	{
+		//		n_ReactItem = ITEM_TYPE_HPKIT;
+		//		CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_HPKIT);
+		//		CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HPKIT);
+		//	}
 
-			if ((WindowCursorPos.x >= itemRange * 2) && (WindowCursorPos.x <= (itemRange * 3)))
-			{
-				n_ReactItem = ITEM_TYPE_PILL;
-				CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_PILL);
-				CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_PILL);
-			}
-		}
-		else
-		{
-			n_ReactItem = ITEM_NONE;
-			CItemMgr::GetInstance()->SetReactItem(ITEM_NONE);
-		}
+		//	if ((WindowCursorPos.x >= itemRange * 2) && (WindowCursorPos.x <= (itemRange * 3)))
+		//	{
+		//		n_ReactItem = ITEM_TYPE_PILL;
+		//		CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_PILL);
+		//		CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_PILL);
+		//	}
+		//}
+		//else
+		//{
+		//	n_ReactItem = ITEM_NONE;
+		//	CItemMgr::GetInstance()->SetReactItem(ITEM_NONE);
+		//}
 
 		break;
 	case WM_LBUTTONUP:
@@ -728,24 +728,23 @@ bool CGameScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM 
 			PurifyMonster();
 			ItemBoxCheck();
 			break;
-		//case 'A':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] += 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
-		//	break;
-		//case 'S':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0] -= 10.0f, m_fShadowPosition[1], m_fShadowPosition[2]);
-		//	break;
-		//case 'D':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] += 10.0f, m_fShadowPosition[2]);
-		//	break;
-		//case 'F':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1] -= 10.0f, m_fShadowPosition[2]);
-		//	break;
-		//case 'G':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]+=10.0f);
-		//	break;
-		//case 'H':
-		//	m_pShadowCamera->SetShadowCameraPosition(m_fShadowPosition[0], m_fShadowPosition[1], m_fShadowPosition[2]-=10.0f);
-		//	break;
+		case '1':
+			n_ReactItem = ITEM_TYPE_HANDLIGHT;
+			CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_HANDLIGHT);
+			CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HANDLIGHT);
+			break; 
+		case '2': 
+			n_ReactItem = ITEM_TYPE_HPKIT;
+			CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_HPKIT);
+			CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_HPKIT);
+			*(m_pPlayer->GetPlayerHPPointer()) += 10;
+			break;
+		case'3':
+			n_ReactItem = ITEM_TYPE_PILL;
+			CItemMgr::GetInstance()->SetReactItem(ITEM_TYPE_PILL);
+			CItemMgr::GetInstance()->UseItemToPlayer(ITEM_TYPE_PILL);
+			*(m_pPlayer->GetPlayerHPPointer()) = 100;
+			break;
 		case VK_SPACE:
 			m_pPlayer->SetAttackState();
 			break;

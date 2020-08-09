@@ -61,6 +61,11 @@ void CTosm::GoodUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pCon
 				int i = 0;
 		}
 	}
+
+	if (GetDistanceToPlayer() < 7.f)
+		SetPosition(m_xmf3PrePosition);
+
+	m_xmf3PrePosition = GetPosition();
 }
 
 void CTosm::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pContext)
@@ -178,6 +183,11 @@ void CTosm::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pCont
 		}
 
 	}
+
+	if (GetDistanceToPlayer() < 7.f)
+		SetPosition(m_xmf3PrePosition);
+
+	m_xmf3PrePosition = GetPosition();
 }
 
 void CTosm::Animate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, int iNum)

@@ -484,7 +484,7 @@ void CPostProcessingShader::BuildObjectPlayerStateUICollection(ID3D12Device* pd3
 	m_PlayerHP->SetMesh(mesh);
 
 	//[ 아이템쓰 ] =============================================================================================
-	float ItemBoxSize = FRAME_BUFFER_HEIGHT / 13.0f;
+	float ItemBoxSize = FRAME_BUFFER_HEIGHT / 14.0f;
 	m_ppItems = new CGameObject * [nIventoryCount];
 
 	m_pItemTex = new CTexture(3, RESOURCE_TEXTURE2D, 0);
@@ -538,7 +538,7 @@ void CPostProcessingShader::BuildObjectPlayerStateUICollection(ID3D12Device* pd3
 void CPostProcessingShader::BuildObjectMinimap(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList)
 {
 	CTriangleRect* mesh = nullptr;
-	int MiniMapHeight = 240, MiniMapWidth = 260;
+	float MiniMapHeight = 240.f, MiniMapWidth = 260.f;
 	//[ 미니맵 ] ============================================================================================
 	m_pMinimap = new CUI_MiniMap(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
 	m_pMinimap->InterLinkShaderTexture(pd3dDevice, pd3dCommandList, GetGraphicsRootSignature());
@@ -739,7 +739,7 @@ void CPostProcessingShader::ReleaseObjects()
 
 	if (m_ppItems)
 	{
-		for (int i = 0; i < nIventoryCount; ++i)
+		for (int i = 0; i < int(nIventoryCount); ++i)
 		{
 			m_ppItems[i]->ReleaseShaderVariables();
 			m_ppItems[i]->ReleaseUploadBuffers();
@@ -928,7 +928,7 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 						if (iter != plist->end())
 						{
 							dynamic_cast<CUI_RaditaionLevel*>(m_IndoorNumberCounts[j])
-								->SetRadiationNumber(*iter);
+								->SetRadiationNumber(float(*iter));
 							iter++;
 						}
 						else
@@ -992,8 +992,8 @@ void CPostProcessingShader::UIRender(ID3D12GraphicsCommandList* pd3dCommandList,
 		if (m_RadiationLevels)
 		{
 			int number = CRadationMgr::GetInstance()->GetRaditaion();
-			dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[0])->SetRadiationNumber(int(number / 10));
-			dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[1])->SetRadiationNumber(int(number % 10));
+			dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[0])->SetRadiationNumber(float(number / 10));
+			dynamic_cast<CUI_RaditaionLevel*>(m_RadiationLevels[1])->SetRadiationNumber(float(number % 10));
 			for (int i = 0; i < 2; ++i)
 			{
 				m_RadiationLevels[i]->Render(pd3dCommandList, pCamera);

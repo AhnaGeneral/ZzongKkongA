@@ -158,7 +158,7 @@ CHeightMapGridMesh::~CHeightMapGridMesh() {
 	if (m_pVertices) delete [] m_pVertices;
 	if (m_xmf3Positions)
 	{
-		for (int i = 0; i < m_nVertices; ++i)
+		for (int i = 0; i < (int)m_nVertices; ++i)
 		{
 			m_xmf3Positions[i] = XMFLOAT3(0.0f, 0.0f,0.0f);
 		}

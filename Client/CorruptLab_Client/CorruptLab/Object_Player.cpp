@@ -36,7 +36,7 @@ CPlayer::CPlayer(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dComman
 
 	m_iMaxHP = 100.0f;
 	m_iCurrentHP = 100.0f;
-	m_iAtt = 5.0f;
+	m_iAtt = 5;
 
 }
 
@@ -535,7 +535,7 @@ bool CMainPlayer::CheckBridge(XMFLOAT3 xmf3PlayerPosition)
 			else if (xmf3PlayerPosition.z < 432) xmf3PlayerPosition.z = 432;
 
 			float fY = xmf3PlayerPosition.x - (-120) - 90;
-			fY = 30 + fY * fY * 0.003;
+			fY = 30.0f + fY * fY * 0.003f;
 			xmf3PlayerPosition.y = fY;
 		}
 		else if (xmf3PlayerPosition.z < 210)
@@ -549,7 +549,7 @@ bool CMainPlayer::CheckBridge(XMFLOAT3 xmf3PlayerPosition)
 			else if (xmf3PlayerPosition.z < 173) xmf3PlayerPosition.z = 173;
 
 			float fY = xmf3PlayerPosition.x - (-50) - 50;
-			fY = 30 + fY * fY * 0.004;
+			fY = 30.0f + fY * fY * 0.004f;
 			xmf3PlayerPosition.y = fY;
 		}
 		XMFLOAT3 xmf3PlayerVelocity = GetVelocity();

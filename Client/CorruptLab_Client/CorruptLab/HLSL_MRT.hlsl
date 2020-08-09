@@ -95,7 +95,9 @@ float4 PSPostProcessingByLaplacianEdge(float4 position : SV_POSITION) : SV_Targe
 	float fEdgeness = 0.0f;
 	float fDepthEdgeness = 0.0f;
 	float3 cEdgeness = float3(0.0f, 0.0f, 0.0f);
-	if ((uint(position.x) >= 1) || (uint(position.y) >= 1) || (uint(position.x) <= gtxtNormal.Length.x - 2) || (uint(position.y) <= gtxtNormal.Length.y - 2))
+	if ((uint(position.x) >= 1) || (uint(position.y) >= 1) 
+		|| (uint(position.x) <= gtxtNormal.Length.x - 2) 
+		|| (uint(position.y) <= gtxtNormal.Length.y - 2))
 	{
 		for (int i = 0; i < 9; i++)
 		{

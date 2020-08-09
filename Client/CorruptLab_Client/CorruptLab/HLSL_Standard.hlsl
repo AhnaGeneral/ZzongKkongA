@@ -111,7 +111,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexturedLightingToMultipleRTs(VS_TEXTURED_LI
 	normalW = normalize(mul(vNormal, TBN));
 	output.normal = float4(normalW /2.f + 0.5f, 1);
 
-	output.depth = float4(input.vPorjPos.z/ input.vPorjPos.w, input.vPorjPos.w /800.0f,0, 1);
+	output.depth = float4(input.vPorjPos.z/ input.vPorjPos.w, input.vPorjPos.w / (gtx_Buffer_width / 2.0f),0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	output.EmmisiveMRT = float4(0, 0, 0, 0);
 
@@ -134,7 +134,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTransparent(VS_TEXTURED_LIGHTING_OUTPUT inpu
 	output.color = float4(1.f, 1.f, 1.f, 0.1f);
 	output.normal = float4(input.normalW, 0.2f);
 
-	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 800.0f, 0, 1);
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / (gtx_Buffer_width / 2.0f), 0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	
 	float fresnelFator = dot(-gvCameraNoraml,input.normalW);
@@ -150,7 +150,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT IndoorPSTransparent(VS_TEXTURED_LIGHTING_OUTPU
 	output.color = float4(1.f, 1.f, 1.f, 0.1f);
 	output.normal = float4(input.normalW, 0.2f);
 
-	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 800.0f, 0, 1);
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / (gtx_Buffer_width / 2.0f), 0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 
 	float fresnelFator = dot(-gvCameraNoraml, input.normalW);
@@ -192,7 +192,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSDissolveForSkinned(VS_TEXTURED_LIGHTING_OUTP
 	output.color = cColorAlbedo;
 
 
-	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 800.0f, 0, 1);
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / (gtx_Buffer_width / 2.0f), 0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	output.EmmisiveMRT = float4(0, 0, 0, 0);
 
@@ -240,7 +240,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT PSTexCoordToMultipleRTs(VS_TEXTURED_LIGHTING_O
 
 	output.normal = float4(input.normalW / 2.0f + 0.5f , 1);
 
-	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 800.0f , 0, 1);
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / (gtx_Buffer_width / 2.0f), 0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	output.EmmisiveMRT = float4(0, 0, 0, 0);
 
@@ -277,7 +277,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT AlphaChannelForSkinned(VS_TEXTURED_LIGHTING_OU
 
 	output.color = cColorAlbedo;
 
-	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 800.0f, 0, 1);
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / (gtx_Buffer_width / 2.0f), 0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	output.EmmisiveMRT = float4(0, 0, 0, 0);
 
@@ -325,7 +325,7 @@ PS_MULTIPLE_RENDER_TARGETS_OUTPUT AlphaChannelDissolveForSkinned(VS_TEXTURED_LIG
 
 	}
 
-	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / 800.0f, 0, 1);
+	output.depth = float4(input.vPorjPos.z / input.vPorjPos.w, input.vPorjPos.w / (gtx_Buffer_width / 2.0f), 0, 1);
 	output.ShadowCamera = float4 (1.0f, 0.0f, 0.0f, 1.0f);
 	output.EmmisiveMRT = float4(0, 0, 0, 0);
 

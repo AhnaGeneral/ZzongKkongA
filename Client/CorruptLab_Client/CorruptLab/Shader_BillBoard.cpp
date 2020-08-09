@@ -279,8 +279,8 @@ void CSoftParticleShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 	{
 		for (int j = 0; j < 500; j+=50) // 50 100 150 
 		{
-			float x = i + rand() % 10;
-			float y = j + rand() % 10;
+			float x = float(i) + rand() % 10;
+			float y = float(j) + rand() % 10;
 			float fHeight = 0.0f;
 			if (pTerrain)
 			{

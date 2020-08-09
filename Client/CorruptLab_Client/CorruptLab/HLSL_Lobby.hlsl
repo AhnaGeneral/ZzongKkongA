@@ -1,6 +1,6 @@
 #include "Shaders.hlsl"
 
-float4 VSLobbyScene (uint nVertexID : SV_VertexID) : SV_POSITION
+float4 VSLobbyScene(uint nVertexID : SV_VertexID) : SV_POSITION
 {
 	if (nVertexID == 0) return(float4(-1.0f, +1.0f, 0.0f, 1.0f));
 	if (nVertexID == 1) return(float4(+1.0f, +1.0f, 0.0f, 1.0f));
@@ -14,8 +14,11 @@ float4 VSLobbyScene (uint nVertexID : SV_VertexID) : SV_POSITION
 
 float4 PSLobbyScene(float4 position : SV_POSITION) : SV_Target
 {
-	float4 LobbyTex = 
-	gtxtLobbyTex[int2(position.xy)];
-	//gtxtLobbyTex.Sample(gSamplerState, int2(position.xy));
+
+	position.x = position.x / gtx_Buffer_width;
+	position.y = position.y / gtx_Buffer_height;
+	float4 LobbyTex =// position;
+	//gtxtLobbyTex[int2(position.xy)];
+	gtxtLobbyTex.Sample(gSamplerState, float2(position.xy));
 	return(LobbyTex);
 }

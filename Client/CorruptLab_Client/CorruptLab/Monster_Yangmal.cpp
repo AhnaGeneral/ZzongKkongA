@@ -64,7 +64,7 @@ void CYangmal::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 			break;
 		case MONSTER_STATE_BACK:
 			m_fIdleTick += fTimeElapsed;
-			MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed * -0.7, pTerrain);
+			MoveToTarget(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed * -0.7f, pTerrain);
 			SetAnimationSet(3, m_iTrackNumber); // walk
 			if (m_fIdleTick > 1.f)
 			{
@@ -73,7 +73,7 @@ void CYangmal::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 			}
 			break;
 		case MONSTER_STATE_ATTACK:
-			Rush(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed * 1.1, pTerrain);
+			Rush(m_xmf3PlayerPosition, fTimeElapsed, m_fSpeed * 1.1f, pTerrain);
 			m_fIdleTick += fTimeElapsed;
 			SetAnimationSet(2, m_iTrackNumber); // run
 			if (m_fIdleTick > 3.f)
@@ -111,6 +111,10 @@ void CYangmal::BadUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pC
 			m_bNotice = false;
 		}
 	}
+	if (GetDistanceToPlayer() < 7.f)
+		SetPosition(m_xmf3PrePosition);
+
+	m_xmf3PrePosition = GetPosition();
 }
 void CYangmal::GoodUpdate(float fTimeElapsed, XMFLOAT4X4* pxmf4x4Parent, void* pContext)
 {
@@ -164,7 +168,7 @@ void CYangmal::Rush(XMFLOAT3& pos, float fTimeElapsed, float Speed, CHeightMapTe
 {
 	XMFLOAT3 xmf3Position = GetPosition();
 
-	if (m_fDistanceToPlayer < 7.f && m_iState == MONSTER_STATE_ATTACK) return;
+	if (m_fDistanceToPlayer < 7.f) return;
 
 	XMFLOAT3 MovePos = Vector3::Add(xmf3Position, Vector3::ScalarProduct(GetLook(), Speed * fTimeElapsed));
 	if (pTerrain)

@@ -37,7 +37,7 @@ PS_SHADOW_OUTPUT PSStandardShadow(VS_STANDARD_SHADOWOUTPUT input)
 {
 	PS_SHADOW_OUTPUT output;
 
-	output.ShadowTex = float4(input.posj.z / input.posj.w, input.posj.w / 800.0f, 0.0f, 1.0f);
+	output.ShadowTex = float4(input.posj.z / input.posj.w, input.posj.w / (gtx_Buffer_width/2.0f), 0.0f, 1.0f);
 
 	return output;
 }

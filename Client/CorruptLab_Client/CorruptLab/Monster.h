@@ -37,7 +37,7 @@ protected:
 	float			m_fFurifyingTime = 0;
 	int				m_iStunAnimation = 1;
 	float			m_fHarfHeight = 0 ;
-
+	XMFLOAT3		m_xmf3PrePosition = XMFLOAT3(0, 0, 0);
 	CAnimationController* m_pAnimationController = NULL;
 	int				m_iMaxHP;
 	int				m_iCurrentHP;

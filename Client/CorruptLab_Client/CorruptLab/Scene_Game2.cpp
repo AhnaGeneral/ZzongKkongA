@@ -104,11 +104,11 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 	m_IndoorWall->SetPosition(0.f, 0.0f, 0.f);
 	m_IndoorWall->SetScale(63.53762f, 21.115f, 77.93047f);
 
-	CTriangleRect* lenghtMesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH / 7.0f,
-		FRAME_BUFFER_HEIGHT / 7.f, 0.0f, 1.0f);
+	CTriangleRect* lenghtMesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 1200 / 7.0f,
+		800 / 7.f, 0.0f, 1.0f);
 
-	CTriangleRect* wirthMesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 0,
-		FRAME_BUFFER_HEIGHT / 7.f, FRAME_BUFFER_WIDTH / 7.0f, 1.0f);
+	CTriangleRect* widthMesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 0,
+		800 / 7.f, 1200 / 7.0f, 1.0f);
 
 	m_IndoorWallLine = new CGameObject * [5];
 
@@ -119,7 +119,7 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	CGameObject* m_IndoorWallLines = new CGameObject();
 	m_IndoorWallLines->SetShader(pShader);
-	m_IndoorWallLines->SetMesh(wirthMesh);
+	m_IndoorWallLines->SetMesh(widthMesh);
 	m_IndoorWallLines->SetScale(0.f, 0.007f, 0.3f);
 	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	m_IndoorWallLines->SetPosition(102, 4.f, +40);
@@ -127,17 +127,15 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_IndoorWallLines = new CGameObject();
 	m_IndoorWallLines->SetShader(pShader);
-	m_IndoorWallLines->SetMesh(wirthMesh);
+	m_IndoorWallLines->SetMesh(widthMesh);
 	m_IndoorWallLines->SetScale(0.f, 0.007f, 0.3f);
 	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	m_IndoorWallLines->SetPosition(102, 4.f, -30);
 	m_IndoorWallLine[4] = m_IndoorWallLines;
 
-
-	XMFLOAT3 Axis = XMFLOAT3(0.0f, 1.f, 0.0);
 	m_IndoorWallLines = new CGameObject();
 	m_IndoorWallLines->SetShader(pShader);
-	m_IndoorWallLines->SetMesh(wirthMesh);
+	m_IndoorWallLines->SetMesh(widthMesh);
 	m_IndoorWallLines->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 	m_IndoorWallLines->SetScale(0.f, 0.007f, 0.6f);
 	m_IndoorWallLines->SetPosition(-102, 4.f, 0);
@@ -161,7 +159,7 @@ void CGameScene2::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 
 	m_pTipingEffect = new CShader_Effect;
 	m_pTipingEffect->BuildObjects(pd3dDevice, pd3dCommandList,
-		m_pd3dGraphicsRootSignature, XMFLOAT3(0.0f, 12.0f, 23.0f), false, 0.6);
+		m_pd3dGraphicsRootSignature, XMFLOAT3(0.0f, 12.0f, 23.0f), false, 0.6f);
 
 	m_pd3dDevice = pd3dDevice; 
 	m_pd3dCommandList = pd3dCommandList; 
@@ -321,7 +319,7 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 				case'8': 
 				case'9':
 				case'0':
-					CMgr_IndoorControl::GetInstance()->InsertPassword(wParam - 48);
+					CMgr_IndoorControl::GetInstance()->InsertPassword(int(wParam) - 48);
 					break;
 				case VK_BACK:
 					CMgr_IndoorControl::GetInstance()->EraserPassword();
@@ -461,6 +459,13 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 			}
 		}
 	}
+
+	for (int i = 0; i < 5; ++i)
+	{
+		m_IndoorWallLine[i]->UpdateTransform(NULL);
+		m_IndoorWallLine[i]->Render(pd3dCommandList, pCamera, 0);
+	}
+
 	if (m_pDynamicObjLists) // 오브젝트 Render
 	{
 		for (int i = 0; i < m_nDynamicObjectTypeNum; i++)
@@ -479,12 +484,6 @@ void CGameScene2::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pC
 		_autoPaticle->Frame(m_pDevice, m_fElapsedTime, pd3dCommandList, pCamera);
 	}
 
-
-	for (int i = 0; i < 5; ++i)
-	{
-		m_IndoorWallLine[i]->UpdateTransform(NULL);
-		m_IndoorWallLine[i]->Render(pd3dCommandList, pCamera, 0);
-	}
 
 
 	if (m_pTipingEffect&& (m_HoloGramControl[0]|| m_HoloGramControl[1])) 
@@ -600,9 +599,11 @@ void CGameScene2::DeskOpenCheck()
 		
 		if (Distance < 13.f)
 		{
-			CMgr_IndoorControl::GetInstance()->SetDeskOpenControl(pObj->m_iTrackNumber);
-			if (pObj->m_iTrackNumber == 4)
+			if (pObj->m_iTrackNumber == 7)
+			{
+				CMgr_IndoorControl::GetInstance()->SetDeskOpenControl(pObj->m_iTrackNumber);
 				CItemMgr::GetInstance()->GetPassword(ObjPos);
+			}
 		}
 	}
 }

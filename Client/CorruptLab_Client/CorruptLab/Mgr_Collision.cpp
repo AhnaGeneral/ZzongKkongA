@@ -76,7 +76,7 @@ void CCollisionMgr::MonsterAttackCheck(int iDamaege, CCollisionBox box, float fT
 	if (box.boundingBox.Intersects(playerBodybox->boundingBox))
 	{
 		m_pPlayer->UpdateObjectID(1);
-		if (m_fTime > 1.f)
+		if (m_fTime > 2.f)
 		{
 			CSoundMgr::GetInstacne()->PlayEffectSound(_T("Attacked"));
 			m_pPlayer->GetDamaage(iDamaege);
@@ -90,7 +90,7 @@ void CCollisionMgr::MonsterDamageCheck(int iDamage)
 	if (iDamage == 100 && m_pMonsterLists) {
 		XMFLOAT3 playerPos = m_pPlayer->GetPosition();
 		float distance = Vector3::Length(Vector3::Subtract(playerPos, FiledPos[m_iSceneProgress - 1]));
-		if (distance > 30) return;
+		if (distance > 50) return;
 
 		for (auto Obj : *m_pMonsterLists[m_iSceneProgress - 1])
 		{
@@ -108,7 +108,7 @@ void CCollisionMgr::MonsterDamageCheck(int iDamage)
 			{
 				if (!Obj->m_bRender || Obj->m_iState == MONSTER_STATE_STUN || Obj->m_iState == MONSTER_STATE_DAMAGEING) continue;
 				
-				if (Obj->GetDistanceToPlayer() < 10)
+				if (Obj->GetDistanceToPlayer() < 12)
 				{
 
 
