@@ -55,13 +55,13 @@ bool CCollisionMgr::StaticCollisionCheck()
 		if (m_pFiledCollision1.Intersects(playerBodybox->boundingBox))
 			return true;
 		break;
-	case PROGRESS_FILED2:
-		for (int i = 0; i < 2; i++)
-		{
-			if (m_pFiledCollision2[i].Intersects(playerBodybox->boundingBox))
-				return true;
-		}
-		break;
+	//case PROGRESS_FILED2:
+	//	for (int i = 0; i < 2; i++)
+	//	{
+	//		if (m_pFiledCollision2[i].Intersects(playerBodybox->boundingBox))
+	//			return true;
+	//	}
+	//	break;
 	default:
 		break;
 	}

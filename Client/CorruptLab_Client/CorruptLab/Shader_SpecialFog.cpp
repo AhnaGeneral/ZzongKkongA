@@ -218,7 +218,7 @@ void CShader_SpecialFog::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCo
 	
 	for (int i = 0; i < m_nOneFog; i ++)
 	{
-		int Xpos = rand() % 40 + 300; //280 ~ 320
+		int Xpos = rand() % 40 + 315; //280 ~ 320
 		int Ypos = rand() % 400 + 56; //56 ~ 456
 		float fHeight = 0.0f; 
 		if (pTerrain)

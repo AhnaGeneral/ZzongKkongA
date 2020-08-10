@@ -616,11 +616,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			else
 				m_pPostProcessingShader->SetMRTSwitch(1);
 			break;
+		case VK_F6:
+			TurnToEnding();
 		case VK_F9:
 			ChangeSwapChainState();
 			break;
 		case VK_F10:
-			TurnToEnding();
 			break;
 		default:
 			break;

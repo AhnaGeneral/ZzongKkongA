@@ -36,8 +36,6 @@ VS_TERRAIN_OUTPUT VSTerrainShadow(VS_TERRAIN_INPUT input)
 HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<VS_TERRAIN_OUTPUT, 25> input)
 {
 
-	//HS_TERRAIN_TESSELLATION_CONSTANT output;
-
 	float fTessFactor = 3;
 	if (gf3RadiationLevel != 0)
 	{
@@ -47,11 +45,24 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstantShadow(InputPatch<
 		vCenter = vCenter / 25.f;
 
 		float fDistanceToCamera = distance(vCenter, gvCameraPosition);
-
-		fTessFactor = 500.f / fDistanceToCamera * 30;
-		if (fDistanceToCamera > 180.f)
+		fTessFactor = round(fDistanceToCamera / 100);
+		switch (fTessFactor)
 		{
-			fTessFactor = 1000.f / fDistanceToCamera;
+		case 0:
+		case 1:
+			fTessFactor = 60;
+			break;
+		case 2:
+			fTessFactor = 20;
+			break;
+		case 3:
+			fTessFactor = 10;
+			break;
+		case 4:
+		case 5:
+			fTessFactor = 2;
+			break;
+
 		}
 	}
 	HS_TERRAIN_TESSELLATION_CONSTANT output;

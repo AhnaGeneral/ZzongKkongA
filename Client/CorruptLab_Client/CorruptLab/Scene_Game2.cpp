@@ -307,9 +307,10 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 			DeskOpenCheck();
 			CodingCheck();
 			break;
+
 			if (CMgr_IndoorControl::GetInstance()->GetPasswordControl())
 			{
-					case'1':
+				case'1':
 				case'2':
 				case'3':
 				case'4':
@@ -350,6 +351,7 @@ bool CGameScene2::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM
 					break;
 			}
 
+			break;
 		case 'L':
 			if (CMgr_IndoorControl::GetInstance()->GetExecuteHandLightControl())
 				CMgr_IndoorControl::GetInstance()->SetExecuteHandLightControl(false); 
@@ -542,6 +544,12 @@ void CGameScene2::Update(float fTimeElapsed)
 void CGameScene2::CodingCheck()
 {
 	if (CMgr_IndoorControl::GetInstance()->GetIsCoded(0) == false) return;
+
+	if (CMgr_IndoorControl::GetInstance()->GetPasswordControl())
+	{
+		CMgr_IndoorControl::GetInstance()->SetpasswordControl(false);
+		return;
+	}
 
 	XMFLOAT3 playerpos = m_pPlayer->GetPosition();
 	float MoniterPos1 = Vector3::Length(Vector3::Subtract(playerpos, XMFLOAT3(0, 0, 15))); 

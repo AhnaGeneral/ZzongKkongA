@@ -115,8 +115,8 @@ Texture2D gtxtDissolveTexture : register(t69);
 Texture2D gtxtRealEffectTexture : register(t70);
 
 
-static float gtx_Buffer_width = 1600.f;
-static float gtx_Buffer_height = 900.f;
+static float gtx_Buffer_width = 1366.0f;
+static float gtx_Buffer_height = 768.f;
 
 struct PS_MULTIPLE_RENDER_TARGETS_OUTPUT
 {

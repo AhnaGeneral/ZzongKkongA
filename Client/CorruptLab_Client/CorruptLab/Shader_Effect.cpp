@@ -177,7 +177,7 @@ void CShader_Effect::CreateTexture(ID3D12Device* pd3dDevice, ID3D12GraphicsComma
 
 void CShader_Effect::CreateShader(ID3D12Device* pd3dDevice, ID3D12RootSignature* pd3dGraphicsRootSignature, UINT nRenderTargets)
 {
-	m_nPipelineStates = 1;
+	m_nPipelineStates = 3;
 	m_ppd3dPipelineStates = new ID3D12PipelineState*[m_nPipelineStates];
 	//FogPipeline
 

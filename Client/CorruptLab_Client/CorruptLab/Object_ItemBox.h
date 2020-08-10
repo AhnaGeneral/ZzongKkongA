@@ -14,5 +14,6 @@ public:
 private:
 	bool m_bAnimating = false;
 	bool m_bIsFull = true;
+	int  m_itemunber = 0;
 };
 

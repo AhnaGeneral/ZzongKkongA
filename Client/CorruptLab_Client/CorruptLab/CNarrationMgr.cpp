@@ -51,8 +51,8 @@ void CNarrationMgr::Initialize(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLi
 		pTexture->LoadTextureFromFile(pd3dDevice, pd3dCommandList, wc, 0);
 		m_pShader->CreateShaderResourceViews(pd3dDevice, pd3dCommandList, pTexture, ROOT_PARAMETER_HP_TEX, 0);
 		pNarration->SetTexture(pTexture);
-		CMesh* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, 1200, 500, 0.0f, 1.0f);
-		pNarration->Set2DPosition(0, -200);
+		CMesh* mesh = new CTriangleRect(pd3dDevice, pd3dCommandList, FRAME_BUFFER_WIDTH, (FRAME_BUFFER_HEIGHT /1.7f), 0.0f, 1.0f);
+		pNarration->Set2DPosition(0, -(FRAME_BUFFER_HEIGHT /5.4f));
 		pNarration->SetMesh(mesh);
 		pNarration->CreateShaderVariables(pd3dDevice, pd3dCommandList);
 		float* alpha = new float(1);

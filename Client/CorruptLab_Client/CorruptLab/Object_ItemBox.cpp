@@ -18,7 +18,14 @@ void CItemBox::Update(float fElapsedTime)
 		{
 			m_pChild->m_pAnimationController->m_pAnimationTracks[m_iTrackNumber].m_bEnable = false;
 			m_bAnimating = false;
-			CItemMgr::GetInstance()->GetItem(rand() % 3, GetPosition());
+
+			if (m_itemunber > 2)
+			{
+				m_itemunber = 0;
+			}
+			CItemMgr::GetInstance()->GetItem(m_itemunber, GetPosition());
+			m_itemunber++; 
+
 		}
 	}
 	else

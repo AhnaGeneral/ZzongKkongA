@@ -1088,6 +1088,7 @@ void CGameScene::ItemBoxCheck()
 		if (Distance < 8)
 		{
 			int filed = CCollisionMgr::GetInstance()->m_iSceneProgress;
+			if (filed == 3) filed = 2; 
 			for (auto pMon : *m_pMonsterLists[filed - 1])
 				if (!pMon->IsPurified()) return;
 

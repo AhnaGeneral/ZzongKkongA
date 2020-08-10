@@ -371,7 +371,7 @@ void CPostProcessingShader::BuildObjects(ID3D12Device* pd3dDevice, ID3D12Graphic
 		int tmp = i / 4;
 		pRenderTargetUI = new CMRTUI(pd3dDevice, pd3dCommandList);
 		pRenderTargetUI->SetMesh(mesh);
-		pRenderTargetUI->Set2DPosition(+520.0f - (remainder * 170.0f), 340.0f + (-tmp * 110));
+		pRenderTargetUI->Set2DPosition(((FRAME_BUFFER_WIDTH/2) - (FRAME_BUFFER_WIDTH/ 7.0f/2.0f)) - (remainder * (FRAME_BUFFER_WIDTH / 7.0f)), 340.0f + (-tmp * (FRAME_BUFFER_HEIGHT / 7.f)));
 		pRenderTargetUI->SetObjectID(i);
 		m_pRenderTargetUIs[i++] = pRenderTargetUI;
 	}
@@ -1022,7 +1022,7 @@ void CPostProcessingShader::UIEndingRender(ID3D12GraphicsCommandList* pd3dComman
 	if (m_EndingCreditUI) 
 	{
 		m_EndingCount += (abs(fElapsedTime * 70.0f));
-		m_EndingCreditUI->Set2DPosition((-FRAME_BUFFER_WIDTH / 2) + 1200, (FRAME_BUFFER_HEIGHT / 2) - (1900 - m_EndingCount));
+		m_EndingCreditUI->Set2DPosition((FRAME_BUFFER_WIDTH - 1000), (FRAME_BUFFER_HEIGHT / 2) - (1900 - m_EndingCount));
 		m_EndingCreditUI->Render(pd3dCommandList, pCamera);
 	}
 }

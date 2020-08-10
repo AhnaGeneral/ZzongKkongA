@@ -129,10 +129,10 @@ HS_TERRAIN_TESSELLATION_CONSTANT VSTerrainTessellationConstant(InputPatch<VS_TER
 			fTessFactor = 60;
 			break;
 		case 2:
-			fTessFactor = 40;
+			fTessFactor = 20;
 			break;
 		case 3:
-			fTessFactor = 20;
+			fTessFactor = 10;
 			break;
 		case 4:
 		case 5:

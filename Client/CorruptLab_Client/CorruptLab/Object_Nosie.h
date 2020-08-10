@@ -27,7 +27,7 @@ protected:
 	CB_DISTORTIONBUFFERTYPE     m_cbvdistortion;
 	CB_NOISEBUFFERTYPE          m_cbvNoisebuffer;
 	float					    m_fFrameTime = 0.0f;
-	float                       m_FogTime = 3.0f;
+	float                       m_FogTime = 1.0f;
 	int                         ControlFog = 0;
 	XMFLOAT3				    m_fPosition = { 0.0f, 0.0f, 0.0f };
 
